@@ -34,7 +34,7 @@
   },
   "devDependencies": {
     "@pagopa/eslint-config": "^1.1.1",
-    "@pagopa/openapi-codegen-ts": "9.0.0",
+    "@pagopa/openapi-codegen-ts": "^10.0.3",
     "@pagopa/ts-commons": "9.1.0",
     "@types/classnames": "^2.2.11",
     "@types/node": "^14.14.9",
@@ -43,7 +43,7 @@
     "@types/react-router-dom": "^5.1.6",
     "@typescript-eslint/eslint-plugin": "^4.28.4",
     "@typescript-eslint/parser": "^4.28.4",
-    "cssnano": "^4.1.10",
+    "cssnano": "^5.0.8",
     "danger-plugin-digitalcitizenship": "^1.0.0",
     "dotenv": "^8.2.0",
     "eslint": "^7.31.0",
