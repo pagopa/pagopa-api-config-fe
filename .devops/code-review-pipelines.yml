@@ -7,7 +7,7 @@
 #
 
 variables:
-  NODE_VERSION: '14.17.6'
+  NODE_VERSION: '12.19.1'
   YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.yarn
 
 # Automatically triggered on PR
@@ -18,7 +18,7 @@ trigger:
       - main
   paths:
     include:
-      - api-config-fe
+      - pagopa-api-config-fe
 
 # Execute agents (jobs) on latest Ubuntu version.
 # To change OS for a specific, override "pool" attribute inside the job definition
@@ -32,12 +32,11 @@ stages:
       - job: make_build
         pool:
           # As we deploy on Windows machines, we use Windows to build
-          # TODO why is it windows machine?
           vmImage: 'windows-2019'
         steps:
           - template: azure-templates/setup-project.yml
           - script: yarn build
-            workingDirectory: api-config-fe
+            workingDirectory: pagopa-api-config-fe
             displayName: 'Build'
 
   - stage: Static_analysis
@@ -47,9 +46,9 @@ stages:
         steps:
           - template: azure-templates/setup-project.yml
           - script: yarn lint
-            workingDirectory: api-config-fe
+            workingDirectory: pago-api-config-fe
             displayName: 'Lint'
-      - job: danger                             # TODO is it necessary?
+      - job: danger
         condition:
           and(
           succeeded(),
@@ -73,7 +72,7 @@ stages:
           - template: azure-templates/setup-project.yml
 
           - script: yarn generate
-            workingDirectory: api-config-fe
+            workingDirectory: pagopa-api-config-fe
             displayName: 'Generate definitions'
 
 #          TODO fix jest configuration
@@ -82,9 +81,9 @@ stages:
 #            displayName: 'Unit tests exec'
 
           - script: yarn test
-            workingDirectory: api-config-fe
+            workingDirectory: pagopa-api-config-fe
             displayName: 'Unit tests exec'
 
           - bash: bash <(curl -s https://codecov.io/bash)
-            workingDirectory: api-config-fe
+            workingDirectory: pagopa-api-config-fe
             displayName: 'Code coverage'
