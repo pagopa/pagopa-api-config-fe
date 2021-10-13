@@ -107,7 +107,7 @@ stages:
               azureSubscription: '$(STAGING_AZURE_SUBSCRIPTION)'
               destination: 'AzureBlob'
               storage: '$(STAGING_STORAGE_ACCOUNT_NAME)'
-              containerName: '$(BLOB_CONTAINER_NAME)'
+              containerName: '$(BLOB_CONTAINER_NAME)' # TODO it should be $web
             displayName: Deploy to container blob
 
 
