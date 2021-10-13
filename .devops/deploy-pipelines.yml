@@ -1,0 +1,224 @@
+parameters:
+  - name: SEMVER
+    displayName: "When packing a release, define the version bump to apply"
+    type: string
+    values:
+      - major
+      - minor
+      - patch
+    default: patch
+  - name: ENV
+    displayName: Target Environment
+    type: string
+    default: dev
+    values:
+      - dev
+      - uat
+
+variables:
+  NODE_VERSION: '14.17.6'
+  YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.yarn
+
+  ${{ if eq(parameters['ENV'], 'dev') }}:
+    AZURE_SUBSCRIPTION: $(DEV_AZURE_SUBSCRIPTION)
+    RESOURCE_GROUP: $(DEV_WEB_APP_RESOURCE_GROUP_NAME)
+    APP_NAME: $(DEV_WEB_APP_NAME)
+    STAGE: "d"
+  ${{ if eq(parameters['ENV'], 'uat') }}:
+    AZURE_SUBSCRIPTION: $(UAT_AZURE_SUBSCRIPTION)
+    RESOURCE_GROUP: $(UAT_WEB_APP_RESOURCE_GROUP_NAME)
+    APP_NAME: $(UAT_WEB_APP_NAME)
+    STAGE: "u"
+
+
+# Only manual triggers
+trigger: none
+pr: none
+
+pool:
+  vmImage: ubuntu-latest
+
+resources:
+  repositories:
+    - repository: pagopaCommons
+      type: github
+      name: pagopa/azure-pipeline-templates
+      ref: refs/tags/v4
+      endpoint: 'pagopa'  # TODO name of the service connection to use
+
+stages:
+  # Create a release on Github
+  - stage: release_service
+    condition: and(eq(variables['Build.SourceBranch'], 'refs/heads/main'), ne('${{ parameters.REPOSITORY }}', 'auth'))
+    pool:
+      vmImage: "ubuntu-latest"
+    jobs:
+      - job: releaseService
+        steps:
+          - template: templates/node-github-release/template.yaml@pagopaCommons
+              parameters:
+                semver: '${{ parameters.SEMVER }}'
+                gitEmail: $(GIT_EMAIL)
+                gitUsername: $(GIT_USERNAME)
+                gitHubConnection: $(GITHUB_CONNECTION)
+                nodeVersion: $(NODE_VERSION)
+                pkg_cache_version_id: $(CACHE_VERSION_ID)
+                pkg_cache_folder: $(YARN_CACHE_FOLDER)
+
+  # Prepare Artifact with application bundle
+  - stage: prepare_artifact
+    dependsOn:
+      - release_service
+    pool:
+      vmImage: 'ubuntu-latest'
+    jobs:
+      - job: 'make_build'
+        steps:
+          # Build application
+          - template: azure-templates/setup-project.yml
+            parameters:
+              # On the assumption that this stage is executed only when Relase stage is,
+              #  with this parameter we set the reference the deploy script must pull changes from.
+              # The branch/tag name is calculated from the source branch
+              #  ex: Build.SourceBranch=refs/heads/master --> master
+              #  ex: Build.SourceBranch=refs/tags/v1.2.3-RELEASE --> v1.2.3-RELEASE
+              gitReference: ${{ replace(replace(variables['Build.SourceBranch'], 'refs/tags/', ''), 'refs/heads/', '') }}
+
+          - template: azure-templates/make-build.yml
+
+          - publish: $(System.DefaultWorkingDirectory)/dist
+            artifact: Bundle
+
+  # Deploy on Azure
+  - stage: deploy_staging
+    dependsOn:
+      - prepare_artifact
+    jobs:
+      - job: 'deploy_to_container'
+        steps:
+          - checkout: none
+
+          - download: current
+            artifact: Bundle
+
+          - task: AzureFileCopy@4
+            inputs:
+              sourcePath: '$(Pipeline.Workspace)/Bundle/*'
+              azureSubscription: '$(STAGING_AZURE_SUBSCRIPTION)'
+              destination: 'AzureBlob'
+              storage: '$(STAGING_STORAGE_ACCOUNT_NAME)'
+              containerName: '$(BLOB_CONTAINER_NAME)'
+            displayName: Deploy to container blob
+
+
+  # Check that the staging instance is healthy
+  - stage: Healthcheck
+    dependsOn:
+      - deploy_staging
+    jobs:
+      - job: 'do_healthcheck'
+        steps:
+          - template: templates/rest-healthcheck/template.yaml@pagopaCommons
+            parameters:
+              azureSubscription: '$(PRODUCTION_AZURE_SUBSCRIPTION)'
+              endpoint: 'https://$(ENDPOINT_AZURE).azureedge.net/$(MY_INDEX)'
+              endpointType: 'public'
+              appName: ''
+              containerInstanceResourceGroup: ''
+              containerInstanceVNet: ''
+              containerInstanceSubnet: ''
+
+  # Deploy bundle to the production container
+  - stage: deploy_production
+    dependsOn:
+      - prepare_artifact
+    jobs:
+      - job: 'deploy_to_container'
+        steps:
+          - checkout: none
+
+          - download: current
+            artifact: Bundle
+
+          - task: AzureFileCopy@4
+            inputs:
+              sourcePath: '$(Pipeline.Workspace)/Bundle/*'
+              azureSubscription: '$(PRODUCTION_AZURE_SUBSCRIPTION)'
+              destination: 'AzureBlob'
+              storage: '$(PRODUCTION_STORAGE_ACCOUNT_NAME)'
+              containerName: '$(BLOB_CONTAINER_NAME)'
+            displayName: Deploy to container blob
+
+          - task: AzureCLI@1
+            displayName: 'Purge CDN'
+            inputs:
+              azureSubscription: '$(PRODUCTION_AZURE_SUBSCRIPTION)'
+              scriptLocation: inlineScript
+              inlineScript: |
+                call az cdn endpoint purge -g $(RESOURCE_GROUP_AZURE) -n $(ENDPOINT_AZURE) --profile-name $(PROFILE_NAME_CDN_AZURE) --content-paths "/*"
+
+
+#  - stage: test
+#    condition: not(failed('deploy_to_container'))
+#    pool:
+#      vmImage: "ubuntu-latest"
+#    jobs:
+#      # is needed to wait for startup of application
+#      - job: waitStartup
+#        pool: Server
+#        steps:
+#          - task: Delay@1
+#            inputs:
+#              delayForMinutes: '2'
+#
+#      - job: integrationTests
+#        dependsOn: waitStartup
+#        steps:
+#          - script: |
+#              yarn global add newman
+#            displayName: 'newman installation'
+#
+#          - script: |
+#              yarn add jquery
+#              bash api-test/setup_env_api_test.sh $(STAGE)
+#
+#          - script: |
+#              newman run api-test/ApiConfig.postman_collection.json --environment=api-test/Azure.postman_environment.json --reporters cli,junit --reporter-junit-export Results/api-config-TEST.xml
+#            displayName: 'Run api test'
+#            continueOnError: true
+#
+#          - task: PublishTestResults@2
+#            inputs:
+#              testResultsFormat: 'JUnit'
+#              testResultsFiles: '**/*-TEST.xml'
+#              searchFolder: '$(System.DefaultWorkingDirectory)'
+#
+#      - job: loadTests
+#        dependsOn: waitStartup
+#        steps:
+#          - script: |
+#              yarn add jquery
+#              bash api-test/setup_env_api_test.sh $(STAGE)
+#
+#          - script: |
+#              yarn global add postman-to-k6
+#            displayName: 'postman-to-k6 installation'
+#          - script: |
+#              sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+#              echo "deb https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+#              sudo apt-get update
+#              sudo apt-get install k6
+#            displayName: 'k6 installation'
+#
+#          - script: |
+#              postman-to-k6  api-test/ApiConfig.postman_collection.json -e api-test/Azure.postman_environment.json -o api-test/k6-script.js
+#            displayName: 'Generate load test'
+#            continueOnError: true
+#
+#          - script: |
+#              k6 run --vus 2 --duration 30s api-test/k6-script.js
+#            displayName: 'Run load test'
+#            continueOnError: true
+
+
+
