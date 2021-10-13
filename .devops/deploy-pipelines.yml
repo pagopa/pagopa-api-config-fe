@@ -95,6 +95,7 @@ stages:
   # Prepare Artifact with application bundle
   - stage: prepare_artifact
     condition: not(failed('release_service'))
+
     pool:
       vmImage: 'ubuntu-latest'
     jobs:
@@ -141,7 +142,6 @@ stages:
           - download: current
             artifact: Bundle
 
-
           # to check why azurefilecopy@4 https://github.com/microsoft/azure-pipelines-tasks/issues/13159
           - task: AzureFileCopy@3
             displayName: 'Deploy to container blob'
@@ -166,7 +166,6 @@ stages:
     jobs:
       - job: 'purge_cdn'
         steps:
-
           - task: AzureCLI@1
             displayName: 'Purge CDN'
             inputs:
