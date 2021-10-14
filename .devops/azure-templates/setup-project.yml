@@ -17,7 +17,7 @@ steps:
   # The common case is when the previous stage pushed another commit
   - ${{ if ne(parameters.gitReference, variables['Build.SourceVersion']) }}:
       - script: |
-          git fetch && git checkout ${{ parameters.gitReference }} && ls
+          git fetch && git checkout ${{ parameters.gitReference }} && pwd
         displayName: 'Checkout reference'
 
   - task: UseNode@1
@@ -25,10 +25,6 @@ steps:
       version: $(NODE_VERSION)
     displayName: 'Set up Node.js'
 
-  - script: pwd && ls
-    workingDirectory: pagopa-api-config-fe
-    displayName: 'Current dir'
-
-  - script: yarn install --frozen-lockfile --no-progress --non-interactive --network-concurrency 1
+  - script: pwd && yarn install --frozen-lockfile --no-progress --non-interactive --network-concurrency 1
     workingDirectory: pagopa-api-config-fe
     displayName: 'Install node modules'
