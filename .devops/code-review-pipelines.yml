@@ -98,13 +98,15 @@ stages:
 
   - stage: Sonarcloud
     jobs:
-      - job: sonarcloud_publish
+      - job: sonarcloud_analysis
         steps:
           - task: SonarCloudPrepare@1
             displayName: 'Prepare SonarCloud analysis configuration'
             inputs:
               SonarCloud: '$(SONARCLOUD_SERVICE_CONN)'
               organization: '$(SONARCLOUD_ORG)'
+              scannerMode: 'CLI'
+              configMode: 'file'
               extraProperties: |
                 sonar.projectKey=$(SONARCLOUD_PROJECT_KEY)
                 sonar.projectName=$(SONARCLOUD_PROJECT_NAME)
