@@ -1,0 +1,147 @@
+$font-weight-bold: 600 !default;
+$text-color: #17324d;
+
+// This file is useful to use some of the feautures of Bootstrap Italia
+// we catch only the necessary to our aim
+// --------------------------------------------------------------------
+// funzioni e variabili colore
+@import "~bootstrap-italia/src/scss/functions";
+@import "~bootstrap-italia/src/scss/utilities/colors_vars";
+
+//variables
+@import "~bootstrap-italia/src/scss/variables";
+
+//classi colore
+@import "~bootstrap-italia/src/scss/utilities/colors";
+
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+
+// mixins
+@import "~bootstrap/scss/mixins";
+@import "~bootstrap-italia/src/scss/custom/mixins/buttons";
+@import "~bootstrap-italia/src/scss/custom/mixins/text-emphasis";
+
+@import "~bootstrap/scss/root";
+@import "~bootstrap/scss/print";
+@import "~bootstrap/scss/reboot";
+@import "~bootstrap/scss/type";
+//@import '~bootstrap/scss/images';
+//@import '~bootstrap/scss/code';
+@import "~bootstrap/scss/grid";
+//@import '~bootstrap/scss/tables';
+@import "~bootstrap/scss/forms";
+@import "~bootstrap/scss/buttons";
+@import "~bootstrap/scss/transitions";
+@import "~bootstrap/scss/dropdown";
+@import "~bootstrap/scss/button-group";
+@import "~bootstrap/scss/input-group";
+@import '~bootstrap/scss/nav';
+@import '~bootstrap/scss/navbar';
+//@import '~bootstrap/scss/card';
+//@import '~bootstrap/scss/breadcrumb';
+//@import '~bootstrap/scss/pagination';
+//@import '~bootstrap/scss/badge';
+//@import '~bootstrap/scss/progress';
+//@import '~bootstrap/scss/media';
+@import "~bootstrap/scss/list-group";
+//@import '~bootstrap/scss/close';
+//@import '~bootstrap/scss/modal';
+//@import '~bootstrap/scss/tooltip';
+//@import '~bootstrap/scss/popover';
+//@import '~bootstrap/scss/carousel';
+@import "~bootstrap/scss/utilities";
+@import "~bootstrap/scss/spinners";
+@import "~bootstrap/scss/toasts";
+
+@import "fonts";
+
+.feather {
+  width: 16px;
+  height: 16px;
+  vertical-align: text-bottom;
+}
+
+
+/*
+ * Sidebar
+ */
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 100; /* Behind the navbar */
+  padding: 48px 0 0; /* Height of navbar */
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+}
+
+@media (max-width: 767.98px) {
+  .sidebar {
+    //top: 5rem;
+  }
+}
+
+.sidebar-sticky {
+  position: relative;
+  top: 0;
+  height: calc(100vh - 48px);
+  padding-top: .5rem;
+  overflow-x: hidden;
+  overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+}
+
+@supports ((position: -webkit-sticky) or (position: sticky)) {
+  .sidebar-sticky {
+    position: -webkit-sticky;
+    position: sticky;
+  }
+}
+
+.sidebar .nav-link {
+  font-weight: 500;
+  color: #333;
+}
+
+.sidebar .nav-link .feather {
+  margin-right: 4px;
+  color: #999;
+}
+
+.sidebar .nav-link.active {
+  color: #007bff;
+}
+
+.sidebar .nav-link:hover .feather,
+.sidebar .nav-link.active .feather {
+  color: inherit;
+}
+
+.sidebar-heading {
+  font-size: .75rem;
+  text-transform: uppercase;
+}
+
+/*
+ * Navbar
+ */
+
+.navbar-brand {
+  padding-top: .75rem;
+  padding-bottom: .75rem;
+  font-size: 1rem;
+  background-color: rgba(0, 0, 0, .25);
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .25);
+}
+
+.navbar .navbar-toggler {
+  top: .25rem;
+  right: 1rem;
+}
+
+.navbar .form-control {
+  padding: .75rem 1rem;
+  border-width: 0;
+  border-radius: 0;
+}
