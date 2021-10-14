@@ -26,5 +26,5 @@ steps:
     displayName: 'Set up Node.js'
 
   - script: yarn install --frozen-lockfile --no-progress --non-interactive --network-concurrency 1
-    workingDirectory: api-config-fe
+    workingDirectory: pagopa-api-config-fe
     displayName: 'Install node modules'
