@@ -108,8 +108,8 @@ stages:
 #              scannerMode: Other
               scannerMode: CLI
               configFile: sonar-project.properties
-#              projectKey: $(SONARCLOUD_PROJECT_KEY)
-#              projectName: $(SONARCLOUD_PROJECT_NAME)
+              projectKey: $(SONARCLOUD_PROJECT_KEY)
+              projectName: $(SONARCLOUD_PROJECT_NAME)
 #              extraProperties: |
 #                sonar.projectKey=$(SONARCLOUD_PROJECT_KEY)
 #                sonar.projectName=$(SONARCLOUD_PROJECT_NAME)
