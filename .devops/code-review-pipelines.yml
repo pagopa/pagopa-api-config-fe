@@ -40,7 +40,7 @@ stages:
 #        sonar.javascript.lcov.reportPaths=./coverage/lcov.info
 #        sonar.typescript.file.suffixes=.ts,.tsx
 #        sonar.sources=.
-        sonar.exclusions=**/__tests__/*.tsx , **/coverage/**/*.js,**/setupTests.ts,**/babel.config.js,**/index.js, **/metro.config.js, **/App.tsx
+#        sonar.exclusions=**/__tests__/*.tsx , **/coverage/**/*.js,**/setupTests.ts,**/babel.config.js,**/index.js, **/metro.config.js, **/App.tsx
         sonar.language=js,jsx,ts,tsx
 #        sonar.tests=./__tests__
 #        sonar.testExecutionReportPaths=./test-report.xml
