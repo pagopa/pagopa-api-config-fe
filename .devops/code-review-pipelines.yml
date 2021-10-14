@@ -105,7 +105,8 @@ stages:
             inputs:
               SonarCloud: '$(SONARCLOUD_SERVICE_CONN)'
               organization: '$(SONARCLOUD_ORG)'
-              scannerMode: Other
+#              scannerMode: Other
+              scannerMode: CLI
               configFile: sonar-project.properties
 #              projectKey: $(SONARCLOUD_PROJECT_KEY)
 #              projectName: $(SONARCLOUD_PROJECT_NAME)
