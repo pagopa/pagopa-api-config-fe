@@ -36,7 +36,6 @@ stages:
         steps:
           - template: azure-templates/setup-project.yml
           - script: yarn build
-            workingDirectory: pagopa-api-config-fe
             displayName: 'Build'
 
   - stage: Static_analysis
@@ -46,7 +45,6 @@ stages:
         steps:
           - template: azure-templates/setup-project.yml
           - script: yarn lint
-            workingDirectory: pago-api-config-fe
             displayName: 'Lint'
       - job: danger
         condition:
@@ -60,7 +58,6 @@ stages:
           - bash: yarn danger ci
             env:
               DANGER_GITHUB_API_TOKEN: '$(DANGER_GITHUB_API_TOKEN)'
-            workingDirectory: pagopa-api-config-fe
             displayName: 'Danger CI'
 
   # B) Run unit tests if there is a push or pull request on any branch.
@@ -72,7 +69,6 @@ stages:
           - template: azure-templates/setup-project.yml
 
           - script: yarn generate
-            workingDirectory: pagopa-api-config-fe
             displayName: 'Generate definitions'
 
 #          TODO fix jest configuration
@@ -81,9 +77,7 @@ stages:
 #            displayName: 'Unit tests exec'
 
           - script: yarn test
-            workingDirectory: pagopa-api-config-fe
             displayName: 'Unit tests exec'
 
           - bash: bash <(curl -s https://codecov.io/bash)
-            workingDirectory: pagopa-api-config-fe
             displayName: 'Code coverage'
