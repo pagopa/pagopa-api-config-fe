@@ -53,15 +53,15 @@ stages:
   - stage: Build
     dependsOn: []
     jobs:
-#      - task: SonarCloudPrepare@1
-#          displayName: 'Prepare SonarCloud analysis configuration'
-#          inputs:
-#            SonarCloud: '$(SONARCLOUD_SERVICE_CONN)'
-#            organization: '$(SONARCLOUD_ORG)'
-#            scannerMode: Other
-#            extraProperties: |
-#              sonar.projectKey=$(SONARCLOUD_PROJECT_KEY)
-#              sonar.projectName=$(SONARCLOUD_PROJECT_NAME)
+      #      - task: SonarCloudPrepare@1
+      #          displayName: 'Prepare SonarCloud analysis configuration'
+      #          inputs:
+      #            SonarCloud: '$(SONARCLOUD_SERVICE_CONN)'
+      #            organization: '$(SONARCLOUD_ORG)'
+      #            scannerMode: Other
+      #            extraProperties: |
+      #              sonar.projectKey=$(SONARCLOUD_PROJECT_KEY)
+      #              sonar.projectName=$(SONARCLOUD_PROJECT_NAME)
       #        sonar.language=js,jsx,ts,tsx
       #          sonar.coverage.exclusions=**/config/*,**/*Mock*,**/model/*,**/entity/*
       #        sonar.javascript.file.suffixes=.js,.jsx
@@ -74,9 +74,9 @@ stages:
       #        sonar.sourceEncoding=UTF-8
 
       - job: make_build
-#        pool:
-#          # As we deploy on Windows machines, we use Windows to build
-#          vmImage: 'windows-2019'
+        #        pool:
+        #          # As we deploy on Windows machines, we use Windows to build
+        #          vmImage: 'windows-2019'
         steps:
           - template: azure-templates/setup-project.yml
           - script: yarn build
@@ -90,19 +90,19 @@ stages:
           - template: azure-templates/setup-project.yml
           - script: yarn lint
             displayName: 'Lint'
-#      - job: danger
-#        condition:
-#          and(
-#          succeeded(),
-#          ne(variables['DANGER_GITHUB_API_TOKEN'], 'skip')
-#          )
-#        steps:
-#          - template: azure-templates/setup-project.yml
-#
-#          - bash: yarn danger ci
-#            env:
-#              DANGER_GITHUB_API_TOKEN: '$(DANGER_GITHUB_API_TOKEN)'
-#            displayName: 'Danger CI'
+  #      - job: danger
+  #        condition:
+  #          and(
+  #          succeeded(),
+  #          ne(variables['DANGER_GITHUB_API_TOKEN'], 'skip')
+  #          )
+  #        steps:
+  #          - template: azure-templates/setup-project.yml
+  #
+  #          - bash: yarn danger ci
+  #            env:
+  #              DANGER_GITHUB_API_TOKEN: '$(DANGER_GITHUB_API_TOKEN)'
+  #            displayName: 'Danger CI'
 
   # B) Run unit tests if there is a push or pull request on any branch.
   - stage: Test
@@ -112,19 +112,19 @@ stages:
         steps:
           - template: azure-templates/setup-project.yml
 
-#          - script: yarn generate
-#            displayName: 'Generate definitions'
+          #          - script: yarn generate
+          #            displayName: 'Generate definitions'
 
-#          TODO fix jest configuration
-#          - script: yarn test:coverage
-#            workingDirectory: pagopa-api-config-fe
-#            displayName: 'Unit tests exec'
+          #          TODO fix jest configuration
+          #          - script: yarn test:coverage
+          #            workingDirectory: pagopa-api-config-fe
+          #            displayName: 'Unit tests exec'
 
           - script: yarn test
             displayName: 'Unit tests exec'
 
-#          - bash: bash <(curl -s https://codecov.io/bash)
-#            displayName: 'Code coverage'
+  #          - bash: bash <(curl -s https://codecov.io/bash)
+  #            displayName: 'Code coverage'
   - stage: Test
       dependsOn: []
       jobs:
