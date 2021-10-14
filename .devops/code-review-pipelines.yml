@@ -26,7 +26,7 @@ pool:
   vmImage: 'ubuntu-latest'
 
 stages:
-  - stage: Sonarcloud
+  - stage: Sonarcloud_configuration
     jobs:
       - job: sonarcloud_conf
         steps:
@@ -125,7 +125,8 @@ stages:
 
   #          - bash: bash <(curl -s https://codecov.io/bash)
   #            displayName: 'Code coverage'
-  - stage: Test
+
+  - stage: SonarCloudPublish
       dependsOn: []
       jobs:
         - job: sonarcloud_publish
