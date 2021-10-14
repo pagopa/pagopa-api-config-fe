@@ -35,7 +35,8 @@ stages:
             inputs:
               SonarCloud: '$(SONARCLOUD_SERVICE_CONN)'
               organization: '$(SONARCLOUD_ORG)'
-              scannerMode: Other
+              scannerMode: 'CLI'
+              configMode: 'file'
               extraProperties: |
                 sonar.projectKey=$(SONARCLOUD_PROJECT_KEY)
                 sonar.projectName=$(SONARCLOUD_PROJECT_NAME)
@@ -126,12 +127,13 @@ stages:
   #          - bash: bash <(curl -s https://codecov.io/bash)
   #            displayName: 'Code coverage'
 
-  - stage: SonarCloudPublish
-      dependsOn: []
-      jobs:
-        - job: sonarcloud_publish
-          steps:
-            - task: SonarCloudPublish@1
-              displayName: 'Publish SonarCloud results on build summary'
-              inputs:
-                pollingTimeoutSec: '300'
+# TODO
+#  - stage: SonarCloudPublish
+#      dependsOn: []
+#      jobs:
+#        - job: sonarcloud_publish
+#          steps:
+#            - task: SonarCloudPublish@1
+#              displayName: 'Publish SonarCloud results on build summary'
+#              inputs:
+#                pollingTimeoutSec: '300'
