@@ -27,24 +27,24 @@ pool:
 
 stages:
   - task: SonarCloudPrepare@1
-      displayName: 'Prepare SonarCloud analysis configuration'
-      inputs:
-        SonarCloud: '$(SONARCLOUD_SERVICE_CONN)'
-        organization: '$(SONARCLOUD_ORG)'
-        scannerMode: Other
-        extraProperties: |
-          sonar.projectKey=$(SONARCLOUD_PROJECT_KEY)
-          sonar.projectName=$(SONARCLOUD_PROJECT_NAME)
+    displayName: 'Prepare SonarCloud analysis configuration'
+    inputs:
+      SonarCloud: '$(SONARCLOUD_SERVICE_CONN)'
+      organization: '$(SONARCLOUD_ORG)'
+      scannerMode: Other
+      extraProperties: |
+        sonar.projectKey=$(SONARCLOUD_PROJECT_KEY)
+        sonar.projectName=$(SONARCLOUD_PROJECT_NAME)
 #          sonar.coverage.exclusions=**/config/*,**/*Mock*,**/model/*,**/entity/*
-          sonar.javascript.file.suffixes=.js,.jsx
-          sonar.javascript.lcov.reportPaths=./coverage/lcov.info
-          sonar.typescript.file.suffixes=.ts,.tsx
-          sonar.sources=.
-          sonar.exclusions=**/__tests__/*.tsx , **/coverage/**/*.js,**/setupTests.ts,**/babel.config.js,**/index.js, **/metro.config.js, **/App.tsx
-          sonar.language=js,jsx,ts,tsx
-          sonar.tests=./__tests__
-          sonar.testExecutionReportPaths=./test-report.xml
-          sonar.sourceEncoding=UTF-8
+        sonar.javascript.file.suffixes=.js,.jsx
+        sonar.javascript.lcov.reportPaths=./coverage/lcov.info
+        sonar.typescript.file.suffixes=.ts,.tsx
+        sonar.sources=.
+        sonar.exclusions=**/__tests__/*.tsx , **/coverage/**/*.js,**/setupTests.ts,**/babel.config.js,**/index.js, **/metro.config.js, **/App.tsx
+        sonar.language=js,jsx,ts,tsx
+        sonar.tests=./__tests__
+        sonar.testExecutionReportPaths=./test-report.xml
+        sonar.sourceEncoding=UTF-8
 
   - stage: Build
     dependsOn: []
