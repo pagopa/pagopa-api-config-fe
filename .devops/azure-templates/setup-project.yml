@@ -25,7 +25,7 @@ steps:
       version: $(NODE_VERSION)
     displayName: 'Set up Node.js'
 
-  - script: pwd && ls
+  - script: ls
       workingDirectory: pagopa-api-config-fe
       displayName: 'Current dir'
 
