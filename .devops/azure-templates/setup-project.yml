@@ -17,7 +17,7 @@ steps:
   # The common case is when the previous stage pushed another commit
   - ${{ if ne(parameters.gitReference, variables['Build.SourceVersion']) }}:
       - script: |
-          git fetch && git checkout ${{ parameters.gitReference }}
+          git fetch && git checkout ${{ parameters.gitReference }} && ls
         displayName: 'Checkout reference'
 
   - task: UseNode@1
