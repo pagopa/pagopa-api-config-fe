@@ -25,9 +25,9 @@ steps:
       version: $(NODE_VERSION)
     displayName: 'Set up Node.js'
 
-  - script: ls
-      workingDirectory: pagopa-api-config-fe
-      displayName: 'Current dir'
+  - script: pwd && ls
+    workingDirectory: pagopa-api-config-fe
+    displayName: 'Current dir'
 
   - script: yarn install --frozen-lockfile --no-progress --non-interactive --network-concurrency 1
     workingDirectory: pagopa-api-config-fe
