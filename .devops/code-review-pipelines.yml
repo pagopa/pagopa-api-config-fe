@@ -122,6 +122,7 @@ stages:
                 sonar.projectKey=$(SONARCLOUD_PROJECT_KEY)
                 sonar.projectName=$(SONARCLOUD_PROJECT_NAME)
                 sonar.sources=src
+                sonar.javascript.file.suffixes=js,jsx,ts,tsx
 #                sonar.exclusions=**/__tests__/*.tsx , **/coverage/**/*.js,**/setupTests.ts,**/babel.config.js,**/index.js, **/App.tsx
 #                sonar.language=js,jsx,ts,tsx
 #                sonar.tests=./__tests__
