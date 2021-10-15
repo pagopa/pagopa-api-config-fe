@@ -119,7 +119,12 @@ stages:
               projectName: $(SONARCLOUD_PROJECT_NAME)
               extraProperties: |
                 sonar.javascript.lcov.reportPaths=coverage/lcov.info
+                sonar.javascript.file.suffixes=.js,.jsx
+                sonar.typescript.file.suffixes=.ts,.tsx
                 sonar.sources=src
+                sonar.sourceEncoding=UTF-8
+                sonar.verbose=true
+                sonar.cs.opencover.reportsPaths=coverage/cobertura-coverage.xml
 #                sonar.projectKey=$(SONARCLOUD_PROJECT_KEY)
 #                sonar.projectName=$(SONARCLOUD_PROJECT_NAME)
 #                sonar.sources=src
