@@ -105,6 +105,7 @@ stages:
   #            displayName: 'Code coverage'
 
   - stage: Sonarcloud
+    dependsOn: []
     jobs:
       - job: sonarcloud_analysis
         steps:
@@ -130,9 +131,12 @@ stages:
 #                sonar.testExecutionReportPaths=./test-report.xml
 #                sonar.sourceEncoding=UTF-8
           - template: templates/node-job-setup/template.yaml@pagopaCommons
+
           - task: SonarCloudAnalyze@1
-            displayName: 'Publish SonarCloud results on build summary'
+            -
+          - task: SonarCloudPublish@1
             inputs:
               pollingTimeoutSec: '300'
+            displayName: 'Publish SonarCloud results on build summary'
 
 
