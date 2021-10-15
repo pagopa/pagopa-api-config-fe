@@ -133,7 +133,7 @@ stages:
           - template: templates/node-job-setup/template.yaml@pagopaCommons
 
           - task: SonarCloudAnalyze@1
-            -
+
           - task: SonarCloudPublish@1
             inputs:
               pollingTimeoutSec: '300'
