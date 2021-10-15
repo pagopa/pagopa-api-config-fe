@@ -114,16 +114,14 @@ stages:
             inputs:
               SonarCloud: '$(SONARCLOUD_SERVICE_CONN)'
               organization: '$(SONARCLOUD_ORG)'
-#              scannerMode: Other
-              scannerMode: CLI
-              configFile: file
+              scannerMode: Other
               projectKey: $(SONARCLOUD_PROJECT_KEY)
               projectName: $(SONARCLOUD_PROJECT_NAME)
-              extraProperties: |
-                sonar.projectKey=$(SONARCLOUD_PROJECT_KEY)
-                sonar.projectName=$(SONARCLOUD_PROJECT_NAME)
-                sonar.sources=src
-                sonar.javascript.file.suffixes=js,jsx,ts,tsx
+#              extraProperties: |
+#                sonar.projectKey=$(SONARCLOUD_PROJECT_KEY)
+#                sonar.projectName=$(SONARCLOUD_PROJECT_NAME)
+#                sonar.sources=src
+#                sonar.javascript.file.suffixes=js,jsx,ts,tsx
 
           - template: templates/node-job-setup/template.yaml@pagopaCommons
 
