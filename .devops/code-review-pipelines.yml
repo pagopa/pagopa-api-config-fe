@@ -117,11 +117,14 @@ stages:
               scannerMode: Other
               projectKey: $(SONARCLOUD_PROJECT_KEY)
               projectName: $(SONARCLOUD_PROJECT_NAME)
-#              extraProperties: |
+              extraProperties: |
+                sonar.javascript.lcov.reportPaths=coverage/lcov.info
+                sonar.sources=src
 #                sonar.projectKey=$(SONARCLOUD_PROJECT_KEY)
 #                sonar.projectName=$(SONARCLOUD_PROJECT_NAME)
 #                sonar.sources=src
 #                sonar.javascript.file.suffixes=js,jsx,ts,tsx
+
 
           - template: templates/node-job-setup/template.yaml@pagopaCommons
 
