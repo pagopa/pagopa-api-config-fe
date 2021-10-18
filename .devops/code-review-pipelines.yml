@@ -106,11 +106,12 @@ stages:
                 sonar.sources=src
                 sonar.exclusions=src/__tests__/**
                 sonar.tests=src/__tests__
-                sonar.test.inclusions: "src/__tests__/**/*.test.tsx
+                sonar.test.inclusions=src/__tests__/**/*.test.tsx
                 sonar.testExecutionReportPaths=test-report.xml
                 sonar.sourceEncoding=UTF-8
                 sonar.verbose=true
                 sonar.cs.opencover.reportsPaths=coverage/cobertura-coverage.xml
+                sonar.typescript.tsconfigPath=tsconfig.json
 
           - template: templates/node-job-setup/template.yaml@pagopaCommons
 
