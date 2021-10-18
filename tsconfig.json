@@ -83,7 +83,6 @@
      "__mocks__",
      "dist",
      "node_modules",
-     "**/__tests__/*",
      "Dangerfile.ts"
    ]
  }
