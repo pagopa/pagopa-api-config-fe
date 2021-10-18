@@ -8,7 +8,7 @@
     "prebuild:clean": "shx rm -rf build",
     "prebuild:tsc": "tsc --noEmit",
     "build": "parcel build src/index.html --dist-dir build/release --public-url ./ --no-optimize",
-    "test": "jest",
+    "test": "jest --coverage --ci",
     "lint": "eslint . -c .eslintrc.js --ext .ts,.tsx --cache",
     "lint-autofix": "eslint . -c .eslintrc.js --ext .ts,.tsx --fix",
     "generate:api": "gen-api-models --api-spec ./TODO-swagger.json --no-strict --out-dir generated/api --request-types --response-decoders --client",

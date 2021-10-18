@@ -122,6 +122,7 @@ stages:
                 sonar.javascript.file.suffixes=.js,.jsx
                 sonar.typescript.file.suffixes=.ts,.tsx
                 sonar.sources=src
+                sonar.test=src/*.test.tsx
                 sonar.sourceEncoding=UTF-8
                 sonar.verbose=true
                 sonar.cs.opencover.reportsPaths=coverage/cobertura-coverage.xml
