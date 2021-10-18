@@ -21,6 +21,11 @@ module.exports = {
 
   // An array of glob patterns indicating a set of files for which coverage information should be collected
   // collectCoverageFrom: undefined,
+  "collectCoverageFrom": [
+    "src/**/*.{js,jsx}",
+    "!src/index.js"
+  ],
+
 
   // The directory where Jest should output its coverage files
   coverageDirectory: "coverage",
@@ -166,6 +171,8 @@ module.exports = {
 
   // This option allows the use of a custom results processor
   // testResultsProcessor: undefined,
+  "testResultsProcessor": "jest-sonar-reporter"
+  // "testResultsProcessor": "jest-junit"
 
   // This option allows use of a custom test runner
   // testRunner: "jest-circus/runner",

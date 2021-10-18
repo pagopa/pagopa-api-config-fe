@@ -34,21 +34,6 @@ resources:
       endpoint: 'io-azure-devops-github-ro'
 
 stages:
-#  - stage: Sonarcloud_configuration
-#    jobs:
-#      - job: sonarcloud_conf
-#        steps:
-#          - task: SonarCloudPrepare@1
-#            displayName: 'Prepare SonarCloud analysis configuration'
-#            inputs:
-#              SonarCloud: '$(SONARCLOUD_SERVICE_CONN)'
-#              organization: '$(SONARCLOUD_ORG)'
-#              scannerMode: 'CLI'
-#              configMode: 'file'
-#              extraProperties: |
-#                sonar.projectKey=$(SONARCLOUD_PROJECT_KEY)
-#                sonar.projectName=$(SONARCLOUD_PROJECT_NAME)
-
 
   - stage: Build
     dependsOn: []
@@ -101,9 +86,6 @@ stages:
           - script: yarn test
             displayName: 'Unit tests exec'
 
-  #          - bash: bash <(curl -s https://codecov.io/bash)
-  #            displayName: 'Code coverage'
-
   - stage: Sonarcloud
     dependsOn: []
     jobs:
@@ -122,15 +104,11 @@ stages:
                 sonar.javascript.file.suffixes=.js,.jsx
                 sonar.typescript.file.suffixes=.ts,.tsx
                 sonar.sources=src
-                sonar.test=src/*.test.tsx
+                sonar.test=src/__tests__/**/*.test.tsx
+                sonar.testExecutionReportPaths=test-report.xml
                 sonar.sourceEncoding=UTF-8
                 sonar.verbose=true
                 sonar.cs.opencover.reportsPaths=coverage/cobertura-coverage.xml
-#                sonar.projectKey=$(SONARCLOUD_PROJECT_KEY)
-#                sonar.projectName=$(SONARCLOUD_PROJECT_NAME)
-#                sonar.sources=src
-#                sonar.javascript.file.suffixes=js,jsx,ts,tsx
-
 
           - template: templates/node-job-setup/template.yaml@pagopaCommons
 
