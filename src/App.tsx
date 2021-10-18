@@ -3,6 +3,13 @@ import React from "react";
 import "./App.css";
 
 function App() {
+
+  // 'Empty block statement' code smell
+  try {
+  }
+  catch(e) {
+  }
+
   return (
     <div className="App">
       <header className="App-header">
