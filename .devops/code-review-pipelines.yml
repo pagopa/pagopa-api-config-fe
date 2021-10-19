@@ -100,7 +100,6 @@ stages:
               projectKey: $(SONARCLOUD_PROJECT_KEY)
               projectName: $(SONARCLOUD_PROJECT_NAME)
               extraProperties: |
-                sonar.javascript.lcov.reportPaths=coverage/lcov.info
                 sonar.javascript.file.suffixes=.js,.jsx
                 sonar.typescript.file.suffixes=.ts,.tsx
                 sonar.sources=src
@@ -111,7 +110,9 @@ stages:
                 sonar.sourceEncoding=UTF-8
                 sonar.verbose=true
                 sonar.cs.opencover.reportsPaths=coverage/cobertura-coverage.xml
+                sonar.javascript.lcov.reportPaths=coverage/lcov.info
                 sonar.typescript.tsconfigPath=tsconfig.json
+                sonar.eslint.reportPaths=eslint-report.json
 
           - template: templates/node-job-setup/template.yaml@pagopaCommons
 
@@ -121,5 +122,3 @@ stages:
             inputs:
               pollingTimeoutSec: '300'
             displayName: 'Publish SonarCloud results on build summary'
-
-

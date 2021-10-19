@@ -21,7 +21,7 @@ module.exports = {
 
   // An array of glob patterns indicating a set of files for which coverage information should be collected
   // collectCoverageFrom: undefined,
-  "collectCoverageFrom": [
+  collectCoverageFrom: [
     "src/**/*.{js,jsx}",
     "!src/index.js"
   ],
