@@ -4,9 +4,6 @@ import "./App.css";
 
 function App() {
 
-  new RegExp("([");
-  str.match("([");
-
   return (
     <div className="App">
       <header className="App-header">
