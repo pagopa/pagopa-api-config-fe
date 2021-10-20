@@ -77,13 +77,15 @@
     "isolatedModules": true
    },
    "include": [
-       "src/**/*"
+     "src/**/*",
+     // this is the eslint-only inclusion
+     ".eslintrc.js",
+     "jest.config.js"
    ],
    "exclude": [
      "__mocks__",
      "dist",
      "node_modules",
-     "**/__tests__/*",
      "Dangerfile.ts"
    ]
  }
