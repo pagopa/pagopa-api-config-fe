@@ -1,12 +1,9 @@
 import React from 'react';
 
-function EntiCreditori(props) {
-    console.log("EC props", props);
-    return (
-            <div className="App">
-                <h2>EC</h2>
-            </div>
-    );
+export default class EntiCreditori extends React.Component {
+    render() {
+        return (
+                <h2>EntiCreditori</h2>
+        );
+    }
 }
-
-export default EntiCreditori;

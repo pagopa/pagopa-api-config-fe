@@ -5,23 +5,24 @@ import EntiCreditori from "../pages/EntiCreditori";
 import IntermediariEC from "../pages/IntermediariEC";
 import NotFound from "../pages/NotFound";
 
+export default class Routes extends React.Component {
 
-function Routes() {
-    return (
+    render(): React.ReactNode {
+        return (
 
-            <BrowserRouter>
-                 <Route render={(props)=>(
-                     <Layout {...props}>
-                         <Switch>
-                             <Route path="/" exact component={EntiCreditori}/>
-                             <Route path="/ec" exact component={EntiCreditori}/>
-                             <Route path="/intermediariec" component={IntermediariEC}/>
-                             <Route component={NotFound}/>
-                         </Switch>
-                     </Layout>
-                 )}/>
-            </BrowserRouter>
-    );
+                <BrowserRouter>
+                    <Route render={(props)=>(
+                            <Layout {...props}>
+                                <Switch>
+                                    <Route path="/" exact component={EntiCreditori}/>
+                                    <Route path="/ec" exact component={EntiCreditori}/>
+                                    <Route path="/intermediariec" component={IntermediariEC}/>
+                                    <Route component={NotFound}/>
+                                </Switch>
+                            </Layout>
+                    )}/>
+                </BrowserRouter>
+        );
+    }
+
 }
-
-export default Routes;

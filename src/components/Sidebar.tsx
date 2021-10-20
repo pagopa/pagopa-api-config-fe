@@ -1,53 +1,40 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
+import {Link} from "react-router-dom";
 import SidebarItems from "./SidebarItems";
-import {BrowserRouter, Link} from "react-router-dom";
 
+export default class Sidebar extends React.Component<any> {
+    render(): React.ReactNode {
 
-function Sidebar(props, {defaultActive,}) {
+        const location = this.props.history.location;
 
-    const [activeIndex, ] = useState(defaultActive || 1);
+        function getClass(index: number) {
+            const activeItem = SidebarItems.findIndex(item => getPath(item.route) === getPath(location.pathname));
+            const currentActiveItem = activeItem === -1 ? 0 : activeItem;
+            return currentActiveItem === index ? 'active' : '';
+        }
 
-    console.log("props", props, defaultActive);
-    // const location = props.history.location;
-    // const lastActiveIndexString = localStorage.getItem("lastActiveIndex");
-    // const lastActiveIndex = Number(lastActiveIndexString);
-    // const [activeIndex, setActiveIndex] = useState(lastActiveIndex || defaultActive);
-    //
-    // function changeActiveIndex(newIndex) {
-    //     localStorage.setItem("lastActiveIndex", newIndex);
-    //     setActiveIndex(newIndex);
-    // }
-    //
-    // function getPath(path) {
-    //     if (path.charAt(0) !== "/") {
-    //         return  "/" + path;
-    //     }
-    //     return path;
-    // }
-    //
-    // useEffect(()=> {
-    //     console.log("todo set active");
-        // const activeItem = SidebarItems.findIndex(item=> getPath(item.route) === getPath(location.pathname))
-        // changeActiveIndex(activeItem);
-    // }, [location]);
-
-
-    return (
-            // <BrowserRouter>
-        <ul>
-            {
-                SidebarItems.map(item => (
-                        <li key={item.name}>
-                            <Link to={item.route}>
-                                {item.name}
-                            </Link>
-                        </li>
-                ))
+        function getPath(path: string) {
+            if (path.charAt(0) !== "/") {
+                return  "/" + path;
             }
-        </ul>
-            // </BrowserRouter>
-    );
+            return path;
+        }
 
+
+        return (
+                <div className="list-group">
+                    {
+                        SidebarItems.map((item, index) => (
+                                <Link to={item.route} key={item.name} className={`list-group-item-action ${getClass(index)}`}>
+                            <span>
+                                {item.name}
+                            </span>
+                                </Link>
+                        ))
+                    }
+                </div>
+        );
+
+    }
 }
 
-export default Sidebar;

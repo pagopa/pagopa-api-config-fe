@@ -1,10 +1,9 @@
 import React from 'react';
 
-function IntermediariEC(props) {
-    console.log("Intemediari EC props", props);
-    return (
-            <h2>IntermediariEC</h2>
-    );
+export default class IntermediariEC extends React.Component {
+    render() {
+        return (
+                <h2>IntermediariEC</h2>
+        );
+    }
 }
-
-export default IntermediariEC;
