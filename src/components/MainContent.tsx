@@ -1,10 +1,12 @@
 import React from "react";
 
+
 export default class MainContent extends React.Component {
 
     render(): React.ReactNode {
         return (
                 <div>
+
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque augue turpis, blandit sed ante ornare, tincidunt gravida nisl. Curabitur sed nibh augue. Praesent et libero arcu. Cras accumsan ipsum at elit imperdiet, id tristique ex vestibulum. Curabitur vel posuere ligula. In hac habitasse platea dictumst. Integer fringilla ipsum eget tellus viverra pellentesque. Duis id ante id dui venenatis ultricies. Nullam turpis purus, maximus vel volutpat non, luctus ac lacus. Morbi convallis libero velit, non finibus lectus facilisis vel.
 
                     Quisque elementum elit non libero luctus pulvinar. Pellentesque interdum sodales ex, in varius nunc blandit eget. In volutpat nisl et lobortis semper. Morbi vitae sapien eu ligula sagittis aliquet. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Etiam at justo elit. Vestibulum tincidunt fringilla arcu vel auctor. Proin sit amet auctor urna, ac tempus tellus. Curabitur et magna cursus, lobortis diam sed, porta velit. In vestibulum sed lorem nec feugiat. Ut placerat, ligula in imperdiet faucibus, orci purus commodo tellus, vel lacinia leo nibh ac tortor.

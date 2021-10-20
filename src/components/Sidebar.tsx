@@ -1,27 +1,53 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
+import SidebarItems from "./SidebarItems";
+import {BrowserRouter, Link} from "react-router-dom";
 
-export default class Sidebar extends React.Component {
 
-    render(): React.ReactNode {
-        return (
+function Sidebar(props, {defaultActive,}) {
 
-                <ul className="nav flex-column">
-                    <li className="nav-item">
-                        <a className="nav-link active" href="#">
-                            Item-1 <span className="sr-only">(current)</span>
-                        </a>
-                    </li>
-                    <li className="nav-item">
-                        <a className="nav-link" href="#">
-                            Item-2
-                        </a>
-                    </li>
-                    <li className="nav-item">
-                        <a className="nav-link" href="#">
-                            Item-3
-                        </a>
-                    </li>
-                </ul>
-        );
-    }
+    const [activeIndex, ] = useState(defaultActive || 1);
+
+    console.log("props", props, defaultActive);
+    // const location = props.history.location;
+    // const lastActiveIndexString = localStorage.getItem("lastActiveIndex");
+    // const lastActiveIndex = Number(lastActiveIndexString);
+    // const [activeIndex, setActiveIndex] = useState(lastActiveIndex || defaultActive);
+    //
+    // function changeActiveIndex(newIndex) {
+    //     localStorage.setItem("lastActiveIndex", newIndex);
+    //     setActiveIndex(newIndex);
+    // }
+    //
+    // function getPath(path) {
+    //     if (path.charAt(0) !== "/") {
+    //         return  "/" + path;
+    //     }
+    //     return path;
+    // }
+    //
+    // useEffect(()=> {
+    //     console.log("todo set active");
+        // const activeItem = SidebarItems.findIndex(item=> getPath(item.route) === getPath(location.pathname))
+        // changeActiveIndex(activeItem);
+    // }, [location]);
+
+
+    return (
+            // <BrowserRouter>
+        <ul>
+            {
+                SidebarItems.map(item => (
+                        <li key={item.name}>
+                            <Link to={item.route}>
+                                {item.name}
+                            </Link>
+                        </li>
+                ))
+            }
+        </ul>
+            // </BrowserRouter>
+    );
+
 }
+
+export default Sidebar;
