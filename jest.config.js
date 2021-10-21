@@ -174,7 +174,7 @@ module.exports = {
 
   // This option allows the use of a custom results processor
   // testResultsProcessor: undefined,
-  // "testResultsProcessor": "jest-sonar-reporter"
+  "testResultsProcessor": "jest-sonar-reporter"
   // "testResultsProcessor": "jest-junit"
 
   // This option allows use of a custom test runner
