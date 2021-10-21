@@ -96,14 +96,14 @@ stages:
             inputs:
               SonarCloud: '$(SONARCLOUD_SERVICE_CONN)'
               organization: '$(SONARCLOUD_ORG)'
-#              scannerMode: Other
-#              projectKey: $(SONARCLOUD_PROJECT_KEY)
-#              projectName: $(SONARCLOUD_PROJECT_NAME)
-              scannerMode: CLI
-              configMode: manual
-              cliProjectKey: $(SONARCLOUD_PROJECT_KEY)
-              cliProjectName: $(SONARCLOUD_PROJECT_NAME)
-              cliSources: $(Build.Repository.LocalPath)
+              scannerMode: Other
+              projectKey: $(SONARCLOUD_PROJECT_KEY)
+              projectName: $(SONARCLOUD_PROJECT_NAME)
+#              scannerMode: CLI
+#              configMode: manual
+#              cliProjectKey: $(SONARCLOUD_PROJECT_KEY)
+#              cliProjectName: $(SONARCLOUD_PROJECT_NAME)
+#              cliSources: $(Build.Repository.LocalPath)
               extraProperties: |
                 sonar.javascript.file.suffixes=.js,.jsx
                 sonar.typescript.file.suffixes=.ts,.tsx
