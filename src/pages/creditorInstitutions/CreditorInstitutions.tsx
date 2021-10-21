@@ -1,8 +1,8 @@
 import React from 'react';
-import {apiClient} from "../../util/apiClient";
 import {Table} from "react-bootstrap";
-import Paginator from "../../components/Paginator";
 import {FaCheck, FaEye, FaTimes, FaTrash} from "react-icons/all";
+import {apiClient} from "../../util/apiClient";
+import Paginator from "../../components/Paginator";
 
 export default class CreditorInstitutions extends React.Component {
 
