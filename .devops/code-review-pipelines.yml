@@ -110,7 +110,6 @@ stages:
                 sonar.sourceEncoding=UTF-8
                 sonar.verbose=true
                 sonar.cs.opencover.reportsPaths=coverage/cobertura-coverage.xml
-#                sonar.javascript.lcov.reportPaths=coverage/lcov.info
                 sonar.typescript.tsconfigPath=tsconfig.json
                 sonar.eslint.reportPaths=eslint-report.json
 
