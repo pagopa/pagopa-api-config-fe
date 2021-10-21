@@ -26,7 +26,6 @@ module.exports = {
     "!src/index.js"
   ],
 
-
   // The directory where Jest should output its coverage files
   coverageDirectory: "coverage",
 
@@ -160,9 +159,9 @@ module.exports = {
   //   "**/__tests__/**/*.[jt]s?(x)",
   //   "**/?(*.)+(spec|test).[tj]s?(x)"
   // ],
-  // "testMatch": [
-  //   "**/__tests__/**/?(*.)+(spec|test).[tj]s?(x)"
-  // ],
+  "testMatch": [
+    "**/__tests__/**/?(*.)+(spec|test).[tj]s?(x)"
+  ],
 
   // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
   // testPathIgnorePatterns: [
