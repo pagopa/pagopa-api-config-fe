@@ -120,6 +120,12 @@ stages:
 
           - template: templates/node-job-setup/template.yaml@pagopaCommons
 
+          - script: yarn test
+              displayName: 'Unit tests exec'
+
+          - script: yarn lint
+              displayName: 'eslint exec'
+
           - task: SonarCloudAnalyze@1
 
           - task: SonarCloudPublish@1
