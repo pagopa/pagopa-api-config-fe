@@ -1,27 +1,40 @@
 import React from "react";
+import {Link} from "react-router-dom";
+import SidebarItems from "./SidebarItems";
 
-export default class Sidebar extends React.Component {
-
+export default class Sidebar extends React.Component<any> {
     render(): React.ReactNode {
-        return (
 
-                <ul className="nav flex-column">
-                    <li className="nav-item">
-                        <a className="nav-link active" href="#">
-                            Item-1 <span className="sr-only">(current)</span>
-                        </a>
-                    </li>
-                    <li className="nav-item">
-                        <a className="nav-link" href="#">
-                            Item-2
-                        </a>
-                    </li>
-                    <li className="nav-item">
-                        <a className="nav-link" href="#">
-                            Item-3
-                        </a>
-                    </li>
-                </ul>
+        const location = this.props.history.location;
+
+        function getClass(index: number) {
+            const activeItem = SidebarItems.findIndex(item => getPath(item.route) === getPath(location.pathname));
+            const currentActiveItem = activeItem === -1 ? 0 : activeItem;
+            return currentActiveItem === index ? 'active' : '';
+        }
+
+        function getPath(path: string) {
+            if (path.charAt(0) !== "/") {
+                return  "/" + path;
+            }
+            return path;
+        }
+
+
+        return (
+                <div className="list-group">
+                    {
+                        SidebarItems.map((item, index) => (
+                                <Link to={item.route} key={item.name} className={`list-group-item-action ${getClass(index)}`}>
+                            <span>
+                                {item.name}
+                            </span>
+                                </Link>
+                        ))
+                    }
+                </div>
         );
+
     }
 }
+

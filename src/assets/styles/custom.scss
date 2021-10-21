@@ -26,6 +26,7 @@ $text-color: #17324d;
 @import "~bootstrap/scss/print";
 @import "~bootstrap/scss/reboot";
 @import "~bootstrap/scss/type";
+@import "~bootstrap/scss/alert";
 //@import '~bootstrap/scss/images';
 //@import '~bootstrap/scss/code';
 @import "~bootstrap/scss/grid";
@@ -69,6 +70,25 @@ $text-color: #17324d;
   z-index: 100; /* Behind the navbar */
   padding: 48px 0 0; /* Height of navbar */
   box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+
+  .list-group {
+
+    .list-group-item-action {
+      text-decoration: none;
+      padding: 10px 0px;
+
+      span {
+        padding: 20px;
+      }
+
+      &.active {
+        background-color: $gray-200;
+        font-weight: bold;
+        color: $black;
+      }
+    }
+  }
+
 }
 
 @media (max-width: 767.98px) {

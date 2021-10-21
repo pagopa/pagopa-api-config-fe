@@ -3,11 +3,9 @@ import ReactDOM from "react-dom";
 import "./assets/styles/custom.scss";
 import "bootstrap/dist/js/bootstrap.min";
 import "jquery";
-import App from "./pages/App";
+import Routes from "./util/routes";
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById("app")
+        <Routes/>,
+        document.getElementById('app')
 );
