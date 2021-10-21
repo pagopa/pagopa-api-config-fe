@@ -39,7 +39,7 @@ test("rendering EC through navigation on /ec", () => {
   // Interact with page
   act(() => {
     // Find the link
-    const goLink = document.querySelector('[href="/ec"]');
+    const goLink = document.querySelector('[href="/creditor-institutions"]');
     if (goLink != null) {
       // Click it
       goLink.dispatchEvent(new MouseEvent("click", {bubbles: true}));
