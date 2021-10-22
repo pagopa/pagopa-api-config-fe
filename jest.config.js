@@ -22,10 +22,9 @@ module.exports = {
   // An array of glob patterns indicating a set of files for which coverage information should be collected
   // collectCoverageFrom: undefined,
   collectCoverageFrom: [
-    "src/**/*.{js,jsx}",
+    "src/**/*.{js,jsx,ts,tsx}",
     "!src/index.js"
   ],
-
 
   // The directory where Jest should output its coverage files
   coverageDirectory: "coverage",
@@ -43,8 +42,8 @@ module.exports = {
   //   "json",
   //   "text",
     "lcov",
-    "clover",
-    "cobertura"
+    // "clover",
+    // "cobertura"
   ],
 
   // An object that configures minimum threshold enforcement for coverage results
@@ -165,6 +164,9 @@ module.exports = {
   //   "**/__tests__/**/*.[jt]s?(x)",
   //   "**/?(*.)+(spec|test).[tj]s?(x)"
   // ],
+  "testMatch": [
+    "**/__tests__/**/?(*.)+(spec|test).[tj]s?(x)"
+  ],
 
   // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
   // testPathIgnorePatterns: [
@@ -177,7 +179,6 @@ module.exports = {
   // This option allows the use of a custom results processor
   // testResultsProcessor: undefined,
   "testResultsProcessor": "jest-sonar-reporter"
-  // "testResultsProcessor": "jest-junit"
 
   // This option allows use of a custom test runner
   // testRunner: "jest-circus/runner",

@@ -91,6 +91,14 @@ stages:
     jobs:
       - job: sonarcloud_analysis
         steps:
+          - template: templates/node-job-setup/template.yaml@pagopaCommons
+
+#          - bash: |
+#              git fetch && git checkout PCFG-57-setup-pipeline-devops
+
+          - script: git branch
+            displayName: 'Branch identification'
+
           - task: SonarCloudPrepare@1
             displayName: 'Prepare SonarCloud analysis configuration'
             inputs:
@@ -99,22 +107,33 @@ stages:
               scannerMode: Other
               projectKey: $(SONARCLOUD_PROJECT_KEY)
               projectName: $(SONARCLOUD_PROJECT_NAME)
+#              scannerMode: CLI
+#              configMode: manual
+#              cliProjectKey: $(SONARCLOUD_PROJECT_KEY)
+#              cliProjectName: $(SONARCLOUD_PROJECT_NAME)
+#              cliSources: $(Build.Repository.LocalPath)
               extraProperties: |
                 sonar.javascript.file.suffixes=.js,.jsx
                 sonar.typescript.file.suffixes=.ts,.tsx
-                sonar.sources=src
+                sonar.sources=.
                 sonar.exclusions=src/__tests__/**
                 sonar.tests=src/__tests__
                 sonar.test.inclusions=src/__tests__/**/*.test.tsx
                 sonar.testExecutionReportPaths=test-report.xml
                 sonar.sourceEncoding=UTF-8
                 sonar.verbose=true
-                sonar.cs.opencover.reportsPaths=coverage/cobertura-coverage.xml
                 sonar.javascript.lcov.reportPaths=coverage/lcov.info
                 sonar.typescript.tsconfigPath=tsconfig.json
                 sonar.eslint.reportPaths=eslint-report.json
 
-          - template: templates/node-job-setup/template.yaml@pagopaCommons
+          - script: ls -R [!node_modules]*
+            displayName: 'Show all files recursively'
+
+          - script: yarn test
+            displayName: 'Unit tests execution'
+
+          - script: yarn lint
+            displayName: 'Lint execution'
 
           - task: SonarCloudAnalyze@1
 
