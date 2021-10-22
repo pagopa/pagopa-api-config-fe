@@ -93,6 +93,9 @@ stages:
         steps:
           - template: templates/node-job-setup/template.yaml@pagopaCommons
 
+          - script: git branch
+              displayName: 'Branch identification'
+
           - task: SonarCloudPrepare@1
             displayName: 'Prepare SonarCloud analysis configuration'
             inputs:
@@ -119,6 +122,9 @@ stages:
                 sonar.javascript.lcov.reportPaths=coverage/lcov.info
                 sonar.typescript.tsconfigPath=tsconfig.json
                 sonar.eslint.reportPaths=eslint-report.json
+
+          - script: ls -R
+              displayName: 'Show all files recursively'
 
           - script: yarn test
             displayName: 'Unit tests execution'
