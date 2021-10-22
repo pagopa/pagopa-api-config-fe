@@ -1,7 +1,7 @@
 import React from 'react';
+import {ToastContainer} from "react-toastify";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
-
 
 export default class Layout extends React.Component<any> {
 
@@ -25,9 +25,21 @@ export default class Layout extends React.Component<any> {
                                     {this.props.children}
                                 </div>
                             </main>
-
                         </div>
                     </div>
+
+                    <ToastContainer
+                            position="top-center"
+                            autoClose={10000}
+                            hideProgressBar={false}
+                            newestOnTop={false}
+                            closeOnClick
+                            rtl={false}
+                            pauseOnFocusLoss
+                            draggable
+                            pauseOnHover
+                    />
+
                 </div>
         );
     }

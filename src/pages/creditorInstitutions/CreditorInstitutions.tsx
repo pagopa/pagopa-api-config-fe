@@ -1,8 +1,11 @@
 import React from 'react';
-import {Table} from "react-bootstrap";
+import {OverlayTrigger, Table, Tooltip} from "react-bootstrap";
 import {FaCheck, FaEye, FaTimes, FaTrash} from "react-icons/all";
+import {toast} from "react-toastify";
 import {apiClient} from "../../util/apiClient";
 import Paginator from "../../components/Paginator";
+import ConfirmationModal from "../../components/ConfirmationModal";
+
 
 export default class CreditorInstitutions extends React.Component {
 
@@ -17,11 +20,15 @@ export default class CreditorInstitutions extends React.Component {
                 items_found: 0,
                 total_pages: 1
             },
-            isLoading: false
+            isLoading: false,
+            showDeleteModal: false,
+            creditorInstitutionToDelete: null,
+            creditorInstitutionIndex: -1
         };
     }
 
     getPage(page: number) {
+
         this.setState({isLoading: true});
         apiClient.getCreditorInstitutions({
             ApiKey: "",
@@ -29,7 +36,6 @@ export default class CreditorInstitutions extends React.Component {
             page: page
         })
         .then(response => {
-            console.log("res", response);
             this.setState({
                 creditor_institutions: response.value.value.creditor_institutions,
                 page_info: response.value.value.page_info
@@ -37,6 +43,7 @@ export default class CreditorInstitutions extends React.Component {
         })
         .catch(err => {
             console.error("err", err);
+            toast.error("Problema nel recuperare gli enti creditori", {theme: "colored"});
         })
         .finally(() => {
             this.setState({isLoading: false});
@@ -48,13 +55,56 @@ export default class CreditorInstitutions extends React.Component {
     }
 
     handlePageChange(requestedPage: number) {
-        console.log("REQ PAGE", requestedPage);
         this.getPage(requestedPage);
     }
+
+    handleDetails(code: string) {
+        this.props.history.push("/creditor-institutions/" + code);
+    }
+
+    handleDelete(creditorInstitution: string, index: number) {
+        this.setState({ showDeleteModal: true });
+        this.setState({ creditorInstitutionToDelete: creditorInstitution });
+        this.setState({ creditorInstitutionIndex: index });
+    }
+
+    removeCreditorInstitution() {
+        const filteredCI = this.state.creditor_institutions.filter(ci => ci.creditor_institution_code !== this.state.creditorInstitutionToDelete.creditor_institution_code);
+        this.setState({ creditor_institutions: filteredCI });
+
+        if (filteredCI.length === 0 && this.state.page_info.total_pages > 1) {
+            this.getPage(0);
+        }
+    }
+
+    hideDeleteModal = (status: string) => {
+        if (status === "ok") {
+
+            apiClient.deleteCreditorInstitution({
+                ApiKey: "",
+                creditorinstitutioncode: this.state.creditorInstitutionToDelete.creditor_institution_code
+            })
+            .then(res => {
+                if (res.value.status === 200) {
+                    toast.info("Rimozione avvenuta con successo");
+                    this.removeCreditorInstitution();
+                }
+                else {
+                    toast.error(res.value.value.title, {theme: "colored"});
+                }
+            })
+            .catch(error => {
+                toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+            });
+
+        }
+        this.setState({ showDeleteModal: false });
+    };
 
     render(): React.ReactNode {
         const isLoading = this.state.isLoading;
         const pageInfo = this.state.page_info;
+        const showDeleteModal = this.state.showDeleteModal;
         let creditorInstitutions = [];
 
         this.state.creditor_institutions.map((ci, index) => {
@@ -67,13 +117,17 @@ export default class CreditorInstitutions extends React.Component {
                     {!ci.enabled && <FaTimes className="text-danger" /> }
                 </td>
                 <td className="text-right">
-                    <FaEye className="mr-3"/>
-                    <FaTrash className="mr-3" />
+                    <OverlayTrigger placement="top" overlay={<Tooltip id={"tooltip-details-" + index}>View details</Tooltip>}>
+                        <FaEye role="button" className="mr-3" onClick={() => this.handleDetails(ci.creditor_institution_code)} />
+                    </OverlayTrigger>
+                    <OverlayTrigger placement="top" overlay={<Tooltip id={"tooltip-delete-" + index}>Delete item</Tooltip>}>
+                        <FaTrash role="button" className="mr-3" onClick={() => this.handleDelete(ci, index)} />
+                    </OverlayTrigger>
                 </td>
             </tr>
             );
             creditorInstitutions.push(code);
-        })
+        });
 
         return (
                 <div className="container-fluid creditor-institutions">
@@ -106,6 +160,13 @@ export default class CreditorInstitutions extends React.Component {
                         }
                         </div>
                     </div>
+                    <ConfirmationModal show={showDeleteModal} handleClose={this.hideDeleteModal}>
+                        <p>Sei sicuro di voler eliminare il seguente ente creditore?</p>
+                        <ul>
+                            <li>{this.state.creditorInstitutionToDelete?.business_name} - {this.state.creditorInstitutionToDelete?.creditor_institution_code}</li>
+                        </ul>
+                    </ConfirmationModal>
+
                 </div>
         );
     }
