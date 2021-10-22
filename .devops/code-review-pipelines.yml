@@ -94,7 +94,7 @@ stages:
           - template: templates/node-job-setup/template.yaml@pagopaCommons
 
           - script: git branch
-              displayName: 'Branch identification'
+            displayName: 'Branch identification'
 
           - task: SonarCloudPrepare@1
             displayName: 'Prepare SonarCloud analysis configuration'
@@ -124,7 +124,7 @@ stages:
                 sonar.eslint.reportPaths=eslint-report.json
 
           - script: ls -R
-              displayName: 'Show all files recursively'
+            displayName: 'Show all files recursively'
 
           - script: yarn test
             displayName: 'Unit tests execution'
