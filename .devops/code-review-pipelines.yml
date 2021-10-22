@@ -93,8 +93,8 @@ stages:
         steps:
           - template: templates/node-job-setup/template.yaml@pagopaCommons
 
-          - bash: |
-              git fetch && git checkout PCFG-57-setup-pipeline-devops
+#          - bash: |
+#              git fetch && git checkout PCFG-57-setup-pipeline-devops
 
           - script: git branch
             displayName: 'Branch identification'
