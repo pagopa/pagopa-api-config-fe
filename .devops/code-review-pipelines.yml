@@ -126,7 +126,7 @@ stages:
                 sonar.typescript.tsconfigPath=tsconfig.json
                 sonar.eslint.reportPaths=eslint-report.json
 
-          - script: ls -R
+          - script: ls -R [!node_modules]*
             displayName: 'Show all files recursively'
 
           - script: yarn test
