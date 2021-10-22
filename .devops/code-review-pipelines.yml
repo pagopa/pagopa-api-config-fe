@@ -97,7 +97,7 @@ stages:
               git fetch && git checkout PCFG-57-setup-pipeline-devops
 
           - script: git branch
-              displayName: 'Branch identification'
+            displayName: 'Branch identification'
 
           - task: SonarCloudPrepare@1
             displayName: 'Prepare SonarCloud analysis configuration'
