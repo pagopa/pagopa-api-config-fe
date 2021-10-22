@@ -91,6 +91,8 @@ stages:
     jobs:
       - job: sonarcloud_analysis
         steps:
+          - template: templates/node-job-setup/template.yaml@pagopaCommons
+
           - task: SonarCloudPrepare@1
             displayName: 'Prepare SonarCloud analysis configuration'
             inputs:
@@ -117,8 +119,6 @@ stages:
                 sonar.javascript.lcov.reportPaths=coverage/lcov.info
                 sonar.typescript.tsconfigPath=tsconfig.json
                 sonar.eslint.reportPaths=eslint-report.json
-
-          - template: templates/node-job-setup/template.yaml@pagopaCommons
 
           - script: yarn test
             displayName: 'Unit tests execution'
