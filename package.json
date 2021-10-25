@@ -3,8 +3,10 @@
   "version": "0.1.0",
   "license": "MIT",
   "scripts": {
-    "local": "NODE_ENV=local parcel --port 3000 src/index.html --dist-dir build/debug",
-    "azure": "NODE_ENV=azure parcel --port 3000 src/index.html --dist-dir build/debug",
+    "start:local": "NODE_ENV=local parcel --port 3000 src/index.html --dist-dir build/debug",
+    "start:DEV": "NODE_ENV=dev parcel --port 3000 src/index.html --dist-dir build/debug",
+    "start:UAT": "NODE_ENV=uat parcel --port 3000 src/index.html --dist-dir build/debug",
+    "start:PROD": "NODE_ENV=prod parcel --port 3000 src/index.html --dist-dir build/debug",
     "prebuild": "npm-run-all prebuild:*",
     "prebuild:clean": "shx rm -rf build",
     "prebuild:tsc": "tsc --noEmit",
