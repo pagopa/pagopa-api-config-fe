@@ -169,9 +169,9 @@ module.exports = {
   ],
 
   // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
-  // testPathIgnorePatterns: [
-  //   "/node_modules/"
-  // ],
+  testPathIgnorePatterns: [
+    "/node_modules/"
+  ],
 
   // The regexp pattern or array of patterns that Jest uses to detect test files
   // testRegex: [],
@@ -198,7 +198,8 @@ module.exports = {
   //   "\\.pnp\\.[^\\/]+$"
   // ],
   transformIgnorePatterns: [
-    "<rootDir />/node_modules/?!(react-icons)"
+    "<rootDir />/node_modules/?!(react-icons)",
+    "<rootDir />/node_modules/?!(italia-ts-commons)",
   ],
 
   // An array of regexp pattern strings that are matched against all modules before the module loader will automatically return a mock for them
