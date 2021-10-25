@@ -1,9 +1,21 @@
 import React from 'react';
+import {ToastContainer} from "react-toastify";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 
+interface IProps {
+    history: {
+        location: {
+            pathname: string;
+        };
+        push(url: string): void;
+    };
+}
 
-export default class Layout extends React.Component<any> {
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+interface IState {}
+
+export default class Layout extends React.Component<IProps, IState> {
 
     render(): React.ReactNode {
 
@@ -16,7 +28,7 @@ export default class Layout extends React.Component<any> {
                         <div className="row">
                             <nav id="sidebarMenu" className="col-md-2 col-lg-2 d-md-block bg-white sidebar collapse">
                                 <div className="sidebar-sticky pt-5">
-                                    <Sidebar history={this.props.history}/>
+                                    <Sidebar history={this.props.history} />
                                 </div>
                             </nav>
 
@@ -25,9 +37,21 @@ export default class Layout extends React.Component<any> {
                                     {this.props.children}
                                 </div>
                             </main>
-
                         </div>
                     </div>
+
+                    <ToastContainer
+                            position="top-center"
+                            autoClose={10000}
+                            hideProgressBar={false}
+                            newestOnTop={false}
+                            closeOnClick
+                            rtl={false}
+                            pauseOnFocusLoss
+                            draggable
+                            pauseOnHover
+                    />
+
                 </div>
         );
     }

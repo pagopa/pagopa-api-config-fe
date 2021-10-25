@@ -2,7 +2,23 @@ import React from "react";
 import {Link} from "react-router-dom";
 import SidebarItems from "./SidebarItems";
 
-export default class Sidebar extends React.Component<any> {
+interface IProps {
+    history: {
+        location: {
+            pathname: string;
+        };
+        push(url: string): void;
+    };
+}
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+interface IState {}
+
+export default class Sidebar extends React.Component<IProps, IState> {
+    constructor(props: IProps) {
+        super(props);
+    }
+
     render(): React.ReactNode {
 
         const location = this.props.history.location;
@@ -19,7 +35,6 @@ export default class Sidebar extends React.Component<any> {
             }
             return path;
         }
-
 
         return (
                 <div className="list-group">

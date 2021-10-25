@@ -24,7 +24,10 @@ module.exports = {
   rules: {
     "no-case-declarations": "off",
     "no-inner-declarations": "off",
-    "prefer-const": "error",
+    "prefer-const": ["error", {
+      "destructuring": "any",
+      "ignoreReadBeforeAssign": false
+    }],
     curly: "error",
     "spaced-comment": ["error", "always", { block: { balanced: true } }],
     radix: "error",

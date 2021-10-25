@@ -16,14 +16,14 @@ test("rendering IntermediariEC through navigation", () => {
 
   render(
           <Router history={history}>
-            <Routes />
+            <Routes  />
           </Router>
   );
 
   // Interact with page
   act(() => {
       // Find the link
-      const goLink = document.querySelector('[href="/intermediariec"]');
+      const goLink = document.querySelector('[href="/brokers"]');
       if (goLink != null) {
           // Click it
           goLink.dispatchEvent(new MouseEvent("click", {bubbles: true}));
@@ -31,6 +31,7 @@ test("rendering IntermediariEC through navigation", () => {
   });
 
   // verify page content for expected route
-  expect(screen.getByText(/IntermediariEC/i)).toBeInTheDocument();
+    // expect(screen.getByText(/Intermediari EC/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/Intermediari EC/i));
 
 });

@@ -1,11 +1,11 @@
 const SidebarItems = [
     {
-        name: "EC",
-        route: "/ec"
+        name: "Enti Creditori - EC",
+        route: "/creditor-institutions"
     },
     {
         name: "Intermediari EC",
-        route: "/intermediariec"
+        route: "/brokers"
     }
 ];
 
