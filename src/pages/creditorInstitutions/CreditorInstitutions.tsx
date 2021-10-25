@@ -44,6 +44,8 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
             creditorInstitutionToDelete: {},
             creditorInstitutionIndex: -1
         };
+
+        this.handlePageChange = this.handlePageChange.bind(this);
     }
 
     getPage(page: number) {
@@ -61,6 +63,7 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
             });
         })
         .catch(err => {
+            // eslint-disable-next-line no-console
             console.error("err", err);
             toast.error("Problema nel recuperare gli enti creditori", {theme: "colored"});
         })
@@ -114,6 +117,7 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
                 }
             })
             .catch((err: any) => {
+                // eslint-disable-next-line no-console
                 console.error(err);
                 toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
             });
@@ -178,7 +182,7 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
                                         </tbody>
                                     </Table>
 
-                                    <Paginator pageInfo={pageInfo} onPageChanged={this.handlePageChange.bind(this)} />
+                                    <Paginator pageInfo={pageInfo} onPageChanged={this.handlePageChange} />
                                 </>
                             )
                         }

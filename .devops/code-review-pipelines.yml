@@ -102,8 +102,8 @@ stages:
 #          - bash: |
 #              git fetch && git checkout PCFG-57-setup-pipeline-devops
 
-          - script: git branch
-            displayName: 'Branch identification'
+          - script: yarn generate
+            displayName: 'Generate api client'
 
           - script: git branch
             displayName: 'Branch identification'

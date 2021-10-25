@@ -13,6 +13,7 @@ interface IProps {
     onPageChanged: Function;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface IState {}
 
 export default class Paginator extends React.Component<IProps, IState> {
@@ -28,11 +29,12 @@ export default class Paginator extends React.Component<IProps, IState> {
         const isPrevDisabled = () => pageInfo.page === 0;
         const isNextDisabled = () => pageInfo.page === pageInfo.total_pages -1;
 
-        let items = [];
+        const items = [];
 
         if (pageInfo.page === 0) {
             // eslint-disable-next-line functional/no-let
             for(let item = pageInfo.page; item < pageInfo.page+3; item++) {
+                // eslint-disable-next-line functional/immutable-data
                 items.push(
                         <Pagination.Item
                                 active={item === pageInfo.page}
@@ -43,17 +45,20 @@ export default class Paginator extends React.Component<IProps, IState> {
             }
         }
         else {
+            // eslint-disable-next-line functional/immutable-data
             items.push(
                     <Pagination.Item
                             onClick={() => this.props.onPageChanged(pageInfo.page-1)}
                             key={pageInfo.page}>{pageInfo.page}</Pagination.Item>
             );
+            // eslint-disable-next-line functional/immutable-data
             items.push(
                     <Pagination.Item
                             active={true}
                             onClick={() => this.props.onPageChanged(pageInfo.page)}
                             key={pageInfo.page+1}>{pageInfo.page+1}</Pagination.Item>
             );
+            // eslint-disable-next-line functional/immutable-data
             items.push(
                     <Pagination.Item
                             disabled={pageInfo.page+1 > pageInfo.total_pages -1}
