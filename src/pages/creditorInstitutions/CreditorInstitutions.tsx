@@ -1,6 +1,6 @@
 import React from 'react';
 import {OverlayTrigger, Table, Tooltip} from "react-bootstrap";
-import {FaCheck, FaEye, FaTimes, FaTrash} from "react-icons/fa";
+import {FaCheck, FaEye, FaSpinner, FaTimes, FaTrash} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {apiClient} from "../../util/apiClient";
 import Paginator from "../../components/Paginator";
@@ -161,10 +161,10 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
                 <div className="container-fluid creditor-institutions">
                     <div className="row">
                         <div className="col-md-12 mb-5">
-                            <h2>EntiCreditori</h2>
+                            <h2>Enti Creditori</h2>
                         </div>
                         <div className="col-md-12">
-                        {isLoading &&  ( <p>Loading ...</p> )}
+                        {isLoading &&  ( <FaSpinner className="spinner" /> )}
                         {
                             !isLoading && (
                                 <>

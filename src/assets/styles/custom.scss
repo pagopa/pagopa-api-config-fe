@@ -40,7 +40,7 @@ $text-color: #17324d;
 @import '~bootstrap/scss/nav';
 @import '~bootstrap/scss/navbar';
 //@import '~bootstrap/scss/card';
-//@import '~bootstrap/scss/breadcrumb';
+@import '~bootstrap/scss/breadcrumb';
 @import '~bootstrap/scss/pagination';
 //@import '~bootstrap/scss/badge';
 //@import '~bootstrap/scss/progress';
@@ -57,6 +57,22 @@ $text-color: #17324d;
 //@import "~bootstrap-icons/font/bootstrap-icons";
 
 @import "fonts";
+
+.spinner {
+  animation: spin infinite 5s linear;
+
+  /*You can increase or decrease the timer (5s) to
+   increase or decrease the speed of the spinner*/
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
 
 
 /*
