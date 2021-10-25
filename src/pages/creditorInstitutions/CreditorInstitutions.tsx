@@ -7,7 +7,9 @@ import Paginator from "../../components/Paginator";
 import ConfirmationModal from "../../components/ConfirmationModal";
 
 interface IProps {
-    history: any;
+    history: {
+        push(url: string): void;
+    };
 }
 
 interface IState {
@@ -24,13 +26,10 @@ interface IState {
     creditorInstitutionIndex: number;
 }
 
-
 export default class CreditorInstitutions extends React.Component<IProps, IState> {
 
     constructor(props: IProps) {
         super(props);
-
-        // this.setState({isLoading: false, showDeleteModal: false});
 
         this.state = {
             creditor_institutions: [],
@@ -53,7 +52,7 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
         apiClient.getCreditorInstitutions({
             ApiKey: "",
             limit: 10,
-            page: page
+            page
         })
         .then((response: any) => {
             this.setState({
@@ -68,6 +67,7 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
         .finally(() => {
             this.setState({isLoading: false});
         });
+
     }
 
     componentDidMount(): void {
@@ -122,7 +122,6 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
     };
 
     render(): React.ReactNode {
-        console.log("state", this.state);
         const isLoading = this.state.isLoading;
         const pageInfo = this.state.page_info;
         const showDeleteModal = this.state.showDeleteModal;
@@ -138,9 +137,11 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
                     {!ci.enabled && <FaTimes className="text-danger" /> }
                 </td>
                 <td className="text-right">
+                    {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
                     <OverlayTrigger placement="top" overlay={<Tooltip id={"tooltip-details-" + index}>Dettagli</Tooltip>}>
                         <FaEye role="button" className="mr-3" onClick={() => this.handleDetails(ci.creditor_institution_code)} />
                     </OverlayTrigger>
+                    {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
                     <OverlayTrigger placement="top" overlay={<Tooltip id={"tooltip-delete-" + index}>Elimina</Tooltip>}>
                         <FaTrash role="button" className="mr-3" onClick={() => this.handleDelete(ci, index)} />
                     </OverlayTrigger>

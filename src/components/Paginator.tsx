@@ -2,7 +2,20 @@ import React from "react";
 import {Pagination} from "react-bootstrap";
 
 
-export default class Paginator extends React.Component<any> {
+interface IProps {
+    pageInfo: {
+        page: number;
+        limit: number;
+        items_found: number;
+        total_pages: number;
+    };
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    onPageChanged: Function;
+}
+
+interface IState {}
+
+export default class Paginator extends React.Component<IProps, IState> {
 
     render(): React.ReactNode {
         const pageInfo = this.props.pageInfo;
