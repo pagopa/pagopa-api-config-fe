@@ -39,7 +39,7 @@ $text-color: #17324d;
 @import "~bootstrap/scss/input-group";
 @import '~bootstrap/scss/nav';
 @import '~bootstrap/scss/navbar';
-//@import '~bootstrap/scss/card';
+@import '~bootstrap/scss/card';
 @import '~bootstrap/scss/breadcrumb';
 @import '~bootstrap/scss/pagination';
 //@import '~bootstrap/scss/badge';
@@ -63,6 +63,34 @@ $text-color: #17324d;
 
   /*You can increase or decrease the timer (5s) to
    increase or decrease the speed of the spinner*/
+}
+
+.custom-control-box {
+  display: flex;
+  align-items: center;
+  margin-top: 30px;
+}
+.custom-control {
+  position: relative;
+  z-index: 1;
+  display: block;
+  min-height: 1.5rem;
+  padding-left: 1.5rem;
+  -webkit-print-color-adjust: exact;
+  color-adjust: exact
+}
+.custom-control-input {
+  position: absolute;
+  left: 0;
+  z-index: -1;
+  width: 1rem;
+  height: 1.25rem;
+  //opacity: 0;
+}
+.custom-control-label {
+  position: relative;
+  margin-bottom: 0;
+  vertical-align: top;
 }
 
 @keyframes spin {
