@@ -1,16 +1,36 @@
 import React from 'react';
 import {OverlayTrigger, Table, Tooltip} from "react-bootstrap";
-import {FaCheck, FaEye, FaTimes, FaTrash} from "react-icons/all";
+import {FaCheck, FaEye, FaTimes, FaTrash} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {apiClient} from "../../util/apiClient";
 import Paginator from "../../components/Paginator";
 import ConfirmationModal from "../../components/ConfirmationModal";
 
+interface IProps {
+    history: any;
+}
 
-export default class CreditorInstitutions extends React.Component {
+interface IState {
+    creditor_institutions: any;
+    page_info : {
+        page: 0;
+        limit: 50;
+        items_found: 0;
+        total_pages: 1;
+    };
+    isLoading: boolean;
+    showDeleteModal: boolean;
+    creditorInstitutionToDelete: any;
+    creditorInstitutionIndex: number;
+}
 
-    constructor(props) {
+
+export default class CreditorInstitutions extends React.Component<IProps, IState> {
+
+    constructor(props: IProps) {
         super(props);
+
+        // this.setState({isLoading: false, showDeleteModal: false});
 
         this.state = {
             creditor_institutions: [],
@@ -35,7 +55,7 @@ export default class CreditorInstitutions extends React.Component {
             limit: 10,
             page: page
         })
-        .then(response => {
+        .then((response: any) => {
             this.setState({
                 creditor_institutions: response.value.value.creditor_institutions,
                 page_info: response.value.value.page_info
@@ -69,7 +89,7 @@ export default class CreditorInstitutions extends React.Component {
     }
 
     removeCreditorInstitution() {
-        const filteredCI = this.state.creditor_institutions.filter(ci => ci.creditor_institution_code !== this.state.creditorInstitutionToDelete.creditor_institution_code);
+        const filteredCI = this.state.creditor_institutions.filter((ci: any) => ci.creditor_institution_code !== this.state.creditorInstitutionToDelete.creditor_institution_code);
         this.setState({ creditor_institutions: filteredCI });
 
         if (filteredCI.length === 0 && this.state.page_info.total_pages > 1) {
@@ -84,7 +104,7 @@ export default class CreditorInstitutions extends React.Component {
                 ApiKey: "",
                 creditorinstitutioncode: this.state.creditorInstitutionToDelete.creditor_institution_code
             })
-            .then(res => {
+            .then((res: any) => {
                 if (res.value.status === 200) {
                     toast.info("Rimozione avvenuta con successo");
                     this.removeCreditorInstitution();
@@ -93,21 +113,22 @@ export default class CreditorInstitutions extends React.Component {
                     toast.error(res.value.value.title, {theme: "colored"});
                 }
             })
-            .catch(error => {
+            .catch((err: any) => {
+                console.error(err);
                 toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
             });
-
         }
         this.setState({ showDeleteModal: false });
     };
 
     render(): React.ReactNode {
+        console.log("state", this.state);
         const isLoading = this.state.isLoading;
         const pageInfo = this.state.page_info;
         const showDeleteModal = this.state.showDeleteModal;
-        let creditorInstitutions = [];
+        const creditorInstitutions: any = [];
 
-        this.state.creditor_institutions.map((ci, index) => {
+        this.state.creditor_institutions.map((ci: any, index: number) => {
             const code = (
             <tr key={index}>
                 <td>{ci.business_name}</td>
