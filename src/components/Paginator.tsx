@@ -31,6 +31,7 @@ export default class Paginator extends React.Component<IProps, IState> {
         let items = [];
 
         if (pageInfo.page === 0) {
+            // eslint-disable-next-line functional/no-let
             for(let item = pageInfo.page; item < pageInfo.page+3; item++) {
                 items.push(
                         <Pagination.Item

@@ -25,10 +25,10 @@ interface IProps {
     show: boolean;
     // eslint-disable-next-line @typescript-eslint/ban-types
     handleClose: Function;
-    children: any;
-};
-interface IState {
-};
+    children: React.ReactNode;
+}
+
+interface IState {}
 
 export default class ConfirmationModal extends React.Component<IProps, IState> {
     constructor(props: IProps) {

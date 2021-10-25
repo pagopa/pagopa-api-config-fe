@@ -1,6 +1,6 @@
 const SidebarItems = [
     {
-        name: "EC",
+        name: "Enti Creditori - EC",
         route: "/creditor-institutions"
     },
     {
