@@ -24,7 +24,6 @@
     "generated": "^0.0.3",
     "i18next": "^19.8.4",
     "io-ts": "1.8.5",
-    "node-fetch": "^3.0.0",
     "react": "17.0.1",
     "react-bootstrap": "^1.6.4",
     "react-dom": "^17.0.1",
@@ -50,6 +49,7 @@
     "@types/classnames": "^2.2.11",
     "@types/jest": "^27.0.2",
     "@types/node": "^14.14.9",
+    "@types/node-fetch": "^3.0.3",
     "@types/react": "^16.9.56",
     "@types/react-dom": "^16.9.9",
     "@types/react-router-dom": "^5.1.6",
@@ -68,6 +68,7 @@
     "eslint-plugin-react": "^7.24.0",
     "eslint-plugin-react-hooks": "^4.2.0",
     "eslint-plugin-sonarjs": "^0.9.1",
+    "italia-ts-commons": "^8.6.0",
     "jest": "^27.2.5",
     "jest-sonar-reporter": "^2.0.0",
     "jquery": "^3.6.0",
@@ -77,7 +78,8 @@
     "sass": "^1.42.1",
     "shx": "^0.3.3",
     "ts-jest": "^27.0.7",
-    "typescript": "^4.1.2"
+    "typescript": "^4.1.2",
+    "whatwg-fetch": "^3.6.2"
   },
   "resolutions": {
     "fp-ts": "1.17.4",

@@ -1,7 +1,7 @@
 import React from "react";
 import { Modal, Button } from 'react-bootstrap';
 
-const ConfirmationModal = ({ handleClose, show, children }) => (
+const ConfirmationModal = ({ handleClose, show, children }: {handleClose: any, show: any, children: any}) => (
             <Modal show={show} onHide={() => handleClose("ko")}>
                 <Modal.Header closeButton>
                     <Modal.Title>Attenzione</Modal.Title>

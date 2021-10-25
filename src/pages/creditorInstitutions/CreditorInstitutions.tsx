@@ -138,10 +138,10 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
                     {!ci.enabled && <FaTimes className="text-danger" /> }
                 </td>
                 <td className="text-right">
-                    <OverlayTrigger placement="top" overlay={<Tooltip id={"tooltip-details-" + index}>View details</Tooltip>}>
+                    <OverlayTrigger placement="top" overlay={<Tooltip id={"tooltip-details-" + index}>Dettagli</Tooltip>}>
                         <FaEye role="button" className="mr-3" onClick={() => this.handleDetails(ci.creditor_institution_code)} />
                     </OverlayTrigger>
-                    <OverlayTrigger placement="top" overlay={<Tooltip id={"tooltip-delete-" + index}>Delete item</Tooltip>}>
+                    <OverlayTrigger placement="top" overlay={<Tooltip id={"tooltip-delete-" + index}>Elimina</Tooltip>}>
                         <FaTrash role="button" className="mr-3" onClick={() => this.handleDelete(ci, index)} />
                     </OverlayTrigger>
                 </td>
@@ -164,9 +164,9 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
                                     <Table hover responsive size="sm" >
                                         <thead>
                                         <tr>
-                                            <th className="fixed-td-width">Name</th>
-                                            <th className="fixed-td-width">Code</th>
-                                            <th className="text-center">Enabled</th>
+                                            <th className="fixed-td-width">Ente creditore</th>
+                                            <th className="fixed-td-width">Codice</th>
+                                            <th className="text-center">Abilitato</th>
                                             <th></th>
                                         </tr>
                                         </thead>
