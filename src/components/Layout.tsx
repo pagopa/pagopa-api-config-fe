@@ -3,7 +3,16 @@ import {ToastContainer} from "react-toastify";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 
-export default class Layout extends React.Component<any> {
+interface IProps {
+    history: {
+        push(url: string): void;
+        children: React.ReactNode;
+    };
+}
+
+interface IState {}
+
+export default class Layout extends React.Component<IProps, IState> {
 
     render(): React.ReactNode {
 
