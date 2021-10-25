@@ -5,8 +5,10 @@ import Topbar from "./Topbar";
 
 interface IProps {
     history: {
+        location: {
+            pathname: string;
+        };
         push(url: string): void;
-        children: React.ReactNode;
     };
 }
 
@@ -25,7 +27,7 @@ export default class Layout extends React.Component<IProps, IState> {
                         <div className="row">
                             <nav id="sidebarMenu" className="col-md-2 col-lg-2 d-md-block bg-white sidebar collapse">
                                 <div className="sidebar-sticky pt-5">
-                                    <Sidebar history={this.props.history}/>
+                                    <Sidebar history={this.props.history} />
                                 </div>
                             </nav>
 

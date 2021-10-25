@@ -41,7 +41,7 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
             },
             isLoading: false,
             showDeleteModal: false,
-            creditorInstitutionToDelete: null,
+            creditorInstitutionToDelete: {},
             creditorInstitutionIndex: -1
         };
     }
@@ -126,6 +126,8 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
         const pageInfo = this.state.page_info;
         const showDeleteModal = this.state.showDeleteModal;
         const creditorInstitutions: any = [];
+        const ciToDeleteName = this.state.creditorInstitutionToDelete.business_name;
+        const ciToDeleteCode = this.state.creditorInstitutionToDelete.creditor_institution_code;
 
         this.state.creditor_institutions.map((ci: any, index: number) => {
             const code = (
@@ -185,7 +187,7 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
                     <ConfirmationModal show={showDeleteModal} handleClose={this.hideDeleteModal}>
                         <p>Sei sicuro di voler eliminare il seguente ente creditore?</p>
                         <ul>
-                            <li>{this.state.creditorInstitutionToDelete?.business_name} - {this.state.creditorInstitutionToDelete?.creditor_institution_code}</li>
+                            <li>{ciToDeleteName} - {ciToDeleteCode}</li>
                         </ul>
                     </ConfirmationModal>
 

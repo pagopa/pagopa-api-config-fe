@@ -16,7 +16,7 @@ test("rendering IntermediariEC through navigation", () => {
 
   render(
           <Router history={history}>
-            <Routes />
+            <Routes  />
           </Router>
   );
 

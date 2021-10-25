@@ -25,7 +25,7 @@ interface IProps {
     show: boolean;
     // eslint-disable-next-line @typescript-eslint/ban-types
     handleClose: Function;
-    children: React.ReactNode;
+    children?: React.ReactNode;
 }
 
 interface IState {}

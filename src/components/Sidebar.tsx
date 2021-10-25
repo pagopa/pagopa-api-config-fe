@@ -4,7 +4,9 @@ import SidebarItems from "./SidebarItems";
 
 interface IProps {
     history: {
-        location: any;
+        location: {
+            pathname: string;
+        };
         push(url: string): void;
     };
 }
@@ -12,6 +14,10 @@ interface IProps {
 interface IState {}
 
 export default class Sidebar extends React.Component<IProps, IState> {
+    constructor(props: IProps) {
+        super(props);
+    }
+
     render(): React.ReactNode {
 
         const location = this.props.history.location;

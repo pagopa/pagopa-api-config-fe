@@ -41,6 +41,8 @@ stages:
       - job: make_build
         steps:
           - template: templates/node-job-setup/template.yaml@pagopaCommons
+          - script: yarn generate
+            displayName: 'Generate api client'
           - script: yarn build
             displayName: 'Build'
 
@@ -50,6 +52,8 @@ stages:
       - job: lint
         steps:
           - template: templates/node-job-setup/template.yaml@pagopaCommons
+          - script: yarn generate
+            displayName: 'Generate api client'
           - script: yarn lint
             displayName: 'Lint'
 
@@ -83,6 +87,8 @@ stages:
           #            workingDirectory: pagopa-api-config-fe
           #            displayName: 'Unit tests exec'
 
+          - script: yarn generate
+            displayName: 'Generate api client'
           - script: yarn test
             displayName: 'Unit tests exec'
 
@@ -95,6 +101,9 @@ stages:
 
 #          - bash: |
 #              git fetch && git checkout PCFG-57-setup-pipeline-devops
+
+          - script: git branch
+            displayName: 'Branch identification'
 
           - script: git branch
             displayName: 'Branch identification'
