@@ -1,6 +1,6 @@
 import React from "react";
 import {Alert, Breadcrumb, Card, Form, Table} from "react-bootstrap";
-import {FaSpinner} from "react-icons/fa";
+import {FaCheck, FaSpinner, FaTimes} from "react-icons/fa";
 import {apiClient} from "../../util/apiClient";
 
 interface IProps {
@@ -15,6 +15,7 @@ interface IState {
     code: string;
     creditorInstitution: any;
     ibanList: [];
+    stationList: [];
 }
 
 export default class CreditorInstitution extends React.Component<IProps, IState> {
@@ -27,13 +28,12 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
             isLoading: true,
             code: "",
             creditorInstitution: {},
-            ibanList: []
+            ibanList: [],
+            stationList: []
         };
     }
 
-    componentDidMount(): void {
-        const code = this.props.match.params.code;
-        this.setState({isError: false});
+    getCreditorInstitution(code: string): void {
         apiClient.getCreditorInstitution({
             ApiKey: "",
             creditorinstitutioncode: code
@@ -46,12 +46,14 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
             //     this.setState({isError: true});
             // }
         })
-        .catch((err: any) => {
-            console.error("ERR", err);
-            this.setState({isError: true});
-        })
-        .finally(() => this.setState({isLoading: false}));
+                .catch((err: any) => {
+                    console.error("ERR", err);
+                    this.setState({isError: true});
+                })
+                .finally(() => this.setState({isLoading: false}));
+    }
 
+    getIbans(code: string): void {
         apiClient.getCreditorInstitutionsIbans({
             ApiKey: "",
             creditorinstitutioncode: code
@@ -64,10 +66,38 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
             //     this.setState({isError: true});
             // }
         })
+                .catch((err: any) => {
+                    console.error("ERR", err);
+                    this.setState({isError: true});
+                });
+    }
+
+    getStations(code: string): void {
+        apiClient.getCreditorInstitutionStations({
+            ApiKey: "",
+            creditorinstitutioncode: code
+        }).then((response: any) => {
+            console.log("STATIONS", response);
+            if (response.value.status === 200) {
+                this.setState({stationList: response.value.value.stations_list});
+            }
+            // else {
+            //     this.setState({isError: true});
+            // }
+        })
         .catch((err: any) => {
             console.error("ERR", err);
             this.setState({isError: true});
         });
+    }
+
+    componentDidMount(): void {
+        const code: string = this.props.match.params.code as string;
+        this.setState({isError: false});
+        this.getCreditorInstitution(code);
+        this.getIbans(code);
+        this.getStations(code);
+
     }
 
     render(): React.ReactNode {
@@ -79,13 +109,40 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
         this.state.ibanList.map((item: any, index: number) => {
             const row = (
                     <tr key={index}>
-                         <td>{item.iban}</td>
-                         <td>{item.validity_date.toLocaleDateString()}</td>
-                         <td>{item.publication_date.toLocaleDateString()}</td>
-                     </tr>
-             );
-             ibanList.push(row);
+                        <td>{item.iban}</td>
+                        <td>{item.validity_date.toLocaleDateString()}</td>
+                        <td>{item.publication_date.toLocaleDateString()}</td>
+                    </tr>
+            );
+            ibanList.push(row);
         });
+
+        const stationList: any = [];
+
+        this.state.stationList.map((item: any, index: number) => {
+            const row = (
+                    <tr key={index}>
+                        <td>{item.station_code}</td>
+                        <td className="text-center">
+                        { item.enabled && <FaCheck className="text-success" /> }
+                        { !item.enabled && <FaTimes className="text-danger" /> }
+                        </td>
+                        <td className="text-center">{item.application_code}</td>
+                        <td className="text-center">{item.segregation_code}</td>
+                        <td className="text-center">{item.version}</td>
+                        <td className="text-center">
+                            { item.mod4 && <FaCheck className="text-success" /> }
+                            { !item.mod4 && <FaTimes className="text-danger" /> }
+                        </td>
+                        <td className="text-center">
+                            { item.broadcast && <FaCheck className="text-success" /> }
+                            { !item.broadcast && <FaTimes className="text-danger" /> }
+                        </td>
+                    </tr>
+            );
+            stationList.push(row);
+        });
+
 
         return (
                 <div className="container-fluid creditor-institutions">
@@ -148,6 +205,7 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
                                                 <Form.Group controlId="tax" className="col-md-2 custom-control-box">
                                                     <Form.Check
                                                             custom
+                                                            disabled
                                                             defaultChecked={this.state.creditorInstitution.psp_payment === true}
                                                             type={'checkbox'}
                                                             id={'psp-payment'}
@@ -157,6 +215,7 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
                                                 <Form.Group controlId="tax" className="col-md-2 custom-control-box">
                                                     <Form.Check
                                                             custom
+                                                            disabled
                                                             defaultChecked={this.state.creditorInstitution.reporting_ftp === true}
                                                             type={'checkbox'}
                                                             id={'reporting-ftp'}
@@ -166,6 +225,7 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
                                                 <Form.Group controlId="tax" className="col-md-2 custom-control-box">
                                                     <Form.Check
                                                             custom
+                                                            disabled
                                                             defaultChecked={this.state.creditorInstitution.reporting_zip === true}
                                                             type={'checkbox'}
                                                             id={'reporting-zip'}
@@ -190,6 +250,33 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
                                                                 </thead>
                                                                 <tbody>
                                                                 {ibanList}
+                                                                </tbody>
+                                                            </Table>
+                                                        </Card.Body>
+                                                    </Card>
+                                                </div>
+                                            </div>
+                                            <div className="row mt-3">
+                                                <div className="col-md-12">
+                                                    <Card>
+                                                        <Card.Header>
+                                                            <h5>Stazioni</h5>
+                                                        </Card.Header>
+                                                        <Card.Body>
+                                                            <Table hover responsive size="sm" >
+                                                                <thead>
+                                                                <tr>
+                                                                    <th className="">Codice</th>
+                                                                    <th className="text-center">Abilitata</th>
+                                                                    <th className="text-center">Application Code</th>
+                                                                    <th className="text-center">Codice Segregazione</th>
+                                                                    <th className="text-center">Versione</th>
+                                                                    <th className="text-center">Modello 4</th>
+                                                                    <th className="text-center">Broadcast</th>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                {stationList}
                                                                 </tbody>
                                                             </Table>
                                                         </Card.Body>

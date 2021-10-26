@@ -58,6 +58,10 @@ $text-color: #17324d;
 
 @import "fonts";
 
+.text-success {
+  color: #28a745 !important;
+}
+
 .spinner {
   animation: spin infinite 5s linear;
 
