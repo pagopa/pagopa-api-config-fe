@@ -1,6 +1,6 @@
 import React from "react";
-import {Alert, Breadcrumb, Card, Form, Table} from "react-bootstrap";
-import {FaCheck, FaSpinner, FaTimes} from "react-icons/fa";
+import {Alert, Badge, Breadcrumb, Card, Form, Table} from "react-bootstrap";
+import {FaCheck, FaInfoCircle, FaSpinner, FaTimes} from "react-icons/fa";
 import {apiClient} from "../../util/apiClient";
 
 interface IProps {
@@ -16,6 +16,7 @@ interface IState {
     creditorInstitution: any;
     ibanList: [];
     stationList: [];
+    encodings: [];
 }
 
 export default class CreditorInstitution extends React.Component<IProps, IState> {
@@ -29,7 +30,8 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
             code: "",
             creditorInstitution: {},
             ibanList: [],
-            stationList: []
+            stationList: [],
+            encodings: []
         };
     }
 
@@ -38,19 +40,20 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
             ApiKey: "",
             creditorinstitutioncode: code
         }).then((response: any) => {
-            console.log("CODE", response);
+
             if (response.value.status === 200) {
                 this.setState({creditorInstitution: response.value.value});
             }
             // else {
             //     this.setState({isError: true});
             // }
+            console.log("CODE", response, this.state.creditorInstitution);
         })
-                .catch((err: any) => {
-                    console.error("ERR", err);
-                    this.setState({isError: true});
-                })
-                .finally(() => this.setState({isLoading: false}));
+        .catch((err: any) => {
+            console.error("ERR", err);
+            this.setState({isError: true});
+        })
+        .finally(() => this.setState({isLoading: false}));
     }
 
     getIbans(code: string): void {
@@ -66,10 +69,10 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
             //     this.setState({isError: true});
             // }
         })
-                .catch((err: any) => {
-                    console.error("ERR", err);
-                    this.setState({isError: true});
-                });
+        .catch((err: any) => {
+            console.error("ERR", err);
+            this.setState({isError: true});
+        });
     }
 
     getStations(code: string): void {
@@ -91,13 +94,32 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
         });
     }
 
+    getEncodings(code: string): void {
+        apiClient.getCreditorInstitutionEncodings({
+            ApiKey: "",
+            creditorinstitutioncode: code
+        }).then((response: any) => {
+            console.log("ENCODINGS", response);
+            if (response.value.status === 200) {
+                this.setState({encodings: response.value.value.encodings});
+            }
+            // else {
+            //     this.setState({isError: true});
+            // }
+        })
+        .catch((err: any) => {
+            console.error("ERR", err);
+            this.setState({isError: true});
+        });
+    }
+
     componentDidMount(): void {
         const code: string = this.props.match.params.code as string;
         this.setState({isError: false});
         this.getCreditorInstitution(code);
         this.getIbans(code);
         this.getStations(code);
-
+        this.getEncodings(code);
     }
 
     render(): React.ReactNode {
@@ -105,7 +127,6 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
         const isLoading = this.state.isLoading;
 
         const ibanList: any = [];
-
         this.state.ibanList.map((item: any, index: number) => {
             const row = (
                     <tr key={index}>
@@ -118,7 +139,6 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
         });
 
         const stationList: any = [];
-
         this.state.stationList.map((item: any, index: number) => {
             const row = (
                     <tr key={index}>
@@ -143,6 +163,20 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
             stationList.push(row);
         });
 
+        const encodingList: any = [];
+        this.state.encodings.map((item: any, index: number) => {
+            const row = (
+                    <tr key={index}>
+                        <td>
+                            {item.code_type}
+                            {item.code_type.toUpperCase() === "BARCODE_GS1_128" && <Badge className="ml-2" variant="danger">DEPRECATO</Badge>}
+                        </td>
+                        <td>{item.code}</td>
+                    </tr>
+            );
+            encodingList.push(row);
+        });
+
 
         return (
                 <div className="container-fluid creditor-institutions">
@@ -159,7 +193,7 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
                                         Informazioni non disponibili!
                                     </Alert>
                             )}
-                            {isLoading &&  ( <FaSpinner className="spinner" /> )}
+                            {isLoading &&  ( <div className="text-center"><FaSpinner className="spinner" size={28} /></div> )}
                             {
                                 !isLoading && (
                                         <>
@@ -171,7 +205,7 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
                                             <div className="row">
                                                 <Form.Group controlId="code" className="col-md-3">
                                                     <Form.Label>Codice</Form.Label>
-                                                    <Form.Control type="code" placeholder="codice" value={this.state.creditorInstitution.creditor_institution_code} readOnly />
+                                                    <Form.Control type="code" placeholder="-" value={this.state.creditorInstitution.creditor_institution_code} readOnly />
                                                 </Form.Group>
                                                 <Form.Group controlId="enabled" className="col-md-3">
                                                     <Form.Label>Stato</Form.Label>
@@ -184,23 +218,23 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
                                             <div className="row">
                                                 <Form.Group controlId="location" className="col-md-4">
                                                     <Form.Label>Indirizzo</Form.Label>
-                                                    <Form.Control type="location" placeholder="indirizzo" value={this.state.creditorInstitution.address?.location} readOnly />
+                                                    <Form.Control type="location" placeholder="-" value={this.state.creditorInstitution.address?.location} readOnly />
                                                 </Form.Group>
                                                 <Form.Group controlId="city" className="col-md-3">
                                                     <Form.Label>Città</Form.Label>
-                                                    <Form.Control type="city" placeholder="città" value={this.state.creditorInstitution.address?.city} readOnly />
+                                                    <Form.Control type="city" placeholder="-" value={this.state.creditorInstitution.address?.city} readOnly />
                                                 </Form.Group>
                                                 <Form.Group controlId="country_code" className="col-md-2">
                                                     <Form.Label>Provincia</Form.Label>
-                                                    <Form.Control type="country_code" placeholder="provincia" value={this.state.creditorInstitution.address?.country_code} readOnly />
+                                                    <Form.Control type="country_code" placeholder="-" value={this.state.creditorInstitution.address?.country_code} readOnly />
                                                 </Form.Group>
                                                 <Form.Group controlId="cap" className="col-md-2">
                                                     <Form.Label>CAP</Form.Label>
-                                                    <Form.Control type="cap" placeholder="cap" value={this.state.creditorInstitution.address?.zip_code} readOnly />
+                                                    <Form.Control type="cap" placeholder="-" value={this.state.creditorInstitution.address?.zip_code} readOnly />
                                                 </Form.Group>
                                                 <Form.Group controlId="tax" className="col-md-4">
                                                     <Form.Label>Domicilio fiscale</Form.Label>
-                                                    <Form.Control type="tax" placeholder="tax domicile" value={this.state.creditorInstitution.address?.tax_domicile} readOnly />
+                                                    <Form.Control type="tax" placeholder="-" value={this.state.creditorInstitution.address?.tax_domicile} readOnly />
                                                 </Form.Group>
                                                 <Form.Group controlId="tax" className="col-md-2 custom-control-box">
                                                     <Form.Check
@@ -237,21 +271,53 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
                                                 <div className="col-md-12">
                                                     <Card>
                                                         <Card.Header>
+                                                            <h5>Codifiche</h5>
+                                                        </Card.Header>
+                                                        <Card.Body>
+                                                            {Object.keys(encodingList).length === 0 &&  (
+                                                                    <Alert className={'col-md-12'} variant={"warning"} ><FaInfoCircle className="mr-1" />Codifiche non presenti</Alert>
+                                                            )}
+                                                            {Object.keys(encodingList).length > 0 &&
+															<Table hover responsive size="sm">
+																<thead>
+																<tr>
+																	<th className="">Tipo</th>
+																	<th className="">Codice</th>
+																</tr>
+																</thead>
+																<tbody>
+                                                                {encodingList}
+																</tbody>
+															</Table>
+                                                            }
+                                                        </Card.Body>
+                                                    </Card>
+                                                </div>
+                                            </div>
+                                            <div className="row mt-3">
+                                                <div className="col-md-12">
+                                                    <Card>
+                                                        <Card.Header>
                                                             <h5>Iban</h5>
                                                         </Card.Header>
                                                         <Card.Body>
-                                                            <Table hover responsive size="sm" >
-                                                                <thead>
-                                                                <tr>
-                                                                    <th className="">Iban</th>
-                                                                    <th className="">Validità</th>
-                                                                    <th className="">Pubblicazione</th>
-                                                                </tr>
-                                                                </thead>
-                                                                <tbody>
+                                                            {Object.keys(ibanList).length === 0 &&  (
+                                                                    <Alert className={'col-md-12'} variant={"warning"} ><FaInfoCircle className="mr-1" />Iban non presenti</Alert>
+                                                            )}
+                                                            {Object.keys(ibanList).length > 0 &&
+															<Table hover responsive size="sm">
+																<thead>
+																<tr>
+																	<th className="">Iban</th>
+																	<th className="">Validità</th>
+																	<th className="">Pubblicazione</th>
+																</tr>
+																</thead>
+																<tbody>
                                                                 {ibanList}
-                                                                </tbody>
-                                                            </Table>
+																</tbody>
+															</Table>
+                                                            }
                                                         </Card.Body>
                                                     </Card>
                                                 </div>
@@ -263,22 +329,27 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
                                                             <h5>Stazioni</h5>
                                                         </Card.Header>
                                                         <Card.Body>
-                                                            <Table hover responsive size="sm" >
-                                                                <thead>
-                                                                <tr>
-                                                                    <th className="">Codice</th>
-                                                                    <th className="text-center">Abilitata</th>
-                                                                    <th className="text-center">Application Code</th>
-                                                                    <th className="text-center">Codice Segregazione</th>
-                                                                    <th className="text-center">Versione</th>
-                                                                    <th className="text-center">Modello 4</th>
-                                                                    <th className="text-center">Broadcast</th>
-                                                                </tr>
-                                                                </thead>
-                                                                <tbody>
+                                                            {Object.keys(stationList).length === 0 &&  (
+                                                                    <Alert className={'col-md-12'} variant={"warning"} ><FaInfoCircle className="mr-1" />Stazioni non presenti</Alert>
+                                                            )}
+                                                            {Object.keys(stationList).length > 0 &&
+															<Table hover responsive size="sm">
+																<thead>
+																<tr>
+																	<th className="">Codice</th>
+																	<th className="text-center">Abilitata</th>
+																	<th className="text-center">Application Code</th>
+																	<th className="text-center">Codice Segregazione</th>
+																	<th className="text-center">Versione</th>
+																	<th className="text-center">Modello 4</th>
+																	<th className="text-center">Broadcast</th>
+																</tr>
+																</thead>
+																<tbody>
                                                                 {stationList}
-                                                                </tbody>
-                                                            </Table>
+																</tbody>
+															</Table>
+                                                            }
                                                         </Card.Body>
                                                     </Card>
                                                 </div>
