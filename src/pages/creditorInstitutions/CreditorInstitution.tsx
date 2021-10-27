@@ -46,9 +46,11 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
             // else {
             //     this.setState({isError: true});
             // }
+            // eslint-disable-next-line no-console
             console.log("CODE", response, this.state.creditorInstitution);
         })
         .catch((err: any) => {
+            // eslint-disable-next-line no-console
             console.error("ERR", err);
             this.setState({isError: true});
         })
@@ -60,6 +62,7 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
             ApiKey: "",
             creditorinstitutioncode: code
         }).then((response: any) => {
+            // eslint-disable-next-line no-console
             console.log("IBAN", response);
             if (response.right.status === 200) {
                 this.setState({ibanList: response.right.value.ibans});
@@ -69,6 +72,7 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
             // }
         })
         .catch((err: any) => {
+            // eslint-disable-next-line no-console
             console.error("ERR", err);
             this.setState({isError: true});
         });
@@ -79,6 +83,7 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
             ApiKey: "",
             creditorinstitutioncode: code
         }).then((response: any) => {
+            // eslint-disable-next-line no-console
             console.log("STATIONS", response);
             if (response.right.status === 200) {
                 this.setState({stationList: response.right.value.stations_list});
@@ -88,6 +93,7 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
             // }
         })
         .catch((err: any) => {
+            // eslint-disable-next-line no-console
             console.error("ERR", err);
             this.setState({isError: true});
         });
@@ -98,6 +104,7 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
             ApiKey: "",
             creditorinstitutioncode: code
         }).then((response: any) => {
+            // eslint-disable-next-line no-console
             console.log("ENCODINGS", response);
             if (response.right.status === 200) {
                 this.setState({encodings: response.right.value.encodings});
@@ -107,6 +114,7 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
             // }
         })
         .catch((err: any) => {
+            // eslint-disable-next-line no-console
             console.error("ERR", err);
             this.setState({isError: true});
         });
