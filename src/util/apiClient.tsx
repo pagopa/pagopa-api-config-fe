@@ -19,8 +19,8 @@ const fetchWithTimeout = toFetch(
 const fetchApi: typeof fetchWithTimeout = (fetch as any) as typeof fetchWithTimeout;
 
 export const apiClient = createClient({
-    baseUrl: "http://localhost:8080",
-    basePath: "/apiconfig/api/v1",
+    baseUrl: process.env.HOST as string,
+    basePath: process.env.BASEPATH,
     fetchApi
 });
 
