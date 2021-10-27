@@ -40,9 +40,8 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
             ApiKey: "",
             creditorinstitutioncode: code
         }).then((response: any) => {
-
-            if (response.value.status === 200) {
-                this.setState({creditorInstitution: response.value.value});
+            if (response.right.status === 200) {
+                this.setState({creditorInstitution: response.right.value});
             }
             // else {
             //     this.setState({isError: true});
@@ -62,8 +61,8 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
             creditorinstitutioncode: code
         }).then((response: any) => {
             console.log("IBAN", response);
-            if (response.value.status === 200) {
-                this.setState({ibanList: response.value.value.ibans});
+            if (response.right.status === 200) {
+                this.setState({ibanList: response.right.value.ibans});
             }
             // else {
             //     this.setState({isError: true});
@@ -81,8 +80,8 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
             creditorinstitutioncode: code
         }).then((response: any) => {
             console.log("STATIONS", response);
-            if (response.value.status === 200) {
-                this.setState({stationList: response.value.value.stations_list});
+            if (response.right.status === 200) {
+                this.setState({stationList: response.right.value.stations_list});
             }
             // else {
             //     this.setState({isError: true});
@@ -100,8 +99,8 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
             creditorinstitutioncode: code
         }).then((response: any) => {
             console.log("ENCODINGS", response);
-            if (response.value.status === 200) {
-                this.setState({encodings: response.value.value.encodings});
+            if (response.right.status === 200) {
+                this.setState({encodings: response.right.value.encodings});
             }
             // else {
             //     this.setState({isError: true});
