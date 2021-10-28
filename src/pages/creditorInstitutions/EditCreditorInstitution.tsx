@@ -49,6 +49,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
         this.handleChange = this.handleChange.bind(this);
         this.save = this.save.bind(this);
         this.discard = this.discard.bind(this);
+        this.createEncoding = this.createEncoding.bind(this);
     }
 
     getCreditorInstitution(code: string): void {
@@ -190,6 +191,10 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
 
     discard(section: string) {
         this.setState({[section]: Object.assign({}, this.state.backup[section])});
+    }
+
+    createEncoding(): void {
+        console.log("TODO");
     }
 
     render(): React.ReactNode {
@@ -514,6 +519,16 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
 															</Table>
                                                             }
                                                         </Card.Body>
+                                                        <Card.Footer>
+                                                            <div className="row">
+                                                                <div className="col-md-12">
+                                                                    <Button className="float-md-right" onClick={() => { this.createEncoding(); }} >
+                                                                        Nuovo <FaPlus />
+                                                                    </Button>
+                                                                </div>
+
+                                                            </div>
+                                                        </Card.Footer>
                                                     </Card>
                                                 </div>
                                             </div>
@@ -574,6 +589,15 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
 															</Table>
                                                             }
                                                         </Card.Body>
+                                                        <Card.Footer>
+                                                            <div className="row">
+                                                                <div className="col-md-12">
+                                                                    <Button className="float-md-right" onClick={() => { this.createEncoding(); }} >
+                                                                        Nuovo <FaPlus />
+                                                                    </Button>
+                                                                </div>
+                                                            </div>
+                                                        </Card.Footer>
                                                     </Card>
                                                 </div>
                                             </div>
