@@ -13,7 +13,7 @@
     "lint": "eslint -f json -o eslint-report.json . -c .eslintrc.js --ext .ts,.tsx --cache",
     "lint:local": "eslint . -c .eslintrc.js --ext .ts,.tsx --cache",
     "lint-autofix": "eslint . -c .eslintrc.js --ext .ts,.tsx --fix",
-    "generate:api": "gen-api-models --api-spec swagger.json --no-strict --out-dir generated/api --request-types --response-decoders --client",
+    "generate:api": "rm -f swagger.json && wget https://raw.githubusercontent.com/pagopa/pagopa-api-config/main/openapi/swagger.json && sed -i '' 's/\\\\/\\\\\\\\/g' swagger.json && gen-api-models --api-spec swagger.json --no-strict --out-dir generated/api --request-types --response-decoders --client",
     "generate": "npm-run-all generate:*",
     "prettify": "prettier --write \"./**/*.{ts,tsx}\""
   },
