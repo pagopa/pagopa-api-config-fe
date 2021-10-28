@@ -2,6 +2,7 @@ import React from "react";
 import {Alert, Badge, Breadcrumb, Card, Form, Table} from "react-bootstrap";
 import {FaCheck, FaInfoCircle, FaSpinner, FaTimes} from "react-icons/fa";
 import {apiClient} from "../../util/apiClient";
+import {CreditorInstitutionDetails} from "../../../generated/api/CreditorInstitutionDetails";
 
 interface IProps {
     match: {
@@ -13,7 +14,7 @@ interface IState {
     isError: boolean;
     isLoading: boolean;
     code: string;
-    creditorInstitution: any;
+    creditorInstitution: CreditorInstitutionDetails;
     ibanList: [];
     stationList: [];
     encodings: [];
@@ -28,7 +29,7 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
             isError: false,
             isLoading: true,
             code: "",
-            creditorInstitution: {},
+            creditorInstitution: {} as CreditorInstitutionDetails,
             ibanList: [],
             stationList: [],
             encodings: []
@@ -43,11 +44,11 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
             if (response.right.status === 200) {
                 this.setState({creditorInstitution: response.right.value});
             }
-            // else {
-            //     this.setState({isError: true});
-            // }
+            else {
+                this.setState({isError: true});
+            }
             // eslint-disable-next-line no-console
-            console.log("CODE", response, this.state.creditorInstitution);
+            console.log("CODE", response);
         })
         .catch((err: any) => {
             // eslint-disable-next-line no-console
@@ -67,9 +68,9 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
             if (response.right.status === 200) {
                 this.setState({ibanList: response.right.value.ibans});
             }
-            // else {
-            //     this.setState({isError: true});
-            // }
+            else {
+                this.setState({isError: true});
+            }
         })
         .catch((err: any) => {
             // eslint-disable-next-line no-console
@@ -88,9 +89,9 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
             if (response.right.status === 200) {
                 this.setState({stationList: response.right.value.stations_list});
             }
-            // else {
-            //     this.setState({isError: true});
-            // }
+            else {
+                this.setState({isError: true});
+            }
         })
         .catch((err: any) => {
             // eslint-disable-next-line no-console
@@ -109,9 +110,9 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
             if (response.right.status === 200) {
                 this.setState({encodings: response.right.value.encodings});
             }
-            // else {
-            //     this.setState({isError: true});
-            // }
+            else {
+                this.setState({isError: true});
+            }
         })
         .catch((err: any) => {
             // eslint-disable-next-line no-console
@@ -133,6 +134,7 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
         const isError = this.state.isError;
         const isLoading = this.state.isLoading;
 
+        // create rows for ibans table
         const ibanList: any = [];
         this.state.ibanList.map((item: any, index: number) => {
             const row = (
@@ -145,6 +147,7 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
             ibanList.push(row);
         });
 
+        // create rows for stations table
         const stationList: any = [];
         this.state.stationList.map((item: any, index: number) => {
             const row = (
@@ -170,6 +173,7 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
             stationList.push(row);
         });
 
+        // create rows for encodings table
         const encodingList: any = [];
         this.state.encodings.map((item: any, index: number) => {
             const row = (
