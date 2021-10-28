@@ -16,6 +16,7 @@ interface IState {
     isLoading: boolean;
     code: string;
     creditorInstitution: CreditorInstitutionDetails;
+    edit: boolean;
     ibanList: [];
     stationList: [];
     encodings: [];
@@ -45,6 +46,7 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
                 reporting_ftp: false,
                 reporting_zip: false,
             } as CreditorInstitutionDetails,
+            edit: false,
             ibanList: [],
             stationList: [],
             encodings: []
