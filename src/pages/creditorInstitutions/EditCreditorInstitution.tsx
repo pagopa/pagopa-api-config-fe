@@ -3,6 +3,7 @@ import {Alert, Badge, Breadcrumb, Button, Card, Form, Table} from "react-bootstr
 import {FaCheck, FaInfoCircle, FaPlus, FaSpinner, FaTimes} from "react-icons/fa";
 import {apiClient} from "../../util/apiClient";
 import {CreditorInstitutionDetails} from "../../../generated/api/CreditorInstitutionDetails";
+import {toast} from "react-toastify";
 
 interface IProps {
     match: {
@@ -153,7 +154,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
 
     componentDidMount(): void {
         const code: string = this.props.match.params.code as string;
-        this.setState({isError: false});
+        this.setState({code: code, isError: false});
         this.getCreditorInstitution(code);
         this.getIbans(code);
         this.getStations(code);
@@ -165,9 +166,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
         let creditorInstitution: CreditorInstitutionDetails = this.state.creditorInstitution;
         if (obj === "creditorInstitution") {
             // eslint-disable-next-line functional/immutable-data
-            console.log("TAR", event.target.name, event.target.value);
             creditorInstitution[event.target.name] = event.target.type === "checkbox" ? event.target.checked : event.target.value;
-            console.log("TAR1", event.target.name, event.target.value, creditorInstitution[event.target.name]);
         }
         else {
             // eslint-disable-next-line functional/immutable-data
@@ -177,19 +176,36 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
     }
 
     save(section: string) {
-        console.log("save", section);
         apiClient.updateCreditorInstitution({
             ApiKey: "",
             creditorinstitutioncode: this.state.code,
             body: this.state.creditorInstitution
         }).then((response: any) => {
             console.error("SAVE", response);
+            if (response.right.status === 200) {
+                toast.info("Modifica avvenuta con successo.");
+                this.setState({creditorInstitution: response.right.value});
+                this.setState({creditorInstitution: response.right.value});
+                this.setState({ciName: response.right.value.business_name});
+
+                // eslint-disable-next-line functional/no-let
+                let backup = {...this.state.backup};
+                backup.creditorInstitution = {...response.right.value};
+                this.setState({backup});
+            }
+            else {
+                // eslint-disable-next-line no-prototype-builtins
+                const message = (response.right.hasOwnProperty("title")) ? response.right.value.title : "Operazione non avvenuta a causa di un errore";
+                toast.error(message, {theme: "colored"});
+            }
         }).catch((error: any) => {
-            console.error("ERROR", error);
+            toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
         });
+
     }
 
     discard(section: string) {
+        console.log("DISCARD", this.state.backup);
         this.setState({[section]: Object.assign({}, this.state.backup[section])});
     }
 
@@ -522,7 +538,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                                         <Card.Footer>
                                                             <div className="row">
                                                                 <div className="col-md-12">
-                                                                    <Button className="float-md-right" onClick={() => { this.createEncoding(); }} >
+                                                                    <Button className="float-md-right" onClick={() => { this.createEncoding(); }} disabled>
                                                                         Nuovo <FaPlus />
                                                                     </Button>
                                                                 </div>
@@ -592,7 +608,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                                         <Card.Footer>
                                                             <div className="row">
                                                                 <div className="col-md-12">
-                                                                    <Button className="float-md-right" onClick={() => { this.createEncoding(); }} >
+                                                                    <Button className="float-md-right" onClick={() => { this.createEncoding(); }} disabled>
                                                                         Nuovo <FaPlus />
                                                                     </Button>
                                                                 </div>
