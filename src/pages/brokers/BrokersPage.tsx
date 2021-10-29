@@ -1,7 +1,7 @@
 import React from 'react';
 import {toast} from "react-toastify";
 import {OverlayTrigger, Table, Tooltip} from "react-bootstrap";
-import {FaCheck, FaEye, FaTimes, FaTrash} from "react-icons/all";
+import {FaCheck, FaEye, FaTimes, FaTrash} from "react-icons/fa";
 import {Brokers} from "../../../generated/api/Brokers";
 import {Broker} from "../../../generated/api/Broker";
 import {apiClient} from "../../util/apiClient";
