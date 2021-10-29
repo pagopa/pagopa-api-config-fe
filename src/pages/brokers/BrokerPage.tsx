@@ -1,9 +1,14 @@
 import React from 'react';
 
 export default class BrokerPage extends React.Component {
-    render() {
+
+    componentDidMount(): void {
+        // TODO retrieve details
+    }
+
+    render(): React.ReactNode {
         return (
-                <h2>Intermediario EC</h2>
+            <div> broker </div>
         );
     }
 }

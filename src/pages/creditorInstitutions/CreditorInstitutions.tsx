@@ -141,12 +141,10 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
                     {!ci.enabled && <FaTimes className="text-danger" /> }
                 </td>
                 <td className="text-right">
-                    {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
-                    <OverlayTrigger placement="top" overlay={<Tooltip id={"tooltip-details-" + index}>Dettagli</Tooltip>}>
+                    <OverlayTrigger placement="top" overlay={<Tooltip id={`tooltip-details-${index}`}>Dettagli</Tooltip>}>
                         <FaEye role="button" className="mr-3" onClick={() => this.handleDetails(ci.creditor_institution_code)} />
                     </OverlayTrigger>
-                    {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
-                    <OverlayTrigger placement="top" overlay={<Tooltip id={"tooltip-delete-" + index}>Elimina</Tooltip>}>
+                    <OverlayTrigger placement="top" overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
                         <FaTrash role="button" className="mr-3" onClick={() => this.handleDelete(ci, index)} />
                     </OverlayTrigger>
                 </td>
@@ -172,7 +170,7 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
                                             <th className="fixed-td-width">Ente creditore</th>
                                             <th className="fixed-td-width">Codice</th>
                                             <th className="text-center">Abilitato</th>
-                                            <th></th>
+                                            <th/>
                                         </tr>
                                         </thead>
                                         <tbody>

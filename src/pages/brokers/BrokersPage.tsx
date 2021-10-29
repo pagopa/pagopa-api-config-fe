@@ -1,12 +1,13 @@
 import React from 'react';
+import {toast} from "react-toastify";
+import {OverlayTrigger, Table, Tooltip} from "react-bootstrap";
+import {FaCheck, FaEye, FaTimes, FaTrash} from "react-icons/all";
 import {Brokers} from "../../../generated/api/Brokers";
 import {Broker} from "../../../generated/api/Broker";
 import {apiClient} from "../../util/apiClient";
-import {toast} from "react-toastify";
-import {OverlayTrigger, Table, Tooltip} from "react-bootstrap";
 import Paginator from "../../components/Paginator";
-import {FaCheck, FaEye, FaTimes, FaTrash} from "react-icons/all";
 import ConfirmationModal from "../../components/ConfirmationModal";
+import {PageInfo} from "../../../generated/api/PageInfo";
 
 
 interface IProps {
@@ -30,6 +31,8 @@ export default class BrokersPage extends React.Component<IProps, IState> {
             showDeleteModal: false,
             pageIndex: 0
         };
+
+        this.handlePageChange = this.handlePageChange.bind(this);
     }
 
     componentDidMount(): void {
@@ -42,9 +45,9 @@ export default class BrokersPage extends React.Component<IProps, IState> {
         apiClient.getBrokers({
             ApiKey: "",
             limit: 10,
-            page: page
+            page
         })
-            .then(response => {
+            .then((response: any) => {
                 this.setState({
                     body: response.value.value,
                     pageIndex: page
@@ -68,7 +71,13 @@ export default class BrokersPage extends React.Component<IProps, IState> {
     }
 
     removeBroker() {
-        this.getPage(this.state.pageIndex);
+        if (this.state.body?.page_info.items_found === 1) {
+            // if the last one in the page was removed, get previous page...
+            this.getPage(this.state.pageIndex - 1);
+        } else {
+            // ... else stay in that page
+            this.getPage(this.state.pageIndex);
+        }
     }
 
     hideDeleteModal = (status: string) => {
@@ -78,7 +87,7 @@ export default class BrokersPage extends React.Component<IProps, IState> {
                 ApiKey: "",
                 brokercode: this.state.brokerToDelete!.broker_code
             })
-                .then(res => {
+                .then((res: any) => {
                     if (res.value.status === 200) {
                         toast.info("Rimozione avvenuta con successo");
                         this.removeBroker();
@@ -152,8 +161,8 @@ export default class BrokersPage extends React.Component<IProps, IState> {
                                     </tbody>
                                 </Table>
 
-                                <Paginator pageInfo={this.state.body?.page_info}
-                                           onPageChanged={this.handlePageChange.bind(this)}/>
+                                <Paginator pageInfo={this.state.body?.page_info as PageInfo}
+                                           onPageChanged={this.handlePageChange}/>
                             </>
                         )
                     }
@@ -161,7 +170,7 @@ export default class BrokersPage extends React.Component<IProps, IState> {
             </div>
 
             <ConfirmationModal show={this.state.showDeleteModal} handleClose={this.hideDeleteModal}>
-                <p>Sei sicuro di voler eliminare il seguente ente creditore?</p>
+                <p>Sei sicuro di voler eliminare il seguente intermediario?</p>
                 <ul>
                     <li>{this.state.brokerToDelete?.description} - {this.state.brokerToDelete?.broker_code}</li>
                 </ul>
