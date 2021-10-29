@@ -1,9 +1,9 @@
 import React from "react";
 import {Alert, Badge, Breadcrumb, Button, Card, Form, Table} from "react-bootstrap";
 import {FaCheck, FaInfoCircle, FaPlus, FaSpinner, FaTimes} from "react-icons/fa";
+import {toast} from "react-toastify";
 import {apiClient} from "../../util/apiClient";
 import {CreditorInstitutionDetails} from "../../../generated/api/CreditorInstitutionDetails";
-import {toast} from "react-toastify";
 
 interface IProps {
     match: {
@@ -53,6 +53,12 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
         this.createEncoding = this.createEncoding.bind(this);
     }
 
+    updateBackup(section: string, data: CreditorInstitutionDetails | any) {
+        let backup = {...this.state.backup};
+        backup[section] = Object.assign({}, data);
+        this.setState({backup});
+    }
+
     getCreditorInstitution(code: string): void {
         apiClient.getCreditorInstitution({
             ApiKey: "",
@@ -61,16 +67,11 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
             if (response.right.status === 200) {
                 this.setState({creditorInstitution: response.right.value});
                 this.setState({ciName: response.right.value.business_name});
-                let backup = {...this.state.backup};
-                backup.creditorInstitution = Object.assign({}, response.right.value);
-                this.setState({backup});
-
+                this.updateBackup("creditorInstitution", response.right.value);
             }
             else {
                 this.setState({isError: true});
             }
-            // eslint-disable-next-line no-console
-            console.log("CODE", response);
         })
         .catch((err: any) => {
             // eslint-disable-next-line no-console
@@ -85,13 +86,9 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
             ApiKey: "",
             creditorinstitutioncode: code
         }).then((response: any) => {
-            // eslint-disable-next-line no-console
-            console.log("IBAN", response);
             if (response.right.status === 200) {
                 this.setState({ibanList: response.right.value.ibans});
-                let backup = {...this.state.backup};
-                backup.ibans = response.right.value;
-                this.setState({backup});
+                this.updateBackup("ibans", response.right.value);
             }
             else {
                 this.setState({isError: true});
@@ -109,13 +106,9 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
             ApiKey: "",
             creditorinstitutioncode: code
         }).then((response: any) => {
-            // eslint-disable-next-line no-console
-            console.log("STATIONS", response);
             if (response.right.status === 200) {
                 this.setState({stationList: response.right.value.stations_list});
-                let backup = {...this.state.backup};
-                backup.stations = response.right.value;
-                this.setState({backup});
+                this.updateBackup("stations", response.right.value);
             }
             else {
                 this.setState({isError: true});
@@ -133,13 +126,9 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
             ApiKey: "",
             creditorinstitutioncode: code
         }).then((response: any) => {
-            // eslint-disable-next-line no-console
-            console.log("ENCODINGS", response);
             if (response.right.status === 200) {
                 this.setState({encodings: response.right.value.encodings});
-                let backup = {...this.state.backup};
-                backup.encodings = response.right.value;
-                this.setState({backup});
+                this.updateBackup("encodings", response.right.value);
             }
             else {
                 this.setState({isError: true});
@@ -181,17 +170,13 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
             creditorinstitutioncode: this.state.code,
             body: this.state.creditorInstitution
         }).then((response: any) => {
-            console.error("SAVE", response);
+            console.log("SAVE", response);
             if (response.right.status === 200) {
                 toast.info("Modifica avvenuta con successo.");
                 this.setState({creditorInstitution: response.right.value});
                 this.setState({creditorInstitution: response.right.value});
                 this.setState({ciName: response.right.value.business_name});
-
-                // eslint-disable-next-line functional/no-let
-                let backup = {...this.state.backup};
-                backup.creditorInstitution = {...response.right.value};
-                this.setState({backup});
+                this.updateBackup("creditorInstitution", response.right.value);
             }
             else {
                 // eslint-disable-next-line no-prototype-builtins
