@@ -8,7 +8,7 @@ export default class BrokerPage extends React.Component {
 
     render(): React.ReactNode {
         return (
-            <div> broker </div>
+            <div> Intermediari </div>
         );
     }
 }
