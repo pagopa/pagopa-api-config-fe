@@ -2,6 +2,9 @@ import React from 'react';
 import {toast} from "react-toastify";
 import {OverlayTrigger, Table, Tooltip} from "react-bootstrap";
 import {FaCheck, FaEye, FaTimes, FaTrash} from "react-icons/fa";
+import {IResponseType} from "@pagopa/ts-commons/lib/requests";
+import {Validation} from "io-ts";
+import {ProblemJson} from "@pagopa/ts-commons/lib/responses";
 import {Brokers} from "../../../generated/api/Brokers";
 import {Broker} from "../../../generated/api/Broker";
 import {apiClient} from "../../util/apiClient";
@@ -47,11 +50,26 @@ export default class BrokersPage extends React.Component<IProps, IState> {
             limit: 10,
             page
         })
-            .then((response: any) => {
-                this.setState({
-                    body: response.value.value,
-                    pageIndex: page
-                });
+            .then((response: Validation<IResponseType<number, Brokers | ProblemJson | undefined>>) => {
+                // eslint-disable-next-line no-underscore-dangle
+                switch (response._tag) {
+                    case "Right":
+                        if (response.right.status === 200) {
+                            const body = response.right.value as Brokers;
+                            this.setState({
+                                body,
+                                pageIndex: page
+                            });
+                        } else {
+                            const body = response.right.value as ProblemJson;
+                            toast.error(body.title, {theme: "colored"});
+                        }
+                        break;
+                    case "Left":
+                        toast.error("Errore", {theme: "colored"});
+                        break;
+                }
+
             })
             .catch(() => {
                 toast.error("Problema nel recuperare gli intermediari", {theme: "colored"});
@@ -87,12 +105,21 @@ export default class BrokersPage extends React.Component<IProps, IState> {
                 ApiKey: "",
                 brokercode: this.state.brokerToDelete!.broker_code
             })
-                .then((res: any) => {
-                    if (res.value.status === 200) {
-                        toast.info("Rimozione avvenuta con successo");
-                        this.removeBroker();
-                    } else {
-                        toast.error(res.value.value.title, {theme: "colored"});
+                .then((response: Validation<IResponseType<number, ProblemJson | undefined>>) => {
+                    // eslint-disable-next-line no-underscore-dangle
+                    switch (response._tag) {
+                        case "Right":
+                            if (response.right.status === 200) {
+                                toast.info("Rimozione avvenuta con successo");
+                                this.removeBroker();
+                            } else {
+                                const body = response.right.value as ProblemJson;
+                                toast.error(body.title, {theme: "colored"});
+                            }
+                            break;
+                        case "Left":
+                            toast.error("Errore", {theme: "colored"});
+                            break;
                     }
                 })
                 .catch(() => {
