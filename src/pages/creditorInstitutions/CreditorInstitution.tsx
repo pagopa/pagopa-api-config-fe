@@ -3,6 +3,7 @@ import {Alert, Badge, Breadcrumb, Card, Form, Table} from "react-bootstrap";
 import {FaCheck, FaInfoCircle, FaSpinner, FaTimes} from "react-icons/fa";
 import {apiClient} from "../../util/apiClient";
 import {CreditorInstitutionDetails} from "../../../generated/api/CreditorInstitutionDetails";
+import {CreditorInstitutionAddress} from "../../../generated/api/CreditorInstitutionAddress";
 
 interface IProps {
     match: {
@@ -29,7 +30,21 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
             isError: false,
             isLoading: true,
             code: "",
-            creditorInstitution: {} as CreditorInstitutionDetails,
+            creditorInstitution: {
+                address: {
+                    location:"",
+                    city:"",
+                    zip_code:"",
+                    country_code:"",
+                    tax_domicile:""
+                } as CreditorInstitutionAddress,
+                business_name: "",
+                creditor_institution_code: "",
+                enabled: false,
+                psp_payment: false,
+                reporting_ftp: false,
+                reporting_zip: false,
+            } as CreditorInstitutionDetails,
             ibanList: [],
             stationList: [],
             encodings: []
