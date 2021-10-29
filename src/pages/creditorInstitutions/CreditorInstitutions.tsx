@@ -77,6 +77,7 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
     }
 
     handlePageChange(requestedPage: number) {
+        console.log("REQ PAGE", requestedPage);
         this.getPage(requestedPage);
     }
 
