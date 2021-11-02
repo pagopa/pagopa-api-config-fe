@@ -1,6 +1,6 @@
 import React from 'react';
 import {OverlayTrigger, Table, Tooltip} from "react-bootstrap";
-import {FaCheck, FaEye, FaTimes, FaTrash} from "react-icons/fa";
+import {FaCheck, FaEye, FaSpinner, FaTimes, FaTrash} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {apiClient} from "../../util/apiClient";
 import Paginator from "../../components/Paginator";
@@ -49,7 +49,6 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
     }
 
     getPage(page: number) {
-
         this.setState({isLoading: true});
         apiClient.getCreditorInstitutions({
             ApiKey: "",
@@ -58,8 +57,8 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
         })
         .then((response: any) => {
             this.setState({
-                creditor_institutions: response.value.value.creditor_institutions,
-                page_info: response.value.value.page_info
+                creditor_institutions: response.right.value.creditor_institutions,
+                page_info: response.right.value.page_info
             });
         })
         .catch(err => {
@@ -102,23 +101,22 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
 
     hideDeleteModal = (status: string) => {
         if (status === "ok") {
-
             apiClient.deleteCreditorInstitution({
                 ApiKey: "",
                 creditorinstitutioncode: this.state.creditorInstitutionToDelete.creditor_institution_code
             })
             .then((res: any) => {
-                if (res.value.status === 200) {
+                if (res.right.status === 200) {
                     toast.info("Rimozione avvenuta con successo");
                     this.removeCreditorInstitution();
                 }
                 else {
-                    toast.error(res.value.value.title, {theme: "colored"});
+                    toast.error(res.right.value.title, {theme: "colored"});
                 }
             })
             .catch((err: any) => {
                 // eslint-disable-next-line no-console
-                console.error(err);
+                console.error("ERR", err);
                 toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
             });
         }
@@ -161,10 +159,10 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
                 <div className="container-fluid creditor-institutions">
                     <div className="row">
                         <div className="col-md-12 mb-5">
-                            <h2>EntiCreditori</h2>
+                            <h2>Enti Creditori</h2>
                         </div>
                         <div className="col-md-12">
-                        {isLoading &&  ( <p>Loading ...</p> )}
+                        {isLoading &&  ( <FaSpinner className="spinner" /> )}
                         {
                             !isLoading && (
                                 <>

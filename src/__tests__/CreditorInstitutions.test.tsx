@@ -20,7 +20,7 @@ test("rendering EC through navigation on /", () => {
           </Router>
   );
   // verify page content for expected route
-  expect(screen.getByText(/EntiCreditori/i)).toBeInTheDocument();
+  expect(screen.getAllByText(/Enti Creditori/i));
 
 });
 
@@ -47,6 +47,5 @@ test("rendering EC through navigation on /ec", () => {
   });
 
   // verify page content for expected route
-  expect(screen.getByText(/EntiCreditori/i)).toBeInTheDocument();
-
+  expect(screen.getAllByText(/Enti Creditori/i));
 });

@@ -73,7 +73,7 @@ export default class Paginator extends React.Component<IProps, IState> {
                     <Pagination.Prev disabled={isPrevDisabled()} onClick={() => this.props.onPageChanged(getPrev())} />
                     {items}
                     <Pagination.Next disabled={isNextDisabled()} onClick={() => this.props.onPageChanged(getNext())} />
-                    <Pagination.Last disabled={isLastDisabled()} onClick={() => this.props.onPageChanged(pageInfo.total_pages)} />
+                    <Pagination.Last disabled={isLastDisabled()} onClick={() => this.props.onPageChanged(pageInfo.total_pages-1)} />
                 </Pagination>
         );
     }

@@ -39,10 +39,10 @@ $text-color: #17324d;
 @import "~bootstrap/scss/input-group";
 @import '~bootstrap/scss/nav';
 @import '~bootstrap/scss/navbar';
-//@import '~bootstrap/scss/card';
-//@import '~bootstrap/scss/breadcrumb';
+@import '~bootstrap/scss/card';
+@import '~bootstrap/scss/breadcrumb';
 @import '~bootstrap/scss/pagination';
-//@import '~bootstrap/scss/badge';
+@import '~bootstrap/scss/badge';
 //@import '~bootstrap/scss/progress';
 //@import '~bootstrap/scss/media';
 @import "~bootstrap/scss/list-group";
@@ -57,6 +57,55 @@ $text-color: #17324d;
 //@import "~bootstrap-icons/font/bootstrap-icons";
 
 @import "fonts";
+
+.text-success {
+  color: #28a745 !important;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.spinner {
+  animation: spin infinite 1s linear;
+}
+
+.custom-control-box {
+  display: flex;
+  align-items: center;
+  margin-top: 30px;
+}
+.custom-control {
+  position: relative;
+  z-index: 1;
+  display: block;
+  min-height: 1.5rem;
+  padding-left: 1.5rem;
+  -webkit-print-color-adjust: exact;
+  color-adjust: exact
+}
+.custom-control-input {
+  position: absolute;
+  left: 0;
+  z-index: -1;
+  width: 1rem;
+  height: 1.25rem;
+  //opacity: 0;
+}
+.custom-control-label {
+  position: relative;
+  margin-bottom: 0;
+  vertical-align: top;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
 
 
 /*
