@@ -36,7 +36,7 @@ export default class CreateCreditorInstitution extends React.Component<IProps, I
                 "business_name": "",
                 "creditor_institution_code": "",
                 "enabled": false,
-                "fk_int_quadrature": null,
+                "fk_int_quadrature": undefined,
                 "psp_payment": false,
                 "reporting_ftp": false,
                 "reporting_zip": false
@@ -53,13 +53,15 @@ export default class CreateCreditorInstitution extends React.Component<IProps, I
     handleChange(event: any, obj: string) {
         // eslint-disable-next-line functional/no-let
         let creditorInstitution: CreditorInstitutionDetails = this.state.creditorInstitution;
+        const key = event.target.name as string;
         if (obj === "creditorInstitution") {
-            // eslint-disable-next-line functional/immutable-data
-            creditorInstitution[event.target.name] = event.target.type === "checkbox" ? event.target.checked : event.target.value;
+            const value = event.target.type === "checkbox" ? event.target.checked : event.target.value;
+            creditorInstitution = { ...creditorInstitution, [key]: value };
         }
         else {
-            // eslint-disable-next-line functional/immutable-data
-            creditorInstitution.address[event.target.name] = event.target.value;
+            const value = event.target.value;
+            const address = { ...creditorInstitution.address, [key]: value };
+            creditorInstitution = { ...creditorInstitution, address };
         }
         this.setState({creditorInstitution});
     }
@@ -90,7 +92,6 @@ export default class CreateCreditorInstitution extends React.Component<IProps, I
             if (response.hasOwnProperty("right")) {
                 if (response.right.status === 201) {
                     // eslint-disable-next-line no-console
-                    console.log("SAVED SUCCESSFULLY");
                     toast.info("Creazione avvenuta con successo.");
                     setTimeout(this.goBack.bind(this), 2000);
                 }
