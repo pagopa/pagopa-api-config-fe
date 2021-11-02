@@ -188,13 +188,15 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                 toast.error(message, {theme: "colored"});
             }
         }).catch((error: any) => {
+            // eslint-disable-next-line no-console
             console.error("ERROR", error);
             toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
         });
     }
 
     discard(section: string) {
-        this.setState({[section]: Object.assign({}, this.state.backup[section])});
+        // "as any" is necessary because it seems to be a bug: https://github.com/Microsoft/TypeScript/issues/13948
+        this.setState({[section]: Object.assign({}, this.state.backup[section])} as any);
     }
 
     createEncoding(): void {
