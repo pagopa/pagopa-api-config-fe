@@ -164,7 +164,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
         this.setState({creditorInstitution: creditorInstitution});
     }
 
-    save(section: string) {
+    saveCreditorInstitution() {
         apiClient.updateCreditorInstitution({
             ApiKey: "",
             creditorinstitutioncode: this.state.code,
@@ -186,11 +186,9 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
         }).catch((error: any) => {
             toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
         });
-
     }
 
     discard(section: string) {
-        console.log("DISCARD", this.state.backup);
         this.setState({[section]: Object.assign({}, this.state.backup[section])});
     }
 
@@ -490,7 +488,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                                                 this.discard("creditorInstitution");
                                                             }} >Annulla</Button>
                                                             <Button className="float-md-right" onClick={() => {
-                                                                this.save("creditorInstitution");
+                                                                this.saveCreditorInstitution();
                                                             }} >Salva</Button>
                                                         </div>
                                                     </div>
