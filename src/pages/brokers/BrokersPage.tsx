@@ -18,7 +18,7 @@ interface IProps {
 }
 
 interface IState {
-    body?: Brokers;
+    brokersPaginated?: Brokers;
     isLoading: boolean;
     showDeleteModal: boolean;
     brokerToDelete?: Broker;
@@ -57,7 +57,7 @@ export default class BrokersPage extends React.Component<IProps, IState> {
                         if (response.right.status === 200) {
                             const body = response.right.value as Brokers;
                             this.setState({
-                                body,
+                                brokersPaginated: body,
                                 pageIndex: page
                             });
                         } else {
@@ -89,7 +89,7 @@ export default class BrokersPage extends React.Component<IProps, IState> {
     }
 
     removeBroker() {
-        if (this.state.body?.page_info.items_found === 1) {
+        if (this.state.brokersPaginated?.page_info.items_found === 1) {
             // if the last one in the page was removed, get previous page...
             this.getPage(this.state.pageIndex - 1);
         } else {
@@ -138,7 +138,7 @@ export default class BrokersPage extends React.Component<IProps, IState> {
         const isLoading = this.state.isLoading;
         const brokers: any = [];
 
-        this.state.body?.brokers_list.map((elem, index) => {
+        this.state.brokersPaginated?.brokers_list.map((elem, index) => {
             const code = (
                 <tr key={index}>
                     <td>{elem.description}</td>
@@ -188,7 +188,7 @@ export default class BrokersPage extends React.Component<IProps, IState> {
                                     </tbody>
                                 </Table>
 
-                                <Paginator pageInfo={this.state.body?.page_info as PageInfo}
+                                <Paginator pageInfo={this.state.brokersPaginated?.page_info as PageInfo}
                                            onPageChanged={this.handlePageChange}/>
                             </>
                         )
