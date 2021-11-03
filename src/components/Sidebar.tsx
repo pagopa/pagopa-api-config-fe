@@ -24,7 +24,7 @@ export default class Sidebar extends React.Component<IProps, IState> {
         const location = this.props.history.location;
 
         function getClass(index: number) {
-            const activeItem = SidebarItems.findIndex(item => getPath(item.route) === getPath(location.pathname));
+            const activeItem = SidebarItems.findIndex(item => getPath(location.pathname).includes(getPath(item.route)));
             const currentActiveItem = activeItem === -1 ? 0 : activeItem;
             return currentActiveItem === index ? 'active' : '';
         }
