@@ -221,8 +221,9 @@ export default class CheckIca extends React.Component<IProps, IState> {
         reader.readAsText(event.target.files[0]);
         // eslint-disable-next-line functional/immutable-data
         reader.onload = () => {
-            const xml: any = new window.DOMParser().parseFromString(reader.result as string, "text/xml");
-            if (xml.getElementsByTagName("parsererror").length > 0) {
+            const xml = reader.result as string;
+            const code: any = new window.DOMParser().parseFromString(xml, "text/xml");
+            if (code.getElementsByTagName("parsererror").length > 0) {
                 const error = {
                     isVisible: true,
                     message: "XML non valido"
@@ -230,8 +231,8 @@ export default class CheckIca extends React.Component<IProps, IState> {
                 this.setState({error});
             }
             else {
-                this.setState({xml: reader.result});
-                this.checkXML(xml);
+                this.setState({xml});
+                this.checkXML(code);
             }
         };
     }

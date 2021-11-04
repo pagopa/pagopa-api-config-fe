@@ -1,15 +1,6 @@
 import React from 'react';
-import {Breadcrumb, Form, Table} from 'react-bootstrap';
+import {Breadcrumb} from 'react-bootstrap';
 import {Props} from "io-ts";
-import {FaCheck, FaExclamationTriangle, FaSpinner, FaTimes} from "react-icons/fa";
-import {apiClient} from "../../util/apiClient";
-
-interface XMLData {
-    inProgress: boolean;
-    value: string;
-    valid: boolean;
-    action: string;
-}
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface IProps {}
