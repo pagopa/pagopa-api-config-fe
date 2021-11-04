@@ -8,8 +8,12 @@ const SidebarItems = [
         route: "/brokers"
     },
     {
-        name: "Informativa Conto Accredito",
+        name: "Informativa Conto Accredito - ICA",
         route: "/icas"
+    },
+    {
+        name: "Verifica Informativa Conto Accredito",
+        route: "/icas/check"
     }
 ];
 
