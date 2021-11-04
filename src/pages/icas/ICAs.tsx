@@ -1,25 +1,26 @@
 import React from 'react';
 import {Breadcrumb, Form, Table} from 'react-bootstrap';
 import {Props} from "io-ts";
-import {FaCheck, FaSpinner, FaTimes} from "react-icons/fa";
+import {FaCheck, FaExclamationTriangle, FaSpinner, FaTimes} from "react-icons/fa";
 import {apiClient} from "../../util/apiClient";
 
 interface XMLData {
     inProgress: boolean;
-    pagoPA: string;
     value: string;
     valid: boolean;
     action: string;
 }
 
-interface IProps {
-}
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+interface IProps {}
 
 interface IState {
     xml: string;
     creditorInstitutionName: XMLData;
     creditorInstitutionCode: XMLData;
+    error: any;
     ibans: Array<XMLData>;
+    validityDate: XMLData;
 }
 
 export default class Ica extends React.Component<IProps, IState> {
@@ -31,7 +32,12 @@ export default class Ica extends React.Component<IProps, IState> {
             xml: "",
             creditorInstitutionCode: this.initXMLData(),
             creditorInstitutionName: this.initXMLData(),
-            ibans: []
+            error: {
+                isVisible: false,
+                message: ""
+            },
+            ibans: [],
+            validityDate: this.initXMLData()
         };
 
         this.handleFile = this.handleFile.bind(this);
@@ -40,101 +46,132 @@ export default class Ica extends React.Component<IProps, IState> {
     initXMLData(): XMLData {
         return {
             inProgress: true,
-            pagoPa: "",
             value: "",
             valid: false,
             action: ""
         } as unknown as XMLData;
     }
 
-    getCreditorInstitution(code: string): void {
-        apiClient.getCreditorInstitution({
+    checkCreditorInstitution(code: string): Promise<any> {
+        const request = apiClient.getCreditorInstitution({
             ApiKey: "",
             creditorinstitutioncode: code
-        }).then((response: any) => {
-            if (response.right.status === 200) {
-                const codeData = this.state.creditorInstitutionCode;
-                const creditorInstitutionCode: XMLData = {
-                    inProgress: false,
-                    pagoPA: response.right.value.creditor_institution_code,
-                    value: codeData.value,
-                    valid: codeData.value === response.right.value.creditor_institution_code,
-                    action: ""
-                };
-                this.setState({creditorInstitutionCode});
+        });
 
-                const nameData = this.state.creditorInstitutionName;
-                const creditorInstitutionName: XMLData = {
-                    inProgress: false,
-                    pagoPA: response.right.value.business_name,
-                    value: nameData.value,
-                    valid: nameData.value === response.right.value.business_name,
-                    action: ""
-                };
-                this.setState({creditorInstitutionName});
-            }
-            else {
-                console.log("TODO");
-            }
-            // eslint-disable-next-line no-console
-            console.log("CODE", response);
-        })
-        .catch((err: any) => {
-            // eslint-disable-next-line no-console
-            console.error("ERR", err);
-            this.setState({isError: true});
-        })
-        .finally(() => this.setState({isLoading: false}));
+        request
+            .then((response: any) => {
+                if (response.right.status === 200) {
+                    const codeData = this.state.creditorInstitutionCode;
+                    const creditorInstitutionCode: XMLData = {
+                        inProgress: false,
+                        value: codeData.value,
+                        valid: codeData.value === response.right.value.creditor_institution_code,
+                        action: ""
+                    };
+                    this.setState({creditorInstitutionCode});
+
+                    const nameData = this.state.creditorInstitutionName;
+                    const creditorInstitutionName: XMLData = {
+                        inProgress: false,
+                        value: nameData.value,
+                        valid: nameData.value === response.right.value.business_name,
+                        action: ""
+                    };
+                    this.setState({creditorInstitutionName});
+                }
+                else {
+                    const error = {
+                        isVisible: true,
+                        message: "Problemi a recuperare l'Ente Creditore"
+                    };
+                    this.setState({error});
+                }
+            })
+                .catch(() => {
+                    const error = {
+                        isVisible: true,
+                        message: "Problemi a recuperare l'Ente Creditore"
+                    };
+                    this.setState({error});
+                });
+
+        return request;
     }
 
-    getIbans(creditorInstitutionCode: string): void {
+    checkIbans(creditorInstitutionCode: string): void {
         apiClient.getCreditorInstitutionsIbans({
             ApiKey: "",
             creditorinstitutioncode: creditorInstitutionCode
         }).then((response: any) => {
-            console.log("IBAN LIST", response, this.state.ibans);
             if (response.right.status === 200) {
                 const checkedIbans: Array<XMLData> = [];
-                this.state.ibans.map((iban: XMLData) => {
+                this.state.ibans.forEach((iban: XMLData) => {
+                    // eslint-disable-next-line functional/no-let
                     let found = false;
-                    for (let i of response.right.value.ibans) {
+                    for (const i of response.right.value.ibans) {
                         if (iban.value === i.iban) {
                             found = true;
                             break;
                         }
                     }
-                    iban.inProgress = false;
-                    iban.valid = found;
-                    iban.action = !found ? "Iban non presente" : "";
-                    checkedIbans.push(iban);
+                    const ibanToPush = {
+                        inProgress: false,
+                        valid: found,
+                        action: !found ? "Iban non presente" : ""
+                    } as XMLData;
+                    // eslint-disable-next-line functional/immutable-data
+                    checkedIbans.push(ibanToPush);
                 });
                 this.setState({ibans: checkedIbans});
             }
             else {
-                console.log("TODO");
+                const error = {
+                    isVisible: true,
+                    message: "Problemi a recuperare gli Iban dell'Ente Creditore"
+                };
+                this.setState({error});
             }
-            console.log("TODO", this.state.ibans);
-        }).catch((err: any) => {
-            // eslint-disable-next-line no-console
-            console.error("ERR", err);
-        })
-        .finally(() => this.setState({isLoading: false}));
+        }).catch(() => {
+            const error = {
+                isVisible: true,
+                message: "Problemi a recuperare gli Iban dell'Ente Creditore"
+            };
+            this.setState({error});
+        });
+    }
+
+    checkValidityDate(): void {
+        const validityDate = this.state.validityDate;
+        const now = (new Date()).getTime();
+        // eslint-disable-next-line functional/no-let
+        let valid = true;
+        // eslint-disable-next-line functional/no-let
+        let action = "";
+        if (new Date(validityDate.value).getTime() <= now) {
+            action = "La data di inizio validità deve essere superiore alla data corrente";
+            valid = false;
+        }
+
+        const validity = {
+            inProgress: false,
+            value: this.state.validityDate.value,
+            valid,
+            action
+        } as XMLData;
+
+        this.setState({validityDate: validity});
     }
 
     getDefaultXMLData(value: string): XMLData {
         return {
             inProgress: true,
-            pagoPA: "",
             value,
             valid: false,
             action: ""
         } as XMLData;
     }
 
-    checkXML(): void {
-        const code: any = new window.DOMParser().parseFromString(this.state.xml, "text/xml");
-        window.code = code;
-
+    checkXML(code: any): void {
         const ciCode = code.getElementsByTagName("identificativoDominio")[0].textContent;
 
         const creditorInstitutionCode: XMLData = this.getDefaultXMLData(ciCode);
@@ -143,23 +180,50 @@ export default class Ica extends React.Component<IProps, IState> {
         const creditorInstitutionName: XMLData = this.getDefaultXMLData(code.getElementsByTagName("ragioneSociale")[0].textContent);
         this.setState({creditorInstitutionName});
 
-        this.getCreditorInstitution(ciCode);
+        const request = this.checkCreditorInstitution(ciCode);
 
-        for (const iban of code.getElementsByTagName("ibanAccredito")) {
-            const ibanData: XMLData = this.getDefaultXMLData(iban.textContent);
-            let storedIbans = this.state.ibans;
-            storedIbans.push(ibanData);
-            this.setState({ibans: storedIbans});
-        }
-        this.getIbans(ciCode);
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        request.then((result: any) => {
+            if (result.right.status === 200) {
+                for (const iban of code.getElementsByTagName("ibanAccredito")) {
+                    const ibanData: XMLData = this.getDefaultXMLData(iban.textContent);
+                    const storedIbans = this.state.ibans;
+                    // eslint-disable-next-line functional/immutable-data
+                    storedIbans.push(ibanData);
+                    this.setState({ibans: storedIbans});
+                }
+                this.checkIbans(ciCode);
+
+                const validityDate: XMLData = this.getDefaultXMLData(code.getElementsByTagName("dataInizioValidita")[0].textContent);
+                this.setState({validityDate});
+                this.checkValidityDate();
+            }
+        });
     }
 
     handleFile(event: any) {
+        const error = {
+            isVisible: false,
+            message: ""
+        };
+        this.setState({error});
+
         const reader = new FileReader();
         reader.readAsText(event.target.files[0]);
+        // eslint-disable-next-line functional/immutable-data
         reader.onload = () => {
-            this.setState({xml: reader.result});
-            this.checkXML();
+            const xml: any = new window.DOMParser().parseFromString(reader.result as string, "text/xml");
+            if (xml.getElementsByTagName("parsererror").length > 0) {
+                const error = {
+                    isVisible: true,
+                    message: "XML non valido"
+                };
+                this.setState({error});
+            }
+            else {
+                this.setState({xml});
+                this.checkXML(xml);
+            }
         };
     }
 
@@ -199,34 +263,44 @@ export default class Ica extends React.Component<IProps, IState> {
                 <div className="row">
                     <div className="col-md-12">
                         <Form.Group controlId="formFile" className="mb-3">
-                            <Form.Label>XML File</Form.Label>
+                            <Form.Label>File XML</Form.Label>
                             <Form.Control type="file" accept=".xml" onChange={(e) => this.handleFile(e)}/>
                         </Form.Group>
                     </div>
                     <div className="col-md-12">
                         <pre lang="xml">
-                            {this.state.xml}
+                            {this.state.xml.length === 0 && "Caricare un XML valido"}
+                            {this.state.xml.length > 0 && this.state.xml}
                         </pre>
                     </div>
-                    <div className="col-md-12">
-                        <Table hover responsive size="sm">
-                            <thead>
-                            <tr>
-                                <th className=""></th>
-                                <th className="">Contenuto ICA</th>
-                                <th className="text-center">Valido</th>
-                                <th className="">Intervento</th>
-                            </tr>
-                            </thead>
-                            <tbody>
+                    {
+                        this.state.error.isVisible &&
+						<div className="col-md-12 alert alert-warning">
+                            <FaExclamationTriangle /> <span>{this.state.error.message}</span>
+						</div>
+                    }
+                    {
+                        this.state.xml.length > 0 &&
+					    <div className="col-md-12">
+						<Table hover responsive size="sm">
+							<thead>
+							<tr>
+								<th className=""></th>
+								<th className="">Contenuto ICA</th>
+								<th className="text-center">Valido</th>
+								<th className="">Intervento da effettuare</th>
+							</tr>
+							</thead>
+							<tbody>
                             {getRow("Ente Creditore", this.state.creditorInstitutionName, "ec-business-name")}
                             {getRow("Codice Ente Creditore", this.state.creditorInstitutionCode, "ec-code")}
-
+                            {getRow("Data Inizio Validità", this.state.validityDate, "validity-date")}
                             {getIbansRows()}
 
-                            </tbody>
-                        </Table>
-                    </div>
+							</tbody>
+						</Table>
+					</div>
+                    }
                 </div>
             </div>
 
