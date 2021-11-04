@@ -6,6 +6,10 @@ const SidebarItems = [
     {
         name: "Intermediari EC",
         route: "/brokers"
+    },
+    {
+        name: "Informativa Conto Accredito",
+        route: "/icas"
     }
 ];
 

@@ -6,6 +6,7 @@ import BrokersPage from "../pages/brokers/BrokersPage";
 import NotFound from "../pages/NotFound";
 import CreditorInstitution from "../pages/creditorInstitutions/CreditorInstitution";
 import BrokerPage from "../pages/brokers/BrokerPage";
+import Ica from "../pages/icas/ICAs";
 
 export default class Routes extends React.Component {
 
@@ -21,6 +22,7 @@ export default class Routes extends React.Component {
                                     <Route path="/creditor-institutions/:code" component={CreditorInstitution} />
                                     <Route path="/brokers" exact component={BrokersPage}/>
                                     <Route path="/brokers/:code" component={BrokerPage} />
+                                    <Route path="/icas" exact component={Ica} />
                                     <Route component={NotFound}/>
                                 </Switch>
                             </Layout>
