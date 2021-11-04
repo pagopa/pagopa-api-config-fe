@@ -129,6 +129,7 @@ export default class CheckIca extends React.Component<IProps, IState> {
                     }
                     const ibanToPush = {
                         inProgress: false,
+                        value: iban.value,
                         valid: found,
                         action: !found ? "Iban non presente" : ""
                     } as XMLData;
