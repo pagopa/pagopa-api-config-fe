@@ -58,7 +58,7 @@ export default class CreateCreditorInstitution extends React.Component<IProps, I
             const value = event.target.type === "checkbox" ? event.target.checked : event.target.value;
             creditorInstitution = { ...creditorInstitution, [key]: value };
         }
-        else {
+        else if (obj === "address") {
             const value = event.target.value;
             const address = { ...creditorInstitution.address, [key]: value };
             creditorInstitution = { ...creditorInstitution, address };
