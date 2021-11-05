@@ -1,5 +1,6 @@
 import React from "react";
 import {BrowserRouter, Route, Switch} from "react-router-dom";
+import BrokerPage from "../pages/brokers/BrokerPage";
 import BrokersPage from "../pages/brokers/BrokersPage";
 import CreditorInstitutions from "../pages/creditorInstitutions/CreditorInstitutions";
 import CreditorInstitution from "../pages/creditorInstitutions/CreditorInstitution";
