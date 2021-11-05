@@ -73,24 +73,24 @@ export default class CheckIca extends React.Component<IProps, IState> {
 
         request
             .then((response: any) => {
+                const codeData = this.state.creditorInstitutionCode;
+                const nameData = this.state.creditorInstitutionName;
+                let creditorInstitutionCode: XMLData;
+                let creditorInstitutionName: XMLData;
                 if (response.right.status === 200) {
-                    const codeData = this.state.creditorInstitutionCode;
-                    const creditorInstitutionCode: XMLData = {
+                    creditorInstitutionCode = {
                         inProgress: false,
                         value: codeData.value,
                         valid: codeData.value === response.right.value.creditor_institution_code,
                         action: ""
-                    };
-                    this.setState({creditorInstitutionCode});
+                    } as XMLData;
 
-                    const nameData = this.state.creditorInstitutionName;
-                    const creditorInstitutionName: XMLData = {
+                    creditorInstitutionName = {
                         inProgress: false,
                         value: nameData.value,
                         valid: nameData.value === response.right.value.business_name,
                         action: ""
-                    };
-                    this.setState({creditorInstitutionName});
+                    } as XMLData;
                 }
                 else {
                     const error = {
@@ -98,7 +98,23 @@ export default class CheckIca extends React.Component<IProps, IState> {
                         message: "Problemi a recuperare l'Ente Creditore"
                     };
                     this.setState({error});
+
+                    creditorInstitutionCode = {
+                        inProgress: false,
+                        value: codeData.value,
+                        valid: false,
+                        action: "Codice non trovato"
+                    } as XMLData;
+
+                    creditorInstitutionName = {
+                        inProgress: false,
+                        value: nameData.value,
+                        valid: false,
+                        action: "Impossibile validare il nome dell'Ente senza il relativo codice corretto"
+                    } as XMLData;
                 }
+                this.setState({creditorInstitutionCode});
+                this.setState({creditorInstitutionName});
             })
                 .catch(() => {
                     const error = {
@@ -107,7 +123,6 @@ export default class CheckIca extends React.Component<IProps, IState> {
                     };
                     this.setState({error});
                 });
-
         return request;
     }
 
@@ -172,7 +187,6 @@ export default class CheckIca extends React.Component<IProps, IState> {
             valid,
             action
         } as XMLData;
-
         this.setState({validityDate: validity});
     }
 
@@ -208,11 +222,12 @@ export default class CheckIca extends React.Component<IProps, IState> {
                 }
                 this.checkIbans(ciCode);
 
-                const validityDate: XMLData = this.getDefaultXMLData(code.getElementsByTagName("dataInizioValidita")[0].textContent);
-                this.setState({validityDate});
-                this.checkValidityDate();
             }
+
         });
+        const validityDate: XMLData = this.getDefaultXMLData(code.getElementsByTagName("dataInizioValidita")[0].textContent);
+        this.setState({validityDate});
+        this.checkValidityDate();
     }
 
     handleFile(event: any) {
