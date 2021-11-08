@@ -4,8 +4,8 @@ import {Props} from "io-ts";
 import {FaCheck, FaExclamationTriangle, FaMinus, FaSpinner, FaTimes} from "react-icons/fa";
 import IBAN from "iban";
 import {apiClient} from "../../util/apiClient";
-import {Encoding} from "../../../generated/api/Encoding";
 import {Iban} from "../../../generated/api/Iban";
+import {Encoding} from "../../../generated/api/Encoding";
 
 interface XMLData {
     inProgress: boolean;
@@ -180,7 +180,7 @@ export default class CheckIca extends React.Component<IProps, IState> {
         codeData.note = "QRCode non presente";
         for (const encoding of encodings) {
             if (encoding.code_type.toLowerCase() === "qr_code") {
-                if (encoding.code === code) {
+                if (encoding.encoding_code === code) {
                     // eslint-disable-next-line functional/immutable-data
                     codeData.note = "QRCode presente";
                 }
@@ -223,7 +223,7 @@ export default class CheckIca extends React.Component<IProps, IState> {
         let found = false;
         for (const encoding of encodings) {
             if (encoding.code_type.toLowerCase() === "barcode_128_aim") {
-                if (encoding.code === postalCode) {
+                if (encoding.encoding_code === postalCode) {
                     found = true;
                     // eslint-disable-next-line functional/immutable-data
                     iban.valid = "valid";
