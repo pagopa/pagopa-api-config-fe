@@ -2267,6 +2267,11 @@
   dependencies:
     "@types/node" "*"
 
+"@types/iban@^0.0.32":
+  version "0.0.32"
+  resolved "https://registry.yarnpkg.com/@types/iban/-/iban-0.0.32.tgz#0308cc330fe534d5b7015299feb32ab216e124d5"
+  integrity sha512-GhyJ+IVOC/eFfARnYd8wjL9dKvlQU+amhml0UxgSzTr/13V11op+nVVdkyqEipHYoqJZv4RHWLfkMmZrCgjjCA==
+
 "@types/invariant@^2.2.33":
   version "2.2.35"
   resolved "https://registry.yarnpkg.com/@types/invariant/-/invariant-2.2.35.tgz#cd3ebf581a6557452735688d8daba6cf0bd5a3be"
@@ -5290,6 +5295,11 @@ i18next@^19.8.4:
   integrity sha512-0i6cuo6ER6usEOtKajUUDj92zlG+KArFia0857xxiEHAQcUwh/RtOQocui1LPJwunSYT574Pk64aNva1kwtxZg==
   dependencies:
     "@babel/runtime" "^7.12.0"
+
+iban@^0.0.14:
+  version "0.0.14"
+  resolved "https://registry.yarnpkg.com/iban/-/iban-0.0.14.tgz#fd8a65ac50c8b770682634b20dc5c5c9feba5c24"
+  integrity sha512-+rocNKk+Ga9m8Lr9fTMWd+87JnsBrucm0ZsIx5ROOarZlaDLmd+FKdbtvb0XyoBw9GAFOYG2GuLqoNB16d+p3w==
 
 iconv-lite@0.4.24:
   version "0.4.24"

@@ -22,11 +22,15 @@
     "prettify": "prettier --write \"./**/*.{ts,tsx}\""
   },
   "dependencies": {
+    "@pagopa/ts-commons": "^10.2.1",
     "bootstrap": "^4.5.3",
     "classnames": "^2.2.6",
     "date-fns": "^2.16.1",
+    "fp-ts": "^2.11.3",
     "generated": "^0.0.3",
     "i18next": "^19.8.4",
+    "iban": "^0.0.14",
+    "io-ts": "^2.2.13",
     "react": "17.0.1",
     "react-bootstrap": "^1.6.4",
     "react-dom": "^17.0.2",
@@ -37,10 +41,7 @@
     "react-toastify": "^8.0.3",
     "typeface-lora": "^1.1.13",
     "typeface-roboto-mono": "^1.1.13",
-    "typeface-titillium-web": "^1.1.13",
-    "fp-ts": "^2.11.3",
-    "io-ts": "^2.2.13",    
-    "@pagopa/ts-commons": "^10.2.1"
+    "typeface-titillium-web": "^1.1.13"
   },
   "devDependencies": {
     "@babel/core": "^7.15.8",
@@ -52,6 +53,7 @@
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^12.1.2",
     "@types/classnames": "^2.2.11",
+    "@types/iban": "^0.0.32",
     "@types/jest": "^27.0.2",
     "@types/node": "^14.14.9",
     "@types/node-fetch": "^2.5.7",
