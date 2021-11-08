@@ -16,7 +16,7 @@ parameters:
       - uat
 
 variables:
-  NODE_VERSION: '14.17.6'
+  NODE_VERSION: '12.19.1'
   YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.yarn
 
   ${{ if eq(parameters['ENV'], 'dev') }}:
@@ -75,16 +75,20 @@ stages:
       - job: 'make_build'
         steps:
           # Build application
-          - template: azure-templates/setup-project.yml
+          - template: templates/node-job-setup/template.yaml@pagopaCommons
             parameters:
-              # On the assumption that this stage is executed only when Relase stage is,
+              # On the assumption that this stage is executed only when Release stage is,
               #  with this parameter we set the reference the deploy script must pull changes from.
               # The branch/tag name is calculated from the source branch
               #  ex: Build.SourceBranch=refs/heads/master --> master
               #  ex: Build.SourceBranch=refs/tags/v1.2.3-RELEASE --> v1.2.3-RELEASE
               gitReference: ${{ replace(replace(variables['Build.SourceBranch'], 'refs/tags/', ''), 'refs/heads/', '') }}
 
-          - template: azure-templates/make-build.yml
+          - script: yarn generate
+            displayName: 'Generate API client'
+
+          - script: yarn build
+            displayName: 'Build'
 
           - publish: $(System.DefaultWorkingDirectory)/dist
             artifact: Bundle
