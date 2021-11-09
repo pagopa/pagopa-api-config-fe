@@ -473,10 +473,8 @@ export default class CheckIca extends React.Component<IProps, IState> {
                             {!data.inProgress && data.valid === "not valid" && <FaTimes className="text-danger" />}
                             {!data.inProgress && data.valid === "undefined" && <FaMinus  />}
                         </td>
-                        <td className="text-center">
-                            {data.note}
-                        </td>
                         <td>{data.action}</td>
+                        <td className="text-center">{data.note}</td>
                     </tr>
             );
 
@@ -527,9 +525,9 @@ export default class CheckIca extends React.Component<IProps, IState> {
 								<th className=""></th>
 								<th className="">Contenuto ICA</th>
 								<th className="text-center">Valido</th>
-								<th className="text-center">Note</th>
 								<th className="">Intervento da effettuare</th>
-							</tr>
+								<th className="text-center">Note</th>
+                            </tr>
 							</thead>
 							<tbody>
                             {getRow("Ente Creditore", this.state.creditorInstitutionName, "ec-business-name")}
