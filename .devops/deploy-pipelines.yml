@@ -55,12 +55,12 @@ stages:
       - job: releaseService
         steps:
           - template: templates/node-github-release/template.yaml@pagopaCommons
-              parameters:
-                semver: '${{ parameters.SEMVER }}'
-                release_branch: 'main'
-                gitEmail: $(GIT_EMAIL)
-                gitUsername: $(GIT_USERNAME)
-                gitHubConnection: $(GITHUB_CONNECTION)
+            parameters:
+              semver: '${{ parameters.SEMVER }}'
+              release_branch: 'main'
+              gitEmail: $(GIT_EMAIL)
+              gitUsername: $(GIT_USERNAME)
+              gitHubConnection: $(GITHUB_CONNECTION)
 
   # Prepare Artifact with application bundle
   - stage: prepare_artifact
