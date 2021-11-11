@@ -29,6 +29,11 @@ variables:
     RESOURCE_GROUP: $(UAT_WEB_APP_RESOURCE_GROUP_NAME)
     APP_NAME: $(UAT_WEB_APP_NAME)
     STAGE: "u"
+  ${{ if eq(parameters['ENV'], 'prod') }}:
+    AZURE_SUBSCRIPTION: $(PROD_AZURE_SUBSCRIPTION)
+    RESOURCE_GROUP: $(PROD_WEB_APP_RESOURCE_GROUP_NAME)
+    APP_NAME: $(PROD_WEB_APP_NAME)
+    STAGE: "p"
 
 
 # Only manual triggers
@@ -43,13 +48,13 @@ resources:
     - repository: pagopaCommons
       type: github
       name: pagopa/azure-pipeline-templates
-      ref: refs/tags/v4
-      endpoint: 'pagopa'  # TODO name of the service connection to use
+      ref: refs/tags/v18
+      endpoint: 'io-azure-devops-github-ro'
 
 stages:
   # Create a release on Github
   - stage: release_service
-    condition: and(eq(variables['Build.SourceBranch'], 'refs/heads/main'), ne('${{ parameters.REPOSITORY }}', 'auth'))
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
     pool:
       vmImage: "ubuntu-latest"
     jobs:
@@ -58,12 +63,10 @@ stages:
           - template: templates/node-github-release/template.yaml@pagopaCommons
               parameters:
                 semver: '${{ parameters.SEMVER }}'
+                release_branch: 'main'
                 gitEmail: $(GIT_EMAIL)
                 gitUsername: $(GIT_USERNAME)
                 gitHubConnection: $(GITHUB_CONNECTION)
-                nodeVersion: $(NODE_VERSION)
-                pkg_cache_version_id: $(CACHE_VERSION_ID)
-                pkg_cache_folder: $(YARN_CACHE_FOLDER)
 
   # Prepare Artifact with application bundle
   - stage: prepare_artifact
@@ -108,58 +111,58 @@ stages:
           - task: AzureFileCopy@4
             inputs:
               sourcePath: '$(Pipeline.Workspace)/Bundle/*'
-              azureSubscription: '$(STAGING_AZURE_SUBSCRIPTION)'
+              azureSubscription: '$(AZURE_SUBSCRIPTION_STORAGE_ACCOUNT)'
               destination: 'AzureBlob'
-              storage: '$(STAGING_STORAGE_ACCOUNT_NAME)'
-              containerName: '$(BLOB_CONTAINER_NAME)' # TODO it should be $web
+              storage: '$(STORAGE_ACCOUNT_NAME)'
+              containerName: '$(BLOB_CONTAINER_NAME)'
             displayName: Deploy to container blob
 
 
   # Check that the staging instance is healthy
-  - stage: Healthcheck
-    dependsOn:
-      - deploy_staging
-    jobs:
-      - job: 'do_healthcheck'
-        steps:
-          - template: templates/rest-healthcheck/template.yaml@pagopaCommons
-            parameters:
-              azureSubscription: '$(PRODUCTION_AZURE_SUBSCRIPTION)'
-              endpoint: 'https://$(ENDPOINT_AZURE).azureedge.net/$(MY_INDEX)'
-              endpointType: 'public'
-              appName: ''
-              containerInstanceResourceGroup: ''
-              containerInstanceVNet: ''
-              containerInstanceSubnet: ''
+#  - stage: Healthcheck
+#    dependsOn:
+#      - deploy_staging
+#    jobs:
+#      - job: 'do_healthcheck'
+#        steps:
+#          - template: templates/rest-healthcheck/template.yaml@pagopaCommons
+#            parameters:
+#              azureSubscription: '$(PRODUCTION_AZURE_SUBSCRIPTION)'
+#              endpoint: 'https://$(ENDPOINT_AZURE).azureedge.net/$(MY_INDEX)'
+#              endpointType: 'public'
+#              appName: ''
+#              containerInstanceResourceGroup: ''
+#              containerInstanceVNet: ''
+#              containerInstanceSubnet: ''
 
   # Deploy bundle to the production container
-  - stage: deploy_production
-    dependsOn:
-      - prepare_artifact
-    jobs:
-      - job: 'deploy_to_container'
-        steps:
-          - checkout: none
-
-          - download: current
-            artifact: Bundle
-
-          - task: AzureFileCopy@4
-            inputs:
-              sourcePath: '$(Pipeline.Workspace)/Bundle/*'
-              azureSubscription: '$(PRODUCTION_AZURE_SUBSCRIPTION)'
-              destination: 'AzureBlob'
-              storage: '$(PRODUCTION_STORAGE_ACCOUNT_NAME)'
-              containerName: '$(BLOB_CONTAINER_NAME)'
-            displayName: Deploy to container blob
-
-          - task: AzureCLI@1
-            displayName: 'Purge CDN'
-            inputs:
-              azureSubscription: '$(PRODUCTION_AZURE_SUBSCRIPTION)'
-              scriptLocation: inlineScript
-              inlineScript: |
-                call az cdn endpoint purge -g $(RESOURCE_GROUP_AZURE) -n $(ENDPOINT_AZURE) --profile-name $(PROFILE_NAME_CDN_AZURE) --content-paths "/*"
+#  - stage: deploy_production
+#    dependsOn:
+#      - prepare_artifact
+#    jobs:
+#      - job: 'deploy_to_container'
+#        steps:
+#          - checkout: none
+#
+#          - download: current
+#            artifact: Bundle
+#
+#          - task: AzureFileCopy@4
+#            inputs:
+#              sourcePath: '$(Pipeline.Workspace)/Bundle/*'
+#              azureSubscription: '$(PRODUCTION_AZURE_SUBSCRIPTION)'
+#              destination: 'AzureBlob'
+#              storage: '$(PRODUCTION_STORAGE_ACCOUNT_NAME)'
+#              containerName: '$(BLOB_CONTAINER_NAME)'
+#            displayName: Deploy to container blob
+#
+#          - task: AzureCLI@1
+#            displayName: 'Purge CDN'
+#            inputs:
+#              azureSubscription: '$(PRODUCTION_AZURE_SUBSCRIPTION)'
+#              scriptLocation: inlineScript
+#              inlineScript: |
+#                call az cdn endpoint purge -g $(RESOURCE_GROUP_AZURE) -n $(ENDPOINT_AZURE) --profile-name $(PROFILE_NAME_CDN_AZURE) --content-paths "/*"
 
 
 #  - stage: test
