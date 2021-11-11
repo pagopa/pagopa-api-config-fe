@@ -20,21 +20,15 @@ variables:
   YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.yarn
 
   ${{ if eq(parameters['ENV'], 'dev') }}:
-    AZURE_SUBSCRIPTION: $(DEV_AZURE_SUBSCRIPTION)
-    RESOURCE_GROUP: $(DEV_WEB_APP_RESOURCE_GROUP_NAME)
-    APP_NAME: $(DEV_WEB_APP_NAME)
-    STAGE: "d"
+    AZURE_SUBSCRIPTION: "pagopadapiconfigsa"
+    RESOURCE_GROUP: "pagopa-d-api-config-fe-rg"
+    STORAGE_ACCOUNT_NAME: "pagopadapiconfigsa"
   ${{ if eq(parameters['ENV'], 'uat') }}:
     AZURE_SUBSCRIPTION: $(UAT_AZURE_SUBSCRIPTION)
     RESOURCE_GROUP: $(UAT_WEB_APP_RESOURCE_GROUP_NAME)
-    APP_NAME: $(UAT_WEB_APP_NAME)
-    STAGE: "u"
   ${{ if eq(parameters['ENV'], 'prod') }}:
     AZURE_SUBSCRIPTION: $(PROD_AZURE_SUBSCRIPTION)
     RESOURCE_GROUP: $(PROD_WEB_APP_RESOURCE_GROUP_NAME)
-    APP_NAME: $(PROD_WEB_APP_NAME)
-    STAGE: "p"
-
 
 # Only manual triggers
 trigger: none
@@ -111,7 +105,7 @@ stages:
           - task: AzureFileCopy@4
             inputs:
               sourcePath: '$(Pipeline.Workspace)/Bundle/*'
-              azureSubscription: '$(AZURE_SUBSCRIPTION_STORAGE_ACCOUNT)'
+              azureSubscription: '$(AZURE_SUBSCRIPTION)'
               destination: 'AzureBlob'
               storage: '$(STORAGE_ACCOUNT_NAME)'
               containerName: '$(BLOB_CONTAINER_NAME)'
