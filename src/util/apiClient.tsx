@@ -6,6 +6,7 @@ import {
 } from "italia-ts-commons/lib/fetch";
 import {Millisecond} from "italia-ts-commons/lib/units";
 import { createClient } from "../../generated/api/client";
+import {getConfig} from "./config";
 
 
 const abortableFetch = AbortableFetch(agent.getHttpFetch(process.env));
@@ -19,8 +20,8 @@ const fetchWithTimeout = toFetch(
 const fetchApi: typeof fetchWithTimeout = (fetch as any) as typeof fetchWithTimeout;
 
 export const apiClient = createClient({
-    baseUrl: process.env.HOST as string,
-    basePath: process.env.BASEPATH,
+    baseUrl: getConfig("APICONFIG_HOST") as string,
+    basePath: getConfig("APICONFIG_BASEPATH") as string,
     fetchApi
 });
 
