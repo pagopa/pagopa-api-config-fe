@@ -79,7 +79,6 @@ stages:
     jobs:
       - job: release_service
         steps:
-
           - template: templates/node-job-setup/template.yaml@pagopaCommons
             parameters:
               persistCredentials: true
@@ -134,8 +133,8 @@ stages:
 
   # Deploy on Azure
   - stage: deploy_staging
-    dependsOn:
-      - prepare_artifact
+#    dependsOn:
+#      - prepare_artifact
     jobs:
       - job: 'deploy_to_container'
         steps:
