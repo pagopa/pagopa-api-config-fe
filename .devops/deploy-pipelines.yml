@@ -141,7 +141,7 @@ stages:
           - task: AzureCLI@1
             displayName: 'Purge CDN'
             inputs:
-              azureSubscription: '$(PRODUCTION_AZURE_SUBSCRIPTION)'
+              azureSubscription: '$(AZURE_SUBSCRIPTION)'
               scriptLocation: inlineScript
               inlineScript: |
                 call az cdn endpoint purge -g $(RESOURCE_GROUP) -n $(ENDPOINT_CDN) --profile-name $(PROFILE_CDN) --content-paths "/*"
