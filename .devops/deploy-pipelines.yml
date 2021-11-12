@@ -21,10 +21,11 @@ variables:
 
   ${{ if eq(parameters['ENV'], 'dev') }}:
     AZURE_SUBSCRIPTION: "DEV-PAGOPA-SERVICE-CONN"
+    BLOB_CONTAINER_NAME: "$web"
     RESOURCE_GROUP: "pagopa-d-api-config-fe-rg"
-    STORAGE_ACCOUNT_NAME: "pagopadapiconfigsa"
-    APICONFIG_HOST: "https://apiconfig.dev.platform.pagopa.it"
-    APICONFIG_BASEPATH: "/apiconfig/api"
+    STORAGE_ACCOUNT_NAME: "pagopadapiconfigfesa"
+    APICONFIG_HOST: "https://api.dev.platform.pagopa.it"
+    APICONFIG_BASEPATH: "/apiconfig/api" # $(APIM_BASEPATH_APICONFIG)
   ${{ if eq(parameters['ENV'], 'uat') }}:
     AZURE_SUBSCRIPTION: $(UAT_AZURE_SUBSCRIPTION)
     RESOURCE_GROUP: $(UAT_WEB_APP_RESOURCE_GROUP_NAME)
@@ -56,10 +57,6 @@ stages:
     jobs:
       - job: releaseService
         steps:
-          - script: |
-              echo 'username ${GIT_USERNAME}'
-            displayName: "Variables"
-
           - template: templates/node-job-setup/template.yaml@pagopaCommons
             parameters:
               persistCredentials: true
