@@ -1,6 +1,6 @@
 {
   "name": "pagopa-api-config-fe",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "license": "MIT",
   "scripts": {
     "start:local": "NODE_ENV=local parcel --port 3000 src/index.html --dist-dir build/debug",
