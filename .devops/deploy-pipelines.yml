@@ -23,6 +23,8 @@ variables:
     AZURE_SUBSCRIPTION: "DEV-PAGOPA-SERVICE-CONN"
     RESOURCE_GROUP: "pagopa-d-api-config-fe-rg"
     STORAGE_ACCOUNT_NAME: "pagopadapiconfigsa"
+    APICONFIG_HOST: "https://apiconfig.dev.platform.pagopa.it"
+    APICONFIG_BASEPATH: "/apiconfig/api"
   ${{ if eq(parameters['ENV'], 'uat') }}:
     AZURE_SUBSCRIPTION: $(UAT_AZURE_SUBSCRIPTION)
     RESOURCE_GROUP: $(UAT_WEB_APP_RESOURCE_GROUP_NAME)
@@ -108,7 +110,7 @@ stages:
           - script: yarn build
             displayName: 'Build'
 
-          - publish: $(System.DefaultWorkingDirectory)/dist
+          - publish: $(System.DefaultWorkingDirectory)/build/release
             artifact: Bundle
 
   # Deploy on Azure
