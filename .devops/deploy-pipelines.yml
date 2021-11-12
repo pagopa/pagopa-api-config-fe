@@ -54,6 +54,15 @@ stages:
     jobs:
       - job: releaseService
         steps:
+          - script: |
+              echo 'username ${GIT_USERNAME}'
+            displayName: "Variables"
+
+          - template: templates/node-job-setup/template.yaml@pagopaCommons
+            parameters:
+              persistCredentials: true
+              gitReference: 'main'
+
           - template: templates/node-github-release/template.yaml@pagopaCommons
             parameters:
               semver: '${{ parameters.SEMVER }}'
@@ -64,8 +73,8 @@ stages:
 
   # Prepare Artifact with application bundle
   - stage: prepare_artifact
-    dependsOn:
-      - release_service
+#    dependsOn:
+#      - release_service
     pool:
       vmImage: 'ubuntu-latest'
     jobs:
@@ -104,8 +113,8 @@ stages:
 
   # Deploy on Azure
   - stage: deploy_staging
-    dependsOn:
-      - prepare_artifact
+#    dependsOn:
+#      - prepare_artifact
     jobs:
       - job: 'deploy_to_container'
         steps:
