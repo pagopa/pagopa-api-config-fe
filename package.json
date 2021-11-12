@@ -9,9 +9,6 @@
     "prebuild:tsc": "tsc --noEmit",
     "build": "parcel build src/index.html --dist-dir build/release --public-url ./ --no-optimize",
 
-    "test": "jest --coverage --ci --testResultsProcessor jest-sonar-reporter",
-    "test:local": "jest --coverage --ci",
-
     "lint": "eslint -f json -o eslint-report.json . -c .eslintrc.js --ext .ts,.tsx --cache",
     "lint:local": "eslint . -c .eslintrc.js --ext .ts,.tsx --cache",
     "lint-autofix": "eslint . -c .eslintrc.js --ext .ts,.tsx --fix",
