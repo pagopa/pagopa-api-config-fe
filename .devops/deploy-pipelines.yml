@@ -72,8 +72,8 @@ stages:
 
   # Prepare Artifact with application bundle
   - stage: prepare_artifact
-#    dependsOn:
-#      - release_service
+    dependsOn:
+      - release_service
     pool:
       vmImage: 'ubuntu-latest'
     jobs:
@@ -122,22 +122,22 @@ stages:
           - download: current
             artifact: Bundle
 
-#          - task: AzureCLI@1
-#            displayName: 'Sync checkout storage'
-#            inputs:
-#              azureSubscription: $(AZURE_SUBSCRIPTION)
-#              scriptLocation: inlineScript
-#              inlineScript: |
-#                call az storage blob sync --container $(BLOB_CONTAINER_NAME) --account-name $(STORAGE_ACCOUNT_NAME) -s "$(Pipeline.Workspace)\Bundle" -d p
-
-          - task: AzureFileCopy@4
+          - task: AzureCLI@1
+            displayName: 'Deploy to container blob'
             inputs:
-              sourcePath: '$(Pipeline.Workspace)/Bundle'
-              azureSubscription: '$(AZURE_SUBSCRIPTION)'
-              destination: 'azureBlob'
-              storage: '$(STORAGE_ACCOUNT_NAME)'
-              containerName: '$(BLOB_CONTAINER_NAME)'
-            displayName: Deploy to container Blob
+              azureSubscription: $(AZURE_SUBSCRIPTION)
+              scriptLocation: inlineScript
+              inlineScript: |
+                call az storage blob sync --container $(BLOB_CONTAINER_NAME) --account-name $(STORAGE_ACCOUNT_NAME) -s "$(Pipeline.Workspace)\Bundle" -d p
+
+#          - task: AzureFileCopy@4
+#            inputs:
+#              sourcePath: '$(Pipeline.Workspace)/Bundle'
+#              azureSubscription: '$(AZURE_SUBSCRIPTION)'
+#              destination: 'azureBlob'
+#              storage: '$(STORAGE_ACCOUNT_NAME)'
+#              containerName: '$(BLOB_CONTAINER_NAME)'
+#            displayName: Deploy to container Blob
 
 
   # Check that the staging instance is healthy
