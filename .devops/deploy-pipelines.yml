@@ -23,6 +23,8 @@ variables:
     AZURE_SUBSCRIPTION: "DEV-PAGOPA-SERVICE-CONN"
     BLOB_CONTAINER_NAME: "$web"
     RESOURCE_GROUP: "pagopa-d-api-config-fe-rg"
+    CDN_ENDPOINT: "pagopa-d-api-config-fe-cdn-endpoint"
+    CDN_PROFILE: "pagopa-d-api-config-fe-cdn-profile"
     STORAGE_ACCOUNT_NAME: "pagopadapiconfigfesa"
     APICONFIG_HOST: "https://api.dev.platform.pagopa.it"
     APICONFIG_BASEPATH: "/apiconfig/api" # $(APIM_BASEPATH_APICONFIG)
@@ -129,6 +131,20 @@ stages:
               scriptLocation: inlineScript
               inlineScript: |
                 call az storage blob sync --container $(BLOB_CONTAINER_NAME) --account-name $(STORAGE_ACCOUNT_NAME) -s "$(Pipeline.Workspace)\Bundle" -d .
+
+  - stage: purge_cdn
+    dependsOn:
+      - deploy_staging
+    jobs:
+      - job: 'purge_cdn'
+        - task: AzureCLI@1
+          displayName: 'Purge CDN'
+          inputs:
+            azureSubscription: '$(PRODUCTION_AZURE_SUBSCRIPTION)'
+            scriptLocation: inlineScript
+            inlineScript: |
+              call az cdn endpoint purge -g $(RESOURCE_GROUP) -n $(ENDPOINT_CDN) --profile-name $(PROFILE_CDN) --content-paths "/*"
+
 
 #          - task: AzureFileCopy@4
 #            inputs:
