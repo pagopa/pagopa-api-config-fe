@@ -20,7 +20,7 @@ variables:
   YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.yarn
 
   ${{ if eq(parameters['ENV'], 'dev') }}:
-    AZURE_SUBSCRIPTION: "pagopadapiconfigsa"
+    AZURE_SUBSCRIPTION: "DEV-PAGOPA-SERVICE-CONN"
     RESOURCE_GROUP: "pagopa-d-api-config-fe-rg"
     STORAGE_ACCOUNT_NAME: "pagopadapiconfigsa"
   ${{ if eq(parameters['ENV'], 'uat') }}:
