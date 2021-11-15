@@ -99,11 +99,11 @@ stages:
               echo 'APICONFIG_BASEPATH: $APICONFIG_BASEPATH'
               chmod +x env.sh && . ./env.sh
               yarn build
-              workingDirectory: api-config-fe
+            workingDirectory: api-config-fe
             env:
               APICONFIG_HOST: $(APICONFIG_HOST)
               APICONFIG_BASEPATH: $(APICONFIG_BASEPATH)
-            displayName: 'Generate env file'
+            displayName: 'Generate env config file'
 
 #          - script: yarn build
 #            displayName: 'Build'
