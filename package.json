@@ -1,6 +1,6 @@
 {
   "name": "pagopa-api-config-fe",
-  "version": "0.1.14",
+  "version": "0.1.15",
   "license": "MIT",
   "scripts": {
     "envconfig": "export $(grep -v '^#' .env.local | xargs) && chmod +x env.sh && . ./env.sh",
