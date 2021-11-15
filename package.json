@@ -3,9 +3,11 @@
   "version": "0.1.9",
   "license": "MIT",
   "scripts": {
+    "envconfig": "export $(grep -v '^#' .env.local | xargs) && chmod +x env.sh && . ./env.sh",
+
     "prebuild": "npm-run-all prebuild:*",
     "prebuild:clean": "shx rm -rf build",
-    "prebuild:envconfig": "export $(grep -v '^#' .env.local | xargs) && chmod +x env.sh && . ./env.sh",
+    "prebuild:envconfig": "npm-run-all envconfig",
     "prebuild:tsc": "tsc --noEmit",
     "build": "parcel build src/index.html --dist-dir build/release --public-url ./ --no-optimize",
 
@@ -13,9 +15,10 @@
     "lint:local": "eslint . -c .eslintrc.js --ext .ts,.tsx --cache",
     "lint-autofix": "eslint . -c .eslintrc.js --ext .ts,.tsx --fix",
 
-    "prestart": "export $(grep -v '^#' .env.local | xargs) && chmod +x env.sh && . ./env.sh",
+    "prestart": "npm-run-all envconfig",
     "start": "parcel --port 3000 src/index.html --dist-dir build/debug",
 
+    "pretest": "npm-run-all envconfig",
     "test": "jest --coverage --ci --testResultsProcessor jest-sonar-reporter",
     "test:local": "jest --coverage --ci",
 
