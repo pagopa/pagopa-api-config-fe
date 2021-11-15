@@ -157,14 +157,14 @@ stages:
                 call az cdn endpoint purge -g $(RESOURCE_GROUP) -n $(CDN_ENDPOINT) --profile-name $(CDN_PROFILE) --content-paths "/*"
 
 
-#          - task: AzureFileCopy@4
-#            inputs:
-#              sourcePath: '$(Pipeline.Workspace)/Bundle'
-#              azureSubscription: '$(AZURE_SUBSCRIPTION)'
-#              destination: 'azureBlob'
-#              storage: '$(STORAGE_ACCOUNT_NAME)'
-#              containerName: '$(BLOB_CONTAINER_NAME)'
-#            displayName: Deploy to container Blob
+          - task: AzureFileCopy@3
+            inputs:
+              sourcePath: '$(Pipeline.Workspace)/Bundle'
+              azureSubscription: '$(AZURE_SUBSCRIPTION)'
+              destination: 'azureBlob'
+              storage: '$(STORAGE_ACCOUNT_NAME)'
+              containerName: '$(BLOB_CONTAINER_NAME)'
+            displayName: Deploy to container Blob
 
 
   # Check that the staging instance is healthy
