@@ -7,6 +7,8 @@ echo "window._env_ = {" >> ./src/env-config.js
 
 # Loop on environment variables prefixed with
 # apiconfig_ and add them to env-config.js
+env | grep -i apiconfig_
+
 for apiconfig_var in $(env | grep -i apiconfig_); do
     varname=$(printf '%s\n' "$apiconfig_var" | sed -e 's/=.*//')
     varvalue=$(printf '%s\n' "$apiconfig_var" | sed -e 's/^[^=]*=//')
