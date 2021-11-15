@@ -144,7 +144,7 @@ stages:
               azureSubscription: '$(AZURE_SUBSCRIPTION)'
               scriptLocation: inlineScript
               inlineScript: |
-                call az cdn endpoint purge -g $(RESOURCE_GROUP) -n $(ENDPOINT_CDN) --profile-name $(PROFILE_CDN) --content-paths "/*"
+                call az cdn endpoint purge -g $(RESOURCE_GROUP) -n $(CDN_ENDPOINT) --profile-name $(CDN_PROFILE) --content-paths "/*"
 
 
 #          - task: AzureFileCopy@4
