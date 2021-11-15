@@ -103,7 +103,7 @@ stages:
               env:
               APICONFIG_HOST: $(APICONFIG_HOST)
               APICONFIG_BASEPATH: $(APICONFIG_BASEPATH)
-              displayName: 'Generate env file'
+            displayName: 'Generate env file'
 
           - script: yarn build
             displayName: 'Build'
