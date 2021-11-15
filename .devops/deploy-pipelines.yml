@@ -108,19 +108,24 @@ stages:
           - script: yarn generate
             displayName: 'Generate API client'
 
+          - base: |
+              echo 'current folder'
+              echo $(pwd)
+              ls
+
           - bash: |
               echo 'APICONFIG_HOST: $(APICONFIG_HOST)'
               echo 'APICONFIG_BASEPATH: $(APICONFIG_BASEPATH)'
               chmod +x env.sh && . ./env.sh
-              yarn build
-#            workingDirectory: api-config-fe
+              ls
+              ls src/
             env:
               APICONFIG_HOST: $(APICONFIG_HOST)
               APICONFIG_BASEPATH: $(APICONFIG_BASEPATH)
             displayName: 'Generate env config file'
 
-#          - script: yarn build
-#            displayName: 'Build'
+          - script: yarn build
+            displayName: 'Build'
 
           - publish: $(System.DefaultWorkingDirectory)/build/release
             artifact: Bundle
