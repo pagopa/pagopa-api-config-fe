@@ -108,7 +108,7 @@ stages:
           - script: yarn generate
             displayName: 'Generate API client'
 
-          - base: |
+          - bash: |
               echo 'current folder'
               echo $(pwd)
               ls
