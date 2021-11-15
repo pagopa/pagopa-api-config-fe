@@ -97,16 +97,16 @@ stages:
           - bash: |
               echo 'APICONFIG_HOST: $APICONFIG_HOST'
               echo 'APICONFIG_BASEPATH: $APICONFIG_BASEPATH'
-              chmod +x env.sh && source env.sh
+              chmod +x env.sh && . ./env.sh
               yarn build
               workingDirectory: api-config-fe
-              env:
+            env:
               APICONFIG_HOST: $(APICONFIG_HOST)
               APICONFIG_BASEPATH: $(APICONFIG_BASEPATH)
             displayName: 'Generate env file'
 
-          - script: yarn build
-            displayName: 'Build'
+#          - script: yarn build
+#            displayName: 'Build'
 
           - publish: $(System.DefaultWorkingDirectory)/build/release
             artifact: Bundle
