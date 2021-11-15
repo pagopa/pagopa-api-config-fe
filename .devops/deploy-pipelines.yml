@@ -96,8 +96,19 @@ stages:
             displayName: 'Generate API client'
 
           - bash: |
-              echo 'APICONFIG_HOST: $APICONFIG_HOST'
-              echo 'APICONFIG_BASEPATH: $APICONFIG_BASEPATH'
+              echo 'APICONFIG_HOST'
+              echo $(APICONFIG_HOST)
+              echo 'APICONFIG_BASEPATH'
+              echo $(APICONFIG_BASEPATH)
+            env:
+              APICONFIG_HOST: $(APICONFIG_HOST)
+              APICONFIG_BASEPATH: $(APICONFIG_BASEPATH)
+            displayName: 'Testing step'
+
+
+          - bash: |
+              echo 'APICONFIG_HOST: $(APICONFIG_HOST)'
+              echo 'APICONFIG_BASEPATH: $(APICONFIG_BASEPATH)'
               chmod +x env.sh && . ./env.sh
               yarn build
 #            workingDirectory: api-config-fe
