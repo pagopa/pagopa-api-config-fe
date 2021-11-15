@@ -60,18 +60,6 @@ stages:
       - job: releaseService
         steps:
 
-          - bash: |
-              cat src/env-config.js
-              echo 'APICONFIG_HOST: $(APICONFIG_HOST)'
-              echo 'APICONFIG_BASEPATH: $(APICONFIG_BASEPATH)'
-              chmod +x env.sh && . ./env.sh
-              echo 'AFTER ENV EXEC'
-              cat src/env-config.js
-            env:
-              APICONFIG_HOST: $(APICONFIG_HOST)
-              APICONFIG_BASEPATH: $(APICONFIG_BASEPATH)
-            displayName: 'TEMP Generate env config file'
-
           - template: templates/node-job-setup/template.yaml@pagopaCommons
             parameters:
               persistCredentials: true
@@ -84,6 +72,18 @@ stages:
               gitEmail: $(GIT_EMAIL)
               gitUsername: $(GIT_USERNAME)
               gitHubConnection: $(GITHUB_CONNECTION)
+
+          - bash: |
+              cat src/env-config.js
+              echo 'APICONFIG_HOST: $(APICONFIG_HOST)'
+              echo 'APICONFIG_BASEPATH: $(APICONFIG_BASEPATH)'
+              chmod +x env.sh && . ./env.sh
+              echo 'AFTER ENV EXEC'
+              cat src/env-config.js
+            env:
+              APICONFIG_HOST: $(APICONFIG_HOST)
+              APICONFIG_BASEPATH: $(APICONFIG_BASEPATH)
+            displayName: 'TEMP Generate env config file'
 
   # Prepare Artifact with application bundle
   - stage: prepare_artifact
