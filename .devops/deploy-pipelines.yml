@@ -74,8 +74,9 @@ stages:
 
   # Prepare Artifact with application bundle
   - stage: prepare_artifact
-    dependsOn:
-      - release_service
+#    TODO replace
+#    dependsOn:
+#      - release_service
     pool:
       vmImage: 'ubuntu-latest'
     jobs:
@@ -99,7 +100,7 @@ stages:
               echo 'APICONFIG_BASEPATH: $APICONFIG_BASEPATH'
               chmod +x env.sh && . ./env.sh
               yarn build
-            workingDirectory: api-config-fe
+#            workingDirectory: api-config-fe
             env:
               APICONFIG_HOST: $(APICONFIG_HOST)
               APICONFIG_BASEPATH: $(APICONFIG_BASEPATH)
