@@ -24,7 +24,7 @@ variables:
 
   ${{ if eq(parameters['ENV'], 'dev') }}:
     AZURE_SUBSCRIPTION: $(DEV_AZURE_SUBSCRIPTION_STORAGE_ACCOUNT)
-    BLOB_CONTAINER_NAME: $(BLOB_CONTAINER_NAME)
+    BLOB_CONTAINER: $(BLOB_CONTAINER_NAME)
     RESOURCE_GROUP: $(DEV_RESOURCE_GROUP_AZURE)
     CDN_ENDPOINT: $(DEV_ENDPOINT_AZURE)
     CDN_PROFILE: $(DEV_PROFILE_NAME_CDN_AZURE)
@@ -34,7 +34,7 @@ variables:
 
   ${{ if eq(parameters['ENV'], 'uat') }}:
     AZURE_SUBSCRIPTION: $(UAT_AZURE_SUBSCRIPTION_STORAGE_ACCOUNT)
-    BLOB_CONTAINER_NAME: $(BLOB_CONTAINER_NAME)
+    BLOB_CONTAINER: $(BLOB_CONTAINER_NAME)
     RESOURCE_GROUP: $(UAT_RESOURCE_GROUP_AZURE)
     CDN_ENDPOINT: $(UAT_ENDPOINT_AZURE)
     CDN_PROFILE: $(UAT_PROFILE_NAME_CDN_AZURE)
@@ -44,7 +44,7 @@ variables:
 
   ${{ if eq(parameters['ENV'], 'prod') }}:
     AZURE_SUBSCRIPTION: $(PROD_AZURE_SUBSCRIPTION_STORAGE_ACCOUNT)
-    BLOB_CONTAINER_NAME: $(BLOB_CONTAINER_NAME)
+    BLOB_CONTAINER: $(BLOB_CONTAINER_NAME)
     RESOURCE_GROUP: $(PROD_RESOURCE_GROUP_AZURE)
     CDN_ENDPOINT: $(PROD_ENDPOINT_AZURE)
     CDN_PROFILE: $(PROD_PROFILE_NAME_CDN_AZURE)
@@ -145,7 +145,7 @@ stages:
               azureSubscription: $(AZURE_SUBSCRIPTION)
               scriptLocation: inlineScript
               inlineScript: |
-                call az storage blob sync --container $(BLOB_CONTAINER_NAME) --account-name $(STORAGE_ACCOUNT_NAME) -s "$(Pipeline.Workspace)\Bundle" -d .
+                call az storage blob sync --container $(BLOB_CONTAINER) --account-name $(STORAGE_ACCOUNT_NAME) -s "$(Pipeline.Workspace)\Bundle" -d .
 
   - stage: purge_cdn
     dependsOn:
@@ -168,7 +168,7 @@ stages:
 #              azureSubscription: '$(AZURE_SUBSCRIPTION)'
 #              destination: 'azureBlob'
 #              storage: '$(STORAGE_ACCOUNT_NAME)'
-#              containerName: '$(BLOB_CONTAINER_NAME)'
+#              containerName: '$(BLOB_CONTAINER)'
 #            displayName: Deploy to container Blob
 
 
@@ -207,7 +207,7 @@ stages:
 #              azureSubscription: '$(PRODUCTION_AZURE_SUBSCRIPTION)'
 #              destination: 'AzureBlob'
 #              storage: '$(PRODUCTION_STORAGE_ACCOUNT_NAME)'
-#              containerName: '$(BLOB_CONTAINER_NAME)'
+#              containerName: '$(BLOB_CONTAINER)'
 #            displayName: Deploy to container blob
 #
 #          - task: AzureCLI@1
