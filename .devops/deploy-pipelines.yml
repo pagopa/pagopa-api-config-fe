@@ -20,7 +20,7 @@ variables:
   NODE_VERSION: '12.19.1'
   YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.yarn
 
-  APICONFIG_BASEPATH_VERSION: "/v1"
+  APICONFIG_BASEPATH_VERSION: '/v1'
 
   ${{ if eq(parameters['ENV'], 'dev') }}:
     AZURE_SUBSCRIPTION: $(DEV_AZURE_SUBSCRIPTION_STORAGE_ACCOUNT)

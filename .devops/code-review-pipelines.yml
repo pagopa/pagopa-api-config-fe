@@ -18,7 +18,7 @@ parameters:
 variables:
   NODE_VERSION: '12.19.1'
   YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.yarn
-  APICONFIG_BASEPATH_VERSION = "/v1"
+  APICONFIG_BASEPATH_VERSION: '/v1'
 
   ${{ if eq(parameters['ENV'], 'dev') }}:
     APICONFIG_HOST: $(DEV_APICONFIG_API_HOST)
