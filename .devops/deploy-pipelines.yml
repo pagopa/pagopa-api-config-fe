@@ -94,17 +94,16 @@ stages:
           - script: yarn generate
             displayName: 'Generate API client'
 
-#         TODO
-#          - bash: |
-#              echo 'APICONFIG_HOST: $APICONFIG_HOST'
-#              echo 'APICONFIG_BASEPATH: $APICONFIG_BASEPATH'
-#              chmod +x env.sh && source env.sh
-#              yarn build
-#              workingDirectory: api-config-fe
-#              env:
-#              APICONFIG_HOST: $(APICONFIG_HOST)
-#              APICONFIG_BASEPATH: $(APICONFIG_BASEPATH)
-#              displayName: 'Generate env file'
+          - bash: |
+              echo 'APICONFIG_HOST: $APICONFIG_HOST'
+              echo 'APICONFIG_BASEPATH: $APICONFIG_BASEPATH'
+              chmod +x env.sh && source env.sh
+              yarn build
+              workingDirectory: api-config-fe
+              env:
+              APICONFIG_HOST: $(APICONFIG_HOST)
+              APICONFIG_BASEPATH: $(APICONFIG_BASEPATH)
+              displayName: 'Generate env file'
 
           - script: yarn build
             displayName: 'Build'
