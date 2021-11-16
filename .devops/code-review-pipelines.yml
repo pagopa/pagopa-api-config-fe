@@ -5,10 +5,28 @@
 # set its value to 'skip' without marking it secret:
 # - DANGER_GITHUB_API_TOKEN
 #
+parameters:
+  - name: ENV
+    displayName: Target Environment
+    type: string
+    default: dev
+    values:
+      - dev
+      - uat
 
 variables:
   NODE_VERSION: '12.19.1'
   YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.yarn
+
+  ${{ if eq(parameters['ENV'], 'dev') }}:
+    APICONFIG_HOST: $(DEV_APICONFIG_API_HOST)
+    APICONFIG_BASEPATH: $(APIM_BASEPATH_APICONFIG)/v1
+  ${{ if eq(parameters['ENV'], 'uat') }}:
+    APICONFIG_HOST: $(UAT_APICONFIG_API_HOST)
+    APICONFIG_BASEPATH: $(APIM_BASEPATH_APICONFIG)/v1
+  ${{ if eq(parameters['ENV'], 'prod') }}:
+    APICONFIG_HOST: $(PROD_APICONFIG_API_HOST)
+    APICONFIG_BASEPATH: $(APIM_BASEPATH_APICONFIG)/v1
 
 # Automatically triggered on PR
 # https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema?view=azure-devops&tabs=schema%2Cparameter-schema#pr-trigger
