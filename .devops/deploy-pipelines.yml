@@ -141,7 +141,7 @@ stages:
             artifact: Bundle
 
           - task: AzureFileCopy@3
-            displayName: 'Deploy to container Blob - checking AzureFileCopy'
+            displayName: 'Deploy to container blob'
             inputs:
               sourcePath: '$(Pipeline.Workspace)/Bundle'
               azureSubscription: '$(AZURE_SUBSCRIPTION)'
@@ -149,13 +149,13 @@ stages:
               storage: '$(STORAGE_ACCOUNT_NAME)'
               containerName: '$(BLOB_CONTAINER)'
 
-          - task: AzureCLI@1
-            displayName: 'Deploy to container blob'
-            inputs:
-              azureSubscription: $(AZURE_SUBSCRIPTION)
-              scriptLocation: inlineScript
-              inlineScript: |
-                call az storage blob sync --container $(BLOB_CONTAINER) --account-name $(STORAGE_ACCOUNT_NAME) -s "$(Pipeline.Workspace)\Bundle" -d .
+#          - task: AzureCLI@1
+#            displayName: 'Deploy to container blob'
+#            inputs:
+#              azureSubscription: $(AZURE_SUBSCRIPTION)
+#              scriptLocation: inlineScript
+#              inlineScript: |
+#                call az storage blob sync --container $(BLOB_CONTAINER) --account-name $(STORAGE_ACCOUNT_NAME) -s "$(Pipeline.Workspace)\Bundle" -d .
 
   - stage: purge_cdn
     dependsOn:
