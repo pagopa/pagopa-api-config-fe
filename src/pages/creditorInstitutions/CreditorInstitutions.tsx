@@ -1,6 +1,6 @@
 import React from 'react';
-import {OverlayTrigger, Table, Tooltip} from "react-bootstrap";
-import {FaCheck, FaEye, FaSpinner, FaTimes, FaTrash} from "react-icons/fa";
+import {Button, OverlayTrigger, Table, Tooltip} from "react-bootstrap";
+import {FaCheck, FaEye, FaPlus, FaSpinner, FaTimes, FaTrash} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {apiClient} from "../../util/apiClient";
 import Paginator from "../../components/Paginator";
@@ -46,6 +46,7 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
         };
 
         this.handlePageChange = this.handlePageChange.bind(this);
+        this.createCreditorInstitution = this.createCreditorInstitution.bind(this);
     }
 
     getPage(page: number) {
@@ -74,6 +75,10 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
 
     componentDidMount(): void {
         this.getPage(0);
+    }
+
+    createCreditorInstitution() {
+        this.props.history.push("/creditor-institutions/create");
     }
 
     handlePageChange(requestedPage: number) {
@@ -156,8 +161,11 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
         return (
                 <div className="container-fluid creditor-institutions">
                     <div className="row">
-                        <div className="col-md-12 mb-5">
+                        <div className="col-md-10 mb-3">
                             <h2>Enti Creditori</h2>
+                        </div>
+                        <div className="col-md-2 text-right">
+                            <Button onClick={this.createCreditorInstitution} >Nuovo <FaPlus /></Button>
                         </div>
                         <div className="col-md-12">
                         {isLoading &&  ( <FaSpinner className="spinner" /> )}
