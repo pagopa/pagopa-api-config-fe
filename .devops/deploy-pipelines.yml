@@ -121,6 +121,10 @@ stages:
               APICONFIG_BASEPATH: $(APICONFIG_BASEPATH)
             displayName: 'Generate env config file'
 
+          - bash: |
+              cat ./src/env-config.js
+            displayName: 'Show generated env config'
+
           - script: yarn build
             displayName: 'Build'
 
@@ -139,6 +143,15 @@ stages:
           - download: current
             artifact: Bundle
 
+          - task: AzureFileCopy@3
+            displayName: 'Deploy to container Blob - checking AzureFileCopy'
+            inputs:
+              sourcePath: '$(Pipeline.Workspace)/Bundle'
+              azureSubscription: '$(AZURE_SUBSCRIPTION)'
+              destination: 'azureBlob'
+              storage: '$(STORAGE_ACCOUNT_NAME)'
+              containerName: '$(BLOB_CONTAINER)'
+
           - task: AzureCLI@1
             displayName: 'Deploy to container blob'
             inputs:
@@ -147,12 +160,16 @@ stages:
               inlineScript: |
                 call az storage blob sync --container $(BLOB_CONTAINER) --account-name $(STORAGE_ACCOUNT_NAME) -s "$(Pipeline.Workspace)\Bundle" -d .
 
+
+
+
   - stage: purge_cdn
     dependsOn:
       - deploy_staging
     jobs:
       - job: 'purge_cdn'
         steps:
+
           - task: AzureCLI@1
             displayName: 'Purge CDN'
             inputs:
@@ -160,17 +177,6 @@ stages:
               scriptLocation: inlineScript
               inlineScript: |
                 call az cdn endpoint purge -g $(RESOURCE_GROUP) -n $(CDN_ENDPOINT) --profile-name $(CDN_PROFILE) --content-paths "/*"
-
-
-#          - task: AzureFileCopy@3
-#            inputs:
-#              sourcePath: '$(Pipeline.Workspace)/Bundle'
-#              azureSubscription: '$(AZURE_SUBSCRIPTION)'
-#              destination: 'azureBlob'
-#              storage: '$(STORAGE_ACCOUNT_NAME)'
-#              containerName: '$(BLOB_CONTAINER)'
-#            displayName: Deploy to container Blob
-
 
   # Check that the staging instance is healthy
 #  - stage: Healthcheck
