@@ -65,6 +65,15 @@ stages:
           - template: templates/node-job-setup/template.yaml@pagopaCommons
           - script: yarn generate
             displayName: 'Generate api client'
+          - bash: |
+              echo 'APICONFIG_HOST: $(APICONFIG_HOST)'
+              echo 'APICONFIG_BASEPATH: $(APICONFIG_BASEPATH)'
+              chmod +x env.sh && . ./env.sh
+              cat ./src/env-config.js
+            env:
+              APICONFIG_HOST: $(APICONFIG_HOST)
+              APICONFIG_BASEPATH: $(APICONFIG_BASEPATH)
+            displayName: 'Generate env config file'
           - script: yarn build
             displayName: 'Build'
 
@@ -111,6 +120,15 @@ stages:
 
           - script: yarn generate
             displayName: 'Generate api client'
+          - bash: |
+              echo 'APICONFIG_HOST: $(APICONFIG_HOST)'
+              echo 'APICONFIG_BASEPATH: $(APICONFIG_BASEPATH)'
+              chmod +x env.sh && . ./env.sh
+              cat ./src/env-config.js
+            env:
+              APICONFIG_HOST: $(APICONFIG_HOST)
+              APICONFIG_BASEPATH: $(APICONFIG_BASEPATH)
+            displayName: 'Generate env config file'
           - script: yarn test
             displayName: 'Unit tests exec'
 
@@ -121,11 +139,18 @@ stages:
         steps:
           - template: templates/node-job-setup/template.yaml@pagopaCommons
 
-#          - bash: |
-#              git fetch && git checkout PCFG-57-setup-pipeline-devops
-
           - script: yarn generate
             displayName: 'Generate api client'
+
+          - bash: |
+              echo 'APICONFIG_HOST: $(APICONFIG_HOST)'
+              echo 'APICONFIG_BASEPATH: $(APICONFIG_BASEPATH)'
+              chmod +x env.sh && . ./env.sh
+              cat ./src/env-config.js
+            env:
+              APICONFIG_HOST: $(APICONFIG_HOST)
+              APICONFIG_BASEPATH: $(APICONFIG_BASEPATH)
+            displayName: 'Generate env config file'
 
           - script: git branch
             displayName: 'Branch identification'
