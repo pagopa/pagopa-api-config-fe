@@ -1,6 +1,6 @@
 import React from 'react';
 import {Button, OverlayTrigger, Table, Tooltip} from "react-bootstrap";
-import {FaCheck, FaEye, FaPlus, FaSpinner, FaTimes, FaTrash} from "react-icons/fa";
+import {FaCheck, FaEdit, FaEye, FaPlus, FaSpinner, FaTimes, FaTrash} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {apiClient} from "../../util/apiClient";
 import Paginator from "../../components/Paginator";
@@ -89,6 +89,10 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
         this.props.history.push("/creditor-institutions/" + code);
     }
 
+    handleEdit(code: string) {
+        this.props.history.push("/creditor-institutions/" + code + "?edit");
+    }
+
     handleDelete(creditorInstitution: string, index: number) {
         this.setState({ showDeleteModal: true });
         this.setState({ creditorInstitutionToDelete: creditorInstitution });
@@ -146,10 +150,16 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
                     {!ci.enabled && <FaTimes className="text-danger" /> }
                 </td>
                 <td className="text-right">
-                    <OverlayTrigger placement="top" overlay={<Tooltip id={`tooltip-details-${index}`}>Dettagli</Tooltip>}>
+                    {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
+                    <OverlayTrigger placement="top" overlay={<Tooltip id={"tooltip-details-" + index}>Visualizza</Tooltip>}>
                         <FaEye role="button" className="mr-3" onClick={() => this.handleDetails(ci.creditor_institution_code)} />
                     </OverlayTrigger>
-                    <OverlayTrigger placement="top" overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
+                    {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
+                    <OverlayTrigger placement="top" overlay={<Tooltip id={"tooltip-edit-" + index}>Modifica</Tooltip>}>
+                        <FaEdit role="button" className="mr-3" onClick={() => this.handleEdit(ci.creditor_institution_code)} />
+                    </OverlayTrigger>
+                    {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
+                    <OverlayTrigger placement="top" overlay={<Tooltip id={"tooltip-delete-" + index}>Elimina</Tooltip>}>
                         <FaTrash role="button" className="mr-3" onClick={() => this.handleDelete(ci, index)} />
                     </OverlayTrigger>
                 </td>
