@@ -94,6 +94,7 @@ stages:
   - stage: prepare_artifact
 #    dependsOn:
 #      - release_service
+    condition: always()
     pool:
       vmImage: 'ubuntu-latest'
     jobs:
