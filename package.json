@@ -3,7 +3,7 @@
   "version": "0.1.25",
   "license": "MIT",
   "scripts": {
-    "envconfig": "export $(grep -v '^#' xargs | .env.local) && chmod +x env.sh && . ./env.sh",
+    "envconfig": "compgen -A variable | grep APICONFIG_ || export $(grep -v '^#' .env.local | xargs) ; chmod +x env.sh && . ./env.sh",
     "prebuild": "npm-run-all prebuild:*",
     "prebuild:clean": "shx rm -rf build",
     "prebuild:envconfig": "npm-run-all envconfig",
