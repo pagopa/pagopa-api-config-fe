@@ -1,11 +1,12 @@
 import React from "react";
 import {BrowserRouter, Route, Switch} from "react-router-dom";
-import Layout from "../components/Layout";
-import CreditorInstitutions from "../pages/creditorInstitutions/CreditorInstitutions";
-import BrokersPage from "../pages/brokers/BrokersPage";
-import NotFound from "../pages/NotFound";
-import CreditorInstitution from "../pages/creditorInstitutions/CreditorInstitution";
 import BrokerPage from "../pages/brokers/BrokerPage";
+import BrokersPage from "../pages/brokers/BrokersPage";
+import CreditorInstitutions from "../pages/creditorInstitutions/CreditorInstitutions";
+import CreditorInstitution from "../pages/creditorInstitutions/CreditorInstitution";
+import CreateCreditorInstitution from "../pages/creditorInstitutions/CreateCreditorInstitution";
+import Layout from "../components/Layout";
+import NotFound from "../pages/NotFound";
 
 export default class Routes extends React.Component {
 
@@ -18,6 +19,7 @@ export default class Routes extends React.Component {
                                 <Switch>
                                     <Route path="/" exact component={CreditorInstitutions}/>
                                     <Route path="/creditor-institutions" exact component={CreditorInstitutions}/>
+                                    <Route path="/creditor-institutions/create" component={CreateCreditorInstitution} />
                                     <Route path="/creditor-institutions/:code" component={CreditorInstitution} />
                                     <Route path="/brokers" exact component={BrokersPage}/>
                                     <Route path="/brokers/:code" component={BrokerPage} />
