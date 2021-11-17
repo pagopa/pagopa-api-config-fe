@@ -6,8 +6,10 @@ import CreditorInstitutions from "../pages/creditorInstitutions/CreditorInstitut
 import CreditorInstitution from "../pages/creditorInstitutions/CreditorInstitution";
 import CreateCreditorInstitution from "../pages/creditorInstitutions/CreateCreditorInstitution";
 import EditCreditorInstitution from "../pages/creditorInstitutions/EditCreditorInstitution";
+import Ica from "../pages/icas/ICAs";
 import Layout from "../components/Layout";
 import NotFound from "../pages/NotFound";
+
 
 export default class Routes extends React.Component {
 
@@ -27,6 +29,8 @@ export default class Routes extends React.Component {
                                     }}/>
                                     <Route path="/brokers" component={BrokersPage}/>
                                     <Route path="/brokers/:code" component={BrokerPage} />
+                                    <Route path="/icas" exact component={Ica} />
+                                    <Route path="/icas/check" exact component={CheckICA} />
                                     <Route component={NotFound}/>
                                 </Switch>
                             </Layout>
