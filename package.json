@@ -6,7 +6,6 @@
     "envconfig": "chmod +x envconfig.sh && . ./envconfig.sh",
     "prebuild": "npm-run-all prebuild:*",
     "prebuild:clean": "shx rm -rf build",
-    "prebuild:envconfig": "npm-run-all envconfig",
     "prebuild:tsc": "tsc --noEmit",
     "build": "parcel build src/index.html --dist-dir build/release --public-url ./ --no-optimize",
     "lint": "eslint -f json -o eslint-report.json . -c .eslintrc.js --ext .ts,.tsx --cache",
