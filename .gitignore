@@ -57,3 +57,4 @@ yarn-error.log
 !.release-it.js
 .idea
 .vscode
+/.parcel-cache/

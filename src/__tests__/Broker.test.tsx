@@ -1,37 +1,36 @@
 import React from "react";
 import {act, render, screen} from "@testing-library/react";
 import {createMemoryHistory} from 'history';
-import { Router } from 'react-router-dom';
+import {Router} from 'react-router-dom';
 import Routes from "../util/routes";
 
 /**
  * @jest-environment jsdom
  */
 
-test("rendering IntermediariEC through navigation", () => {
+test("rendering Brokers through navigation on /brokers", () => {
 
-  const history = createMemoryHistory();
-  const route = '/';
-  history.push(route);
+    const history = createMemoryHistory();
+    const route = '/';
+    history.push(route);
 
-  render(
-          <Router history={history}>
-            <Routes  />
-          </Router>
-  );
+    render(
+        <Router history={history}>
+            <Routes/>
+        </Router>
+    );
 
-  // Interact with page
-  act(() => {
-      // Find the link
-      const goLink = document.querySelector('[href="/brokers"]');
-      if (goLink != null) {
-          // Click it
-          goLink.dispatchEvent(new MouseEvent("click", {bubbles: true}));
-      }
-  });
+    // Interact with page
+    act(() => {
+        // Find the link
+        const goLink = document.querySelector('[href="/brokers"]');
+        if (goLink != null) {
+            // Click it
+            goLink.dispatchEvent(new MouseEvent("click", {bubbles: true}));
+        }
+    });
 
-  // verify page content for expected route
-    // expect(screen.getByText(/Intermediari EC/i)).toBeInTheDocument();
+    // verify page content for expected route
     expect(screen.getAllByText(/Intermediari EC/i));
 
 });

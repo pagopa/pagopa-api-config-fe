@@ -188,7 +188,7 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
                                             <th className="fixed-td-width">Ente creditore</th>
                                             <th className="fixed-td-width">Codice</th>
                                             <th className="text-center">Abilitato</th>
-                                            <th></th>
+                                            <th/>
                                         </tr>
                                         </thead>
                                         <tbody>

@@ -1,12 +1,13 @@
 import React from "react";
 import {BrowserRouter, Route, Switch} from "react-router-dom";
-import Layout from "../components/Layout";
+import BrokerPage from "../pages/brokers/BrokerPage";
+import BrokersPage from "../pages/brokers/BrokersPage";
 import CreditorInstitutions from "../pages/creditorInstitutions/CreditorInstitutions";
-import Broker from "../pages/Broker";
-import NotFound from "../pages/NotFound";
 import CreditorInstitution from "../pages/creditorInstitutions/CreditorInstitution";
 import CreateCreditorInstitution from "../pages/creditorInstitutions/CreateCreditorInstitution";
 import EditCreditorInstitution from "../pages/creditorInstitutions/EditCreditorInstitution";
+import Layout from "../components/Layout";
+import NotFound from "../pages/NotFound";
 
 export default class Routes extends React.Component {
 
@@ -25,6 +26,7 @@ export default class Routes extends React.Component {
                                         return edit ? <EditCreditorInstitution {...props} /> : <CreditorInstitution {...props} />;
                                     }}/>
                                     <Route path="/brokers" component={Broker}/>
+                                    <Route path="/brokers/:code" component={BrokerPage} />
                                     <Route component={NotFound}/>
                                 </Switch>
                             </Layout>
