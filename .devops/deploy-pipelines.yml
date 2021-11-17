@@ -70,7 +70,7 @@ resources:
 stages:
   # Create a release on Github
   - stage: release_service
-#    condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
     pool:
       vmImage: "ubuntu-latest"
     jobs:
@@ -92,8 +92,8 @@ stages:
 
   # Prepare Artifact with application bundle
   - stage: prepare_artifact
-    dependsOn:
-      - release_service
+#    dependsOn:
+#      - release_service
     pool:
       vmImage: 'ubuntu-latest'
     jobs:
