@@ -98,6 +98,14 @@ $text-color: #17324d;
   vertical-align: top;
 }
 
+pre {
+  overflow-x: auto;
+  background: #333;
+  color: white;
+  padding: 10px 15px;
+  font-size: 12px;
+}
+
 @keyframes spin {
   from {
     transform: rotate(0deg);
