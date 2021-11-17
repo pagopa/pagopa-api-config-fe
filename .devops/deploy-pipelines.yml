@@ -70,7 +70,7 @@ resources:
 stages:
   # Create a release on Github
   - stage: release_service
-    condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+#    condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
     pool:
       vmImage: "ubuntu-latest"
     jobs:
@@ -92,9 +92,8 @@ stages:
 
   # Prepare Artifact with application bundle
   - stage: prepare_artifact
-#    dependsOn:
-#      - release_service
-    condition: always()
+    dependsOn: []
+      - release_service
     pool:
       vmImage: 'ubuntu-latest'
     jobs:
@@ -117,14 +116,11 @@ stages:
               echo 'APICONFIG_HOST: $(APICONFIG_HOST)'
               echo 'APICONFIG_BASEPATH: $(APICONFIG_BASEPATH)'
               chmod +x env.sh && . ./env.sh
+              cat ./src/env-config.js
             env:
               APICONFIG_HOST: $(APICONFIG_HOST)
               APICONFIG_BASEPATH: $(APICONFIG_BASEPATH)
             displayName: 'Generate env config file'
-
-          - bash: |
-              cat ./src/env-config.js
-            displayName: 'Show generated env config'
 
           - script: yarn build
             displayName: 'Build'
@@ -160,9 +156,6 @@ stages:
               scriptLocation: inlineScript
               inlineScript: |
                 call az storage blob sync --container $(BLOB_CONTAINER) --account-name $(STORAGE_ACCOUNT_NAME) -s "$(Pipeline.Workspace)\Bundle" -d .
-
-
-
 
   - stage: purge_cdn
     dependsOn:
