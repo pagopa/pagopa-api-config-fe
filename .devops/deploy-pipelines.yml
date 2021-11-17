@@ -92,7 +92,7 @@ stages:
 
   # Prepare Artifact with application bundle
   - stage: prepare_artifact
-    dependsOn: []
+    dependsOn:
       - release_service
     pool:
       vmImage: 'ubuntu-latest'
