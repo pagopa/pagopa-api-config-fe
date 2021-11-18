@@ -1,6 +1,6 @@
 # API Config
 
-The project is useful to create some configuration for the pagoPA platform.
+The project is useful to create and verify some configuration for the pagoPA platform.
 
 ## Prerequisites
 
