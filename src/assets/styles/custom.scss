@@ -99,7 +99,8 @@ $text-color: #17324d;
 }
 
 pre {
-  overflow-x: auto;
+  max-height: 300px;
+  overflow: auto;
   background: #333;
   color: white;
   padding: 10px 15px;
