@@ -28,7 +28,7 @@ export default class Routes extends React.Component {
                                         const edit: boolean = new URLSearchParams(props.location.search).get("edit") !== null;
                                         return edit ? <EditCreditorInstitution {...props} /> : <CreditorInstitution {...props} />;
                                     }}/>
-                                    <Route path="/brokers" component={BrokersPage}/>
+                                    <Route path="/brokers" exact component={BrokersPage}/>
                                     <Route path="/brokers/:code" component={BrokerPage} />
                                     <Route path="/icas" exact component={Ica} />
                                     <Route path="/icas/check" exact component={CheckICA} />
