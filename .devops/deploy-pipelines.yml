@@ -6,6 +6,7 @@ parameters:
       - major
       - minor
       - patch
+      - skip
     default: patch
   - name: ENV
     displayName: Target Environment
@@ -70,11 +71,12 @@ resources:
 stages:
   # Create a release on Github
   - stage: release_service
-#    condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+    # bump version on main branch and if SEMVER is not 'skip'
+    condition: and(eq(variables['Build.SourceBranch'], 'refs/heads/main'), ne('${{ parameters.SEMVER }}', 'skip'))
     pool:
       vmImage: "ubuntu-latest"
     jobs:
-      - job: releaseService
+      - job: release_service
         steps:
 
           - template: templates/node-job-setup/template.yaml@pagopaCommons
