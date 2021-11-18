@@ -94,8 +94,7 @@ stages:
 
   # Prepare Artifact with application bundle
   - stage: prepare_artifact
-    dependsOn:
-      - release_service
+    condition: not(failed('release_service'))
     pool:
       vmImage: 'ubuntu-latest'
     jobs:
@@ -192,98 +191,3 @@ stages:
 #              containerInstanceResourceGroup: ''
 #              containerInstanceVNet: ''
 #              containerInstanceSubnet: ''
-
-  # Deploy bundle to the production container
-#  - stage: deploy_production
-#    dependsOn:
-#      - prepare_artifact
-#    jobs:
-#      - job: 'deploy_to_container'
-#        steps:
-#          - checkout: none
-#
-#          - download: current
-#            artifact: Bundle
-#
-#          - task: AzureFileCopy@4
-#            inputs:
-#              sourcePath: '$(Pipeline.Workspace)/Bundle/*'
-#              azureSubscription: '$(PRODUCTION_AZURE_SUBSCRIPTION)'
-#              destination: 'AzureBlob'
-#              storage: '$(PRODUCTION_STORAGE_ACCOUNT_NAME)'
-#              containerName: '$(BLOB_CONTAINER)'
-#            displayName: Deploy to container blob
-#
-#          - task: AzureCLI@1
-#            displayName: 'Purge CDN'
-#            inputs:
-#              azureSubscription: '$(PRODUCTION_AZURE_SUBSCRIPTION)'
-#              scriptLocation: inlineScript
-#              inlineScript: |
-#                call az cdn endpoint purge -g $(RESOURCE_GROUP_AZURE) -n $(ENDPOINT_AZURE) --profile-name $(PROFILE_NAME_CDN_AZURE) --content-paths "/*"
-
-
-#  - stage: test
-#    condition: not(failed('deploy_to_container'))
-#    pool:
-#      vmImage: "ubuntu-latest"
-#    jobs:
-#      # is needed to wait for startup of application
-#      - job: waitStartup
-#        pool: Server
-#        steps:
-#          - task: Delay@1
-#            inputs:
-#              delayForMinutes: '2'
-#
-#      - job: integrationTests
-#        dependsOn: waitStartup
-#        steps:
-#          - script: |
-#              yarn global add newman
-#            displayName: 'newman installation'
-#
-#          - script: |
-#              yarn add jquery
-#              bash api-test/setup_env_api_test.sh $(STAGE)
-#
-#          - script: |
-#              newman run api-test/ApiConfig.postman_collection.json --environment=api-test/Azure.postman_environment.json --reporters cli,junit --reporter-junit-export Results/api-config-TEST.xml
-#            displayName: 'Run api test'
-#            continueOnError: true
-#
-#          - task: PublishTestResults@2
-#            inputs:
-#              testResultsFormat: 'JUnit'
-#              testResultsFiles: '**/*-TEST.xml'
-#              searchFolder: '$(System.DefaultWorkingDirectory)'
-#
-#      - job: loadTests
-#        dependsOn: waitStartup
-#        steps:
-#          - script: |
-#              yarn add jquery
-#              bash api-test/setup_env_api_test.sh $(STAGE)
-#
-#          - script: |
-#              yarn global add postman-to-k6
-#            displayName: 'postman-to-k6 installation'
-#          - script: |
-#              sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
-#              echo "deb https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
-#              sudo apt-get update
-#              sudo apt-get install k6
-#            displayName: 'k6 installation'
-#
-#          - script: |
-#              postman-to-k6  api-test/ApiConfig.postman_collection.json -e api-test/Azure.postman_environment.json -o api-test/k6-script.js
-#            displayName: 'Generate load test'
-#            continueOnError: true
-#
-#          - script: |
-#              k6 run --vus 2 --duration 30s api-test/k6-script.js
-#            displayName: 'Run load test'
-#            continueOnError: true
-
-
-
