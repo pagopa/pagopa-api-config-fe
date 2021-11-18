@@ -2,6 +2,7 @@ import React from "react";
 import {BrowserRouter, Route, Switch} from "react-router-dom";
 import BrokerPage from "../pages/brokers/BrokerPage";
 import BrokersPage from "../pages/brokers/BrokersPage";
+import CheckICA from "../pages/icas/CheckICA";
 import CreditorInstitutions from "../pages/creditorInstitutions/CreditorInstitutions";
 import CreditorInstitution from "../pages/creditorInstitutions/CreditorInstitution";
 import CreateCreditorInstitution from "../pages/creditorInstitutions/CreateCreditorInstitution";
@@ -27,7 +28,7 @@ export default class Routes extends React.Component {
                                         const edit: boolean = new URLSearchParams(props.location.search).get("edit") !== null;
                                         return edit ? <EditCreditorInstitution {...props} /> : <CreditorInstitution {...props} />;
                                     }}/>
-                                    <Route path="/brokers" component={BrokersPage}/>
+                                    <Route path="/brokers" exact component={BrokersPage}/>
                                     <Route path="/brokers/:code" component={BrokerPage} />
                                     <Route path="/icas" exact component={Ica} />
                                     <Route path="/icas/check" exact component={CheckICA} />

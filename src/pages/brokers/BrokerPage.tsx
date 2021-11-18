@@ -71,7 +71,7 @@ export default class BrokerPage extends React.Component<IProps, IState> {
                     <>
                         <div className="col-md-12 mb-5">
                             <Breadcrumb>
-                                <Breadcrumb.Item href="/creditor-institutions">Intermediari</Breadcrumb.Item>
+                                <Breadcrumb.Item href="/brokers">Intermediari</Breadcrumb.Item>
                                 <Breadcrumb.Item active>{this.state.broker!.description}</Breadcrumb.Item>
                             </Breadcrumb>
                         </div>

@@ -1,6 +1,6 @@
 {
   "name": "pagopa-api-config-fe",
-  "version": "0.1.28",
+  "version": "0.1.30",
   "license": "MIT",
   "scripts": {
     "envconfig": "chmod +x envconfig.sh && . ./envconfig.sh",
@@ -41,10 +41,7 @@
     "react-toastify": "^8.0.3",
     "typeface-lora": "^1.1.13",
     "typeface-roboto-mono": "^1.1.13",
-    "typeface-titillium-web": "^1.1.13",
-    "fp-ts": "^2.11.3",
-    "io-ts": "^2.2.13",
-    "@pagopa/ts-commons": "^10.2.1"
+    "typeface-titillium-web": "^1.1.13"
   },
   "devDependencies": {
     "@babel/core": "^7.15.8",
