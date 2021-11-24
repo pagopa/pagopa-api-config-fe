@@ -199,6 +199,7 @@ export default class CheckIca extends React.Component<IProps, IState> {
         if (this.state.encodings.length === 0) {
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
             apiClient.getCreditorInstitutionEncodings({
+                Authorization: `Bearer  ${window.sessionStorage.getItem("secret")}`,
                 ApiKey: "",
                 creditorinstitutioncode: code
             }).then((response: any) => {
@@ -263,6 +264,7 @@ export default class CheckIca extends React.Component<IProps, IState> {
         if (this.state.encodings.length === 0) {
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
             apiClient.getCreditorInstitutionEncodings({
+                Authorization: `Bearer  ${window.sessionStorage.getItem("secret")}`,
                 ApiKey: "",
                 creditorinstitutioncode: ciCode
             }).then((response: any) => {
