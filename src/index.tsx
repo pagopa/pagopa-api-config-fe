@@ -13,10 +13,8 @@ import App from "./App";
 const msalInstance = new PublicClientApplication(msalConfig);
 
 ReactDOM.render(
-    <React.StrictMode>
-        <MsalProvider instance={msalInstance}>
-            <App/>
-        </MsalProvider>
-    </React.StrictMode>,
+    <MsalProvider instance={msalInstance}>
+        <App/>
+    </MsalProvider>,
     document.getElementById('app')
 );

@@ -3,9 +3,11 @@ import {Breadcrumb, Form, Table} from 'react-bootstrap';
 import {Props} from "io-ts";
 import {FaCheck, FaExclamationTriangle, FaMinus, FaSpinner, FaTimes} from "react-icons/fa";
 import IBAN from "iban";
+import {MsalContext} from "@azure/msal-react";
 import {apiClient} from "../../util/apiClient";
 import {Iban} from "../../../generated/api/Iban";
 import {Encoding} from "../../../generated/api/Encoding";
+import {loginRequest} from "../../authConfig";
 
 interface XMLData {
     inProgress: boolean;
@@ -16,7 +18,8 @@ interface XMLData {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface IProps {}
+interface IProps {
+}
 
 interface IState {
     xml: string;
@@ -29,6 +32,7 @@ interface IState {
 }
 
 export default class CheckIca extends React.Component<IProps, IState> {
+    static contextType = MsalContext;
 
     constructor(props: Props) {
         super(props);
@@ -83,10 +87,17 @@ export default class CheckIca extends React.Component<IProps, IState> {
         const codeData = this.state.creditorInstitutionCode;
         const nameData = this.state.creditorInstitutionName;
 
-        const request = apiClient.getCreditorInstitution({
-            ApiKey: "",
-            creditorinstitutioncode: code
-        });
+        const request = this.context.instance.acquireTokenSilent({
+            ...loginRequest,
+            account: this.context.accounts[0]
+        })
+            .then((response: any) => {
+                void apiClient.getCreditorInstitution({
+                    Authorization: `Bearer ${response.accessToken}`,
+                    ApiKey: "",
+                    creditorinstitutioncode: code
+                });
+            });
 
         request
             .then((response: any) => {
@@ -112,8 +123,7 @@ export default class CheckIca extends React.Component<IProps, IState> {
                     } as XMLData;
 
                     this.checkQRCode(code);
-                }
-                else {
+                } else {
                     const error = {
                         isVisible: true,
                         message: "Problemi di recupero dati dell'Ente Creditore"
@@ -196,18 +206,24 @@ export default class CheckIca extends React.Component<IProps, IState> {
      */
     checkQRCode(code: string): void {
         if (this.state.encodings.length === 0) {
-            // eslint-disable-next-line @typescript-eslint/no-floating-promises
-            apiClient.getCreditorInstitutionEncodings({
-                ApiKey: "",
-                creditorinstitutioncode: code
-            }).then((response: any) => {
-                if (response.right.status === 200) {
-                    this.setState({encodings: response.right.value.encodings});
-                    this.evaluateQRCode(code, response.right.value.encodings);
-                }
-            });
-        }
-        else {
+            this.context.instance.acquireTokenSilent({
+                ...loginRequest,
+                account: this.context.accounts[0]
+            })
+                .then((response: any) => {
+                    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+                    apiClient.getCreditorInstitutionEncodings({
+                        Authorization: `Bearer ${response.accessToken}`,
+                        ApiKey: "",
+                        creditorinstitutioncode: code
+                    }).then((response: any) => {
+                        if (response.right.status === 200) {
+                            this.setState({encodings: response.right.value.encodings});
+                            this.evaluateQRCode(code, response.right.value.encodings);
+                        }
+                    });
+                });
+        } else {
             this.evaluateQRCode(code, this.state.encodings);
         }
     }
@@ -260,19 +276,25 @@ export default class CheckIca extends React.Component<IProps, IState> {
      */
     checkBarcode128aim(ciCode: string, iban: XMLData): void {
         if (this.state.encodings.length === 0) {
-            // eslint-disable-next-line @typescript-eslint/no-floating-promises
-            apiClient.getCreditorInstitutionEncodings({
-                ApiKey: "",
-                creditorinstitutioncode: ciCode
-            }).then((response: any) => {
-                if (response.right.status === 200) {
-                    this.setState({encodings: response.right.value.encodings});
+            this.context.instance.acquireTokenSilent({
+                ...loginRequest,
+                account: this.context.accounts[0]
+            })
+                .then((response: any) => {
+                    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+                    apiClient.getCreditorInstitutionEncodings({
+                        Authorization: `Bearer ${response.accessToken}`,
+                        ApiKey: "",
+                        creditorinstitutioncode: ciCode
+                    }).then((response: any) => {
+                        if (response.right.status === 200) {
+                            this.setState({encodings: response.right.value.encodings});
 
-                    this.evaluateBarcode128aim(iban, response.right.value.encodings);
-                }
-            });
-        }
-        else {
+                            this.evaluateBarcode128aim(iban, response.right.value.encodings);
+                        }
+                    });
+                });
+        } else {
             this.evaluateBarcode128aim(iban, this.state.encodings);
         }
     }
@@ -302,8 +324,7 @@ export default class CheckIca extends React.Component<IProps, IState> {
             if (iban.value.substr(5, 5) === "07601") {
                 // postal iban
                 this.checkBarcode128aim(creditorInstitutionCode, iban);
-            }
-            else {
+            } else {
                 // eslint-disable-next-line functional/immutable-data
                 iban.valid = "valid";
                 // eslint-disable-next-line functional/immutable-data
@@ -318,51 +339,56 @@ export default class CheckIca extends React.Component<IProps, IState> {
      * @param creditorInstitutionCode
      */
     checkIbans(creditorInstitutionCode: string): void {
-        apiClient.getCreditorInstitutionsIbans({
-            ApiKey: "",
-            creditorinstitutioncode: creditorInstitutionCode
-        }).then((response: any) => {
-            if (response.right.status === 200) {
-                const checkedIbans: Array<XMLData> = [];
-                this.state.ibans.forEach((iban: XMLData) => {
-                    // validate iban
-                    if(IBAN.isValid(iban.value)) {
-                        // eslint-disable-next-line no-param-reassign
-                        iban = this.evaluateIban(creditorInstitutionCode, response.right.value.ibans, iban);
-                    }
-                    else {
-                        // eslint-disable-next-line functional/immutable-data
-                        iban.valid = "not valid";
-                        // eslint-disable-next-line functional/immutable-data
-                        iban.note = "IBAN non corretto";
-                    }
+        this.context.instance.acquireTokenSilent({
+            ...loginRequest,
+            account: this.context.accounts[0]
+        })
+            .then((response: any) => {
+                apiClient.getCreditorInstitutionsIbans({
+                    Authorization: `Bearer ${response.accessToken}`,
+                    ApiKey: "",
+                    creditorinstitutioncode: creditorInstitutionCode
+                }).then((response: any) => {
+                    if (response.right.status === 200) {
+                        const checkedIbans: Array<XMLData> = [];
+                        this.state.ibans.forEach((iban: XMLData) => {
+                            // validate iban
+                            if (IBAN.isValid(iban.value)) {
+                                // eslint-disable-next-line no-param-reassign
+                                iban = this.evaluateIban(creditorInstitutionCode, response.right.value.ibans, iban);
+                            } else {
+                                // eslint-disable-next-line functional/immutable-data
+                                iban.valid = "not valid";
+                                // eslint-disable-next-line functional/immutable-data
+                                iban.note = "IBAN non corretto";
+                            }
 
-                    const ibanToPush = {
-                        inProgress: false,
-                        value: iban.value,
-                        valid: iban.valid,
-                        note: iban.note,
-                        action: iban.action
-                    } as XMLData;
-                    // eslint-disable-next-line functional/immutable-data
-                    checkedIbans.push(ibanToPush);
+                            const ibanToPush = {
+                                inProgress: false,
+                                value: iban.value,
+                                valid: iban.valid,
+                                note: iban.note,
+                                action: iban.action
+                            } as XMLData;
+                            // eslint-disable-next-line functional/immutable-data
+                            checkedIbans.push(ibanToPush);
+                        });
+                        this.setState({ibans: checkedIbans});
+                    } else {
+                        const error = {
+                            isVisible: true,
+                            message: "Problemi a recuperare gli IBAN dell'Ente Creditore"
+                        };
+                        this.setState({error});
+                    }
+                }).catch(() => {
+                    const error = {
+                        isVisible: true,
+                        message: "Problemi a recuperare gli IBAN dell'Ente Creditore"
+                    };
+                    this.setState({error});
                 });
-                this.setState({ibans: checkedIbans});
-            }
-            else {
-                const error = {
-                    isVisible: true,
-                    message: "Problemi a recuperare gli IBAN dell'Ente Creditore"
-                };
-                this.setState({error});
-            }
-        }).catch(() => {
-            const error = {
-                isVisible: true,
-                message: "Problemi a recuperare gli IBAN dell'Ente Creditore"
-            };
-            this.setState({error});
-        });
+            });
     }
 
     /**
@@ -454,8 +480,7 @@ export default class CheckIca extends React.Component<IProps, IState> {
                     message: "XML sintatticamente non valido"
                 };
                 this.setState({error});
-            }
-            else {
+            } else {
                 this.setState({xml});
                 this.checkXML(code);
             }
@@ -464,21 +489,21 @@ export default class CheckIca extends React.Component<IProps, IState> {
 
     render(): React.ReactNode {
         const getRow = (rowTitle: string, data: XMLData, key: string) => (
-                    <tr key={key}>
-                        <td className="font-weight-bold">{rowTitle}</td>
-                        <td>{data.value}</td>
-                        <td className="text-center">
-                            {data.inProgress && <FaSpinner className="spinner" />}
-                            {!data.inProgress && data.valid === "valid" && <FaCheck className="text-success" />}
-                            {!data.inProgress && data.valid === "not valid" && <FaTimes className="text-danger" />}
-                            {!data.inProgress && data.valid === "undefined" && <FaMinus  />}
-                        </td>
-                        <td>{data.action}</td>
-                        <td className="text-center">{data.note}</td>
-                    </tr>
-            );
+            <tr key={key}>
+                <td className="font-weight-bold">{rowTitle}</td>
+                <td>{data.value}</td>
+                <td className="text-center">
+                    {data.inProgress && <FaSpinner className="spinner"/>}
+                    {!data.inProgress && data.valid === "valid" && <FaCheck className="text-success"/>}
+                    {!data.inProgress && data.valid === "not valid" && <FaTimes className="text-danger"/>}
+                    {!data.inProgress && data.valid === "undefined" && <FaMinus/>}
+                </td>
+                <td>{data.action}</td>
+                <td className="text-center">{data.note}</td>
+            </tr>
+        );
 
-        const getIbansRows = () => this.state.ibans.map((iban: XMLData, index: number) => getRow("Iban " + (index+1).toString(), iban, "iban-" + index.toString()));
+        const getIbansRows = () => this.state.ibans.map((iban: XMLData, index: number) => getRow("Iban " + (index + 1).toString(), iban, "iban-" + index.toString()));
 
         return (
             <div className="container-fluid creditor-institutions">
@@ -512,32 +537,32 @@ export default class CheckIca extends React.Component<IProps, IState> {
                     </div>
                     {
                         this.state.error.isVisible &&
-						<div className="col-md-12 alert alert-warning">
-                            <FaExclamationTriangle /> <span>{this.state.error.message}</span>
-						</div>
+                        <div className="col-md-12 alert alert-warning">
+                            <FaExclamationTriangle/> <span>{this.state.error.message}</span>
+                        </div>
                     }
                     {
                         this.state.xml.length > 0 &&
-					    <div className="col-md-12">
-						<Table hover responsive size="sm">
-							<thead>
-							<tr>
-								<th className=""></th>
-								<th className="">Contenuto ICA</th>
-								<th className="text-center">Valido</th>
-								<th className="">Intervento da effettuare</th>
-								<th className="text-center">Note</th>
-                            </tr>
-							</thead>
-							<tbody>
-                            {getRow("Ente Creditore", this.state.creditorInstitutionName, "ec-business-name")}
-                            {getRow("Codice Ente Creditore", this.state.creditorInstitutionCode, "ec-code")}
-                            {getRow("Data Inizio Validità", this.state.validityDate, "validity-date")}
-                            {getIbansRows()}
+                        <div className="col-md-12">
+                            <Table hover responsive size="sm">
+                                <thead>
+                                <tr>
+                                    <th className=""></th>
+                                    <th className="">Contenuto ICA</th>
+                                    <th className="text-center">Valido</th>
+                                    <th className="">Intervento da effettuare</th>
+                                    <th className="text-center">Note</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {getRow("Ente Creditore", this.state.creditorInstitutionName, "ec-business-name")}
+                                {getRow("Codice Ente Creditore", this.state.creditorInstitutionCode, "ec-code")}
+                                {getRow("Data Inizio Validità", this.state.validityDate, "validity-date")}
+                                {getIbansRows()}
 
-							</tbody>
-						</Table>
-					</div>
+                                </tbody>
+                            </Table>
+                        </div>
                     }
                 </div>
             </div>

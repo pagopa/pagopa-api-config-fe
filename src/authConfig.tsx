@@ -1,4 +1,12 @@
 import { LogLevel } from "@azure/msal-browser";
+import {getConfig} from "./util/config";
+
+
+
+const tenant = getConfig("APICONFIG_TENANT") as string;
+const redirectUri = getConfig("APICONFIG_REDIRECT_URI") as string;
+const clientId = getConfig("APICONFIG_CLIENT_ID") as string;
+const scopes = (getConfig("APICONFIG_SCOPES") as string).replace(" ","").split(",");
 
 /**
  * Configuration object to be passed to MSAL instance on creation.
@@ -7,9 +15,9 @@ import { LogLevel } from "@azure/msal-browser";
  */
 export const msalConfig = {
     auth: {
-        clientId: "YOUR CLIENT ID",
-        authority: "YOUR AUTHORITY",
-        redirectUri: "http://localhost:3000/"
+        clientId: `${clientId}`,
+        authority: `${tenant}`,
+        redirectUri: `${redirectUri}`
     },
     cache: {
         cacheLocation: "sessionStorage", // This configures where your cache will be stored
@@ -47,13 +55,5 @@ export const msalConfig = {
  * https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-permissions-and-consent#openid-connect-scopes
  */
 export const loginRequest = {
-    scopes: ["User.Read"]
-};
-
-/**
- * Add here the scopes to request when obtaining an access token for MS Graph API. For more information, see:
- * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/resources-and-scopes.md
- */
-export const graphConfig = {
-    graphMeEndpoint: "Enter_the_Graph_Endpoint_Herev1.0/me"
+    scopes
 };

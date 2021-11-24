@@ -5,8 +5,10 @@ import {ProblemJson} from "@pagopa/ts-commons/lib/responses";
 import {toast} from "react-toastify";
 import {Breadcrumb, Form} from "react-bootstrap";
 import {FaSpinner} from "react-icons/fa";
+import {MsalContext} from "@azure/msal-react";
 import {apiClient} from "../../util/apiClient";
 import {BrokerDetails} from '../../../generated/api/BrokerDetails';
+import {loginRequest} from "../../authConfig";
 
 interface IProps {
     match: {
@@ -20,6 +22,7 @@ interface IState {
 }
 
 export default class BrokerPage extends React.Component<IProps, IState> {
+    static contextType = MsalContext;
 
     constructor(props: IProps) {
         super(props);
@@ -34,32 +37,40 @@ export default class BrokerPage extends React.Component<IProps, IState> {
     }
 
     callGetBroker(code: string) {
-        apiClient.getBroker({
-            ApiKey: "",
-            brokercode: code
-        }).then((response: Validation<IResponseType<number, BrokerDetails | ProblemJson | undefined>>) => {
-            // eslint-disable-next-line no-underscore-dangle
-            switch (response._tag) {
-                case "Right":
-                    if (response.right.status === 200) {
-                        const body = response.right.value as BrokerDetails;
-                        this.setState({
-                            broker: body
-                        });
-                    } else {
-                        const body = response.right.value as ProblemJson;
-                        toast.error(body.title, {theme: "colored"});
-                    }
-                    break;
-                case "Left":
-                    toast.error("Errore", {theme: "colored"});
-                    break;
-            }
-        }).catch(() => {
-            toast.error("Problema nel recuperare i dettagli dell'intermediario", {theme: "colored"});
-        }).finally(() => {
-            this.setState({isLoading: false});
-        });
+        this.context.instance.acquireTokenSilent({
+            ...loginRequest,
+            account: this.context.accounts[0]
+        })
+            .then((response: any) => {
+                apiClient.getBroker({
+                    Authorization: `Bearer ${response.accessToken}`,
+                    ApiKey: "",
+                    brokercode: code
+                })
+                    .then((response: Validation<IResponseType<number, BrokerDetails | ProblemJson | undefined>>) => {
+                        // eslint-disable-next-line no-underscore-dangle
+                        switch (response._tag) {
+                            case "Right":
+                                if (response.right.status === 200) {
+                                    const body = response.right.value as BrokerDetails;
+                                    this.setState({
+                                        broker: body
+                                    });
+                                } else {
+                                    const body = response.right.value as ProblemJson;
+                                    toast.error(body.title, {theme: "colored"});
+                                }
+                                break;
+                            case "Left":
+                                toast.error("Errore", {theme: "colored"});
+                                break;
+                        }
+                    }).catch(() => {
+                    toast.error("Problema nel recuperare i dettagli dell'intermediario", {theme: "colored"});
+                }).finally(() => {
+                    this.setState({isLoading: false});
+                });
+            });
     }
 
     render(): React.ReactNode {

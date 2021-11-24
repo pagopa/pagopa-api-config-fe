@@ -1,7 +1,8 @@
 import React from 'react';
 import {ToastContainer} from "react-toastify";
+import {injectToken} from "../util/MsalWrapper";
 import Sidebar from "./Sidebar";
-import {Topbar} from "./Topbar";
+import Topbar from "./Topbar";
 
 interface IProps {
     history: {
@@ -10,25 +11,36 @@ interface IProps {
         };
         push(url: string): void;
     };
+    instance: any;
+    accounts: any;
+    isAuthenticated: boolean;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface IState {
+    loading: boolean;
 }
 
-export default class Layout extends React.Component<IProps, IState> {
+class Layout extends React.Component<IProps, IState> {
+
+    constructor(props: IProps) {
+        super(props);
+        this.state = {
+            loading: true,
+        };
+    }
 
     render(): React.ReactNode {
 
         return (
             <div>
 
-                <Topbar/>
+                <Topbar isAuthenticated={this.props.isAuthenticated}/>
 
                 <div className="container-fluid">
                     <div className="row">
                         <nav id="sidebarMenu" className="col-md-2 col-lg-2 d-md-block bg-white sidebar collapse">
-                            <div className="sidebar-sticky pt-5">
+                            <div className="sidebar-sticky">
                                 <Sidebar history={this.props.history}/>
                             </div>
                         </nav>
@@ -41,6 +53,7 @@ export default class Layout extends React.Component<IProps, IState> {
                         </main>
                     </div>
                 </div>
+
 
                 <ToastContainer
                     position="top-center"
@@ -58,3 +71,5 @@ export default class Layout extends React.Component<IProps, IState> {
         );
     }
 }
+
+export default injectToken(Layout);

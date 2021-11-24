@@ -25,4 +25,5 @@ export const apiClient = createClient({
     fetchApi
 });
 
+
 export type APIClient = typeof apiClient;
