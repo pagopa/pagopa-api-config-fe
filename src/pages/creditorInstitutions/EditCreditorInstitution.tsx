@@ -62,6 +62,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
 
     getCreditorInstitution(code: string): void {
         apiClient.getCreditorInstitution({
+            Authorization: `Bearer  ${window.sessionStorage.getItem("secret")}`, 
             ApiKey: "",
             creditorinstitutioncode: code
         }).then((response: any) => {
@@ -84,6 +85,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
 
     getIbans(code: string): void {
         apiClient.getCreditorInstitutionsIbans({
+            Authorization: `Bearer  ${window.sessionStorage.getItem("secret")}`, 
             ApiKey: "",
             creditorinstitutioncode: code
         }).then((response: any) => {
@@ -104,6 +106,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
 
     getStations(code: string): void {
         apiClient.getCreditorInstitutionStations({
+            Authorization: `Bearer  ${window.sessionStorage.getItem("secret")}`, 
             ApiKey: "",
             creditorinstitutioncode: code
         }).then((response: any) => {
@@ -124,6 +127,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
 
     getEncodings(code: string): void {
         apiClient.getCreditorInstitutionEncodings({
+            Authorization: `Bearer  ${window.sessionStorage.getItem("secret")}`, 
             ApiKey: "",
             creditorinstitutioncode: code
         }).then((response: any) => {
@@ -169,6 +173,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
 
     saveCreditorInstitution() {
         apiClient.updateCreditorInstitution({
+            Authorization: `Bearer  ${window.sessionStorage.getItem("secret")}`, 
             ApiKey: "",
             creditorinstitutioncode: this.state.code,
             body: this.state.creditorInstitution

@@ -35,6 +35,7 @@ export default class BrokerPage extends React.Component<IProps, IState> {
 
     callGetBroker(code: string) {
         apiClient.getBroker({
+            Authorization: `Bearer  ${window.sessionStorage.getItem("secret")}`,
             ApiKey: "",
             brokercode: code
         }).then((response: Validation<IResponseType<number, BrokerDetails | ProblemJson | undefined>>) => {

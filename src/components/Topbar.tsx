@@ -1,10 +1,21 @@
 import React from "react";
+import {useIsAuthenticated, useMsal} from "@azure/msal-react";
+import {loginRequest} from "../authConfig";
 import {SignOutButton} from "./SignOutButton";
-import {useIsAuthenticated} from "@azure/msal-react";
 import {SignInButton} from "./SignInButton";
 
 export const Topbar = () => {
     const isAuthenticated = useIsAuthenticated();
+    const {instance, accounts} = useMsal();
+
+    void instance.acquireTokenSilent({
+        ...loginRequest,
+        account: accounts[0]
+    }).then((response) => {
+        console.log("TOKEN", response);
+        window.sessionStorage.setItem("secret", response.idToken);
+    }).catch(error => console.error(error));
+
 
     return (
 

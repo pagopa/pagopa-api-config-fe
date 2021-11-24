@@ -84,6 +84,7 @@ export default class CreateCreditorInstitution extends React.Component<IProps, I
 
     save(): void {
         apiClient.createCreditorInstitution({
+            Authorization: `Bearer  ${window.sessionStorage.getItem("secret")}`,
             ApiKey: "",
             body: this.state.creditorInstitution
         }).then((response: any) => {

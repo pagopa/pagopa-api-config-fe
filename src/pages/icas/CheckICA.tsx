@@ -84,6 +84,7 @@ export default class CheckIca extends React.Component<IProps, IState> {
         const nameData = this.state.creditorInstitutionName;
 
         const request = apiClient.getCreditorInstitution({
+            Authorization: `Bearer  ${window.sessionStorage.getItem("secret")}`, 
             ApiKey: "",
             creditorinstitutioncode: code
         });
@@ -319,6 +320,7 @@ export default class CheckIca extends React.Component<IProps, IState> {
      */
     checkIbans(creditorInstitutionCode: string): void {
         apiClient.getCreditorInstitutionsIbans({
+            Authorization: `Bearer  ${window.sessionStorage.getItem("secret")}`, 
             ApiKey: "",
             creditorinstitutioncode: creditorInstitutionCode
         }).then((response: any) => {

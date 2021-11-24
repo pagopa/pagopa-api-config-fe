@@ -55,6 +55,7 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
 
     getCreditorInstitution(code: string): void {
         apiClient.getCreditorInstitution({
+            Authorization: `Bearer  ${window.sessionStorage.getItem("secret")}`,
             ApiKey: "",
             creditorinstitutioncode: code
         }).then((response: any) => {
@@ -77,6 +78,7 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
 
     getIbans(code: string): void {
         apiClient.getCreditorInstitutionsIbans({
+            Authorization: `Bearer  ${window.sessionStorage.getItem("secret")}`,
             ApiKey: "",
             creditorinstitutioncode: code
         }).then((response: any) => {
@@ -98,6 +100,7 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
 
     getStations(code: string): void {
         apiClient.getCreditorInstitutionStations({
+            Authorization: `Bearer  ${window.sessionStorage.getItem("secret")}`,
             ApiKey: "",
             creditorinstitutioncode: code
         }).then((response: any) => {
@@ -119,6 +122,7 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
 
     getEncodings(code: string): void {
         apiClient.getCreditorInstitutionEncodings({
+            Authorization: `Bearer  ${window.sessionStorage.getItem("secret")}`,
             ApiKey: "",
             creditorinstitutioncode: code
         }).then((response: any) => {

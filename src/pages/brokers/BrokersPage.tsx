@@ -46,6 +46,7 @@ export default class BrokersPage extends React.Component<IProps, IState> {
 
         this.setState({isLoading: true});
         apiClient.getBrokers({
+            Authorization: `Bearer  ${window.sessionStorage.getItem("secret")}`,
             ApiKey: "",
             limit: 10,
             page
@@ -102,6 +103,7 @@ export default class BrokersPage extends React.Component<IProps, IState> {
         if (status === "ok") {
 
             apiClient.deleteBroker({
+                Authorization: `Bearer  ${window.sessionStorage.getItem("secret")}`,
                 ApiKey: "",
                 brokercode: this.state.brokerToDelete!.broker_code
             })

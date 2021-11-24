@@ -52,6 +52,7 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
     getPage(page: number) {
         this.setState({isLoading: true});
         apiClient.getCreditorInstitutions({
+            Authorization: `Bearer  ${window.sessionStorage.getItem("secret")}`,
             ApiKey: "",
             limit: 10,
             page
@@ -111,6 +112,7 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
     hideDeleteModal = (status: string) => {
         if (status === "ok") {
             apiClient.deleteCreditorInstitution({
+                Authorization: `Bearer  ${window.sessionStorage.getItem("secret")}`,
                 ApiKey: "",
                 creditorinstitutioncode: this.state.creditorInstitutionToDelete.creditor_institution_code
             })
