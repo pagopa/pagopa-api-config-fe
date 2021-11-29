@@ -87,8 +87,6 @@ export default class CreateCreditorInstitution extends React.Component<IProps, I
             ApiKey: "",
             body: this.state.creditorInstitution
         }).then((response: any) => {
-            // eslint-disable-next-line no-console
-            console.log("RES SAVE", response);
             // eslint-disable-next-line no-prototype-builtins
             if (response.hasOwnProperty("right")) {
                 if (response.right.status === 201) {
@@ -103,10 +101,8 @@ export default class CreateCreditorInstitution extends React.Component<IProps, I
             else {
                 toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
             }
-        }).catch((err: any) => {
+        }).catch(() => {
             toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
-            // eslint-disable-next-line no-console
-            console.log("ERR", err);
         });
     }
 
