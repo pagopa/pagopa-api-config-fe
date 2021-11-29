@@ -62,9 +62,7 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
                 page_info: response.right.value.page_info
             });
         })
-        .catch(err => {
-            // eslint-disable-next-line no-console
-            console.error("err", err);
+        .catch(() => {
             toast.error("Problema nel recuperare gli enti creditori", {theme: "colored"});
         })
         .finally(() => {
@@ -123,9 +121,7 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
                     toast.error(res.right.value.title, {theme: "colored"});
                 }
             })
-            .catch((err: any) => {
-                // eslint-disable-next-line no-console
-                console.error("ERR", err);
+            .catch(() => {
                 toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
             });
         }

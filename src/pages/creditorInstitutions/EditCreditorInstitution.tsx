@@ -74,9 +74,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                 this.setState({isError: true});
             }
         })
-        .catch((err: any) => {
-            // eslint-disable-next-line no-console
-            console.error("ERR", err);
+        .catch(() => {
             this.setState({isError: true});
         })
         .finally(() => this.setState({isLoading: false}));
@@ -95,9 +93,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                 this.setState({isError: true});
             }
         })
-        .catch((err: any) => {
-            // eslint-disable-next-line no-console
-            console.error("ERR", err);
+        .catch(() => {
             this.setState({isError: true});
         });
     }
@@ -115,9 +111,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                 this.setState({isError: true});
             }
         })
-        .catch((err: any) => {
-            // eslint-disable-next-line no-console
-            console.error("ERR", err);
+        .catch(() => {
             this.setState({isError: true});
         });
     }
@@ -135,9 +129,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                 this.setState({isError: true});
             }
         })
-        .catch((err: any) => {
-            // eslint-disable-next-line no-console
-            console.error("ERR", err);
+        .catch(() => {
             this.setState({isError: true});
         });
     }
@@ -173,8 +165,6 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
             creditorinstitutioncode: this.state.code,
             body: this.state.creditorInstitution
         }).then((response: any) => {
-            // eslint-disable-next-line no-console
-            console.log("SAVE", response);
             if (response.right.status === 200) {
                 toast.info("Modifica avvenuta con successo.");
                 this.setState({creditorInstitution: response.right.value});
@@ -187,9 +177,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                 const message = (response.right.hasOwnProperty("title")) ? response.right.value.title : "Operazione non avvenuta a causa di un errore";
                 toast.error(message, {theme: "colored"});
             }
-        }).catch((error: any) => {
-            // eslint-disable-next-line no-console
-            console.error("ERROR", error);
+        }).catch(() => {
             toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
         });
     }
@@ -199,9 +187,8 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
         this.setState({[section]: Object.assign({}, this.state.backup[section])} as any);
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     createEncoding(): void {
-        // eslint-disable-next-line no-console
-        console.log("TODO");
     }
 
     render(): React.ReactNode {
