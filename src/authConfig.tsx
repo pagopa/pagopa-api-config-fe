@@ -1,20 +1,30 @@
 import { LogLevel } from "@azure/msal-browser";
+import {getConfig} from "./util/config";
 
 /**
  * Enter here the user flows and custom policies for your B2C application
  * To learn more about user flows, visit: https://docs.microsoft.com/en-us/azure/active-directory-b2c/user-flow-overview
  * To learn more about custom policies, visit: https://docs.microsoft.com/en-us/azure/active-directory-b2c/custom-policy-overview
  */
+
+const tenant = getConfig("APICONFIG_TENANT") as string;
+const redirectUri = getConfig("APICONFIG_REDIRECT_URI") as string;
+const clientId = getConfig("APICONFIG_CLIENT_ID") as string;
+
 export const b2cPolicies = {
     names: {
-        signUpSignIn: "B2C_1_signin_login"
+        signUpSignIn: "B2C_1_signup_signin",
+        forgotPassword: "B2C_1_reset_password",
     },
     authorities: {
         signUpSignIn: {
-            authority: "https://devoperationpagopa.b2clogin.com/devoperationpagopa.onmicrosoft.com/B2C_1_signin_login",
+            authority: `https://${tenant}.b2clogin.com/${tenant}.onmicrosoft.com/B2C_1_signup_signin`,
+        },
+        forgotPassword: {
+            authority: `https://${tenant}.b2clogin.com/${tenant}.onmicrosoft.com/B2C_1_reset_password`,
         }
     },
-    authorityDomain: "devoperationpagopa.b2clogin.com"
+    authorityDomain: `${tenant}.b2clogin.com`
 };
 
 
@@ -25,12 +35,12 @@ export const b2cPolicies = {
  */
 export const msalConfig = {
     auth: {
-        clientId: "f6e55ea3-6b09-49b7-81ef-9dbd9c4c2a21", // This is the ONLY mandatory field that you need to supply.
+        clientId, // This is the ONLY mandatory field that you need to supply.
         authority: b2cPolicies.authorities.signUpSignIn.authority, // Choose SUSI as your default authority.
         knownAuthorities: [b2cPolicies.authorityDomain], // Mark your B2C tenant's domain as trusted.
         // TODO parameterize
-        redirectUri: "https://config.dev.platform.pagopa.it/", // You must register this URI on Azure Portal/App Registration. Defaults to window.location.origin
-        postLogoutRedirectUri: "https://config.dev.platform.pagopa.it/", // Indicates the page to navigate after logout.
+        redirectUri: `${redirectUri}`, // You must register this URI on Azure Portal/App Registration. Defaults to window.location.origin
+        postLogoutRedirectUri: `${redirectUri}`, // Indicates the page to navigate after logout.
         navigateToLoginRequestUrl: false, // If "true", will navigate back to the original request location before processing the auth code response.
     },
     cache: {
@@ -68,8 +78,8 @@ export const msalConfig = {
  */
 export const protectedResources = {
     apiHello: {
-        endpoint: "https://devoperationpagopa.onmicrosoft.com/f6e55ea3-6b09-49b7-81ef-9dbd9c4c2a21/read",
-        scopes: ["https://devoperationpagopa.onmicrosoft.com/f6e55ea3-6b09-49b7-81ef-9dbd9c4c2a21/read"], // e.g. api://xxxxxx/access_as_user
+        endpoint: `https://${tenant}.onmicrosoft.com/${clientId}/access_as_user`,
+        scopes: [`https://${tenant}.onmicrosoft.com/${clientId}/access_as_user`], // e.g. api://xxxxxx/access_as_user
     },
 };
 
