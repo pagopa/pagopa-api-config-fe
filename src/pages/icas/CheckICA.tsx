@@ -28,6 +28,7 @@ interface IState {
     encodings: Array<Encoding>;
     error: any;
     ibans: Array<XMLData>;
+    xsd: XMLData;
     validityDate: XMLData;
 }
 
@@ -47,7 +48,8 @@ export default class CheckIca extends React.Component<IProps, IState> {
                 message: ""
             },
             ibans: [],
-            validityDate: this.initXMLData()
+            validityDate: this.initXMLData(),
+            xsd: this.initXMLData()
         };
         this.handleFile = this.handleFile.bind(this);
     }
@@ -62,7 +64,8 @@ export default class CheckIca extends React.Component<IProps, IState> {
                 message: ""
             },
             ibans: [],
-            validityDate: this.initXMLData()
+            validityDate: this.initXMLData(),
+            xsd: this.initXMLData()
         });
     }
 
@@ -469,7 +472,9 @@ export default class CheckIca extends React.Component<IProps, IState> {
         this.initState();
 
         const reader = new FileReader();
-        reader.readAsText(event.target.files[0]);
+        const file = event.target.files[0];
+        this.uploadXML(file);
+        reader.readAsText(file);
         // eslint-disable-next-line functional/immutable-data
         reader.onload = () => {
             const xml = reader.result as string;
@@ -487,23 +492,67 @@ export default class CheckIca extends React.Component<IProps, IState> {
         };
     }
 
+    uploadXML(file: any) {
+        const data = new FormData();
+        data.append("file", file);
+
+        fetch("http://localhost:8080/apiconfig/api/v1/icas/xsd", {
+            method: "POST",
+            body: data
+        }).then((response: any) => {
+            response.json().then((json: any) => {
+                const xsd = {
+                    inProgress: false,
+                    note: "",
+                    value: json.xsdSchema,
+                    valid: json.xsdCompliant ? "valid" : "not valid",
+                    action: json.detail
+                } as XMLData;
+                this.setState({xsd});
+            });
+        }).catch((err) => {
+            console.log("err", err);
+            const xsd = {
+                inProgress: false,
+                note: "",
+                value: "-",
+                valid: "undefined",
+                action: "Problema con il servizio di conformità schema XSD"
+            } as XMLData;
+            this.setState({xsd});
+        });
+
+        // apiClient.checkXSD({
+        //     ApiKey: "",
+        //     body: data
+        // }).then((response: any) => {
+        //     console.log("response", response);
+        // }).catch((err) => {
+        //     console.log("err", err);
+        // });
+    }
+
     render(): React.ReactNode {
         const getRow = (rowTitle: string, data: XMLData, key: string) => (
-            <tr key={key}>
-                <td className="font-weight-bold">{rowTitle}</td>
-                <td>{data.value}</td>
-                <td className="text-center">
-                    {data.inProgress && <FaSpinner className="spinner"/>}
-                    {!data.inProgress && data.valid === "valid" && <FaCheck className="text-success"/>}
-                    {!data.inProgress && data.valid === "not valid" && <FaTimes className="text-danger"/>}
-                    {!data.inProgress && data.valid === "undefined" && <FaMinus/>}
-                </td>
-                <td>{data.action}</td>
-                <td className="text-center">{data.note}</td>
-            </tr>
+                    <tr key={key}>
+                        <td className="font-weight-bold">{rowTitle}</td>
+                        <td>{data.value}</td>
+                        <td className="text-center">
+                            {data.inProgress && <FaSpinner className="spinner" />}
+                            {!data.inProgress && data.valid === "valid" && <FaCheck className="text-success" />}
+                            {!data.inProgress && data.valid === "not valid" && <FaTimes className="text-danger" />}
+                            {!data.inProgress && data.valid === "undefined" && <FaMinus  />}
+                        </td>
+                        <td>{data.action}</td>
+                        <td className="text-center">{data.note}</td>
+                    </tr>
+            );
+
+        const getSchemaName = () => (
+            new URL(this.state.xsd.value).pathname.split("/").pop()
         );
 
-        const getIbansRows = () => this.state.ibans.map((iban: XMLData, index: number) => getRow("Iban " + (index + 1).toString(), iban, "iban-" + index.toString()));
+        const getIbansRows = () => this.state.ibans.map((iban: XMLData, index: number) => getRow("Iban " + (index+1).toString(), iban, "iban-" + index.toString()));
 
         return (
             <div className="container-fluid creditor-institutions">
@@ -543,8 +592,35 @@ export default class CheckIca extends React.Component<IProps, IState> {
                     }
                     {
                         this.state.xml.length > 0 &&
-                        <div className="col-md-12">
-                            <Table hover responsive size="sm">
+					    <div className="col-md-12">
+							<Table hover responsive size="sm" className="xsd-table">
+								<thead>
+								<tr>
+									<th className="">XSD Schema</th>
+									<th className="text-center">Conforme</th>
+									<th className="">Intervento da effettuare</th>
+								</tr>
+								</thead>
+								<tbody>
+                                <tr>
+                                    <td>
+                                        {this.state.xsd.value.length > 0 && <a href={this.state.xsd.value} target="schema_frame">{getSchemaName()}</a>}
+                                    </td>
+                                    <td className="text-center">
+                                        {this.state.xsd.inProgress && <FaSpinner className="spinner" />}
+                                        {!this.state.xsd.inProgress && this.state.xsd.valid === "valid" && <FaCheck className="text-success" />}
+                                        {!this.state.xsd.inProgress && this.state.xsd.valid === "not valid" && <FaTimes className="text-danger" />}
+                                        {!this.state.xsd.inProgress && this.state.xsd.valid === "undefined" && <FaMinus  />}
+                                    </td>
+                                    <td>
+                                        {this.state.xsd.valid === "not valid" && <span>{this.state.xsd.action}</span>}
+                                    </td>
+                                </tr>
+
+								</tbody>
+							</Table>
+
+                            <Table hover responsive size="sm" className="xml-table">
                                 <thead>
                                 <tr>
                                     <th className=""></th>

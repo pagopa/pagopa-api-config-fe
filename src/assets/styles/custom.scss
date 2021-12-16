@@ -225,3 +225,33 @@ pre {
     width: 35%;
   }
 }
+
+.xsd-table {
+  td:first-child {
+    width: 35%;
+  }
+  td:nth-child(2) {
+    width: 5%;
+  }
+  td:nth-child(3) {
+    width: 60%;
+  }
+}
+
+.xml-table {
+  td:first-child {
+    width: 12%;
+  }
+  td:nth-child(2) {
+    width: 23%;
+  }
+  td:nth-child(3) {
+    width: 5%;
+  }
+  td:nth-child(4) {
+    width: 30%;
+  }
+  td:nth-child(5) {
+    width: 30%;
+  }
+}
