@@ -5,12 +5,14 @@ import {FaCheck, FaEye, FaTimes, FaTrash} from "react-icons/fa";
 import {IResponseType} from "@pagopa/ts-commons/lib/requests";
 import {Validation} from "io-ts";
 import {ProblemJson} from "@pagopa/ts-commons/lib/responses";
+import {MsalContext} from "@azure/msal-react";
 import {Brokers} from "../../../generated/api/Brokers";
 import {Broker} from "../../../generated/api/Broker";
 import {apiClient} from "../../util/apiClient";
 import Paginator from "../../components/Paginator";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import {PageInfo} from "../../../generated/api/PageInfo";
+import {loginRequest} from "../../authConfig";
 
 
 interface IProps {
@@ -26,6 +28,7 @@ interface IState {
 }
 
 export default class BrokersPage extends React.Component<IProps, IState> {
+    static contextType = MsalContext;
 
     constructor(props: IProps) {
         super(props);
@@ -45,37 +48,44 @@ export default class BrokersPage extends React.Component<IProps, IState> {
     getPage(page: number) {
 
         this.setState({isLoading: true});
-        apiClient.getBrokers({
-            ApiKey: "",
-            limit: 10,
-            page
+        this.context.instance.acquireTokenSilent({
+            ...loginRequest,
+            account: this.context.accounts[0]
         })
-            .then((response: Validation<IResponseType<number, Brokers | ProblemJson | undefined>>) => {
-                // eslint-disable-next-line no-underscore-dangle
-                switch (response._tag) {
-                    case "Right":
-                        if (response.right.status === 200) {
-                            const body = response.right.value as Brokers;
-                            this.setState({
-                                brokersPaginated: body,
-                                pageIndex: page
-                            });
-                        } else {
-                            const body = response.right.value as ProblemJson;
-                            toast.error(body.title, {theme: "colored"});
+            .then((response: any) => {
+                apiClient.getBrokers({
+                    Authorization: `Bearer ${response.accessToken}`,
+                    ApiKey: "",
+                    limit: 10,
+                    page
+                })
+                    .then((response: Validation<IResponseType<number, Brokers | ProblemJson | undefined>>) => {
+                        // eslint-disable-next-line no-underscore-dangle
+                        switch (response._tag) {
+                            case "Right":
+                                if (response.right.status === 200) {
+                                    const body = response.right.value as Brokers;
+                                    this.setState({
+                                        brokersPaginated: body,
+                                        pageIndex: page
+                                    });
+                                } else {
+                                    const body = response.right.value as ProblemJson;
+                                    toast.error(body.title, {theme: "colored"});
+                                }
+                                break;
+                            case "Left":
+                                toast.error("Errore", {theme: "colored"});
+                                break;
                         }
-                        break;
-                    case "Left":
-                        toast.error("Errore", {theme: "colored"});
-                        break;
-                }
 
-            })
-            .catch(() => {
-                toast.error("Problema nel recuperare gli intermediari", {theme: "colored"});
-            })
-            .finally(() => {
-                this.setState({isLoading: false});
+                    })
+                    .catch(() => {
+                        toast.error("Problema nel recuperare gli intermediari", {theme: "colored"});
+                    })
+                    .finally(() => {
+                        this.setState({isLoading: false});
+                    });
             });
     }
 
@@ -100,30 +110,36 @@ export default class BrokersPage extends React.Component<IProps, IState> {
 
     hideDeleteModal = (status: string) => {
         if (status === "ok") {
-
-            apiClient.deleteBroker({
-                ApiKey: "",
-                brokercode: this.state.brokerToDelete!.broker_code
+            this.context.instance.acquireTokenSilent({
+                ...loginRequest,
+                account: this.context.accounts[0]
             })
-                .then((response: Validation<IResponseType<number, ProblemJson | undefined>>) => {
-                    // eslint-disable-next-line no-underscore-dangle
-                    switch (response._tag) {
-                        case "Right":
-                            if (response.right.status === 200) {
-                                toast.info("Rimozione avvenuta con successo");
-                                this.removeBroker();
-                            } else {
-                                const body = response.right.value as ProblemJson;
-                                toast.error(body.title, {theme: "colored"});
+                .then((response: any) => {
+                    apiClient.deleteBroker({
+                        Authorization: `Bearer ${response.accessToken}`,
+                        ApiKey: "",
+                        brokercode: this.state.brokerToDelete!.broker_code
+                    })
+                        .then((response: Validation<IResponseType<number, ProblemJson | undefined>>) => {
+                            // eslint-disable-next-line no-underscore-dangle
+                            switch (response._tag) {
+                                case "Right":
+                                    if (response.right.status === 200) {
+                                        toast.info("Rimozione avvenuta con successo");
+                                        this.removeBroker();
+                                    } else {
+                                        const body = response.right.value as ProblemJson;
+                                        toast.error(body.title, {theme: "colored"});
+                                    }
+                                    break;
+                                case "Left":
+                                    toast.error("Errore", {theme: "colored"});
+                                    break;
                             }
-                            break;
-                        case "Left":
-                            toast.error("Errore", {theme: "colored"});
-                            break;
-                    }
-                })
-                .catch(() => {
-                    toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                        })
+                        .catch(() => {
+                            toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                        });
                 });
 
         }

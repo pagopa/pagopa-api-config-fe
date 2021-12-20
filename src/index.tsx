@@ -4,9 +4,17 @@ import "./assets/styles/custom.scss";
 import "bootstrap/dist/js/bootstrap.min";
 import "jquery";
 import "react-toastify/dist/ReactToastify.min.css";
-import Routes from "./util/routes";
+import "bootstrap/dist/css/bootstrap.min.css";
+import {PublicClientApplication} from "@azure/msal-browser";
+import {MsalProvider} from "@azure/msal-react";
+import {msalConfig} from "./authConfig";
+import App from "./App";
+
+const msalInstance = new PublicClientApplication(msalConfig);
 
 ReactDOM.render(
-        <Routes/>,
-        document.getElementById('app')
+    <MsalProvider instance={msalInstance}>
+        <App/>
+    </MsalProvider>,
+    document.getElementById('app')
 );

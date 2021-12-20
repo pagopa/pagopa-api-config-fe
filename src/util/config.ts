@@ -3,6 +3,11 @@ import { Millisecond } from "italia-ts-commons/lib/units";
 export interface IConfig {
   APICONFIG_HOST: string;
   APICONFIG_BASEPATH: string;
+
+  APICONFIG_CLIENT_ID: string;
+  APICONFIG_REDIRECT_URI: string;
+  APICONFIG_TENANT: string;
+  APICONFIG_SCOPES: string;
 }
 
 export function getConfig(param: keyof IConfig): string | Millisecond {
