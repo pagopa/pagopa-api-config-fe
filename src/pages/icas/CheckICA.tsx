@@ -527,14 +527,24 @@ export default class CheckIca extends React.Component<IProps, IState> {
         });
 
         // TODO understand how to fix generated client
-        // apiClient.checkXSD({
-        //     ApiKey: "",
-        //     body: data
-        // }).then((response: any) => {
-        //     console.log("response", response);
-        // }).catch((err) => {
-        //     console.log("err", err);
-        // });
+        /*
+        this.context.instance.acquireTokenSilent({
+            ...loginRequest,
+            account: this.context.accounts[0]
+        })
+        .then((response: any) => {
+            void apiClient.checkXSD({
+                ApiKey: "",
+                Authorization: `Bearer ${response.accessToken}`,
+                file: data
+            }).then((response: any) => {
+                console.log("response", response);
+            }).catch((err) => {
+                console.log("err", err);
+            });
+        });
+         */
+
     }
 
     render(): React.ReactNode {
