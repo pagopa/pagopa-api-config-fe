@@ -91,6 +91,10 @@
     "whatwg-fetch": "^3.6.2"
   },
   "resolutions": {
-    "@babel/preset-env": "7.13.8"
+    "@babel/preset-env": "7.13.8",
+    "ansi-regex": "^5.0.1",
+    "json-schema": "^0.4.0",
+    "node-fetch": "^2.6.1",
+    "validator": "^13.7.0"
   }
 }

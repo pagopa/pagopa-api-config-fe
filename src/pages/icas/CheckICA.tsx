@@ -8,6 +8,7 @@ import {apiClient} from "../../util/apiClient";
 import {Iban} from "../../../generated/api/Iban";
 import {Encoding} from "../../../generated/api/Encoding";
 import {loginRequest} from "../../authConfig";
+import {getConfig} from "../../util/config";
 
 interface XMLData {
     inProgress: boolean;
@@ -496,7 +497,10 @@ export default class CheckIca extends React.Component<IProps, IState> {
         const data = new FormData();
         data.append("file", file);
 
-        fetch("http://localhost:8080/apiconfig/api/v1/icas/xsd", {
+        const baseUrl = getConfig("APICONFIG_HOST") as string;
+        const basePath = getConfig("APICONFIG_BASEPATH") as string;
+
+        fetch(baseUrl + basePath + "/icas/xsd", {
             method: "POST",
             body: data
         }).then((response: any) => {
@@ -510,8 +514,7 @@ export default class CheckIca extends React.Component<IProps, IState> {
                 } as XMLData;
                 this.setState({xsd});
             });
-        }).catch((err) => {
-            console.log("err", err);
+        }).catch(() => {
             const xsd = {
                 inProgress: false,
                 note: "",
@@ -522,6 +525,7 @@ export default class CheckIca extends React.Component<IProps, IState> {
             this.setState({xsd});
         });
 
+        // TODO understand how to fix generated client
         // apiClient.checkXSD({
         //     ApiKey: "",
         //     body: data
@@ -549,7 +553,8 @@ export default class CheckIca extends React.Component<IProps, IState> {
             );
 
         const getSchemaName = () => (
-            new URL(this.state.xsd.value).pathname.split("/").pop()
+            // eslint-disable-next-line functional/immutable-data
+            this.state.xsd.value === "-" ? "" : new URL(this.state.xsd.value).pathname.split("/").pop()
         );
 
         const getIbansRows = () => this.state.ibans.map((iban: XMLData, index: number) => getRow("Iban " + (index+1).toString(), iban, "iban-" + index.toString()));
