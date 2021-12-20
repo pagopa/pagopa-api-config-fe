@@ -166,19 +166,19 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
                     <td className="text-right">
                         {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
                         <OverlayTrigger placement="top"
-                                        overlay={<Tooltip id={"tooltip-details-" + index}>Visualizza</Tooltip>}>
+                                        overlay={<Tooltip id={`tooltip-details-${index}`}>Visualizza</Tooltip>}>
                             <FaEye role="button" className="mr-3"
                                    onClick={() => this.handleDetails(ci.creditor_institution_code)}/>
                         </OverlayTrigger>
                         {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
                         <OverlayTrigger placement="top"
-                                        overlay={<Tooltip id={"tooltip-edit-" + index}>Modifica</Tooltip>}>
+                                        overlay={<Tooltip id={`tooltip-edit-${index}`}>Modifica</Tooltip>}>
                             <FaEdit role="button" className="mr-3"
                                     onClick={() => this.handleEdit(ci.creditor_institution_code)}/>
                         </OverlayTrigger>
                         {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
                         <OverlayTrigger placement="top"
-                                        overlay={<Tooltip id={"tooltip-delete-" + index}>Elimina</Tooltip>}>
+                                        overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
                             <FaTrash role="button" className="mr-3" onClick={() => this.handleDelete(ci, index)}/>
                         </OverlayTrigger>
                     </td>
