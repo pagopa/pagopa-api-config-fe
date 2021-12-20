@@ -34,7 +34,6 @@ class Layout extends React.Component<IProps, IState> {
 
         return (
             <div>
-
                 <Topbar isAuthenticated={this.props.isAuthenticated}/>
 
                 <div className="container-fluid">
