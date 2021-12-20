@@ -4,6 +4,7 @@ import {Props} from "io-ts";
 import {FaCheck, FaExclamationTriangle, FaMinus, FaSpinner, FaTimes} from "react-icons/fa";
 import IBAN from "iban";
 import {MsalContext} from "@azure/msal-react";
+import axios from "axios";
 import {apiClient} from "../../util/apiClient";
 import {Iban} from "../../../generated/api/Iban";
 import {Encoding} from "../../../generated/api/Encoding";
@@ -499,21 +500,21 @@ export default class CheckIca extends React.Component<IProps, IState> {
 
         const baseUrl = getConfig("APICONFIG_HOST") as string;
         const basePath = getConfig("APICONFIG_BASEPATH") as string;
+        const config = {
+            headers: {
+                'content-type': 'multipart/form-data'
+            }
+        };
 
-        fetch(baseUrl + basePath + "/icas/xsd", {
-            method: "POST",
-            body: data
-        }).then((response: any) => {
-            response.json().then((json: any) => {
-                const xsd = {
-                    inProgress: false,
-                    note: "",
-                    value: json.xsdSchema,
-                    valid: json.xsdCompliant ? "valid" : "not valid",
-                    action: json.detail
-                } as XMLData;
-                this.setState({xsd});
-            });
+        axios.post(baseUrl + basePath + "/icas/xsd", data, config).then((response:any) => {
+            const xsd = {
+                inProgress: false,
+                note: "",
+                value: response.data.xsdSchema,
+                valid: response.data.xsdCompliant ? "valid" : "not valid",
+                action: response.data.detail
+            } as XMLData;
+            this.setState({xsd});
         }).catch(() => {
             const xsd = {
                 inProgress: false,
