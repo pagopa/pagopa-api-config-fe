@@ -88,100 +88,104 @@ export default class CheckIca extends React.Component<IProps, IState> {
      * Check if creditor institution code and business name are correct
      * @param code: creditor institution code
      */
-    checkCreditorInstitution(code: string): Promise<any> {
+    checkCreditorInstitution(creditorInstitutionCode: string, code: string): void {
         const codeData = this.state.creditorInstitutionCode;
         const nameData = this.state.creditorInstitutionName;
 
-        const request = this.context.instance.acquireTokenSilent({
+        this.context.instance.acquireTokenSilent({
             ...loginRequest,
             account: this.context.accounts[0]
         })
             .then((response: any) => {
-                void apiClient.getCreditorInstitution({
+                apiClient.getCreditorInstitution({
                     Authorization: `Bearer ${response.accessToken}`,
                     ApiKey: "",
-                    creditorinstitutioncode: code
-                });
-            });
+                    creditorinstitutioncode: creditorInstitutionCode
+                }).then((response: any) => {
+                    this.analyzeCreditorInstitutionResponse(codeData, nameData, response);
 
-        request
-            .then((response: any) => {
-                // eslint-disable-next-line functional/no-let
-                let creditorInstitutionCode: XMLData;
-                // eslint-disable-next-line functional/no-let
-                let creditorInstitutionName: XMLData;
-                if (response.right.status === 200) {
-                    creditorInstitutionCode = {
+                    if (response.right.status === 200) {
+                        this.analyzeIbanList(code);
+                    }
+
+                }).catch(() => {
+                    const creditorInstitutionCode = {
                         inProgress: false,
-                        note: "",
                         value: codeData.value,
-                        valid: codeData.value === response.right.value.creditor_institution_code ? "valid" : "not valid",
+                        valid: "undefined",
+                        note: "Problema di comunicazione con il servizio",
                         action: ""
                     } as XMLData;
 
-                    creditorInstitutionName = {
+                    const creditorInstitutionName = {
                         inProgress: false,
-                        note: "",
                         value: nameData.value,
-                        valid: nameData.value === response.right.value.business_name ? "valid" : "not valid",
+                        valid: "undefined",
+                        note: "Problema di comunicazione con il servizio",
                         action: ""
                     } as XMLData;
 
-                    this.checkQRCode(code);
-                } else {
+                    this.setState({creditorInstitutionCode});
+                    this.setState({creditorInstitutionName});
+
                     const error = {
                         isVisible: true,
                         message: "Problemi di recupero dati dell'Ente Creditore"
                     };
                     this.setState({error});
-
-                    creditorInstitutionCode = {
-                        inProgress: false,
-                        value: codeData.value,
-                        valid: "not valid",
-                        note: "Codice non trovato",
-                        action: "Verificare il codice dell'Ente Creditore"
-                    } as XMLData;
-
-                    creditorInstitutionName = {
-                        inProgress: false,
-                        value: nameData.value,
-                        valid: "not valid",
-                        note: "Impossibile validare il nome dell'Ente senza il relativo codice corretto",
-                        action: "Verificare il codice dell'Ente Creditore"
-                    } as XMLData;
-                }
-                this.setState({creditorInstitutionCode});
-                this.setState({creditorInstitutionName});
-            })
-            .catch(() => {
-                const creditorInstitutionCode = {
-                    inProgress: false,
-                    value: codeData.value,
-                    valid: "undefined",
-                    note: "Problema di comunicazione con il servizio",
-                    action: ""
-                } as XMLData;
-
-                const creditorInstitutionName = {
-                    inProgress: false,
-                    value: nameData.value,
-                    valid: "undefined",
-                    note: "Problema di comunicazione con il servizio",
-                    action: ""
-                } as XMLData;
-
-                this.setState({creditorInstitutionCode});
-                this.setState({creditorInstitutionName});
-
-
-                const error = {
-                    isVisible: true,
-                    message: "Problemi di recupero dati dell'Ente Creditore"
-                };
-                this.setState({error});
+                });
             });
-        return request;
+
+    }
+
+    analyzeCreditorInstitutionResponse(codeData: any, nameData: any, response: any) {
+        // eslint-disable-next-line functional/no-let
+        let creditorInstitutionCode: XMLData;
+        // eslint-disable-next-line functional/no-let
+        let creditorInstitutionName: XMLData;
+        if (response.right.status === 200) {
+            creditorInstitutionCode = {
+                inProgress: false,
+                note: "",
+                value: codeData.value,
+                valid: codeData.value === response.right.value.creditor_institution_code ? "valid" : "not valid",
+                action: ""
+            } as XMLData;
+
+            creditorInstitutionName = {
+                inProgress: false,
+                note: "",
+                value: nameData.value,
+                valid: nameData.value === response.right.value.business_name ? "valid" : "not valid",
+                action: ""
+            } as XMLData;
+
+            this.checkQRCode(codeData.value);
+        } else {
+            const error = {
+                isVisible: true,
+                message: "Problemi di recupero dati dell'Ente Creditore"
+            };
+            this.setState({error});
+
+            creditorInstitutionCode = {
+                inProgress: false,
+                value: codeData.value,
+                valid: "not valid",
+                note: "Codice non trovato",
+                action: "Verificare il codice dell'Ente Creditore"
+            } as XMLData;
+
+            creditorInstitutionName = {
+                inProgress: false,
+                value: nameData.value,
+                valid: "not valid",
+                note: "Impossibile validare il nome dell'Ente senza il relativo codice corretto",
+                action: "Verificare il codice dell'Ente Creditore"
+            } as XMLData;
+        }
+        this.setState({creditorInstitutionCode});
+        this.setState({creditorInstitutionName});
     }
 
     /**
@@ -209,7 +213,7 @@ export default class CheckIca extends React.Component<IProps, IState> {
      * Check if the creditor institution has the QRCode encoding
      * @param code
      */
-    checkQRCode(code: string): void {
+    checkQRCode(creditorInstitutionCode: string): void {
         if (this.state.encodings.length === 0) {
             this.context.instance.acquireTokenSilent({
                 ...loginRequest,
@@ -220,16 +224,16 @@ export default class CheckIca extends React.Component<IProps, IState> {
                     apiClient.getCreditorInstitutionEncodings({
                         Authorization: `Bearer ${response.accessToken}`,
                         ApiKey: "",
-                        creditorinstitutioncode: code
+                        creditorinstitutioncode: creditorInstitutionCode
                     }).then((response: any) => {
                         if (response.right.status === 200) {
                             this.setState({encodings: response.right.value.encodings});
-                            this.evaluateQRCode(code, response.right.value.encodings);
+                            this.evaluateQRCode(creditorInstitutionCode, response.right.value.encodings);
                         }
                     });
                 });
         } else {
-            this.evaluateQRCode(code, this.state.encodings);
+            this.evaluateQRCode(creditorInstitutionCode, this.state.encodings);
         }
     }
 
@@ -446,24 +450,23 @@ export default class CheckIca extends React.Component<IProps, IState> {
         const creditorInstitutionName: XMLData = this.getDefaultXMLData(code.getElementsByTagName("ragioneSociale")[0].textContent);
         this.setState({creditorInstitutionName});
 
-        const request = this.checkCreditorInstitution(ciCode);
+        this.checkCreditorInstitution(ciCode, code);
 
-        // eslint-disable-next-line @typescript-eslint/no-floating-promises
-        request.then((result: any) => {
-            if (result.right.status === 200) {
-                for (const iban of code.getElementsByTagName("ibanAccredito")) {
-                    const ibanData: XMLData = this.getDefaultXMLData(iban.textContent);
-                    const storedIbans = this.state.ibans;
-                    // eslint-disable-next-line functional/immutable-data
-                    storedIbans.push(ibanData);
-                    this.setState({ibans: storedIbans});
-                }
-                this.checkIbans(ciCode);
-            }
-        });
         const validityDate: XMLData = this.getDefaultXMLData(code.getElementsByTagName("dataInizioValidita")[0].textContent);
         this.setState({validityDate});
         this.checkValidityDate();
+    }
+
+    analyzeIbanList(code: any): void {
+        for (const iban of code.getElementsByTagName("ibanAccredito")) {
+            const ibanData: XMLData = this.getDefaultXMLData(iban.textContent);
+            const storedIbans = this.state.ibans;
+            // eslint-disable-next-line functional/immutable-data
+            storedIbans.push(ibanData);
+            this.setState({ibans: storedIbans});
+        }
+        const ciCode = code.getElementsByTagName("identificativoDominio")[0].textContent;
+        this.checkIbans(ciCode);
     }
 
     /**
@@ -475,23 +478,25 @@ export default class CheckIca extends React.Component<IProps, IState> {
 
         const reader = new FileReader();
         const file = event.target.files[0];
-        this.uploadXML(file);
-        reader.readAsText(file);
-        // eslint-disable-next-line functional/immutable-data
-        reader.onload = () => {
-            const xml = reader.result as string;
-            const code: any = new window.DOMParser().parseFromString(xml, "text/xml");
-            if (code.getElementsByTagName("parsererror").length > 0) {
-                const error = {
-                    isVisible: true,
-                    message: "XML sintatticamente non valido"
-                };
-                this.setState({error});
-            } else {
-                this.setState({xml});
-                this.checkXML(code);
-            }
-        };
+        if (file) {
+            this.uploadXML(file);
+            reader.readAsText(file);
+            // eslint-disable-next-line functional/immutable-data
+            reader.onload = () => {
+                const xml = reader.result as string;
+                const code: any = new window.DOMParser().parseFromString(xml, "text/xml");
+                if (code.getElementsByTagName("parsererror").length > 0) {
+                    const error = {
+                        isVisible: true,
+                        message: "XML sintatticamente non valido"
+                    };
+                    this.setState({error});
+                } else {
+                    this.setState({xml});
+                    this.checkXML(code);
+                }
+            };
+        }
     }
 
     uploadXML(file: any) {
@@ -500,51 +505,38 @@ export default class CheckIca extends React.Component<IProps, IState> {
 
         const baseUrl = getConfig("APICONFIG_HOST") as string;
         const basePath = getConfig("APICONFIG_BASEPATH") as string;
-        const config = {
-            headers: {
-                'content-type': 'multipart/form-data'
-            }
-        };
 
-        axios.post(baseUrl + basePath + "/icas/xsd", data, config).then((response:any) => {
-            const xsd = {
-                inProgress: false,
-                note: "",
-                value: response.data.xsdSchema,
-                valid: response.data.xsdCompliant ? "valid" : "not valid",
-                action: response.data.detail
-            } as XMLData;
-            this.setState({xsd});
-        }).catch(() => {
-            const xsd = {
-                inProgress: false,
-                note: "",
-                value: "-",
-                valid: "undefined",
-                action: "Problema con il servizio di conformità schema XSD"
-            } as XMLData;
-            this.setState({xsd});
-        });
 
-        // TODO understand how to fix generated client
-        /*
         this.context.instance.acquireTokenSilent({
             ...loginRequest,
             account: this.context.accounts[0]
-        })
-        .then((response: any) => {
-            void apiClient.checkXSD({
-                ApiKey: "",
-                Authorization: `Bearer ${response.accessToken}`,
-                file: data
-            }).then((response: any) => {
-                console.log("response", response);
-            }).catch((err) => {
-                console.log("err", err);
+        }).then((response: any) => {
+            const config = {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    Authorization: `Bearer ${response.accessToken}`
+                }
+            };
+            axios.post(baseUrl + basePath + "/icas/xsd", data, config).then((response:any) => {
+                const xsd = {
+                    inProgress: false,
+                    note: "",
+                    value: response.data.xsdSchema,
+                    valid: response.data.xsdCompliant ? "valid" : "not valid",
+                    action: response.data.detail
+                } as XMLData;
+                this.setState({xsd});
+            }).catch(() => {
+                const xsd = {
+                    inProgress: false,
+                    note: "",
+                    value: "-",
+                    valid: "undefined",
+                    action: "Problema con il servizio di conformità schema XSD"
+                } as XMLData;
+                this.setState({xsd});
             });
         });
-         */
-
     }
 
     render(): React.ReactNode {
