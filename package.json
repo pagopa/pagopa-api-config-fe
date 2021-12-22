@@ -25,6 +25,7 @@
     "@azure/msal-browser": "^2.19.0",
     "@azure/msal-react": "^1.1.1",
     "@pagopa/ts-commons": "^10.2.1",
+    "axios": "^0.24.0",
     "bootstrap": "^4.5.3",
     "classnames": "^2.2.6",
     "date-fns": "^2.16.1",
@@ -91,6 +92,10 @@
     "whatwg-fetch": "^3.6.2"
   },
   "resolutions": {
-    "@babel/preset-env": "7.13.8"
+    "@babel/preset-env": "7.13.8",
+    "ansi-regex": "^5.0.1",
+    "json-schema": "^0.4.0",
+    "node-fetch": "^2.6.1",
+    "validator": "^13.7.0"
   }
 }

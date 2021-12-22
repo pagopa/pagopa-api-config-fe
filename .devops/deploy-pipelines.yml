@@ -73,18 +73,19 @@ stages:
   - stage: release_service
     # bump version on main branch and if SEMVER is not 'skip'
     condition: and(eq(variables['Build.SourceBranch'], 'refs/heads/main'), ne('${{ parameters.SEMVER }}', 'skip'))
+
     pool:
       vmImage: "ubuntu-latest"
     jobs:
       - job: release_service
         steps:
-
           - template: templates/node-job-setup/template.yaml@pagopaCommons
             parameters:
               persistCredentials: true
               gitReference: 'main'
 
           - template: templates/node-github-release/template.yaml@pagopaCommons
+
             parameters:
               semver: '${{ parameters.SEMVER }}'
               release_branch: 'main'
@@ -95,6 +96,7 @@ stages:
   # Prepare Artifact with application bundle
   - stage: prepare_artifact
     condition: not(failed('release_service'))
+
     pool:
       vmImage: 'ubuntu-latest'
     jobs:
@@ -141,7 +143,6 @@ stages:
           - download: current
             artifact: Bundle
 
-
           # to check why azurefilecopy@4 https://github.com/microsoft/azure-pipelines-tasks/issues/13159
           - task: AzureFileCopy@3
             displayName: 'Deploy to container blob'
@@ -166,7 +167,6 @@ stages:
     jobs:
       - job: 'purge_cdn'
         steps:
-
           - task: AzureCLI@1
             displayName: 'Purge CDN'
             inputs:
