@@ -132,10 +132,13 @@ stages:
               echo 'APICONFIG_HOST: $(APICONFIG_HOST)'
               echo 'APICONFIG_BASEPATH: $(APICONFIG_BASEPATH)'
               chmod +x env.sh && . ./env.sh
-              cat ./src/env-config.js
             env:
               APICONFIG_HOST: $(APICONFIG_HOST)
               APICONFIG_BASEPATH: $(APICONFIG_BASEPATH)
+              APICONFIG_CLIENT_ID: $(APICONFIG_CLIENT_ID)
+              APICONFIG_REDIRECT_URI: $(APICONFIG_REDIRECT_URI)
+              APICONFIG_TENANT: $(APICONFIG_TENANT)
+              APICONFIG_SCOPES: $(APICONFIG_SCOPES)
             displayName: 'Generate env config file'
 
           - script: yarn build
