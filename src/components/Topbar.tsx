@@ -19,7 +19,7 @@ export default class Topbar extends React.Component<IProps, IState> {
 
             <nav className="navbar navbar-light sticky-top bg-white flex-md-nowrap p-0 shadow">
                 <a className="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="#">
-                    <img src={require('../assets/images/logo-pagopa-spa_resize.png')} title="logo"/>
+                    <img src={require('../assets/images/logo-pagopa.png')} title="logo"/>
                 </a>
 
                 <div className={"m-2"}>
