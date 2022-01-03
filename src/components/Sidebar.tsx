@@ -44,10 +44,8 @@ export default class Sidebar extends React.Component<IProps, IState> {
         const location = this.props.history.location;
         const domains = this.state.domains;
 
-        function getClass(domain: string, index: number) {
-            const activeItem = SidebarItems.findIndex(item => item.domain === domain && getPath(location.pathname).includes(getPath(item.route)));
-            const currentActiveItem = activeItem === -1 ? 0 : activeItem;
-            return currentActiveItem === index ? 'active' : '';
+        function getClass(domain: any, item: any) {
+            return getPath(location.pathname).startsWith(item.route) && getPath(location.pathname).includes(getPath(item.route)) ? "active" : "";
         }
 
         function getPath(path: string) {
@@ -62,7 +60,6 @@ export default class Sidebar extends React.Component<IProps, IState> {
         }
 
         return (
-
             <Accordion defaultActiveKey="0">
                 <span>
                     <Accordion.Toggle as="div" eventKey="0">
@@ -76,9 +73,9 @@ export default class Sidebar extends React.Component<IProps, IState> {
                         <div className="list-group">
                             {
                                 SidebarItems.filter(item => item.domain === "ec").map((item, index) =>
-                                        <Link to={item.route} key={item.name} className={`list-group-item-action ${getClass( "ec", index)}`}>
-                                            <span>{item.name}</span>
-                                        </Link>
+                                    <Link to={item.route} key={item.name} className={`list-group-item-action ${getClass( "ec", item)}`}>
+                                        <span>{item.name}</span>
+                                    </Link>
                                 )
                             }
                         </div>
@@ -96,9 +93,9 @@ export default class Sidebar extends React.Component<IProps, IState> {
                         <div className="list-group">
                             {
                                 SidebarItems.filter(item => item.domain === "psp").map((item, index) =>
-                                        <Link to={item.route} key={item.name} className={`list-group-item-action ${getClass( "psp", index)}`}>
-                                            <span>{item.name}</span>
-                                        </Link>
+                                    <Link to={item.route} key={item.name} className={`list-group-item-action ${getClass( "psp", item)}`}>
+                                        <span>{item.name}</span>
+                                    </Link>
                                 )
                             }
                         </div>
