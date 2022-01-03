@@ -78,6 +78,7 @@ export default class Sidebar extends React.Component<IProps, IState> {
 
     render(): React.ReactNode {
         const location = this.props.history.location;
+
         const domains: any = this.state.domains;
 
         function getClass(item: any) {
