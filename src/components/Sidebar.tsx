@@ -100,6 +100,10 @@ export default class Sidebar extends React.Component<IProps, IState> {
             );
         }
 
+        function getCompressionClass(domain: string, expand: boolean) {
+            return domains[domain] === expand ? "d-inline" : "d-none";
+        }
+
         return (
             <Accordion onSelect={(activeIndex) => this.handleAccordion(activeIndex)}>
                 <span>
