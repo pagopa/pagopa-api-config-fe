@@ -1,20 +1,29 @@
 const SidebarItems = [
     {
-        name: "Enti Creditori - EC",
-        route: "/creditor-institutions"
+        name: "EC",
+        route: "/creditor-institutions",
+        domain: "ec"
     },
     {
         name: "Intermediari EC",
-        route: "/brokers"
-    },
-    {
-        name: "Informativa Conto Accredito - ICA",
-        route: "/icas"
+        route: "/brokers",
+        domain: "ec"
     },
     {
         name: "Verifica Informativa Conto Accredito",
-        route: "/icas/check"
-    }
+        route: "/icas/check",
+        domain: "ec"
+    },
+    {
+        name: "PSP",
+        route: "/payment-service-providers",
+        domain: "psp"
+    },
 ];
+// {
+//     name: "Informativa Conto Accredito - ICA",
+//     route: "/icas",
+//     domain: "ec"
+// },
 
 export default SidebarItems;
