@@ -135,9 +135,7 @@ export default class Sidebar extends React.Component<IProps, IState> {
                     </Accordion.Collapse>
                 </span>
             </Accordion>
-
         );
-
     }
 }
 

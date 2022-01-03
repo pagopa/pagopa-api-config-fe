@@ -80,7 +80,6 @@ export default class PaymentServiceProviders extends React.Component<IProps, ISt
                     this.setState({isLoading: false});
                 });
             });
-
     }
 
     componentDidMount(): void {
@@ -216,7 +215,7 @@ export default class PaymentServiceProviders extends React.Component<IProps, ISt
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        {pspList}
+                                            {pspList}
                                         </tbody>
                                     </Table>
 
