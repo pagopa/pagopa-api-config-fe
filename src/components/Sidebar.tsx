@@ -100,6 +100,14 @@ export default class Sidebar extends React.Component<IProps, IState> {
             return domains[domain] === expand ? "d-inline" : "d-none";
         }
 
+        function getLink(item: any) {
+            return (
+                <Link to={item.route} key={item.name} className={`list-group-item-action ${getClass(item)}`}>
+                    <span>{item.name}</span>
+                </Link>
+            );
+        }
+
         return (
             <Accordion onSelect={(activeIndex) => this.handleAccordion(activeIndex)}>
                 <span>
