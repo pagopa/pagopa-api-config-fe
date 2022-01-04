@@ -3,10 +3,12 @@ import {Button, OverlayTrigger, Table, Tooltip} from "react-bootstrap";
 import {FaCheck, FaEdit, FaEye, FaPlus, FaSpinner, FaTimes, FaTrash} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
+import axios from "axios";
 import {apiClient} from "../../util/apiClient";
 import Paginator from "../../components/Paginator";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import {loginRequest} from "../../authConfig";
+import {getConfig} from "../../util/config";
 
 interface IProps {
     history: {
@@ -15,7 +17,7 @@ interface IProps {
 }
 
 interface IState {
-    creditor_institutions: any;
+    payment_service_providers: any;
     page_info: {
         page: 0;
         limit: 50;
@@ -24,18 +26,23 @@ interface IState {
     };
     isLoading: boolean;
     showDeleteModal: boolean;
-    creditorInstitutionToDelete: any;
-    creditorInstitutionIndex: number;
+    paymentServiceProviderToDelete: any;
+    paymentServiceProviderIndex: number;
 }
 
 export default class PaymentServiceProviders extends React.Component<IProps, IState> {
     static contextType = MsalContext;
 
+    service = "/payment-service-providers";
+
+    baseUrl = getConfig("APICONFIG_HOST") as string;
+    basePath = getConfig("APICONFIG_BASEPATH") as string;
+
     constructor(props: IProps) {
         super(props);
 
         this.state = {
-            creditor_institutions: [],
+            payment_service_providers: [],
             page_info: {
                 page: 0,
                 limit: 50,
@@ -44,12 +51,12 @@ export default class PaymentServiceProviders extends React.Component<IProps, ISt
             },
             isLoading: false,
             showDeleteModal: false,
-            creditorInstitutionToDelete: {},
-            creditorInstitutionIndex: -1
+            paymentServiceProviderToDelete: {},
+            paymentServiceProviderIndex: -1
         };
 
         this.handlePageChange = this.handlePageChange.bind(this);
-        this.createCreditorInstitution = this.createCreditorInstitution.bind(this);
+        this.create = this.create.bind(this);
     }
 
     getPage(page: number) {
@@ -60,25 +67,28 @@ export default class PaymentServiceProviders extends React.Component<IProps, ISt
             account: this.context.accounts[0]
         })
             .then((response: any) => {
-                apiClient.getCreditorInstitutions({
-                    Authorization: `Bearer ${response.accessToken}`,
-                    ApiKey: "",
-                    limit: 10,
-                    page
-                })
-                    .then((response: any) => {
 
-                        this.setState({
-                            creditor_institutions: response.right.value.creditor_institutions,
-                            page_info: response.right.value.page_info
-                        });
-                    })
-                    .catch(() => {
-                        toast.error("Problema nel recuperare gli enti creditori", {theme: "colored"});
-                    })
-                    .finally(() => {
-                        this.setState({isLoading: false});
+                const data = {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        Authorization: `Bearer ${response.accessToken}`
+                    },
+                    params: {
+                        limit: 10,
+                        page
+                    }
+                };
+
+                axios.get(this.baseUrl + this.basePath + "/paymentserviceproviders", data).then((response:any) => {
+                    this.setState({
+                        payment_service_providers: response.data.payment_service_providers,
+                        page_info: response.data.page_info
                     });
+                }).catch(() => {
+                    toast.error("Problema nel recuperare i portatori di servizio di pagamento", {theme: "colored"});
+                }).finally(() => {
+                    this.setState({isLoading: false});
+                });
             });
 
     }
@@ -87,8 +97,9 @@ export default class PaymentServiceProviders extends React.Component<IProps, ISt
         this.getPage(0);
     }
 
-    createCreditorInstitution() {
-        this.props.history.push("/creditor-institutions/create");
+    create() {
+        // this.props.history.push(this.service + "/create");
+        return false;
     }
 
     handlePageChange(requestedPage: number) {
@@ -96,29 +107,31 @@ export default class PaymentServiceProviders extends React.Component<IProps, ISt
     }
 
     handleDetails(code: string) {
-        this.props.history.push("/creditor-institutions/" + code);
+        this.props.history.push( this.service + "/" + code);
     }
 
     handleEdit(code: string) {
-        this.props.history.push("/creditor-institutions/" + code + "?edit");
+        this.props.history.push(this.service + "/" + code + "?edit");
     }
 
-    handleDelete(creditorInstitution: string, index: number) {
+    handleDelete(paymentServiceProvider: string, index: number) {
         this.setState({showDeleteModal: true});
-        this.setState({creditorInstitutionToDelete: creditorInstitution});
-        this.setState({creditorInstitutionIndex: index});
+        this.setState({paymentServiceProviderToDelete: paymentServiceProvider});
+        this.setState({paymentServiceProviderIndex: index});
     }
 
     removeCreditorInstitution() {
-        const filteredCI = this.state.creditor_institutions.filter((ci: any) => ci.creditor_institution_code !== this.state.creditorInstitutionToDelete.creditor_institution_code);
-        this.setState({creditor_institutions: filteredCI});
+        const filteredPSP = this.state.payment_service_providers.filter((ci: any) => ci.psp_code !== this.state.paymentServiceProviderToDelete.psp_code);
+        this.setState({payment_service_providers: filteredPSP});
 
-        if (filteredCI.length === 0 && this.state.page_info.total_pages > 1) {
+        if (filteredPSP.length === 0 && this.state.page_info.total_pages > 1) {
             this.getPage(0);
         }
     }
 
     hideDeleteModal = (status: string) => {
+        console.log("TODO", status);
+        /*
         if (status === "ok") {
             this.context.instance.acquireTokenSilent({
                 ...loginRequest,
@@ -144,57 +157,59 @@ export default class PaymentServiceProviders extends React.Component<IProps, ISt
                 });
         }
         this.setState({showDeleteModal: false});
+        */
     };
 
     render(): React.ReactNode {
         const isLoading = this.state.isLoading;
         const pageInfo = this.state.page_info;
         const showDeleteModal = this.state.showDeleteModal;
-        const creditorInstitutions: any = [];
-        const ciToDeleteName = this.state.creditorInstitutionToDelete.business_name;
-        const ciToDeleteCode = this.state.creditorInstitutionToDelete.creditor_institution_code;
+        const pspList: any = [];
+        const pspToDeleteName = this.state.paymentServiceProviderToDelete.business_name;
+        const pspToDeleteCode = this.state.paymentServiceProviderToDelete.psp_code;
 
-        this.state.creditor_institutions.map((ci: any, index: number) => {
+        this.state.payment_service_providers.map((psp: any, index: number) => {
             const code = (
                 <tr key={index}>
-                    <td>{ci.business_name}</td>
-                    <td>{ci.creditor_institution_code}</td>
+                    <td>{psp.business_name}</td>
+                    <td>{psp.psp_code}</td>
                     <td className="text-center">
-                        {ci.enabled && <FaCheck className="text-success"/>}
-                        {!ci.enabled && <FaTimes className="text-danger"/>}
+                        {psp.enabled && <FaCheck className="text-success"/>}
+                        {!psp.enabled && <FaTimes className="text-danger"/>}
                     </td>
                     <td className="text-right">
                         {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
                         <OverlayTrigger placement="top"
                                         overlay={<Tooltip id={`tooltip-details-${index}`}>Visualizza</Tooltip>}>
                             <FaEye role="button" className="mr-3"
-                                   onClick={() => this.handleDetails(ci.creditor_institution_code)}/>
+                                   onClick={() => this.handleDetails(psp.psp_code)}/>
                         </OverlayTrigger>
                         {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
                         <OverlayTrigger placement="top"
                                         overlay={<Tooltip id={`tooltip-edit-${index}`}>Modifica</Tooltip>}>
-                            <FaEdit role="button" className="mr-3"
-                                    onClick={() => this.handleEdit(ci.creditor_institution_code)}/>
+                            {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
+                            <FaEdit role="button" className="mr-3 disabled" onClick={() => false && this.handleEdit(psp.psp_code)}/>
                         </OverlayTrigger>
                         {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
                         <OverlayTrigger placement="top"
                                         overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
-                            <FaTrash role="button" className="mr-3" onClick={() => this.handleDelete(ci, index)}/>
+                            {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
+                            <FaTrash role="button" className="mr-3 disabled" onClick={() => false && this.handleDelete(psp, index)}/>
                         </OverlayTrigger>
                     </td>
                 </tr>
             );
-            creditorInstitutions.push(code);
+            pspList.push(code);
         });
 
         return (
             <div className="container-fluid creditor-institutions">
                 <div className="row">
                     <div className="col-md-10 mb-3">
-                        <h2>Enti Creditori</h2>
+                        <h2>Prestatori Servizio di Pagamento</h2>
                     </div>
                     <div className="col-md-2 text-right">
-                        <Button onClick={this.createCreditorInstitution}>Nuovo <FaPlus/></Button>
+                        <Button className="disabled" onClick={this.create}>Nuovo <FaPlus/></Button>
                     </div>
                     <div className="col-md-12">
                         {isLoading && (<FaSpinner className="spinner"/>)}
@@ -204,14 +219,14 @@ export default class PaymentServiceProviders extends React.Component<IProps, ISt
                                     <Table hover responsive size="sm">
                                         <thead>
                                         <tr>
-                                            <th className="fixed-td-width">Ente creditore</th>
+                                            <th className="fixed-td-width">Prestatore Servizio di Pagamento</th>
                                             <th className="fixed-td-width">Codice</th>
                                             <th className="text-center">Abilitato</th>
                                             <th/>
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        {creditorInstitutions}
+                                        {pspList}
                                         </tbody>
                                     </Table>
 
@@ -222,9 +237,9 @@ export default class PaymentServiceProviders extends React.Component<IProps, ISt
                     </div>
                 </div>
                 <ConfirmationModal show={showDeleteModal} handleClose={this.hideDeleteModal}>
-                    <p>Sei sicuro di voler eliminare il seguente ente creditore?</p>
+                    <p>Sei sicuro di voler eliminare il seguente prestatore servizio di pagamento?</p>
                     <ul>
-                        <li>{ciToDeleteName} - {ciToDeleteCode}</li>
+                        <li>{pspToDeleteName} - {pspToDeleteCode}</li>
                     </ul>
                 </ConfirmationModal>
 

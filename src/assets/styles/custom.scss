@@ -98,6 +98,11 @@ $text-color: #17324d;
   vertical-align: top;
 }
 
+.disabled {
+  color: $gray-500;
+  cursor: not-allowed !important;
+}
+
 pre {
   max-height: 300px;
   overflow: auto;
