@@ -11,6 +11,7 @@ import Ica from "../pages/icas/ICAs";
 import Layout from "../components/Layout";
 import NotFound from "../pages/NotFound";
 import CreateBrokerPage from "../pages/brokers/CreateBrokerPage";
+import EditBrokerPage from "../pages/brokers/EditBrokerPage";
 
 
 export default class Routes extends React.Component {
@@ -33,7 +34,10 @@ export default class Routes extends React.Component {
 
                                     <Route path="/brokers" exact component={BrokersPage}/>
                                     <Route path="/brokers/create" component={CreateBrokerPage} />
-                                    <Route path="/brokers/:code" component={BrokerPage} />
+                                    <Route path="/brokers/:code" render={props => {
+                                        const edit: boolean = new URLSearchParams(props.location.search).get("edit") !== null;
+                                        return edit ? <EditBrokerPage {...props} /> : <BrokerPage {...props} />;
+                                    }}/>
 
                                     <Route path="/icas" exact component={Ica} />
                                     <Route path="/icas/check" exact component={CheckICA} />

@@ -1,7 +1,7 @@
 import React from 'react';
 import {toast} from "react-toastify";
 import {Button, OverlayTrigger, Table, Tooltip} from "react-bootstrap";
-import {FaCheck, FaEye, FaPlus, FaTimes, FaTrash} from "react-icons/fa";
+import {FaCheck, FaEdit, FaEye, FaPlus, FaTimes, FaTrash} from "react-icons/fa";
 import {IResponseType} from "@pagopa/ts-commons/lib/requests";
 import {Validation} from "io-ts";
 import {ProblemJson} from "@pagopa/ts-commons/lib/responses";
@@ -155,6 +155,10 @@ export default class BrokersPage extends React.Component<IProps, IState> {
         this.props.history.push("/brokers/create");
     }
 
+    handleEdit(code: string) {
+        this.props.history.push("/brokers/" + code + "?edit");
+    }
+
     render(): React.ReactNode {
         const isLoading = this.state.isLoading;
         const brokers: any = [];
@@ -173,6 +177,11 @@ export default class BrokersPage extends React.Component<IProps, IState> {
                                         overlay={<Tooltip id={`tooltip-details-${index}`}>View details</Tooltip>}>
                             <FaEye role="button" className="mr-3"
                                    onClick={() => this.handleDetails(elem.broker_code)}/>
+                        </OverlayTrigger>
+                        <OverlayTrigger placement="top"
+                                        overlay={<Tooltip id={`tooltip-edit-${index}`}>Modifica</Tooltip>}>
+                            <FaEdit role="button" className="mr-3"
+                                    onClick={() => this.handleEdit(elem.broker_code)}/>
                         </OverlayTrigger>
                         <OverlayTrigger placement="top"
                                         overlay={<Tooltip id={`tooltip-delete-${index}`}>Delete item</Tooltip>}>
