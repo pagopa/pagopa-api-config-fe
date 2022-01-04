@@ -60,3 +60,5 @@ yarn-error.log
 /.parcel-cache/
 
 .env.local
+*/env-config.js
+/swagger.json
