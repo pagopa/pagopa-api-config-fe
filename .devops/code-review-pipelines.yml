@@ -20,6 +20,11 @@ variables:
   YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.yarn
   APICONFIG_BASEPATH_VERSION: '/v1'
 
+  APICONFIG_CLIENT_ID: '<CLIENT_ID>'
+  APICONFIG_REDIRECT_URI: http://localhost:3000
+  APICONFIG_TENANT: 'https://login.microsoftonline.com/<TENANT_ID>'
+  APICONFIG_SCOPES: 'api://pagopa-apiconfig-be/access-apiconfig-be'
+
   ${{ if eq(parameters['ENV'], 'dev') }}:
     APICONFIG_HOST: $(DEV_APICONFIG_API_HOST)
     APICONFIG_BASEPATH: $(APIM_BASEPATH_APICONFIG)$(APICONFIG_BASEPATH_VERSION)

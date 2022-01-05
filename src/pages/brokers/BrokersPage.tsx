@@ -1,7 +1,7 @@
 import React from 'react';
 import {toast} from "react-toastify";
-import {OverlayTrigger, Table, Tooltip} from "react-bootstrap";
-import {FaCheck, FaEye, FaTimes, FaTrash} from "react-icons/fa";
+import {Button, OverlayTrigger, Table, Tooltip} from "react-bootstrap";
+import {FaCheck, FaEye, FaPlus, FaTimes, FaTrash} from "react-icons/fa";
 import {IResponseType} from "@pagopa/ts-commons/lib/requests";
 import {Validation} from "io-ts";
 import {ProblemJson} from "@pagopa/ts-commons/lib/responses";
@@ -39,6 +39,7 @@ export default class BrokersPage extends React.Component<IProps, IState> {
         };
 
         this.handlePageChange = this.handlePageChange.bind(this);
+        this.createBrokerPage = this.createBrokerPage.bind(this);
     }
 
     componentDidMount(): void {
@@ -150,6 +151,10 @@ export default class BrokersPage extends React.Component<IProps, IState> {
         this.props.history.push("/brokers/" + code);
     }
 
+    createBrokerPage() {
+        this.props.history.push("/brokers/create");
+    }
+
     render(): React.ReactNode {
         const isLoading = this.state.isLoading;
         const brokers: any = [];
@@ -182,8 +187,11 @@ export default class BrokersPage extends React.Component<IProps, IState> {
 
         return <div className="container-fluid creditor-institutions">
             <div className="row">
-                <div className="col-md-12 mb-5">
+                <div className="col-md-10 mb-3">
                     <h2>Intermediari</h2>
+                </div>
+                <div className="col-md-2 text-right">
+                    <Button onClick={this.createBrokerPage}>Nuovo <FaPlus/></Button>
                 </div>
                 <div className="col-md-12">
                     {isLoading && (<p>Loading ...</p>)}

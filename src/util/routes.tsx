@@ -10,6 +10,7 @@ import EditCreditorInstitution from "../pages/creditorInstitutions/EditCreditorI
 import Ica from "../pages/icas/ICAs";
 import Layout from "../components/Layout";
 import NotFound from "../pages/NotFound";
+import CreateBrokerPage from "../pages/brokers/CreateBrokerPage";
 
 
 export default class Routes extends React.Component {
@@ -22,14 +23,18 @@ export default class Routes extends React.Component {
                             <Layout {...props}>
                                 <Switch>
                                     <Route path="/" exact component={CreditorInstitutions}/>
+
                                     <Route path="/creditor-institutions" exact component={CreditorInstitutions}/>
                                     <Route path="/creditor-institutions/create" component={CreateCreditorInstitution} />
                                     <Route path="/creditor-institutions/:code" render={props => {
                                         const edit: boolean = new URLSearchParams(props.location.search).get("edit") !== null;
                                         return edit ? <EditCreditorInstitution {...props} /> : <CreditorInstitution {...props} />;
                                     }}/>
+
                                     <Route path="/brokers" exact component={BrokersPage}/>
+                                    <Route path="/brokers/create" component={CreateBrokerPage} />
                                     <Route path="/brokers/:code" component={BrokerPage} />
+
                                     <Route path="/icas" exact component={Ica} />
                                     <Route path="/icas/check" exact component={CheckICA} />
                                     <Route component={NotFound}/>
