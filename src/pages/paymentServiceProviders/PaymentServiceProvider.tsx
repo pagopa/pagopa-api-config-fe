@@ -75,7 +75,7 @@ export default class PaymentServiceProvider extends React.Component<IProps, ISta
                 <div className="row">
                     <div className="col-md-12 mb-5">
                         <Breadcrumb>
-                            <Breadcrumb.Item href="/payment-service-providers">Prestatori Servizi di Pagamento</Breadcrumb.Item>
+                            <Breadcrumb.Item href="/payment-service-providers">Prestatori Servizio di Pagamento</Breadcrumb.Item>
                             <Breadcrumb.Item active>{this.state.paymentServiceProvider.business_name}</Breadcrumb.Item>
                         </Breadcrumb>
                     </div>
