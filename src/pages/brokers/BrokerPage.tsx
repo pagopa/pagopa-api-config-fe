@@ -76,42 +76,48 @@ export default class BrokerPage extends React.Component<IProps, IState> {
     render(): React.ReactNode {
         const isLoading = this.state.isLoading;
         return (
-            <div>
-                {isLoading && (<div className="text-center"><FaSpinner className="spinner" size={28}/></div>)}
-                {!isLoading && (
-                    <>
-                        <div className="col-md-12 mb-5">
-                            <Breadcrumb>
-                                <Breadcrumb.Item href="/brokers">Intermediari</Breadcrumb.Item>
-                                <Breadcrumb.Item active>{this.state.broker?.description}</Breadcrumb.Item>
-                            </Breadcrumb>
-                        </div>
-                        <h2>{this.state.broker?.description}</h2>
-                        <div className={"d-flex flex-row justify-content-around"}>
-                            <Form.Group controlId="code" className={"p-2"} style={{minWidth: 400}}>
-                                <Form.Label>Codice</Form.Label>
-                                <Form.Control type="code" placeholder="-" value={this.state.broker?.broker_code}
-                                              readOnly/>
-                            </Form.Group>
-                            <Form.Group controlId="enabled" className={"p-2"} style={{minWidth: 200}}>
-                                <Form.Label>Stato</Form.Label>
-                                <Form.Control as="select" type="enabled" placeholder="stato" readOnly>
-                                    {this.state.broker?.enabled && <option>Abilitato</option>}
-                                    {!this.state.broker?.enabled && <option>Non Abilitato</option>}
-                                </Form.Control>
-                            </Form.Group>
-                            <Form.Group controlId="extended_fault_bean" className={"p-2"} style={{minWidth: 200}}>
-                                <Form.Label>Extended Fault Bean</Form.Label>
-                                <Form.Control as="select" type="enabled" placeholder="stato" readOnly>
-                                    {this.state.broker?.extended_fault_bean && <option>Abilitato</option>}
-                                    {!this.state.broker?.extended_fault_bean && <option>Non Abilitato</option>}
-                                </Form.Control>
-                            </Form.Group>
-                        </div>
-                    </>
-                )}
+            <div className="container-fluid brokers">
+                <div className="row">
+                    <div className="col-md-12 mb-5">
+                        <Breadcrumb>
+                            <Breadcrumb.Item href="/brokers">Intermediari</Breadcrumb.Item>
+                            <Breadcrumb.Item active>{this.state.broker?.description}</Breadcrumb.Item>
+                        </Breadcrumb>
+                    </div>
 
-
+                    <div className="col-md-12">
+                        {isLoading && (<div className="text-center"><FaSpinner className="spinner" size={28}/></div>)}
+                        {!isLoading && (
+                            <>
+                                <div className="row">
+                                    <div className="col-md-12">
+                                        <h2>{this.state.broker?.description}</h2>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <Form.Group controlId="code" className="col-md-2">
+                                        <Form.Label>Codice</Form.Label>
+                                        <Form.Control type="code" placeholder="-" value={this.state.broker?.broker_code} readOnly/>
+                                    </Form.Group>
+                                    <Form.Group controlId="enabled" className="col-md-2">
+                                        <Form.Label>Stato</Form.Label>
+                                        <Form.Control as="select" type="enabled" placeholder="stato" readOnly>
+                                            {this.state.broker?.enabled && <option>Abilitato</option>}
+                                            {!this.state.broker?.enabled && <option>Non Abilitato</option>}
+                                        </Form.Control>
+                                    </Form.Group>
+                                    <Form.Group controlId="extended_fault_bean" className="col-md-2">
+                                        <Form.Label>Extended Fault Bean</Form.Label>
+                                        <Form.Control as="select" type="enabled" placeholder="stato" readOnly>
+                                            {this.state.broker?.extended_fault_bean && <option>Abilitato</option>}
+                                            {!this.state.broker?.extended_fault_bean && <option>Non Abilitato</option>}
+                                        </Form.Control>
+                                    </Form.Group>
+                                </div>
+                            </>
+                        )}
+                    </div>
+                </div>
             </div>
         );
     }
