@@ -84,7 +84,6 @@ export default class BrokerPage extends React.Component<IProps, IState> {
                             <Breadcrumb.Item active>{this.state.broker?.description}</Breadcrumb.Item>
                         </Breadcrumb>
                     </div>
-
                     <div className="col-md-12">
                         {isLoading && (<div className="text-center"><FaSpinner className="spinner" size={28}/></div>)}
                         {!isLoading && (
