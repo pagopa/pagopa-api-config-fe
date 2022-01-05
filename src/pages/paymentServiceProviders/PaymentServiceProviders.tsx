@@ -3,7 +3,6 @@ import {Button, OverlayTrigger, Table, Tooltip} from "react-bootstrap";
 import {FaCheck, FaEdit, FaEye, FaPlus, FaSpinner, FaTimes, FaTrash} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
-import axios from "axios";
 import {apiClient} from "../../util/apiClient";
 import Paginator from "../../components/Paginator";
 import ConfirmationModal from "../../components/ConfirmationModal";
@@ -67,26 +66,21 @@ export default class PaymentServiceProviders extends React.Component<IProps, ISt
             account: this.context.accounts[0]
         })
             .then((response: any) => {
-
-                const data = {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                        Authorization: `Bearer ${response.accessToken}`
-                    },
-                    params: {
-                        limit: 10,
-                        page
-                    }
-                };
-
-                axios.get(this.baseUrl + this.basePath + "/paymentserviceproviders", data).then((response:any) => {
-                    this.setState({
-                        payment_service_providers: response.data.payment_service_providers,
-                        page_info: response.data.page_info
-                    });
-                }).catch(() => {
-                    toast.error("Problema nel recuperare i portatori di servizio di pagamento", {theme: "colored"});
-                }).finally(() => {
+                apiClient.getPaymentServiceProviders({
+                    Authorization: `Bearer ${response.accessToken}`,
+                    ApiKey: "",
+                    limit: 10,
+                    page
+                }).then((response: any) => {
+                        this.setState({
+                            payment_service_providers: response.right.value.payment_service_providers,
+                            page_info: response.right.value.page_info
+                        });
+                })
+                .catch(() => {
+                    toast.error("Problema nel recuperare i prestatori servizi di pagamento", {theme: "colored"});
+                })
+                .finally(() => {
                     this.setState({isLoading: false});
                 });
             });
