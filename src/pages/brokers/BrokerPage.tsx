@@ -83,28 +83,28 @@ export default class BrokerPage extends React.Component<IProps, IState> {
                         <div className="col-md-12 mb-5">
                             <Breadcrumb>
                                 <Breadcrumb.Item href="/brokers">Intermediari</Breadcrumb.Item>
-                                <Breadcrumb.Item active>{this.state.broker!.description}</Breadcrumb.Item>
+                                <Breadcrumb.Item active>{this.state.broker?.description}</Breadcrumb.Item>
                             </Breadcrumb>
                         </div>
-                        <h2>{this.state.broker!.description}</h2>
+                        <h2>{this.state.broker?.description}</h2>
                         <div className={"d-flex flex-row justify-content-around"}>
                             <Form.Group controlId="code" className={"p-2"} style={{minWidth: 400}}>
                                 <Form.Label>Codice</Form.Label>
-                                <Form.Control type="code" placeholder="-" value={this.state.broker!.broker_code}
+                                <Form.Control type="code" placeholder="-" value={this.state.broker?.broker_code}
                                               readOnly/>
                             </Form.Group>
                             <Form.Group controlId="enabled" className={"p-2"} style={{minWidth: 200}}>
                                 <Form.Label>Stato</Form.Label>
                                 <Form.Control as="select" type="enabled" placeholder="stato" readOnly>
-                                    {this.state.broker!.enabled && <option>Abilitato</option>}
-                                    {!this.state.broker!.enabled && <option>Non Abilitato</option>}
+                                    {this.state.broker?.enabled && <option>Abilitato</option>}
+                                    {!this.state.broker?.enabled && <option>Non Abilitato</option>}
                                 </Form.Control>
                             </Form.Group>
                             <Form.Group controlId="extended_fault_bean" className={"p-2"} style={{minWidth: 200}}>
                                 <Form.Label>Extended Fault Bean</Form.Label>
                                 <Form.Control as="select" type="enabled" placeholder="stato" readOnly>
-                                    {this.state.broker!.extended_fault_bean && <option>Abilitato</option>}
-                                    {!this.state.broker!.extended_fault_bean && <option>Non Abilitato</option>}
+                                    {this.state.broker?.extended_fault_bean && <option>Abilitato</option>}
+                                    {!this.state.broker?.extended_fault_bean && <option>Non Abilitato</option>}
                                 </Form.Control>
                             </Form.Group>
                         </div>

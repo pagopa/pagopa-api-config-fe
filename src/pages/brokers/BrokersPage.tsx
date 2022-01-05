@@ -109,6 +109,34 @@ export default class BrokersPage extends React.Component<IProps, IState> {
         }
     }
 
+    deleteBroker(access_token: string, broker_code: string) {
+        apiClient.deleteBroker({
+            Authorization: `Bearer ${access_token}`,
+            ApiKey: "",
+            brokercode: broker_code
+        })
+            .then((response: Validation<IResponseType<number, ProblemJson | undefined>>) => {
+                // eslint-disable-next-line no-underscore-dangle
+                switch (response._tag) {
+                    case "Right":
+                        if (response.right.status === 200) {
+                            toast.info("Rimozione avvenuta con successo");
+                            this.removeBroker();
+                        } else {
+                            const body = response.right.value as ProblemJson;
+                            toast.error(body.title, {theme: "colored"});
+                        }
+                        break;
+                    case "Left":
+                        toast.error("Errore", {theme: "colored"});
+                        break;
+                }
+            })
+            .catch(() => {
+                toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+            });
+    }
+
     hideDeleteModal = (status: string) => {
         if (status === "ok") {
             this.context.instance.acquireTokenSilent({
@@ -116,31 +144,9 @@ export default class BrokersPage extends React.Component<IProps, IState> {
                 account: this.context.accounts[0]
             })
                 .then((response: any) => {
-                    apiClient.deleteBroker({
-                        Authorization: `Bearer ${response.accessToken}`,
-                        ApiKey: "",
-                        brokercode: this.state.brokerToDelete!.broker_code
-                    })
-                        .then((response: Validation<IResponseType<number, ProblemJson | undefined>>) => {
-                            // eslint-disable-next-line no-underscore-dangle
-                            switch (response._tag) {
-                                case "Right":
-                                    if (response.right.status === 200) {
-                                        toast.info("Rimozione avvenuta con successo");
-                                        this.removeBroker();
-                                    } else {
-                                        const body = response.right.value as ProblemJson;
-                                        toast.error(body.title, {theme: "colored"});
-                                    }
-                                    break;
-                                case "Left":
-                                    toast.error("Errore", {theme: "colored"});
-                                    break;
-                            }
-                        })
-                        .catch(() => {
-                            toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
-                        });
+                    if (this.state.brokerToDelete) {
+                        this.deleteBroker(response.accessToken, this.state.brokerToDelete.broker_code);
+                    }
                 });
 
         }

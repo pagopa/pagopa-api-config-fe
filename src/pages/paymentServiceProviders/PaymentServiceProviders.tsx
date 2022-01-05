@@ -123,8 +123,8 @@ export default class PaymentServiceProviders extends React.Component<IProps, ISt
         }
     }
 
-    hideDeleteModal = (status: string) => {
-        console.log("TODO", status);
+    hideDeleteModal = () => {
+        // hideDeleteModal = (status: string) => {
         /*
         if (status === "ok") {
             this.context.instance.acquireTokenSilent({
