@@ -7,7 +7,6 @@ import {apiClient} from "../../util/apiClient";
 import Paginator from "../../components/Paginator";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import {loginRequest} from "../../authConfig";
-import {getConfig} from "../../util/config";
 
 interface IProps {
     history: {
@@ -33,9 +32,6 @@ export default class PaymentServiceProviders extends React.Component<IProps, ISt
     static contextType = MsalContext;
 
     service = "/payment-service-providers";
-
-    baseUrl = getConfig("APICONFIG_HOST") as string;
-    basePath = getConfig("APICONFIG_BASEPATH") as string;
 
     constructor(props: IProps) {
         super(props);
