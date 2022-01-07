@@ -89,7 +89,6 @@ export default class Channel extends React.Component<IProps, IState> {
                         {
                             !isLoading && (
                                 <>
-
                                     <div className="row">
                                         <div className="col-md-12">
                                             <h2>{this.state.channel.description}</h2>
