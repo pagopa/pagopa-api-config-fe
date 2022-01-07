@@ -75,7 +75,7 @@ export default class Station extends React.Component<IProps, IState> {
                 <div className="row">
                     <div className="col-md-12 mb-5">
                         <Breadcrumb>
-                            <Breadcrumb.Item href="/payment-service-providers">Stazioni</Breadcrumb.Item>
+                            <Breadcrumb.Item href="/stations">Stazioni</Breadcrumb.Item>
                             <Breadcrumb.Item active>{this.state.station.station_code}</Breadcrumb.Item>
                         </Breadcrumb>
                     </div>
