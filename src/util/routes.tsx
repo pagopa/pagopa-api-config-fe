@@ -7,6 +7,8 @@ import CreditorInstitutions from "../pages/creditorInstitutions/CreditorInstitut
 import CreditorInstitution from "../pages/creditorInstitutions/CreditorInstitution";
 import CreateCreditorInstitution from "../pages/creditorInstitutions/CreateCreditorInstitution";
 import EditCreditorInstitution from "../pages/creditorInstitutions/EditCreditorInstitution";
+import Stations from "../pages/stations/Stations";
+import Station from "../pages/stations/Station";
 import Ica from "../pages/icas/ICAs";
 import PaymentServiceProviders from "../pages/paymentServiceProviders/PaymentServiceProviders";
 import PaymentServiceProvider from "../pages/paymentServiceProviders/PaymentServiceProvider";
@@ -41,6 +43,13 @@ export default class Routes extends React.Component {
                                     <Route path="/brokers/:code" render={props => {
                                         const edit: boolean = new URLSearchParams(props.location.search).get("edit") !== null;
                                         return edit ? <EditBrokerPage {...props} /> : <BrokerPage {...props} />;
+                                    }}/>
+
+                                    <Route path="/stations" exact component={Stations}/>
+                                    <Route path="/stations/create" component={NotFound} />
+                                    <Route path="/stations/:code" render={props => {
+                                        const edit: boolean = new URLSearchParams(props.location.search).get("edit") !== null;
+                                        return edit ? <NotFound /> : <Station {...props} />;
                                     }}/>
 
                                     <Route path="/icas" exact component={Ica} />
