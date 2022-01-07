@@ -19,6 +19,11 @@ const SidebarItems = [
         route: "/payment-service-providers",
         domain: "psp"
     },
+    {
+        name: "Intermediari PSP",
+        route: "/brokers-psp",
+        domain: "psp"
+    },
 ];
 // {
 //     name: "Informativa Conto Accredito - ICA",

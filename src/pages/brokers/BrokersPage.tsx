@@ -203,7 +203,7 @@ export default class BrokersPage extends React.Component<IProps, IState> {
         return <div className="container-fluid creditor-institutions">
             <div className="row">
                 <div className="col-md-10 mb-3">
-                    <h2>Intermediari</h2>
+                    <h2>Intermediari EC</h2>
                 </div>
                 <div className="col-md-2 text-right">
                     <Button onClick={this.createBrokerPage}>Nuovo <FaPlus/></Button>

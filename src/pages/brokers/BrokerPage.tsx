@@ -107,8 +107,8 @@ export default class BrokerPage extends React.Component<IProps, IState> {
                                         </Form.Control>
                                     </Form.Group>
                                     <Form.Group controlId="extended_fault_bean" className="col-md-2">
-                                        <Form.Label>Extended Fault Bean</Form.Label>
-                                        <Form.Control as="select" type="enabled" placeholder="stato" readOnly>
+                                        <Form.Label>Fault Bean esteso</Form.Label>
+                                        <Form.Control as="select" type="extended_fault_bean" placeholder="stato" readOnly>
                                             {this.state.broker?.extended_fault_bean && <option>Abilitato</option>}
                                             {!this.state.broker?.extended_fault_bean && <option>Non Abilitato</option>}
                                         </Form.Control>
