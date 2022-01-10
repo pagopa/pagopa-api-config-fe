@@ -41,14 +41,15 @@ export default class Routes extends React.Component {
                                         return edit ? <EditBrokerPage {...props} /> : <BrokerPage {...props} />;
                                     }}/>
 
+                                    <Route path="/icas" exact component={Ica} />
+                                    <Route path="/icas/check" exact component={CheckICA} />
+
                                     <Route path="/payment-service-providers" exact component={PaymentServiceProviders}/>
                                     <Route path="/payment-service-providers/:code" render={props => {
                                         const edit: boolean = new URLSearchParams(props.location.search).get("edit") !== null;
                                         return edit ? <NotFound /> : <PaymentServiceProvider {...props} />;
                                     }}/>
 
-                                    <Route path="/icas" exact component={Ica} />
-                                    <Route path="/icas/check" exact component={CheckICA} />
                                     <Route component={NotFound}/>
                                 </Switch>
                             </Layout>

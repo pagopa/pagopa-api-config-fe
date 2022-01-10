@@ -15,7 +15,7 @@ interface IProps {
 }
 
 interface IState {
-    payment_service_providers: any;
+    brokers_psp: any;
     page_info: {
         page: 0;
         limit: 50;
@@ -24,20 +24,20 @@ interface IState {
     };
     isLoading: boolean;
     showDeleteModal: boolean;
-    paymentServiceProviderToDelete: any;
-    paymentServiceProviderIndex: number;
+    brokerToDelete: any;
+    brokerIndex: number;
 }
 
-export default class PaymentServiceProviders extends React.Component<IProps, IState> {
+export default class BrokerPSP extends React.Component<IProps, IState> {
     static contextType = MsalContext;
 
-    service = "/payment-service-providers";
+    service = "/brokers-psp";
 
     constructor(props: IProps) {
         super(props);
 
         this.state = {
-            payment_service_providers: [],
+            brokers_psp: [],
             page_info: {
                 page: 0,
                 limit: 50,
@@ -46,8 +46,8 @@ export default class PaymentServiceProviders extends React.Component<IProps, ISt
             },
             isLoading: false,
             showDeleteModal: false,
-            paymentServiceProviderToDelete: {},
-            paymentServiceProviderIndex: -1
+            brokerToDelete: {},
+            brokerIndex: -1
         };
 
         this.handlePageChange = this.handlePageChange.bind(this);
@@ -62,14 +62,14 @@ export default class PaymentServiceProviders extends React.Component<IProps, ISt
             account: this.context.accounts[0]
         })
             .then((response: any) => {
-                apiClient.getPaymentServiceProviders({
+                apiClient.getBrokersPsp({
                     Authorization: `Bearer ${response.accessToken}`,
                     ApiKey: "",
                     limit: 10,
                     page
                 }).then((response: any) => {
                         this.setState({
-                            payment_service_providers: response.right.value.payment_service_providers,
+                            brokers_psp: response.right.value.brokers_psp_list,
                             page_info: response.right.value.page_info
                         });
                 })
@@ -80,6 +80,7 @@ export default class PaymentServiceProviders extends React.Component<IProps, ISt
                     this.setState({isLoading: false});
                 });
             });
+
     }
 
     componentDidMount(): void {
@@ -105,13 +106,13 @@ export default class PaymentServiceProviders extends React.Component<IProps, ISt
 
     handleDelete(paymentServiceProvider: string, index: number) {
         this.setState({showDeleteModal: true});
-        this.setState({paymentServiceProviderToDelete: paymentServiceProvider});
-        this.setState({paymentServiceProviderIndex: index});
+        this.setState({brokerToDelete: paymentServiceProvider});
+        this.setState({brokerIndex: index});
     }
 
     removeCreditorInstitution() {
-        const filteredPSP = this.state.payment_service_providers.filter((ci: any) => ci.psp_code !== this.state.paymentServiceProviderToDelete.psp_code);
-        this.setState({payment_service_providers: filteredPSP});
+        const filteredPSP = this.state.brokers_psp.filter((ci: any) => ci.psp_code !== this.state.brokerToDelete.psp_code);
+        this.setState({brokers_psp: filteredPSP});
 
         if (filteredPSP.length === 0 && this.state.page_info.total_pages > 1) {
             this.getPage(0);
@@ -153,49 +154,49 @@ export default class PaymentServiceProviders extends React.Component<IProps, ISt
         const isLoading = this.state.isLoading;
         const pageInfo = this.state.page_info;
         const showDeleteModal = this.state.showDeleteModal;
-        const pspList: any = [];
-        const pspToDeleteName = this.state.paymentServiceProviderToDelete.business_name;
-        const pspToDeleteCode = this.state.paymentServiceProviderToDelete.psp_code;
+        const brokerPSPList: any = [];
+        const brokerPSPToDeleteName = this.state.brokerToDelete.business_name;
+        const brokerPSPToDeleteCode = this.state.brokerToDelete.broker_psp_code;
 
-        this.state.payment_service_providers.map((psp: any, index: number) => {
+        this.state.brokers_psp.map((broker: any, index: number) => {
             const code = (
                 <tr key={index}>
-                    <td>{psp.business_name}</td>
-                    <td>{psp.psp_code}</td>
+                    <td>{broker.description}</td>
+                    <td>{broker.broker_psp_code}</td>
                     <td className="text-center">
-                        {psp.enabled && <FaCheck className="text-success"/>}
-                        {!psp.enabled && <FaTimes className="text-danger"/>}
+                        {broker.enabled && <FaCheck className="text-success"/>}
+                        {!broker.enabled && <FaTimes className="text-danger"/>}
                     </td>
                     <td className="text-right">
                         {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
                         <OverlayTrigger placement="top"
                                         overlay={<Tooltip id={`tooltip-details-${index}`}>Visualizza</Tooltip>}>
                             <FaEye role="button" className="mr-3"
-                                   onClick={() => this.handleDetails(psp.psp_code)}/>
+                                   onClick={() => this.handleDetails(broker.broker_psp_code)}/>
                         </OverlayTrigger>
                         {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
                         <OverlayTrigger placement="top"
                                         overlay={<Tooltip id={`tooltip-edit-${index}`}>Modifica</Tooltip>}>
                             {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
-                            <FaEdit role="button" className="mr-3 disabled" onClick={() => false && this.handleEdit(psp.psp_code)}/>
+                            <FaEdit role="button" className="mr-3 disabled" onClick={() => false && this.handleEdit(broker.broker_psp_code)}/>
                         </OverlayTrigger>
                         {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
                         <OverlayTrigger placement="top"
                                         overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
                             {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
-                            <FaTrash role="button" className="mr-3 disabled" onClick={() => false && this.handleDelete(psp, index)}/>
+                            <FaTrash role="button" className="mr-3 disabled" onClick={() => false && this.handleDelete(broker, index)}/>
                         </OverlayTrigger>
                     </td>
                 </tr>
             );
-            pspList.push(code);
+            brokerPSPList.push(code);
         });
 
         return (
             <div className="container-fluid creditor-institutions">
                 <div className="row">
                     <div className="col-md-10 mb-3">
-                        <h2>Prestatori Servizio di Pagamento</h2>
+                        <h2>Intermediari PSP</h2>
                     </div>
                     <div className="col-md-2 text-right">
                         <Button className="disabled" onClick={this.create}>Nuovo <FaPlus/></Button>
@@ -208,14 +209,14 @@ export default class PaymentServiceProviders extends React.Component<IProps, ISt
                                     <Table hover responsive size="sm">
                                         <thead>
                                         <tr>
-                                            <th className="fixed-td-width">Prestatore Servizio di Pagamento</th>
+                                            <th className="fixed-td-width">Intermediario PSP</th>
                                             <th className="fixed-td-width">Codice</th>
                                             <th className="text-center">Abilitato</th>
                                             <th/>
                                         </tr>
                                         </thead>
                                         <tbody>
-                                            {pspList}
+                                        {brokerPSPList}
                                         </tbody>
                                     </Table>
 
@@ -226,9 +227,9 @@ export default class PaymentServiceProviders extends React.Component<IProps, ISt
                     </div>
                 </div>
                 <ConfirmationModal show={showDeleteModal} handleClose={this.hideDeleteModal}>
-                    <p>Sei sicuro di voler eliminare il seguente prestatore servizio di pagamento?</p>
+                    <p>Sei sicuro di voler eliminare il seguente intermediario PSP?</p>
                     <ul>
-                        <li>{pspToDeleteName} - {pspToDeleteCode}</li>
+                        <li>{brokerPSPToDeleteName} - {brokerPSPToDeleteCode}</li>
                     </ul>
                 </ConfirmationModal>
 

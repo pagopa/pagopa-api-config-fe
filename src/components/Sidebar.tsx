@@ -35,7 +35,7 @@ export default class Sidebar extends React.Component<IProps, IState> {
     componentDidMount(): void {
         // workaround for react according gap
         SidebarItems.forEach(item => {
-            if (this.props.history.location.pathname.startsWith(item.route)) {
+            if (this.props.history.location.pathname.split("/")[1] === item.route.substring(1)) {
                 const headings: Array<Element> = Array.from(document.getElementsByClassName("navbar-heading"));
                 headings.forEach((heading: Element) => {
                     const textContent = heading.textContent;
@@ -81,7 +81,7 @@ export default class Sidebar extends React.Component<IProps, IState> {
         const domains: any = this.state.domains;
 
         function getClass(item: any) {
-            return getPath(location.pathname).startsWith(item.route) && getPath(location.pathname).includes(getPath(item.route)) ? "active" : "";
+            return getPath(location.pathname).split("/")[1] === item.route.substring(1) && getPath(location.pathname).includes(getPath(item.route)) ? "active" : "";
         }
 
         function getPath(path: string) {
@@ -135,9 +135,7 @@ export default class Sidebar extends React.Component<IProps, IState> {
                     </Accordion.Collapse>
                 </span>
             </Accordion>
-
         );
-
     }
 }
 
