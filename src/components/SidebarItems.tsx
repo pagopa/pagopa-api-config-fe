@@ -10,6 +10,11 @@ const SidebarItems = [
         domain: "ec"
     },
     {
+        name: "Stazioni",
+        route: "/stations",
+        domain: "ec"
+    },
+    {
         name: "Verifica Informativa Conto Accredito",
         route: "/icas/check",
         domain: "ec"
