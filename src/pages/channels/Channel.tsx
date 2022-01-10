@@ -89,79 +89,203 @@ export default class Channel extends React.Component<IProps, IState> {
                         {
                             !isLoading && (
                                 <>
-                                    TODO
-                                    {/*<div className="row">*/}
-                                    {/*    <div className="col-md-12">*/}
-                                    {/*        <h2>{this.state.channel.business_name}</h2>*/}
-                                    {/*    </div>*/}
-                                    {/*</div>*/}
-                                    {/*<div className="row">*/}
-                                    {/*    <Form.Group controlId="code" className="col-md-4">*/}
-                                    {/*        <Form.Label>Codice</Form.Label>*/}
-                                    {/*        <Form.Control type="code" placeholder="-"*/}
-                                    {/*                      value={this.state.channel.psp_code}*/}
-                                    {/*                      readOnly/>*/}
-                                    {/*    </Form.Group>*/}
-                                    {/*    <Form.Group controlId="enabled" className="col-md-2">*/}
-                                    {/*        <Form.Label>Stato</Form.Label>*/}
-                                    {/*        <Form.Control as="select" type="enabled" placeholder="stato" readOnly>*/}
-                                    {/*            {this.state.channel.enabled && <option>Abilitato</option>}*/}
-                                    {/*            {!this.state.channel.enabled && <option>Non Abilitato</option>}*/}
-                                    {/*        </Form.Control>*/}
-                                    {/*    </Form.Group>*/}
-                                    {/*</div>*/}
-                                    {/*<div className="row">*/}
-                                    {/*    <Form.Group controlId="tax_code" className="col-md-4">*/}
-                                    {/*        <Form.Label>Codice Fiscale</Form.Label>*/}
-                                    {/*        <Form.Control type="tax_code" placeholder="-"*/}
-                                    {/*                      value={this.state.channel.tax_code}*/}
-                                    {/*                      readOnly/>*/}
-                                    {/*    </Form.Group>*/}
-                                    {/*    <Form.Group controlId="abi" className="col-md-2">*/}
-                                    {/*        <Form.Label>Codice ABI</Form.Label>*/}
-                                    {/*        <Form.Control type="abi" placeholder="-"*/}
-                                    {/*                      value={this.state.channel.abi}*/}
-                                    {/*                      readOnly/>*/}
-                                    {/*    </Form.Group>*/}
-                                    {/*    <Form.Group controlId="bic" className="col-md-2">*/}
-                                    {/*        <Form.Label>Codice BIC</Form.Label>*/}
-                                    {/*        <Form.Control type="bic" placeholder="-"*/}
-                                    {/*                      value={this.state.channel.bic}*/}
-                                    {/*                      readOnly/>*/}
-                                    {/*    </Form.Group>*/}
-                                    {/*</div>*/}
-                                    {/*<div className="row">*/}
-                                    {/*    <Form.Group controlId="agid_psp" className="col-md-2 custom-control-box">*/}
-                                    {/*        <Form.Check*/}
-                                    {/*            custom*/}
-                                    {/*            disabled*/}
-                                    {/*            defaultChecked={this.state.channel.agid_psp === true}*/}
-                                    {/*            type={'checkbox'}*/}
-                                    {/*            id={'agid-psp'}*/}
-                                    {/*            label={'PSP interno'}*/}
-                                    {/*        />*/}
-                                    {/*    </Form.Group>*/}
-                                    {/*    <Form.Group controlId="stamp" className="col-md-2 custom-control-box">*/}
-                                    {/*        <Form.Check*/}
-                                    {/*            custom*/}
-                                    {/*            disabled*/}
-                                    {/*            defaultChecked={this.state.channel.stamp === true}*/}
-                                    {/*            type={'checkbox'}*/}
-                                    {/*            id={'stamp'}*/}
-                                    {/*            label={'Marca bollo digitale'}*/}
-                                    {/*        />*/}
-                                    {/*    </Form.Group>*/}
-                                    {/*    <Form.Group controlId="transfer" className="col-md-2 custom-control-box">*/}
-                                    {/*        <Form.Check*/}
-                                    {/*            custom*/}
-                                    {/*            disabled*/}
-                                    {/*            defaultChecked={this.state.channel.transfer === true}*/}
-                                    {/*            type={'checkbox'}*/}
-                                    {/*            id={'transfer'}*/}
-                                    {/*            label={'Storno pagamento'}*/}
-                                    {/*        />*/}
-                                    {/*    </Form.Group>*/}
-                                    {/*</div>*/}
+
+                                    <div className="row">
+                                        <div className="col-md-12">
+                                            <h2>{this.state.channel.description}</h2>
+                                        </div>
+                                    </div>
+                                    <div className="row">
+                                        <Form.Group controlId="code" className="col-md-4">
+                                            <Form.Label>Codice</Form.Label>
+                                            <Form.Control type="code" placeholder="-" value={this.state.channel.channel_code} readOnly/>
+                                        </Form.Group>
+                                        <Form.Group controlId="enabled" className="col-md-2">
+                                            <Form.Label>Stato</Form.Label>
+                                            <Form.Control as="select" type="enabled" placeholder="stato" readOnly>
+                                                {this.state.channel.enabled && <option>Abilitato</option>}
+                                                {!this.state.channel.enabled && <option>Non Abilitato</option>}
+                                            </Form.Control>
+                                        </Form.Group>
+                                        <Form.Group controlId="broker_psp_code" className="col-md-3">
+                                            <Form.Label>Codice Intermediario PSP</Form.Label>
+                                            <Form.Control placeholder="-" value={this.state.channel.broker_psp_code} readOnly/>
+                                        </Form.Group>
+                                        <Form.Group controlId="password" className="col-md-3">
+                                            <Form.Label>Password</Form.Label>
+                                            <Form.Control placeholder="-" value={this.state.channel.password} readOnly/>
+                                        </Form.Group>
+                                    </div>
+                                    <div className="row">
+                                        <Form.Group controlId="protocol" className="col-md-2">
+                                            <Form.Label>Protocollo</Form.Label>
+                                            <Form.Control placeholder="-" value={this.state.channel.protocol} readOnly/>
+                                        </Form.Group>
+
+                                        <Form.Group controlId="ip" className="col-md-2">
+                                            <Form.Label>IP</Form.Label>
+                                            <Form.Control placeholder="-" value={this.state.channel.ip} readOnly/>
+                                        </Form.Group>
+
+                                        <Form.Group controlId="port" className="col-md-2">
+                                            <Form.Label>Porta</Form.Label>
+                                            <Form.Control placeholder="-" value={this.state.channel.port} readOnly/>
+                                        </Form.Group>
+
+                                        <Form.Group controlId="service" className="col-md-3">
+                                            <Form.Label>Servizio</Form.Label>
+                                            <Form.Control placeholder="-" value={this.state.channel.service} readOnly/>
+                                        </Form.Group>
+                                    </div>
+
+                                    <div className="row">
+                                        <Form.Group controlId="redirect_protocol" className="col-md-2">
+                                            <Form.Label>Protocollo Redirect</Form.Label>
+                                            <Form.Control placeholder="-" value={this.state.channel.redirect_protocol} readOnly/>
+                                        </Form.Group>
+
+                                        <Form.Group controlId="redirect_ip" className="col-md-2">
+                                            <Form.Label>IP Redirect</Form.Label>
+                                            <Form.Control placeholder="-" value={this.state.channel.redirect_ip} readOnly/>
+                                        </Form.Group>
+
+                                        <Form.Group controlId="redirect_port" className="col-md-2">
+                                            <Form.Label>Porta Redirect</Form.Label>
+                                            <Form.Control placeholder="-" value={this.state.channel.redirect_port} readOnly/>
+                                        </Form.Group>
+
+                                        <Form.Group controlId="redirect_path" className="col-md-3">
+                                            <Form.Label>Servizio Redirect</Form.Label>
+                                            <Form.Control placeholder="-" value={this.state.channel.redirect_path} readOnly/>
+                                        </Form.Group>
+
+                                        <Form.Group controlId="redirect_query_string" className="col-md-3">
+                                            <Form.Label>Parametri Redirect</Form.Label>
+                                            <Form.Control placeholder="-" value={this.state.channel.redirect_query_string} readOnly/>
+                                        </Form.Group>
+                                    </div>
+
+                                    <div className="row">
+                                        <Form.Group controlId="proxy_enabled" className="col-md-2">
+                                            <Form.Label>Proxy</Form.Label>
+                                            <Form.Control as="select" placeholder="stato" readOnly>
+                                                {this.state.channel.proxy_enabled && <option>Abilitato</option>}
+                                                {!this.state.channel.proxy_enabled && <option>Non Abilitato</option>}
+                                            </Form.Control>
+                                        </Form.Group>
+
+                                        <Form.Group controlId="proxy_host" className="col-md-2">
+                                            <Form.Label>Indirizzo Proxy</Form.Label>
+                                            <Form.Control placeholder="-" value={this.state.channel.proxy_host} readOnly/>
+                                        </Form.Group>
+
+                                        <Form.Group controlId="proxy_port" className="col-md-2">
+                                            <Form.Label>Porta Proxy</Form.Label>
+                                            <Form.Control placeholder="-" value={this.state.channel.proxy_port} readOnly/>
+                                        </Form.Group>
+                                    </div>
+
+                                    <div className="row">
+                                        <Form.Group controlId="payment_model" className="col-md-2">
+                                            <Form.Label>Modello Pagamento</Form.Label>
+                                            <Form.Control placeholder="-" value={this.state.channel.payment_model} readOnly/>
+                                        </Form.Group>
+
+                                        <Form.Group controlId="serv_plugin" className="col-md-2">
+                                            <Form.Label>Plugin WFESP</Form.Label>
+                                            <Form.Control placeholder="-" value={this.state.channel.serv_plugin} readOnly/>
+                                        </Form.Group>
+
+                                        <Form.Group controlId="thread_number" className="col-md-2">
+                                            <Form.Label>Numero Thread</Form.Label>
+                                            <Form.Control placeholder="-" value={this.state.channel.thread_number} readOnly/>
+                                        </Form.Group>
+
+                                        <Form.Group controlId="timeout_a" className="col-md-2">
+                                            <Form.Label>Timeout A</Form.Label>
+                                            <Form.Control placeholder="-" value={this.state.channel.timeout_a} readOnly/>
+                                        </Form.Group>
+
+                                        <Form.Group controlId="timeout_b" className="col-md-2">
+                                            <Form.Label>Timeout B</Form.Label>
+                                            <Form.Control placeholder="-" value={this.state.channel.timeout_b} readOnly/>
+                                        </Form.Group>
+
+                                        <Form.Group controlId="timeout_c" className="col-md-2">
+                                            <Form.Label>Timeout C</Form.Label>
+                                            <Form.Control placeholder="-" value={this.state.channel.timeout_c} readOnly/>
+                                        </Form.Group>
+
+                                    </div>
+
+                                    <div className="row">
+
+                                        <Form.Group controlId="flag_io" className="col-md-2 custom-control-box">
+                                            <Form.Check
+                                                    custom
+                                                    disabled
+                                                    defaultChecked={this.state.channel.flag_io === true}
+                                                    type={'checkbox'}
+                                                    id={'flag_io'}
+                                                    label={'PSP Notify Payment'}
+                                            />
+                                        </Form.Group>
+
+                                        <Form.Group controlId="rt_push" className="col-md-2 custom-control-box">
+                                            <Form.Check
+                                                    custom
+                                                    disabled
+                                                    defaultChecked={this.state.channel.rt_push === true}
+                                                    type={'checkbox'}
+                                                    id={'rt_push'}
+                                                    label={'Push Ricevuta Telematica'}
+                                            />
+                                        </Form.Group>
+
+                                        <Form.Group controlId="on_us" className="col-md-2 custom-control-box">
+                                            <Form.Check
+                                                    custom
+                                                    disabled
+                                                    defaultChecked={this.state.channel.on_us === true}
+                                                    type={'checkbox'}
+                                                    id={'on_us'}
+                                                    label={'On Us'}
+                                            />
+                                        </Form.Group>
+
+                                        <Form.Group controlId="card_chart" className="col-md-2 custom-control-box">
+                                            <Form.Check
+                                                    custom
+                                                    disabled
+                                                    defaultChecked={this.state.channel.card_chart === true}
+                                                    type={'checkbox'}
+                                                    id={'card_chart'}
+                                                    label={'Carrello RPT'}
+                                            />
+                                        </Form.Group>
+
+                                        <Form.Group controlId="recovery" className="col-md-2 custom-control-box">
+                                            <Form.Check
+                                                    custom
+                                                    disabled
+                                                    defaultChecked={this.state.channel.recovery === true}
+                                                    type={'checkbox'}
+                                                    id={'recovery'}
+                                                    label={'Processo di Recovery Pull'}
+                                            />
+                                        </Form.Group>
+
+                                        <Form.Group controlId="digital_stamp_brand" className="col-md-2 custom-control-box">
+                                            <Form.Check
+                                                    custom
+                                                    disabled
+                                                    defaultChecked={this.state.channel.digital_stamp_brand === true}
+                                                    type={'checkbox'}
+                                                    id={'digital_stamp_brand'}
+                                                    label={'Marca Bollo Digitale'}
+                                            />
+                                        </Form.Group>
+                                    </div>
                                 </>
                             )
                         }
