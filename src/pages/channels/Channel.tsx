@@ -75,7 +75,7 @@ export default class Channel extends React.Component<IProps, IState> {
                 <div className="row">
                     <div className="col-md-12 mb-5">
                         <Breadcrumb>
-                            <Breadcrumb.Item href="/payment-service-providers">Canali</Breadcrumb.Item>
+                            <Breadcrumb.Item href="/channels">Canali</Breadcrumb.Item>
                             <Breadcrumb.Item active>{this.state.channel.description}</Breadcrumb.Item>
                         </Breadcrumb>
                     </div>
