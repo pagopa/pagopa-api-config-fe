@@ -35,8 +35,6 @@ export const msalConfig = {
                         console.error(message);
                         return;
                     case LogLevel.Info:
-                        // eslint-disable-next-line no-console
-                        console.info(message);
                         return;
                     case LogLevel.Verbose:
                         // eslint-disable-next-line no-console

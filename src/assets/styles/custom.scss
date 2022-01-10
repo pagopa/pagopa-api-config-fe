@@ -98,6 +98,11 @@ $text-color: #17324d;
   vertical-align: top;
 }
 
+.disabled {
+  color: $gray-500;
+  cursor: not-allowed !important;
+}
+
 pre {
   max-height: 300px;
   overflow: auto;
@@ -129,6 +134,7 @@ pre {
   z-index: 100; /* Behind the navbar */
   padding: 48px 0 0 !important; /* Height of navbar */
   box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+  font-size: 0.9rem;
 
   .list-group {
 
@@ -258,4 +264,14 @@ pre {
 
 .breadcrumb {
   background-color: white !important;
+}
+
+.navbar-heading {
+  display: block;
+  text-transform: uppercase;
+  color: $gray-600;
+  font-size: 0.75rem;
+  border-bottom: 1px solid $gray-100;
+  margin-top: 10px;
+  cursor: pointer;
 }
