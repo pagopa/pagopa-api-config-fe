@@ -78,6 +78,7 @@ export default class Sidebar extends React.Component<IProps, IState> {
 
     render(): React.ReactNode {
         const location = this.props.history.location;
+
         const domains: any = this.state.domains;
 
         function getClass(item: any) {
@@ -88,16 +89,16 @@ export default class Sidebar extends React.Component<IProps, IState> {
             return path.charAt(0) !== "/" ? "/" + path : path;
         }
 
+        function getCompressionClass(domain: string, expand: boolean) {
+            return domains[domain] === expand ? "d-inline" : "d-none";
+        }
+
         function getLink(item: any) {
             return (
                 <Link to={item.route} key={item.name} className={`list-group-item-action ${getClass(item)}`}>
                     <span>{item.name}</span>
                 </Link>
             );
-        }
-
-        function getCompressionClass(domain: string, expand: boolean) {
-            return domains[domain] === expand ? "d-inline" : "d-none";
         }
 
         return (

@@ -29,6 +29,11 @@ const SidebarItems = [
         route: "/brokers-psp",
         domain: "psp"
     },
+    {
+        name: "Canali",
+        route: "/channels",
+        domain: "psp"
+    }
 ];
 // {
 //     name: "Informativa Conto Accredito - ICA",
