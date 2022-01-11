@@ -69,7 +69,7 @@ export default class Channels extends React.Component<IProps, IState> {
                     page
                 }).then((response: any) => {
                     this.setState({
-                        channels: response.right.value.channels_list,
+                        channels: response.right.value.channels,
                         page_info: response.right.value.page_info
                     });
                 })

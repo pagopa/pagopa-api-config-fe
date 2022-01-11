@@ -69,7 +69,7 @@ export default class BrokerPSP extends React.Component<IProps, IState> {
                     page
                 }).then((response: any) => {
                         this.setState({
-                            brokers_psp: response.right.value.brokers_psp_list,
+                            brokers_psp: response.right.value.brokers_psp,
                             page_info: response.right.value.page_info
                         });
                 })
