@@ -108,8 +108,8 @@ export default class PaymentServiceProviders extends React.Component<IProps, ISt
         this.setState({paymentServiceProviderIndex: index});
     }
 
-    removeCreditorInstitution() {
-        const filteredPSP = this.state.payment_service_providers.filter((ci: any) => ci.psp_code !== this.state.paymentServiceProviderToDelete.psp_code);
+    removePaymentServiceProvider() {
+        const filteredPSP = this.state.payment_service_providers.filter((psp: any) => psp.psp_code !== this.state.paymentServiceProviderToDelete.psp_code);
         this.setState({payment_service_providers: filteredPSP});
 
         if (filteredPSP.length === 0 && this.state.page_info.total_pages > 1) {
@@ -117,24 +117,22 @@ export default class PaymentServiceProviders extends React.Component<IProps, ISt
         }
     }
 
-    hideDeleteModal = () => {
-        // hideDeleteModal = (status: string) => {
-        /*
+    hideDeleteModal = (status: string) => {
         if (status === "ok") {
             this.context.instance.acquireTokenSilent({
                 ...loginRequest,
                 account: this.context.accounts[0]
             })
                 .then((response: any) => {
-                    apiClient.deleteCreditorInstitution({
+                    apiClient.deletePaymentServiceProvider({
                         Authorization: `Bearer ${response.accessToken}`,
                         ApiKey: "",
-                        creditorinstitutioncode: this.state.creditorInstitutionToDelete.creditor_institution_code
+                        pspcode: this.state.paymentServiceProviderToDelete.psp_code
                     })
                         .then((res: any) => {
                             if (res.right.status === 200) {
                                 toast.info("Rimozione avvenuta con successo");
-                                this.removeCreditorInstitution();
+                                this.removePaymentServiceProvider();
                             } else {
                                 toast.error(res.right.value.title, {theme: "colored"});
                             }
@@ -145,7 +143,6 @@ export default class PaymentServiceProviders extends React.Component<IProps, ISt
                 });
         }
         this.setState({showDeleteModal: false});
-        */
     };
 
     render(): React.ReactNode {
@@ -175,12 +172,12 @@ export default class PaymentServiceProviders extends React.Component<IProps, ISt
                         {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
                         <OverlayTrigger placement="top"
                                         overlay={<Tooltip id={`tooltip-edit-${index}`}>Modifica</Tooltip>}>
-                            <FaEdit role="button" className="mr-3 disabled" onClick={() => this.handleEdit(psp.psp_code)}/>
+                            <FaEdit role="button" className="mr-3" onClick={() => this.handleEdit(psp.psp_code)}/>
                         </OverlayTrigger>
                         {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
                         <OverlayTrigger placement="top"
                                         overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
-                            <FaTrash role="button" className="mr-3 disabled" onClick={() => this.handleDelete(psp, index)}/>
+                            <FaTrash role="button" className="mr-3" onClick={() => this.handleDelete(psp, index)}/>
                         </OverlayTrigger>
                     </td>
                 </tr>
