@@ -67,10 +67,10 @@ export default class PaymentServiceProviders extends React.Component<IProps, ISt
                     ApiKey: "",
                     limit: 10,
                     page
-                }).then((response: any) => {
+                }).then((data: any) => {
                         this.setState({
-                            payment_service_providers: response.right.value.payment_service_providers,
-                            page_info: response.right.value.page_info
+                            payment_service_providers: data.right.value.payment_service_providers,
+                            page_info: data.right.value.page_info
                         });
                 })
                 .catch(() => {
