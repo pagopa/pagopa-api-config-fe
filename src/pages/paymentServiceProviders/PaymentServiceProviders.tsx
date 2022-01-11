@@ -87,8 +87,7 @@ export default class PaymentServiceProviders extends React.Component<IProps, ISt
     }
 
     create() {
-        // this.props.history.push(this.service + "/create");
-        return false;
+        this.props.history.push(this.service + "/create");
     }
 
     handlePageChange(requestedPage: number) {
@@ -176,14 +175,12 @@ export default class PaymentServiceProviders extends React.Component<IProps, ISt
                         {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
                         <OverlayTrigger placement="top"
                                         overlay={<Tooltip id={`tooltip-edit-${index}`}>Modifica</Tooltip>}>
-                            {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
-                            <FaEdit role="button" className="mr-3 disabled" onClick={() => false && this.handleEdit(psp.psp_code)}/>
+                            <FaEdit role="button" className="mr-3 disabled" onClick={() => this.handleEdit(psp.psp_code)}/>
                         </OverlayTrigger>
                         {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
                         <OverlayTrigger placement="top"
                                         overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
-                            {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
-                            <FaTrash role="button" className="mr-3 disabled" onClick={() => false && this.handleDelete(psp, index)}/>
+                            <FaTrash role="button" className="mr-3 disabled" onClick={() => this.handleDelete(psp, index)}/>
                         </OverlayTrigger>
                     </td>
                 </tr>
@@ -198,7 +195,7 @@ export default class PaymentServiceProviders extends React.Component<IProps, ISt
                         <h2>Prestatori Servizio di Pagamento</h2>
                     </div>
                     <div className="col-md-2 text-right">
-                        <Button className="disabled" onClick={this.create}>Nuovo <FaPlus/></Button>
+                        <Button onClick={this.create}>Nuovo <FaPlus/></Button>
                     </div>
                     <div className="col-md-12">
                         {isLoading && (<FaSpinner className="spinner"/>)}

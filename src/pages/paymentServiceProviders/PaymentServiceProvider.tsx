@@ -49,7 +49,6 @@ export default class PaymentServiceProvider extends React.Component<IProps, ISta
                     pspcode: code
                 })
                     .then((response: any) => {
-                        console.log("AAAA", response);
                         if (response.right.status === 200) {
                             this.setState({paymentServiceProvider: response.right.value});
                         } else {
