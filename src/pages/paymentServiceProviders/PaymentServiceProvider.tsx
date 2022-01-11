@@ -1,6 +1,6 @@
 import React from "react";
-import {Alert, Breadcrumb, Form} from "react-bootstrap";
-import {FaSpinner} from "react-icons/fa";
+import {Alert, Breadcrumb, Card, Form, Table} from "react-bootstrap";
+import {FaCheck, FaInfoCircle, FaSpinner, FaTimes} from "react-icons/fa";
 import {MsalContext} from "@azure/msal-react";
 import {apiClient} from "../../util/apiClient";
 import {loginRequest} from "../../authConfig";
@@ -17,6 +17,7 @@ interface IState {
     isLoading: boolean;
     code: string;
     paymentServiceProvider: PaymentServiceProviderDetails;
+    channelList: any;
     edit: boolean;
 }
 
@@ -31,6 +32,7 @@ export default class PaymentServiceProvider extends React.Component<IProps, ISta
             isLoading: true,
             code: "",
             paymentServiceProvider: {} as PaymentServiceProviderDetails,
+            channelList: [],
             edit: false
         };
     }
@@ -47,6 +49,7 @@ export default class PaymentServiceProvider extends React.Component<IProps, ISta
                     pspcode: code
                 })
                     .then((response: any) => {
+                        console.log("AAAA", response);
                         if (response.right.status === 200) {
                             this.setState({paymentServiceProvider: response.right.value});
                         } else {
@@ -60,15 +63,57 @@ export default class PaymentServiceProvider extends React.Component<IProps, ISta
             });
     }
 
+    getChannels(code: string): void {
+        this.context.instance.acquireTokenSilent({
+            ...loginRequest,
+            account: this.context.accounts[0]
+        })
+                .then((response: any) => {
+                    apiClient.getPaymentServiceProvidersChannels({
+                        Authorization: `Bearer ${response.accessToken}`,
+                        ApiKey: "",
+                        pspcode: code
+                    })
+                            .then((response: any) => {
+                                if (response.right.status === 200) {
+                                    this.setState({channelList: response.right.value.channels});
+                                } else {
+                                    this.setState({isError: true});
+                                }
+                            })
+                            .catch(() => {
+                                this.setState({isError: true});
+                            })
+                            .finally(() => this.setState({isLoading: false}));
+                });
+    }
+
     componentDidMount(): void {
         const code: string = this.props.match.params.code as string;
         this.setState({isError: false});
         this.getPaymentServiceProvider(code);
+        this.getChannels(code);
     }
 
     render(): React.ReactNode {
         const isError = this.state.isError;
         const isLoading = this.state.isLoading;
+
+        // create rows for channels table
+        const channelList: any = [];
+        this.state.channelList.map((item: any, index: number) => {
+            const row = (
+                    <tr key={index}>
+                        <td>{item.channel_code}</td>
+                        <td className="text-center">
+                            {item.enabled && <FaCheck className="text-success"/>}
+                            {!item.enabled && <FaTimes className="text-danger"/>}
+                        </td>
+                        <td className="text-center">{item.payment_type.join(" ")}</td>
+                    </tr>
+            );
+            channelList.push(row);
+        });
 
         return (
             <div className="container-fluid payment-service-providers">
@@ -164,6 +209,35 @@ export default class PaymentServiceProvider extends React.Component<IProps, ISta
                                 </>
                             )
                         }
+                    </div>
+                </div>
+                <div className="row mt-3">
+                    <div className="col-md-12">
+                        <Card>
+                            <Card.Header>
+                                <h5>Canali</h5>
+                            </Card.Header>
+                            <Card.Body>
+                                {Object.keys(channelList).length === 0 && (
+                                        <Alert className={'col-md-12'} variant={"warning"}><FaInfoCircle
+                                                className="mr-1"/>Canali non presenti</Alert>
+                                )}
+                                {Object.keys(channelList).length > 0 &&
+								<Table hover responsive size="sm">
+									<thead>
+									<tr>
+										<th className="">Codice</th>
+										<th className="text-center">Abilitata</th>
+										<th className="text-center">Tipo Pagamento</th>
+									</tr>
+									</thead>
+									<tbody>
+                                    {channelList}
+									</tbody>
+								</Table>
+                                }
+                            </Card.Body>
+                        </Card>
                     </div>
                 </div>
             </div>
