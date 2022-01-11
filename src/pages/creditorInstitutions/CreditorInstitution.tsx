@@ -118,7 +118,7 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
                 })
                     .then((response: any) => {
                         if (response.right.status === 200) {
-                            this.setState({stationList: response.right.value.stations_list});
+                            this.setState({stationList: response.right.value.stations});
                         } else {
                             this.setState({isError: true});
                         }

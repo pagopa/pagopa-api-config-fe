@@ -169,7 +169,7 @@ export default class BrokersPage extends React.Component<IProps, IState> {
         const isLoading = this.state.isLoading;
         const brokers: any = [];
 
-        this.state.brokersPaginated?.brokers_list.map((elem, index) => {
+        this.state.brokersPaginated?.brokers.map((elem, index) => {
             const code = (
                 <tr key={index}>
                     <td>{elem.description}</td>
