@@ -322,7 +322,7 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
 														<tr>
 															<th className="">Codice</th>
 															<th className="text-center">Abilitata</th>
-															<th className="text-center">Tipo Pagamento</th>
+															<th className="text-center">Tipo Versamento</th>
 														</tr>
 														</thead>
 														<tbody>

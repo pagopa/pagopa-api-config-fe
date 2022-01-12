@@ -20,7 +20,7 @@ interface IState {
     edit: boolean;
 }
 
-export default class PaymentServiceProvider extends React.Component<IProps, IState> {
+export default class BrokerPSP extends React.Component<IProps, IState> {
     static contextType = MsalContext;
 
     constructor(props: IProps) {
@@ -75,7 +75,7 @@ export default class PaymentServiceProvider extends React.Component<IProps, ISta
                 <div className="row">
                     <div className="col-md-12 mb-5">
                         <Breadcrumb>
-                            <Breadcrumb.Item href="/payment-service-providers">Intermediari PSP</Breadcrumb.Item>
+                            <Breadcrumb.Item href="/brokers-psp">Intermediari PSP</Breadcrumb.Item>
                             <Breadcrumb.Item active>{this.state.brokerPSP.description}</Breadcrumb.Item>
                         </Breadcrumb>
                     </div>

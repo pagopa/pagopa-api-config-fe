@@ -227,7 +227,7 @@ export default class PaymentServiceProvider extends React.Component<IProps, ISta
 									<tr>
 										<th className="">Codice</th>
 										<th className="text-center">Abilitata</th>
-										<th className="text-center">Tipo Pagamento</th>
+										<th className="text-center">Tipo Versamento</th>
 									</tr>
 									</thead>
 									<tbody>

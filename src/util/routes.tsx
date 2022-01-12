@@ -2,6 +2,8 @@ import React from "react";
 import {BrowserRouter, Route, Switch} from "react-router-dom";
 import BrokerPage from "../pages/brokers/BrokerPage";
 import BrokersPage from "../pages/brokers/BrokersPage";
+import CreateBrokerPage from "../pages/brokers/CreateBrokerPage";
+import EditBrokerPage from "../pages/brokers/EditBrokerPage";
 import CheckICA from "../pages/icas/CheckICA";
 import CreditorInstitutions from "../pages/creditorInstitutions/CreditorInstitutions";
 import CreditorInstitution from "../pages/creditorInstitutions/CreditorInstitution";
@@ -12,16 +14,15 @@ import Station from "../pages/stations/Station";
 import Ica from "../pages/icas/ICAs";
 import PaymentServiceProviders from "../pages/paymentServiceProviders/PaymentServiceProviders";
 import PaymentServiceProvider from "../pages/paymentServiceProviders/PaymentServiceProvider";
-import BrokersPSP from "../pages/brokersPSP/brokersPSP";
-import BrokerPSP from "../pages/brokersPSP/brokerPSP";
-import Layout from "../components/Layout";
-import NotFound from "../pages/NotFound";
-import CreateBrokerPage from "../pages/brokers/CreateBrokerPage";
-import EditBrokerPage from "../pages/brokers/EditBrokerPage";
-import Channels from "../pages/channels/Channels";
-import Channel from "../pages/channels/Channel";
 import CreatePaymentServiceProvider from "../pages/paymentServiceProviders/CreatePaymentServiceProvider";
 import EditPaymentServiceProvider from "../pages/paymentServiceProviders/EditPaymentServiceProvider";
+import BrokersPSP from "../pages/brokersPSP/BrokersPSP";
+import BrokerPSP from "../pages/brokersPSP/BrokerPSP";
+import CreateBrokerPSP from "../pages/brokersPSP/CreateBrokerPSP";
+import Channels from "../pages/channels/Channels";
+import Channel from "../pages/channels/Channel";
+import Layout from "../components/Layout";
+import NotFound from "../pages/NotFound";
 
 
 export default class Routes extends React.Component {
@@ -67,6 +68,7 @@ export default class Routes extends React.Component {
                                     }}/>
 
                                     <Route path="/brokers-psp" exact component={BrokersPSP}/>
+                                    <Route path="/brokers-psp/create" component={CreateBrokerPSP} />
                                     <Route path="/brokers-psp/:code" render={props => {
                                         const edit: boolean = new URLSearchParams(props.location.search).get("edit") !== null;
                                         return edit ? <NotFound /> : <BrokerPSP {...props} />;

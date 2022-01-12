@@ -28,7 +28,7 @@ interface IState {
     brokerIndex: number;
 }
 
-export default class BrokerPSP extends React.Component<IProps, IState> {
+export default class BrokersPSP extends React.Component<IProps, IState> {
     static contextType = MsalContext;
 
     service = "/brokers-psp";
@@ -88,8 +88,7 @@ export default class BrokerPSP extends React.Component<IProps, IState> {
     }
 
     create() {
-        // this.props.history.push(this.service + "/create");
-        return false;
+        this.props.history.push(this.service + "/create");
     }
 
     handlePageChange(requestedPage: number) {
@@ -178,13 +177,13 @@ export default class BrokerPSP extends React.Component<IProps, IState> {
                         <OverlayTrigger placement="top"
                                         overlay={<Tooltip id={`tooltip-edit-${index}`}>Modifica</Tooltip>}>
                             {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
-                            <FaEdit role="button" className="mr-3 disabled" onClick={() => false && this.handleEdit(broker.broker_psp_code)}/>
+                            <FaEdit role="button" className="mr-3" onClick={() => this.handleEdit(broker.broker_psp_code)}/>
                         </OverlayTrigger>
                         {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
                         <OverlayTrigger placement="top"
                                         overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
                             {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
-                            <FaTrash role="button" className="mr-3 disabled" onClick={() => false && this.handleDelete(broker, index)}/>
+                            <FaTrash role="button" className="mr-3" onClick={() => this.handleDelete(broker, index)}/>
                         </OverlayTrigger>
                     </td>
                 </tr>
@@ -199,7 +198,7 @@ export default class BrokerPSP extends React.Component<IProps, IState> {
                         <h2>Intermediari PSP</h2>
                     </div>
                     <div className="col-md-2 text-right">
-                        <Button className="disabled" onClick={this.create}>Nuovo <FaPlus/></Button>
+                        <Button onClick={this.create}>Nuovo <FaPlus/></Button>
                     </div>
                     <div className="col-md-12">
                         {isLoading && (<FaSpinner className="spinner"/>)}
