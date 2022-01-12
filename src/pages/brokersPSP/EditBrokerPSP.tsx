@@ -138,7 +138,7 @@ export default class EditBrokerPSP extends React.Component<IProps, IState> {
                 <div className="row">
                     <div className="col-md-12 mb-5">
                         <Breadcrumb>
-                            <Breadcrumb.Item href={this.service}>Prestatori Servizio di Pagamento</Breadcrumb.Item>
+                            <Breadcrumb.Item href={this.service}>Intermediari PSP</Breadcrumb.Item>
                             <Breadcrumb.Item active>{this.state.brokerPspName}</Breadcrumb.Item>
                         </Breadcrumb>
                     </div>
