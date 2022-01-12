@@ -20,6 +20,8 @@ import CreateBrokerPage from "../pages/brokers/CreateBrokerPage";
 import EditBrokerPage from "../pages/brokers/EditBrokerPage";
 import Channels from "../pages/channels/Channels";
 import Channel from "../pages/channels/Channel";
+import CreatePaymentServiceProvider from "../pages/paymentServiceProviders/CreatePaymentServiceProvider";
+import EditPaymentServiceProvider from "../pages/paymentServiceProviders/EditPaymentServiceProvider";
 
 
 export default class Routes extends React.Component {
@@ -58,9 +60,10 @@ export default class Routes extends React.Component {
                                     <Route path="/icas/check" exact component={CheckICA} />
 
                                     <Route path="/payment-service-providers" exact component={PaymentServiceProviders}/>
+                                    <Route path="/payment-service-providers/create" component={CreatePaymentServiceProvider} />
                                     <Route path="/payment-service-providers/:code" render={props => {
                                         const edit: boolean = new URLSearchParams(props.location.search).get("edit") !== null;
-                                        return edit ? <NotFound /> : <PaymentServiceProvider {...props} />;
+                                        return edit ? <EditPaymentServiceProvider {...props} /> : <PaymentServiceProvider {...props} />;
                                     }}/>
 
                                     <Route path="/brokers-psp" exact component={BrokersPSP}/>

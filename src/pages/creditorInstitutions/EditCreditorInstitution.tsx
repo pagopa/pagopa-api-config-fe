@@ -102,7 +102,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                 }).then((response: any) => {
                     if (response.right.status === 200) {
                         this.setState({ibanList: response.right.value.ibans});
-                        this.updateBackup("ibans", response.right.value);
+                        this.updateBackup("ibans", response.right.value.ibans);
                     } else {
                         this.setState({isError: true});
                     }
@@ -125,8 +125,8 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                     creditorinstitutioncode: code
                 }).then((response: any) => {
                     if (response.right.status === 200) {
-                        this.setState({stationList: response.right.value.stations_list});
-                        this.updateBackup("stations", response.right.value);
+                        this.setState({stationList: response.right.value.stations});
+                        this.updateBackup("stations", response.right.value.stations);
                     } else {
                         this.setState({isError: true});
                     }
@@ -150,7 +150,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                 }).then((response: any) => {
                     if (response.right.status === 200) {
                         this.setState({encodings: response.right.value.encodings});
-                        this.updateBackup("encodings", response.right.value);
+                        this.updateBackup("encodings", response.right.value.encodings);
                     } else {
                         this.setState({isError: true});
                     }
@@ -329,7 +329,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                                     <Form.Label>Stato</Form.Label>
                                                     <Form.Control as="select" name="enabled"
                                                                   onChange={(e) => this.handleChange(e, "creditorInstitution")}
-                                                                  defaultValue={this.state.creditorInstitution.enabled.toString()}>
+                                                                  defaultValue={String(this.state.creditorInstitution.enabled)}>
                                                         <option value="true">Abilitato</option>
                                                         <option value="false">Non Abilitato</option>
                                                     </Form.Control>
