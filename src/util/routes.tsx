@@ -23,6 +23,7 @@ import Channels from "../pages/channels/Channels";
 import Channel from "../pages/channels/Channel";
 import Layout from "../components/Layout";
 import NotFound from "../pages/NotFound";
+import EditBrokerPSP from "../pages/brokersPSP/EditBrokerPSP";
 
 
 export default class Routes extends React.Component {
@@ -71,7 +72,7 @@ export default class Routes extends React.Component {
                                     <Route path="/brokers-psp/create" component={CreateBrokerPSP} />
                                     <Route path="/brokers-psp/:code" render={props => {
                                         const edit: boolean = new URLSearchParams(props.location.search).get("edit") !== null;
-                                        return edit ? <NotFound /> : <BrokerPSP {...props} />;
+                                        return edit ? <EditBrokerPSP {...props} /> : <BrokerPSP {...props} />;
                                     }}/>
 
                                     <Route path="/channels" exact component={Channels}/>

@@ -103,9 +103,9 @@ export default class BrokersPSP extends React.Component<IProps, IState> {
         this.props.history.push(this.service + "/" + code + "?edit");
     }
 
-    handleDelete(paymentServiceProvider: string, index: number) {
+    handleDelete(brokerPSP: string, index: number) {
         this.setState({showDeleteModal: true});
-        this.setState({brokerToDelete: paymentServiceProvider});
+        this.setState({brokerToDelete: brokerPSP});
         this.setState({brokerIndex: index});
     }
 
@@ -118,19 +118,19 @@ export default class BrokersPSP extends React.Component<IProps, IState> {
         }
     }
 
-    hideDeleteModal = () => {
-        // hideDeleteModal = (status: string) => {
-        /*
+
+    hideDeleteModal = (status: string) => {
+
         if (status === "ok") {
             this.context.instance.acquireTokenSilent({
                 ...loginRequest,
                 account: this.context.accounts[0]
             })
                 .then((response: any) => {
-                    apiClient.deleteCreditorInstitution({
+                    apiClient.deleteBrokerPsp({
                         Authorization: `Bearer ${response.accessToken}`,
                         ApiKey: "",
-                        creditorinstitutioncode: this.state.creditorInstitutionToDelete.creditor_institution_code
+                        brokerpspcode: this.state.brokerToDelete.broker_psp_code
                     })
                         .then((res: any) => {
                             if (res.right.status === 200) {
@@ -146,7 +146,6 @@ export default class BrokersPSP extends React.Component<IProps, IState> {
                 });
         }
         this.setState({showDeleteModal: false});
-        */
     };
 
     render(): React.ReactNode {
@@ -154,7 +153,7 @@ export default class BrokersPSP extends React.Component<IProps, IState> {
         const pageInfo = this.state.page_info;
         const showDeleteModal = this.state.showDeleteModal;
         const brokerPSPList: any = [];
-        const brokerPSPToDeleteName = this.state.brokerToDelete.business_name;
+        const brokerPSPToDeleteName = this.state.brokerToDelete.description;
         const brokerPSPToDeleteCode = this.state.brokerToDelete.broker_psp_code;
 
         this.state.brokers_psp.map((broker: any, index: number) => {

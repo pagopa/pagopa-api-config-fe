@@ -115,7 +115,7 @@ export default class CreateBrokerPSP extends React.Component<IProps, IState> {
                             </div>
                         </div>
                         <div className="row">
-                            <Form.Group controlId="description" className="col-md-3">
+                            <Form.Group controlId="description" className="col-md-4">
                                 <Form.Label>Descrizione</Form.Label>
                                 <Form.Control name="description" placeholder=""
                                               onChange={(e) => this.handleChange(e)}/>
