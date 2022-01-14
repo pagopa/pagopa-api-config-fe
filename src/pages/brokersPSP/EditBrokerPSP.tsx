@@ -5,7 +5,7 @@ import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
 import {apiClient} from "../../util/apiClient";
 import {loginRequest} from "../../authConfig";
-import { BrokerDetails } from "../../../generated/api/BrokerDetails";
+import {BrokerPspDetails} from "../../../generated/api/BrokerPspDetails";
 
 interface IProps {
     match: {
@@ -17,13 +17,16 @@ interface IState {
     isError: boolean;
     isLoading: boolean;
     backup: any;
+    brokerPspName: string;
     code: string;
-    brokerDetails: BrokerDetails;
+    brokerPSP: BrokerPspDetails;
     edit: boolean;
 }
 
-export default class EditBrokersPage extends React.Component<IProps, IState> {
+export default class EditBrokerPSP extends React.Component<IProps, IState> {
     static contextType = MsalContext;
+
+    service = "/brokers-psp";
 
     constructor(props: IProps) {
         super(props);
@@ -32,39 +35,41 @@ export default class EditBrokersPage extends React.Component<IProps, IState> {
             isError: false,
             isLoading: true,
             backup: {
-                brokerDetails: {} as BrokerDetails,
+                brokersPsp: {} as BrokerPspDetails
             },
+            brokerPspName: "",
             code: "",
-            brokerDetails: {} as BrokerDetails,
-            edit: false,
+            brokerPSP: {} as BrokerPspDetails,
+            edit: false
         };
 
         this.handleChange = this.handleChange.bind(this);
-        this.saveBroker = this.saveBroker.bind(this);
+        this.saveBrokerPSP = this.saveBrokerPSP.bind(this);
         this.discard = this.discard.bind(this);
     }
 
-    updateBackup(section: string, data: BrokerDetails | any) {
+    updateBackup(section: string, data: BrokerPspDetails | any) {
         // eslint-disable-next-line functional/no-let
         let backup = {...this.state.backup};
         backup = {...backup, [section]: data};
         this.setState({backup});
     }
 
-    getBrokerDetails(code: string): void {
+    getBrokerPSP(code: string): void {
         this.context.instance.acquireTokenSilent({
             ...loginRequest,
             account: this.context.accounts[0]
         })
             .then((response: any) => {
-                apiClient.getBroker({
+                apiClient.getBrokerPsp({
                     Authorization: `Bearer ${response.accessToken}`,
                     ApiKey: "",
-                    brokercode: code
+                    brokerpspcode: code
                 }).then((response: any) => {
                     if (response.right.status === 200) {
-                        this.setState({brokerDetails: response.right.value});
-                        this.updateBackup("brokerDetails", response.right.value);
+                        this.setState({brokerPSP: response.right.value});
+                        this.setState({brokerPspName: response.right.value.description});
+                        this.updateBackup("brokerPSP", response.right.value);
                     } else {
                         this.setState({isError: true});
                     }
@@ -79,35 +84,35 @@ export default class EditBrokersPage extends React.Component<IProps, IState> {
     componentDidMount(): void {
         const code: string = this.props.match.params.code as string;
         this.setState({code, isError: false});
-        this.getBrokerDetails(code);
+        this.getBrokerPSP(code);
     }
 
     handleChange(event: any) {
         // eslint-disable-next-line functional/no-let
-        let brokerDetails: BrokerDetails = this.state.brokerDetails;
+        let brokerPSP: BrokerPspDetails = this.state.brokerPSP;
         const key = event.target.name as string;
         const value = event.target.type === "checkbox" ? event.target.checked : event.target.value;
-        brokerDetails = {...brokerDetails, [key]: value};
-
-        this.setState({brokerDetails});
+        brokerPSP = {...brokerPSP, [key]: value};
+        this.setState({brokerPSP});
     }
 
-    saveBroker() {
+    saveBrokerPSP() {
         this.context.instance.acquireTokenSilent({
             ...loginRequest,
             account: this.context.accounts[0]
         })
             .then((response: any) => {
-                apiClient.updateBroker({
+                apiClient.updateBrokerPsp({
                     Authorization: `Bearer ${response.accessToken}`,
                     ApiKey: "",
-                    brokercode: this.state.code,
-                    body: this.state.brokerDetails
+                    brokerpspcode: this.state.code,
+                    body: this.state.brokerPSP
                 }).then((response: any) => {
                     if (response.right.status === 200) {
                         toast.info("Modifica avvenuta con successo.");
-                        this.setState({brokerDetails: response.right.value});
-                        this.updateBackup("brokerDetails", response.right.value);
+                        this.setState({brokerPSP: response.right.value});
+                        this.setState({brokerPspName: response.right.value.description});
+                        this.updateBackup("brokerPSP", response.right.value);
                     } else {
                         // eslint-disable-next-line no-prototype-builtins
                         const message = (response.right.hasOwnProperty("title")) ? response.right.value.title : "Operazione non avvenuta a causa di un errore";
@@ -124,18 +129,17 @@ export default class EditBrokersPage extends React.Component<IProps, IState> {
         this.setState({[section]: Object.assign({}, this.state.backup[section])} as any);
     }
 
-
     render(): React.ReactNode {
         const isError = this.state.isError;
         const isLoading = this.state.isLoading;
 
         return (
-            <div className="container-fluid broker">
+            <div className="container-fluid creditor-institutions">
                 <div className="row">
                     <div className="col-md-12 mb-5">
                         <Breadcrumb>
-                            <Breadcrumb.Item href="/brokers">Intermediario</Breadcrumb.Item>
-                            <Breadcrumb.Item active>{this.state.backup.brokerDetails.description}</Breadcrumb.Item>
+                            <Breadcrumb.Item href={this.service}>Intermediari PSP</Breadcrumb.Item>
+                            <Breadcrumb.Item active>{this.state.brokerPspName}</Breadcrumb.Item>
                         </Breadcrumb>
                     </div>
                     <div className="col-md-12">
@@ -150,41 +154,43 @@ export default class EditBrokersPage extends React.Component<IProps, IState> {
                                 <>
                                     <div className="row">
                                         <div className="col-md-12">
-                                            <h2>{this.state.backup.brokerDetails.description}</h2>
+                                            <h2>{this.state.brokerPspName}</h2>
                                         </div>
                                     </div>
+
                                     <Card>
                                         <Card.Header>
                                             <h5>Anagrafica</h5>
                                         </Card.Header>
                                         <Card.Body>
                                             <div className="row">
-                                                <Form.Group controlId="code" className="col-md-3">
-                                                    <Form.Label>Nome</Form.Label>
+                                                <Form.Group controlId="code" className="col-md-4">
+                                                    <Form.Label>Descrizione</Form.Label>
                                                     <Form.Control name="description" placeholder=""
-                                                                  value={this.state.brokerDetails.description}
+                                                                  value={this.state.brokerPSP.description}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
+
                                                 <Form.Group controlId="code" className="col-md-3">
                                                     <Form.Label>Codice</Form.Label>
-                                                    <Form.Control name="broker_code" placeholder=""
-                                                                  value={this.state.brokerDetails.broker_code}
+                                                    <Form.Control name="broker_psp_code" placeholder=""
+                                                                  value={this.state.brokerPSP.broker_psp_code}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
-                                                <Form.Group controlId="enabled" className="col-md-3">
+                                                <Form.Group controlId="enabled" className="col-md-2">
                                                     <Form.Label>Stato</Form.Label>
                                                     <Form.Control as="select" name="enabled" placeholder="stato"
                                                                   onChange={(e) => this.handleChange(e)}
-                                                                  defaultValue={String(this.state.brokerDetails.enabled)}>
+                                                                  defaultValue={String(this.state.brokerPSP.enabled)}>
                                                         <option value="true">Abilitato</option>
                                                         <option value="false">Non Abilitato</option>
                                                     </Form.Control>
                                                 </Form.Group>
-                                                <Form.Group controlId="extended_fault_bean" className="col-md-3">
-                                                    <Form.Label>Fault Bean Esteso</Form.Label>
-                                                    <Form.Control as="select" name="extended_fault_bean" placeholder="fault bean"
+                                                <Form.Group controlId="extended_fault_bean" className="col-md-2">
+                                                    <Form.Label>Fault Bean esteso</Form.Label>
+                                                    <Form.Control as="select" name="extended_fault_bean" placeholder="stato"
                                                                   onChange={(e) => this.handleChange(e)}
-                                                                  defaultValue={this.state.brokerDetails.extended_fault_bean.toString()}>
+                                                                  defaultValue={String(this.state.brokerPSP.extended_fault_bean)}>
                                                         <option value="true">Abilitato</option>
                                                         <option value="false">Non Abilitato</option>
                                                     </Form.Control>
@@ -196,10 +202,10 @@ export default class EditBrokersPage extends React.Component<IProps, IState> {
                                                 <div className="col-md-12">
                                                     <Button className="ml-2 float-md-right" variant="secondary"
                                                             onClick={() => {
-                                                                this.discard("brokerDetails");
+                                                                this.discard("brokerPSP");
                                                             }}>Annulla</Button>
                                                     <Button className="float-md-right" onClick={() => {
-                                                        this.saveBroker();
+                                                        this.saveBrokerPSP();
                                                     }}>Salva</Button>
                                                 </div>
                                             </div>

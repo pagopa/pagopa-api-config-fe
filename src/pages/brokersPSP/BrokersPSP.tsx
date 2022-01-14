@@ -28,7 +28,7 @@ interface IState {
     brokerIndex: number;
 }
 
-export default class BrokerPSP extends React.Component<IProps, IState> {
+export default class BrokersPSP extends React.Component<IProps, IState> {
     static contextType = MsalContext;
 
     service = "/brokers-psp";
@@ -88,8 +88,7 @@ export default class BrokerPSP extends React.Component<IProps, IState> {
     }
 
     create() {
-        // this.props.history.push(this.service + "/create");
-        return false;
+        this.props.history.push(this.service + "/create");
     }
 
     handlePageChange(requestedPage: number) {
@@ -104,9 +103,9 @@ export default class BrokerPSP extends React.Component<IProps, IState> {
         this.props.history.push(this.service + "/" + code + "?edit");
     }
 
-    handleDelete(paymentServiceProvider: string, index: number) {
+    handleDelete(brokerPSP: string, index: number) {
         this.setState({showDeleteModal: true});
-        this.setState({brokerToDelete: paymentServiceProvider});
+        this.setState({brokerToDelete: brokerPSP});
         this.setState({brokerIndex: index});
     }
 
@@ -119,19 +118,19 @@ export default class BrokerPSP extends React.Component<IProps, IState> {
         }
     }
 
-    hideDeleteModal = () => {
-        // hideDeleteModal = (status: string) => {
-        /*
+
+    hideDeleteModal = (status: string) => {
+
         if (status === "ok") {
             this.context.instance.acquireTokenSilent({
                 ...loginRequest,
                 account: this.context.accounts[0]
             })
                 .then((response: any) => {
-                    apiClient.deleteCreditorInstitution({
+                    apiClient.deleteBrokerPsp({
                         Authorization: `Bearer ${response.accessToken}`,
                         ApiKey: "",
-                        creditorinstitutioncode: this.state.creditorInstitutionToDelete.creditor_institution_code
+                        brokerpspcode: this.state.brokerToDelete.broker_psp_code
                     })
                         .then((res: any) => {
                             if (res.right.status === 200) {
@@ -147,7 +146,6 @@ export default class BrokerPSP extends React.Component<IProps, IState> {
                 });
         }
         this.setState({showDeleteModal: false});
-        */
     };
 
     render(): React.ReactNode {
@@ -155,7 +153,7 @@ export default class BrokerPSP extends React.Component<IProps, IState> {
         const pageInfo = this.state.page_info;
         const showDeleteModal = this.state.showDeleteModal;
         const brokerPSPList: any = [];
-        const brokerPSPToDeleteName = this.state.brokerToDelete.business_name;
+        const brokerPSPToDeleteName = this.state.brokerToDelete.description;
         const brokerPSPToDeleteCode = this.state.brokerToDelete.broker_psp_code;
 
         this.state.brokers_psp.map((broker: any, index: number) => {
@@ -178,13 +176,13 @@ export default class BrokerPSP extends React.Component<IProps, IState> {
                         <OverlayTrigger placement="top"
                                         overlay={<Tooltip id={`tooltip-edit-${index}`}>Modifica</Tooltip>}>
                             {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
-                            <FaEdit role="button" className="mr-3 disabled" onClick={() => false && this.handleEdit(broker.broker_psp_code)}/>
+                            <FaEdit role="button" className="mr-3" onClick={() => this.handleEdit(broker.broker_psp_code)}/>
                         </OverlayTrigger>
                         {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
                         <OverlayTrigger placement="top"
                                         overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
                             {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
-                            <FaTrash role="button" className="mr-3 disabled" onClick={() => false && this.handleDelete(broker, index)}/>
+                            <FaTrash role="button" className="mr-3" onClick={() => this.handleDelete(broker, index)}/>
                         </OverlayTrigger>
                     </td>
                 </tr>
@@ -199,7 +197,7 @@ export default class BrokerPSP extends React.Component<IProps, IState> {
                         <h2>Intermediari PSP</h2>
                     </div>
                     <div className="col-md-2 text-right">
-                        <Button className="disabled" onClick={this.create}>Nuovo <FaPlus/></Button>
+                        <Button onClick={this.create}>Nuovo <FaPlus/></Button>
                     </div>
                     <div className="col-md-12">
                         {isLoading && (<FaSpinner className="spinner"/>)}

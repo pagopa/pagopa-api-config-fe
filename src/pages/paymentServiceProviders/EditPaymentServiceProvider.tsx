@@ -160,7 +160,7 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
     }
 
     // eslint-disable-next-line @typescript-eslint/no-empty-function
-    createEncoding(): void {
+    createChannel(): void {
     }
 
     render(): React.ReactNode {
@@ -322,7 +322,7 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
 														<tr>
 															<th className="">Codice</th>
 															<th className="text-center">Abilitata</th>
-															<th className="text-center">Tipo Pagamento</th>
+															<th className="text-center">Tipo Versamento</th>
 														</tr>
 														</thead>
 														<tbody>
@@ -335,7 +335,7 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                                                     <div className="row">
                                                         <div className="col-md-12">
                                                             <Button className="float-md-right" onClick={() => {
-                                                                this.createEncoding();
+                                                                this.createChannel();
                                                             }} disabled>
                                                                 Nuovo <FaPlus/>
                                                             </Button>
