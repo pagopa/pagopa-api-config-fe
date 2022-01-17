@@ -11,6 +11,7 @@ import CreateCreditorInstitution from "../pages/creditorInstitutions/CreateCredi
 import EditCreditorInstitution from "../pages/creditorInstitutions/EditCreditorInstitution";
 import Stations from "../pages/stations/Stations";
 import Station from "../pages/stations/Station";
+import CreateStation from "../pages/stations/CreateStation";
 import Ica from "../pages/icas/ICAs";
 import PaymentServiceProviders from "../pages/paymentServiceProviders/PaymentServiceProviders";
 import PaymentServiceProvider from "../pages/paymentServiceProviders/PaymentServiceProvider";
@@ -19,14 +20,13 @@ import EditPaymentServiceProvider from "../pages/paymentServiceProviders/EditPay
 import BrokersPSP from "../pages/brokersPSP/BrokersPSP";
 import BrokerPSP from "../pages/brokersPSP/BrokerPSP";
 import CreateBrokerPSP from "../pages/brokersPSP/CreateBrokerPSP";
+import EditBrokerPSP from "../pages/brokersPSP/EditBrokerPSP";
 import Channels from "../pages/channels/Channels";
 import Channel from "../pages/channels/Channel";
 import CreateChannel from "../pages/channels/CreateChannel";
+import EditChannel from "../pages/channels/EditChannel";
 import Layout from "../components/Layout";
 import NotFound from "../pages/NotFound";
-import EditBrokerPSP from "../pages/brokersPSP/EditBrokerPSP";
-import EditChannel from "../pages/channels/EditChannel";
-
 
 export default class Routes extends React.Component {
 
@@ -54,7 +54,7 @@ export default class Routes extends React.Component {
                                     }}/>
 
                                     <Route path="/stations" exact component={Stations}/>
-                                    <Route path="/stations/create" component={NotFound} />
+                                    <Route path="/stations/create" component={CreateStation} />
                                     <Route path="/stations/:code" render={props => {
                                         const edit: boolean = new URLSearchParams(props.location.search).get("edit") !== null;
                                         return edit ? <NotFound /> : <Station {...props} />;

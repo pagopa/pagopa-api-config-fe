@@ -88,8 +88,7 @@ export default class Stations extends React.Component<IProps, IState> {
     }
 
     create() {
-        // this.props.history.push(this.service + "/create");
-        return false;
+        this.props.history.push(this.service + "/create");
     }
 
     handlePageChange(requestedPage: number) {
@@ -198,7 +197,7 @@ export default class Stations extends React.Component<IProps, IState> {
                         <h2>Stazioni</h2>
                     </div>
                     <div className="col-md-2 text-right">
-                        <Button className="disabled" onClick={this.create}>Nuovo <FaPlus/></Button>
+                        <Button onClick={this.create}>Nuovo <FaPlus/></Button>
                     </div>
                     <div className="col-md-12">
                         {isLoading && (<FaSpinner className="spinner"/>)}
