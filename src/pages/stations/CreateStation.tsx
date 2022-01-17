@@ -260,7 +260,7 @@ export default class CreateStation extends React.Component<IProps, IState> {
 
                             <Form.Group controlId="proxy_host" className="col-md-2">
                                 <Form.Label>Indirizzo Proxy</Form.Label>
-                                <Form.Control name="procy_host" onChange={(e) => this.handleChange(e)} />
+                                <Form.Control name="proxy_host" onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
 
                             <Form.Group controlId="proxy_port" className="col-md-2">

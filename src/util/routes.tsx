@@ -12,6 +12,7 @@ import EditCreditorInstitution from "../pages/creditorInstitutions/EditCreditorI
 import Stations from "../pages/stations/Stations";
 import Station from "../pages/stations/Station";
 import CreateStation from "../pages/stations/CreateStation";
+import EditStation from "../pages/stations/EditStation";
 import Ica from "../pages/icas/ICAs";
 import PaymentServiceProviders from "../pages/paymentServiceProviders/PaymentServiceProviders";
 import PaymentServiceProvider from "../pages/paymentServiceProviders/PaymentServiceProvider";
@@ -57,7 +58,7 @@ export default class Routes extends React.Component {
                                     <Route path="/stations/create" component={CreateStation} />
                                     <Route path="/stations/:code" render={props => {
                                         const edit: boolean = new URLSearchParams(props.location.search).get("edit") !== null;
-                                        return edit ? <NotFound /> : <Station {...props} />;
+                                        return edit ? <EditStation {...props} /> : <Station {...props} />;
                                     }}/>
 
                                     <Route path="/icas" exact component={Ica} />

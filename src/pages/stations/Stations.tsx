@@ -118,19 +118,17 @@ export default class Stations extends React.Component<IProps, IState> {
         }
     }
 
-    hideDeleteModal = () => {
-        // hideDeleteModal = (status: string) => {
-        /*
+    hideDeleteModal = (status: string) => {
         if (status === "ok") {
             this.context.instance.acquireTokenSilent({
                 ...loginRequest,
                 account: this.context.accounts[0]
             })
                 .then((response: any) => {
-                    apiClient.deleteCreditorInstitution({
+                    apiClient.deleteStation({
                         Authorization: `Bearer ${response.accessToken}`,
                         ApiKey: "",
-                        creditorinstitutioncode: this.state.creditorInstitutionToDelete.creditor_institution_code
+                        stationcode: this.state.stationToDelete.station_code
                     })
                         .then((res: any) => {
                             if (res.right.status === 200) {
@@ -146,7 +144,7 @@ export default class Stations extends React.Component<IProps, IState> {
                 });
         }
         this.setState({showDeleteModal: false});
-        */
+
     };
 
     render(): React.ReactNode {
@@ -176,13 +174,13 @@ export default class Stations extends React.Component<IProps, IState> {
                         <OverlayTrigger placement="top"
                                         overlay={<Tooltip id={`tooltip-edit-${index}`}>Modifica</Tooltip>}>
                             {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
-                            <FaEdit role="button" className="mr-3 disabled" onClick={() => false && this.handleEdit(station.station_code)}/>
+                            <FaEdit role="button" className="mr-3" onClick={() => this.handleEdit(station.station_code)}/>
                         </OverlayTrigger>
                         {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
                         <OverlayTrigger placement="top"
                                         overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
                             {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
-                            <FaTrash role="button" className="mr-3 disabled" onClick={() => false && this.handleDelete(station, index)}/>
+                            <FaTrash role="button" className="mr-3" onClick={() => this.handleDelete(station, index)}/>
                         </OverlayTrigger>
                     </td>
                 </tr>
