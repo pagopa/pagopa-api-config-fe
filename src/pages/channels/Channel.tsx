@@ -136,7 +136,6 @@ export default class Channel extends React.Component<IProps, IState> {
                                             <Form.Control placeholder="-" value={this.state.channel.service} readOnly/>
                                         </Form.Group>
                                     </div>
-
                                     <div className="row">
                                         <Form.Group controlId="redirect_protocol" className="col-md-2">
                                             <Form.Label>Protocollo Redirect</Form.Label>
@@ -163,7 +162,6 @@ export default class Channel extends React.Component<IProps, IState> {
                                             <Form.Control placeholder="-" value={this.state.channel.redirect_query_string} readOnly/>
                                         </Form.Group>
                                     </div>
-
                                     <div className="row">
                                         <Form.Group controlId="proxy_enabled" className="col-md-2">
                                             <Form.Label>Proxy</Form.Label>
@@ -183,7 +181,6 @@ export default class Channel extends React.Component<IProps, IState> {
                                             <Form.Control placeholder="-" value={this.state.channel.proxy_port} readOnly/>
                                         </Form.Group>
                                     </div>
-
                                     <div className="row">
                                         <Form.Group controlId="payment_model" className="col-md-2">
                                             <Form.Label>Modello Pagamento</Form.Label>
@@ -216,7 +213,6 @@ export default class Channel extends React.Component<IProps, IState> {
                                         </Form.Group>
 
                                     </div>
-
                                     <div className="row">
 
                                         <Form.Group controlId="flag_io" className="col-md-2 custom-control-box">
