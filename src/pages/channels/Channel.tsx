@@ -114,6 +114,10 @@ export default class Channel extends React.Component<IProps, IState> {
                                             <Form.Label>Password</Form.Label>
                                             <Form.Control placeholder="-" value={this.state.channel.password} readOnly/>
                                         </Form.Group>
+                                        <Form.Group controlId="new_password" className="col-md-3">
+                                            <Form.Label>Nuova Password</Form.Label>
+                                            <Form.Control placeholder="-" value={this.state.channel.new_password} readOnly/>
+                                        </Form.Group>
                                     </div>
                                     <div className="row">
                                         <Form.Group controlId="protocol" className="col-md-2">

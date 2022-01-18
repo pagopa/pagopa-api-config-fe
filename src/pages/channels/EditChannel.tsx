@@ -199,7 +199,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
                                                                           onChange={(e) => this.handleChange(e)} />
                                                         </Form.Group>
                                                         <Form.Group controlId="new_password" className="col-md-3">
-                                                            <Form.Label>Password</Form.Label>
+                                                            <Form.Label>Nuova Password</Form.Label>
                                                             <Form.Control name="new_password" placeholder=""
                                                                           value={this.state.channel.new_password}
                                                                           onChange={(e) => this.handleChange(e)} />

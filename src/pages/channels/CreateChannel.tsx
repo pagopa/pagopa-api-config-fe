@@ -5,7 +5,6 @@ import {MsalContext} from "@azure/msal-react";
 import {apiClient} from "../../util/apiClient";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import {loginRequest} from "../../authConfig";
-import {BrokerPspDetails} from "../../../generated/api/BrokerPspDetails";
 import {ChannelDetails} from "../../../generated/api/ChannelDetails";
 
 interface IProps {
