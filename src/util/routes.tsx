@@ -25,6 +25,7 @@ import CreateChannel from "../pages/channels/CreateChannel";
 import Layout from "../components/Layout";
 import NotFound from "../pages/NotFound";
 import EditBrokerPSP from "../pages/brokersPSP/EditBrokerPSP";
+import EditChannel from "../pages/channels/EditChannel";
 
 
 export default class Routes extends React.Component {
@@ -80,7 +81,7 @@ export default class Routes extends React.Component {
                                     <Route path="/channels/create" component={CreateChannel} />
                                     <Route path="/channels/:code" render={props => {
                                         const edit: boolean = new URLSearchParams(props.location.search).get("edit") !== null;
-                                        return edit ? <NotFound /> : <Channel {...props} />;
+                                        return edit ? <EditChannel {...props} /> : <Channel {...props} />;
                                     }}/>
 
                                     <Route component={NotFound}/>
