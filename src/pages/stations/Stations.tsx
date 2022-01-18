@@ -109,8 +109,8 @@ export default class Stations extends React.Component<IProps, IState> {
         this.setState({stationIndex: index});
     }
 
-    removeCreditorInstitution() {
-        const filteredStations = this.state.stations.filter((ci: any) => ci.psp_code !== this.state.stationToDelete.station_code);
+    removeStation() {
+        const filteredStations = this.state.stations.filter((item: any) => item.station_code !== this.state.stationToDelete.station_code);
         this.setState({stations: filteredStations});
 
         if (filteredStations.length === 0 && this.state.page_info.total_pages > 1) {
@@ -133,7 +133,7 @@ export default class Stations extends React.Component<IProps, IState> {
                         .then((res: any) => {
                             if (res.right.status === 200) {
                                 toast.info("Rimozione avvenuta con successo");
-                                this.removeCreditorInstitution();
+                                this.removeStation();
                             } else {
                                 toast.error(res.right.value.title, {theme: "colored"});
                             }
