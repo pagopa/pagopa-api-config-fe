@@ -1,6 +1,6 @@
 import React from "react";
-import {Alert, Breadcrumb, Form} from "react-bootstrap";
-import {FaSpinner} from "react-icons/fa";
+import {Alert, Breadcrumb, Card, Form, Table} from "react-bootstrap";
+import {FaInfoCircle, FaSpinner} from "react-icons/fa";
 import {MsalContext} from "@azure/msal-react";
 import {apiClient} from "../../util/apiClient";
 import {loginRequest} from "../../authConfig";
@@ -17,6 +17,7 @@ interface IState {
     isLoading: boolean;
     code: string;
     channel: ChannelDetails;
+    paymentTypeList: [];
     edit: boolean;
 }
 
@@ -31,6 +32,7 @@ export default class Channel extends React.Component<IProps, IState> {
             isLoading: true,
             code: "",
             channel: {} as ChannelDetails,
+            paymentTypeList: [],
             edit: false
         };
     }
@@ -70,6 +72,19 @@ export default class Channel extends React.Component<IProps, IState> {
         const isError = this.state.isError;
         const isLoading = this.state.isLoading;
 
+        // create rows for ibans table
+        const paymentTypeList: any = [];
+        this.state.paymentTypeList.map((item: any, index: number) => {
+            const row = (
+                    <tr key={index}>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+            );
+            paymentTypeList.push(row);
+        });
+
         return (
             <div className="container-fluid channel">
                 <div className="row">
@@ -95,7 +110,7 @@ export default class Channel extends React.Component<IProps, IState> {
                                         </div>
                                     </div>
                                     <div className="row">
-                                        <Form.Group controlId="code" className="col-md-4">
+                                        <Form.Group controlId="code" className="col-md-3">
                                             <Form.Label>Codice</Form.Label>
                                             <Form.Control type="code" placeholder="-" value={this.state.channel.channel_code} readOnly/>
                                         </Form.Group>
@@ -110,11 +125,11 @@ export default class Channel extends React.Component<IProps, IState> {
                                             <Form.Label>Codice Intermediario PSP</Form.Label>
                                             <Form.Control placeholder="-" value={this.state.channel.broker_psp_code} readOnly/>
                                         </Form.Group>
-                                        <Form.Group controlId="password" className="col-md-3">
+                                        <Form.Group controlId="password" className="col-md-2">
                                             <Form.Label>Password</Form.Label>
                                             <Form.Control placeholder="-" value={this.state.channel.password} readOnly/>
                                         </Form.Group>
-                                        <Form.Group controlId="new_password" className="col-md-3">
+                                        <Form.Group controlId="new_password" className="col-md-2">
                                             <Form.Label>Nuova Password</Form.Label>
                                             <Form.Control placeholder="-" value={this.state.channel.new_password} readOnly/>
                                         </Form.Group>
@@ -218,7 +233,6 @@ export default class Channel extends React.Component<IProps, IState> {
 
                                     </div>
                                     <div className="row">
-
                                         <Form.Group controlId="flag_io" className="col-md-2 custom-control-box">
                                             <Form.Check
                                                     custom
@@ -284,6 +298,35 @@ export default class Channel extends React.Component<IProps, IState> {
                                                     label={'Marca Bollo Digitale'}
                                             />
                                         </Form.Group>
+                                    </div>
+                                    <div className="row mt-3">
+                                        <div className="col-md-12">
+                                            <Card>
+                                                <Card.Header>
+                                                    <h5>Tipo Versamento</h5>
+                                                </Card.Header>
+                                                <Card.Body>
+                                                    {Object.keys(paymentTypeList).length === 0 && (
+                                                            <Alert className={'col-md-12'} variant={"warning"}><FaInfoCircle
+                                                                    className="mr-1"/>Tipi Versamento non presenti</Alert>
+                                                    )}
+                                                    {Object.keys(paymentTypeList).length > 0 &&
+													<Table hover responsive size="sm">
+														<thead>
+														<tr>
+															<th className="">Iban</th>
+															<th className="">Validità</th>
+															<th className="">Pubblicazione</th>
+														</tr>
+														</thead>
+														<tbody>
+                                                            {paymentTypeList}
+														</tbody>
+													</Table>
+                                                    }
+                                                </Card.Body>
+                                            </Card>
+                                        </div>
                                     </div>
                                 </>
                             )
