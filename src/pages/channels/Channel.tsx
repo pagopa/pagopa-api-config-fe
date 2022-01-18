@@ -412,7 +412,9 @@ export default class Channel extends React.Component<IProps, IState> {
                                                     <h5>Tipo Versamento</h5>
                                                 </Card.Header>
                                                 <Card.Body>
+
                                                     { getPaymentTypeContent() }
+
                                                 </Card.Body>
                                             </Card>
                                         </div>
