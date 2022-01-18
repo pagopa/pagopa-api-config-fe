@@ -164,7 +164,7 @@ export default class EditStation extends React.Component<IProps, IState> {
                                         </Card.Header>
                                         <Card.Body>
                                             <div className="row">
-                                                <Form.Group controlId="station_code" className="col-md-4">
+                                                <Form.Group controlId="station_code" className="col-md-3">
                                                     <Form.Label>Codice</Form.Label>
                                                     <Form.Control name="station_code" placeholder=""
                                                                   value={this.state.station.station_code}
@@ -180,14 +180,14 @@ export default class EditStation extends React.Component<IProps, IState> {
                                                     </Form.Control>
                                                 </Form.Group>
 
-                                                <Form.Group controlId="version" className="col-md-2">
+                                                <Form.Group controlId="version" className="col-md-1">
                                                     <Form.Label>Versione</Form.Label>
                                                     <Form.Control name="version"
                                                                   value={this.state.station.version}
                                                                   onChange={(e) => this.handleChange(e)} />
                                                 </Form.Group>
 
-                                                <Form.Group controlId="broker_code" className="col-md-3">
+                                                <Form.Group controlId="broker_code" className="col-md-2">
                                                     <Form.Label>Codice Intermediario</Form.Label>
                                                     <Form.Control name="broker_code"
                                                                   value={this.state.station.broker_code}
