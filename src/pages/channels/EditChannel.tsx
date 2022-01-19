@@ -114,8 +114,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
                             this.setState({channelName: response.right.value.description});
                             this.updateBackup("channel", response.right.value);
                         } else {
-                            // eslint-disable-next-line no-prototype-builtins
-                            const message = (response.right.hasOwnProperty("title")) ? response.right.value.title : "Operazione non avvenuta a causa di un errore";
+                            const message = "detail" in response.right.value ? response.right.value.detail : "Operazione non avvenuta a causa di un errore";
                             toast.error(message, {theme: "colored"});
                         }
                     }).catch(() => {
