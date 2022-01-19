@@ -87,7 +87,8 @@ export default class CreateBrokerPSP extends React.Component<IProps, IState> {
                             toast.info("Creazione avvenuta con successo.");
                             setTimeout(this.goBack.bind(this), 2000);
                         } else {
-                            toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                            const message = ("detail" in response.right.value) ? response.right.value.detail : "Operazione non avvenuta a causa di un errore";
+                            toast.error(message, {theme: "colored"});
                         }
                     } else {
                         toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
