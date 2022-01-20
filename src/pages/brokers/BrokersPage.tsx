@@ -109,7 +109,7 @@ export default class BrokersPage extends React.Component<IProps, IState> {
         }
     }
 
-    deleteBroker(access_token: string, broker_code: string) {
+    deleteBrokerCall(access_token: string, broker_code: string) {
         apiClient.deleteBroker({
             Authorization: `Bearer ${access_token}`,
             ApiKey: "",
@@ -145,7 +145,7 @@ export default class BrokersPage extends React.Component<IProps, IState> {
             })
                 .then((response: any) => {
                     if (this.state.brokerToDelete) {
-                        this.deleteBroker(response.accessToken, this.state.brokerToDelete.broker_code);
+                        this.deleteBrokerCall(response.accessToken, this.state.brokerToDelete.broker_code);
                     }
                 });
 

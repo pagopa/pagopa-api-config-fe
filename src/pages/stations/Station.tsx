@@ -35,7 +35,7 @@ export default class Station extends React.Component<IProps, IState> {
         };
     }
 
-    getStation(code: string): void {
+    getStationCall(code: string): void {
         this.context.instance.acquireTokenSilent({
             ...loginRequest,
             account: this.context.accounts[0]
@@ -63,7 +63,7 @@ export default class Station extends React.Component<IProps, IState> {
     componentDidMount(): void {
         const code: string = this.props.match.params.code as string;
         this.setState({isError: false});
-        this.getStation(code);
+        this.getStationCall(code);
     }
 
     render(): React.ReactNode {
