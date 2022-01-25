@@ -1,8 +1,9 @@
 import React from 'react';
-import {Button, OverlayTrigger, Table, Tooltip} from "react-bootstrap";
+import {Button, Card, Form, OverlayTrigger, Table, Tooltip} from "react-bootstrap";
 import {FaCheck, FaEdit, FaEye, FaPlus, FaSpinner, FaTimes, FaTrash} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
+import {debounce} from 'throttle-debounce';
 import {apiClient} from "../../util/apiClient";
 import Paginator from "../../components/Paginator";
 import ConfirmationModal from "../../components/ConfirmationModal";
@@ -201,6 +202,24 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
                         {
                             !isLoading && (
                                 <>
+
+                                    <Card>
+                                        <Card.Header>
+                                            <h5>Filtri</h5>
+                                        </Card.Header>
+                                        <Card.Body>
+                                            <Form.Group controlId="filter_name" className="col-md-3">
+                                                <Form.Label>Nome</Form.Label>
+                                                <Form.Control name="filter_name" placeholder=""/>
+                                            </Form.Group>
+                                            <Form.Group controlId="filter_code" className="col-md-3">
+                                                <Form.Label>Nome</Form.Label>
+                                                <Form.Control name="filter_code" placeholder=""/>
+                                            </Form.Group>
+                                            <Button onClick={this.createCreditorInstitution}>Nuovo <FaPlus/></Button>
+                                        </Card.Body>
+                                    </Card>
+
                                     <Table hover responsive size="sm">
                                         <thead>
                                         <tr>
