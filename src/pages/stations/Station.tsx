@@ -120,7 +120,7 @@ export default class Station extends React.Component<IProps, IState> {
 
                                         <Form.Group controlId="new_password" className="col-md-2">
                                             <Form.Label>Nuova Password</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.password} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.station.new_password} readOnly/>
                                         </Form.Group>
                                     </div>
 

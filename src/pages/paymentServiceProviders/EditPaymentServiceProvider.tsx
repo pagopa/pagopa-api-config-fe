@@ -144,8 +144,7 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                         this.setState({pspName: response.right.value.business_name});
                         this.updateBackup("paymentServiceProvider", response.right.value);
                     } else {
-                        // eslint-disable-next-line no-prototype-builtins
-                        const message = (response.right.hasOwnProperty("title")) ? response.right.value.title : "Operazione non avvenuta a causa di un errore";
+                        const message = ("detail" in response.right.value) ? response.right.value.detail : "Operazione non avvenuta a causa di un errore";
                         toast.error(message, {theme: "colored"});
                     }
                 }).catch(() => {

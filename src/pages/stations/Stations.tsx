@@ -88,8 +88,7 @@ export default class Stations extends React.Component<IProps, IState> {
     }
 
     create() {
-        // this.props.history.push(this.service + "/create");
-        return false;
+        this.props.history.push(this.service + "/create");
     }
 
     handlePageChange(requestedPage: number) {
@@ -110,8 +109,8 @@ export default class Stations extends React.Component<IProps, IState> {
         this.setState({stationIndex: index});
     }
 
-    removeCreditorInstitution() {
-        const filteredStations = this.state.stations.filter((ci: any) => ci.psp_code !== this.state.stationToDelete.station_code);
+    removeStation() {
+        const filteredStations = this.state.stations.filter((item: any) => item.station_code !== this.state.stationToDelete.station_code);
         this.setState({stations: filteredStations});
 
         if (filteredStations.length === 0 && this.state.page_info.total_pages > 1) {
@@ -119,24 +118,22 @@ export default class Stations extends React.Component<IProps, IState> {
         }
     }
 
-    hideDeleteModal = () => {
-        // hideDeleteModal = (status: string) => {
-        /*
+    hideDeleteModal = (status: string) => {
         if (status === "ok") {
             this.context.instance.acquireTokenSilent({
                 ...loginRequest,
                 account: this.context.accounts[0]
             })
                 .then((response: any) => {
-                    apiClient.deleteCreditorInstitution({
+                    apiClient.deleteStation({
                         Authorization: `Bearer ${response.accessToken}`,
                         ApiKey: "",
-                        creditorinstitutioncode: this.state.creditorInstitutionToDelete.creditor_institution_code
+                        stationcode: this.state.stationToDelete.station_code
                     })
                         .then((res: any) => {
                             if (res.right.status === 200) {
                                 toast.info("Rimozione avvenuta con successo");
-                                this.removeCreditorInstitution();
+                                this.removeStation();
                             } else {
                                 toast.error(res.right.value.title, {theme: "colored"});
                             }
@@ -147,7 +144,7 @@ export default class Stations extends React.Component<IProps, IState> {
                 });
         }
         this.setState({showDeleteModal: false});
-        */
+
     };
 
     render(): React.ReactNode {
@@ -177,13 +174,13 @@ export default class Stations extends React.Component<IProps, IState> {
                         <OverlayTrigger placement="top"
                                         overlay={<Tooltip id={`tooltip-edit-${index}`}>Modifica</Tooltip>}>
                             {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
-                            <FaEdit role="button" className="mr-3 disabled" onClick={() => false && this.handleEdit(station.station_code)}/>
+                            <FaEdit role="button" className="mr-3" onClick={() => this.handleEdit(station.station_code)}/>
                         </OverlayTrigger>
                         {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
                         <OverlayTrigger placement="top"
                                         overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
                             {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
-                            <FaTrash role="button" className="mr-3 disabled" onClick={() => false && this.handleDelete(station, index)}/>
+                            <FaTrash role="button" className="mr-3" onClick={() => this.handleDelete(station, index)}/>
                         </OverlayTrigger>
                     </td>
                 </tr>
@@ -198,7 +195,7 @@ export default class Stations extends React.Component<IProps, IState> {
                         <h2>Stazioni</h2>
                     </div>
                     <div className="col-md-2 text-right">
-                        <Button className="disabled" onClick={this.create}>Nuovo <FaPlus/></Button>
+                        <Button onClick={this.create}>Nuovo <FaPlus/></Button>
                     </div>
                     <div className="col-md-12">
                         {isLoading && (<FaSpinner className="spinner"/>)}

@@ -85,7 +85,8 @@ export default class CreateBrokerPage extends React.Component<IProps, IState> {
                         } else if(response.right.status === 409){
                             toast.error("Codice Broker già presente", {theme: "colored"});
                         } else {
-                            toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                            const message = ("detail" in response.right.value) ? response.right.value.detail : "Operazione non avvenuta a causa di un errore";
+                            toast.error(message, {theme: "colored"});
                         }
                     } else {
                         toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
