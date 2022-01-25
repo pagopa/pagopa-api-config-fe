@@ -1,13 +1,13 @@
 import React from 'react';
-import {Button, Card, Form, OverlayTrigger, Table, Tooltip} from "react-bootstrap";
+import {Button, OverlayTrigger, Table, Tooltip} from "react-bootstrap";
 import {FaCheck, FaEdit, FaEye, FaPlus, FaSpinner, FaTimes, FaTrash} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
-import {debounce} from 'throttle-debounce';
 import {apiClient} from "../../util/apiClient";
 import Paginator from "../../components/Paginator";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import {loginRequest} from "../../authConfig";
+import Filters from "../../components/Filters";
 
 interface IProps {
     history: {
@@ -22,6 +22,10 @@ interface IState {
         limit: 50;
         items_found: 0;
         total_pages: 1;
+    };
+    filters: {
+        code: string;
+        name: string;
     };
     isLoading: boolean;
     showDeleteModal: boolean;
@@ -42,6 +46,10 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
                 limit: 50,
                 items_found: 0,
                 total_pages: 1
+            },
+            filters: {
+                code: "",
+                name: "",
             },
             isLoading: false,
             showDeleteModal: false,
@@ -65,7 +73,9 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
                     Authorization: `Bearer ${response.accessToken}`,
                     ApiKey: "",
                     limit: 10,
-                    page
+                    page,
+                    code: this.state.filters.code,
+                    name: this.state.filters.name
                 })
                     .then((response: any) => {
 
@@ -147,6 +157,11 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
         this.setState({showDeleteModal: false});
     };
 
+    handleFilterCallback = (filters: any) => {
+        this.setState({filters});
+        this.getPage(0);
+    };
+
     render(): React.ReactNode {
         const isLoading = this.state.isLoading;
         const pageInfo = this.state.page_info;
@@ -198,27 +213,13 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
                         <Button onClick={this.createCreditorInstitution}>Nuovo <FaPlus/></Button>
                     </div>
                     <div className="col-md-12">
+                        <Filters showName={true}
+                                 onFilter={this.handleFilterCallback}/>
                         {isLoading && (<FaSpinner className="spinner"/>)}
                         {
                             !isLoading && (
                                 <>
 
-                                    <Card>
-                                        <Card.Header>
-                                            <h5>Filtri</h5>
-                                        </Card.Header>
-                                        <Card.Body>
-                                            <Form.Group controlId="filter_name" className="col-md-3">
-                                                <Form.Label>Nome</Form.Label>
-                                                <Form.Control name="filter_name" placeholder=""/>
-                                            </Form.Group>
-                                            <Form.Group controlId="filter_code" className="col-md-3">
-                                                <Form.Label>Nome</Form.Label>
-                                                <Form.Control name="filter_code" placeholder=""/>
-                                            </Form.Group>
-                                            <Button onClick={this.createCreditorInstitution}>Nuovo <FaPlus/></Button>
-                                        </Card.Body>
-                                    </Card>
 
                                     <Table hover responsive size="sm">
                                         <thead>

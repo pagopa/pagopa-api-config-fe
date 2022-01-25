@@ -7,6 +7,7 @@ import {apiClient} from "../../util/apiClient";
 import Paginator from "../../components/Paginator";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import {loginRequest} from "../../authConfig";
+import Filters from "../../components/Filters";
 
 interface IProps {
     history: {
@@ -21,6 +22,10 @@ interface IState {
         limit: 50;
         items_found: 0;
         total_pages: 1;
+    };
+    filters: {
+        code: string;
+        name: string;
     };
     isLoading: boolean;
     showDeleteModal: boolean;
@@ -44,6 +49,10 @@ export default class BrokersPSP extends React.Component<IProps, IState> {
                 items_found: 0,
                 total_pages: 1
             },
+            filters: {
+                code: "",
+                name: "",
+            },
             isLoading: false,
             showDeleteModal: false,
             brokerToDelete: {},
@@ -66,7 +75,9 @@ export default class BrokersPSP extends React.Component<IProps, IState> {
                     Authorization: `Bearer ${response.accessToken}`,
                     ApiKey: "",
                     limit: 10,
-                    page
+                    page,
+                    code: this.state.filters.code,
+                    name: this.state.filters.name
                 }).then((response: any) => {
                         this.setState({
                             brokers_psp: response.right.value.brokers_psp,
@@ -148,6 +159,11 @@ export default class BrokersPSP extends React.Component<IProps, IState> {
         this.setState({showDeleteModal: false});
     };
 
+    handleFilterCallback = (filters: any) => {
+        this.setState({filters});
+        this.getPage(0);
+    };
+
     render(): React.ReactNode {
         const isLoading = this.state.isLoading;
         const pageInfo = this.state.page_info;
@@ -200,6 +216,8 @@ export default class BrokersPSP extends React.Component<IProps, IState> {
                         <Button onClick={this.create}>Nuovo <FaPlus/></Button>
                     </div>
                     <div className="col-md-12">
+                        <Filters showName={true}
+                                 onFilter={this.handleFilterCallback}/>
                         {isLoading && (<FaSpinner className="spinner"/>)}
                         {
                             !isLoading && (

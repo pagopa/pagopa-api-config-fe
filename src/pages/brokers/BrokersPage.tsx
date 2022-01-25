@@ -13,6 +13,7 @@ import Paginator from "../../components/Paginator";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import {PageInfo} from "../../../generated/api/PageInfo";
 import {loginRequest} from "../../authConfig";
+import Filters from "../../components/Filters";
 
 
 interface IProps {
@@ -25,6 +26,10 @@ interface IState {
     showDeleteModal: boolean;
     brokerToDelete?: Broker;
     pageIndex: number;
+    filters: {
+        code: string;
+        name: string;
+    };
 }
 
 export default class BrokersPage extends React.Component<IProps, IState> {
@@ -35,7 +40,11 @@ export default class BrokersPage extends React.Component<IProps, IState> {
         this.state = {
             isLoading: true,
             showDeleteModal: false,
-            pageIndex: 0
+            pageIndex: 0,
+            filters: {
+                code: "",
+                name: "",
+            },
         };
 
         this.handlePageChange = this.handlePageChange.bind(this);
@@ -58,7 +67,9 @@ export default class BrokersPage extends React.Component<IProps, IState> {
                     Authorization: `Bearer ${response.accessToken}`,
                     ApiKey: "",
                     limit: 10,
-                    page
+                    page,
+                    code: this.state.filters.code,
+                    name: this.state.filters.name
                 })
                     .then((response: Validation<IResponseType<number, Brokers | ProblemJson | undefined>>) => {
                         // eslint-disable-next-line no-underscore-dangle
@@ -165,6 +176,11 @@ export default class BrokersPage extends React.Component<IProps, IState> {
         this.props.history.push("/brokers/" + code + "?edit");
     }
 
+    handleFilterCallback = (filters: any) => {
+        this.setState({filters});
+        this.getPage(0);
+    };
+
     render(): React.ReactNode {
         const isLoading = this.state.isLoading;
         const brokers: any = [];
@@ -209,6 +225,8 @@ export default class BrokersPage extends React.Component<IProps, IState> {
                     <Button onClick={this.createBrokerPage}>Nuovo <FaPlus/></Button>
                 </div>
                 <div className="col-md-12">
+                    <Filters showName={true}
+                             onFilter={this.handleFilterCallback}/>
                     {isLoading && (<p>Loading ...</p>)}
                     {
                         !isLoading && (
