@@ -87,7 +87,7 @@ export default class Channels extends React.Component<IProps, IState> {
     }
 
     create() {
-        // this.props.history.push(this.service + "/create");
+        this.props.history.push(this.service + "/create");
         return false;
     }
 
@@ -109,7 +109,7 @@ export default class Channels extends React.Component<IProps, IState> {
         this.setState({channelIndex: index});
     }
 
-    removeCreditorInstitution() {
+    removeChannel() {
         const filteredChannel = this.state.channels.filter((item: any) => item.channel_code !== this.state.channelToDelete.channel_code);
         this.setState({channels: filteredChannel});
 
@@ -118,24 +118,23 @@ export default class Channels extends React.Component<IProps, IState> {
         }
     }
 
-    hideDeleteModal = () => {
-        // hideDeleteModal = (status: string) => {
-        /*
+    hideDeleteModal = (status: string) => {
+
         if (status === "ok") {
             this.context.instance.acquireTokenSilent({
                 ...loginRequest,
                 account: this.context.accounts[0]
             })
                 .then((response: any) => {
-                    apiClient.deleteCreditorInstitution({
+                    apiClient.deleteChannel({
                         Authorization: `Bearer ${response.accessToken}`,
                         ApiKey: "",
-                        creditorinstitutioncode: this.state.creditorInstitutionToDelete.creditor_institution_code
+                        channelcode: this.state.channelToDelete.channel_code
                     })
                         .then((res: any) => {
                             if (res.right.status === 200) {
                                 toast.info("Rimozione avvenuta con successo");
-                                this.removeCreditorInstitution();
+                                this.removeChannel();
                             } else {
                                 toast.error(res.right.value.title, {theme: "colored"});
                             }
@@ -146,7 +145,6 @@ export default class Channels extends React.Component<IProps, IState> {
                 });
         }
         this.setState({showDeleteModal: false});
-        */
     };
 
     render(): React.ReactNode {
@@ -177,13 +175,13 @@ export default class Channels extends React.Component<IProps, IState> {
                         <OverlayTrigger placement="top"
                                         overlay={<Tooltip id={`tooltip-edit-${index}`}>Modifica</Tooltip>}>
                             {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
-                            <FaEdit role="button" className="mr-3 disabled" onClick={() => false && this.handleEdit(channel.channel_code)}/>
+                            <FaEdit role="button" className="mr-3" onClick={() => this.handleEdit(channel.channel_code)}/>
                         </OverlayTrigger>
                         {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
                         <OverlayTrigger placement="top"
                                         overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
                             {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
-                            <FaTrash role="button" className="mr-3 disabled" onClick={() => false && this.handleDelete(channel, index)}/>
+                            <FaTrash role="button" className="mr-3" onClick={() => this.handleDelete(channel, index)}/>
                         </OverlayTrigger>
                     </td>
                 </tr>
@@ -198,7 +196,7 @@ export default class Channels extends React.Component<IProps, IState> {
                         <h2>Canali</h2>
                     </div>
                     <div className="col-md-2 text-right">
-                        <Button className="disabled" onClick={this.create}>Nuovo <FaPlus/></Button>
+                        <Button onClick={this.create}>Nuovo <FaPlus/></Button>
                     </div>
                     <div className="col-md-12">
                         {isLoading && (<FaSpinner className="spinner"/>)}
