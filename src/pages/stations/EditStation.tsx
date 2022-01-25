@@ -66,7 +66,6 @@ export default class EditStation extends React.Component<IProps, IState> {
                     ApiKey: "",
                     stationcode: code
                 }).then((response: any) => {
-                    console.log("EDIT", response);
                     if (response.right.status === 200) {
                         this.setState({station: response.right.value});
                         this.setState({stationName: response.right.value.station_code});

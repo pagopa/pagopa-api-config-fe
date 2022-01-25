@@ -105,7 +105,6 @@ export default class CreateStation extends React.Component<IProps, IState> {
                     ApiKey: "",
                     body: this.state.station
                 }).then((response: any) => {
-                    console.log("RESP", response);
                     // eslint-disable-next-line no-prototype-builtins
                     if (response.hasOwnProperty("right")) {
                         if (response.right.status === 201) {
