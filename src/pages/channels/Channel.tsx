@@ -144,6 +144,7 @@ export default class Channel extends React.Component<IProps, IState> {
     render(): React.ReactNode {
         const isError = this.state.isError;
         const isLoading = this.state.isLoading;
+
         const paymentTypeLegend = this.paymentTypeLegend;
 
         // create rows for payment types table
