@@ -108,7 +108,7 @@ export default class PaymentServiceProvider extends React.Component<IProps, ISta
                             {item.enabled && <FaCheck className="text-success"/>}
                             {!item.enabled && <FaTimes className="text-danger"/>}
                         </td>
-                        <td className="text-center">{item.payment_type.join(" ")}</td>
+                        <td className="text-center">{item.payment_types.join(" ")}</td>
                     </tr>
             );
             channelList.push(row);
