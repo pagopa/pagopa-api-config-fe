@@ -107,7 +107,7 @@ export default class Channel extends React.Component<IProps, IState> {
             JIF: "Bancomat Pay",
             MYBK: "MyBank Seller Bank",
             PPAL: "PayPal",
-            OBEB: "Online Banking Electronic Payment <span class=\"badge badge-danger\">DEPRECATO</span>"
+            OBEP: "Online Banking Electronic Payment"
         };
 
         // create rows for payment types table
@@ -116,9 +116,17 @@ export default class Channel extends React.Component<IProps, IState> {
             const row = (
                     <tr key={index}>
                         <td>{item}</td>
-                        <td><span dangerouslySetInnerHTML={{__html: paymentTypeLegend[item]}}></span></td>
+                        <td>
+                            {
+                                paymentTypeLegend[item]
+                            }
+                            {
+                                item === "OBEP" && <span className="badge badge-danger ml-2">DEPRECATO</span>
+                            }
+                        </td>
                     </tr>
             );
+            // <span dangerouslySetInnerHTML={{__html: paymentTypeLegend[item]}}></span>
             paymentTypeList.push(row);
         });
 
