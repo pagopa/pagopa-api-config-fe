@@ -259,9 +259,9 @@ export default class EditChannel extends React.Component<IProps, IState> {
             account: this.context.accounts[0]
         })
             .then((response: any) => {
-                const paymentTypes: Array<string> = [this.state.paymentType];
+                const ptList: Array<string> = [this.state.paymentType];
                 const data = {
-                    "payment_types": paymentTypes
+                    "payment_types": ptList
                 } as PspChannelPaymentTypes;
                 apiClient.createPaymentType({
                     Authorization: `Bearer ${response.accessToken}`,
@@ -328,7 +328,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
                         <div className="col-md-12 mb-5">
                             <Breadcrumb>
                                 <Breadcrumb.Item href={this.service}>Canali</Breadcrumb.Item>
-                                <Breadcrumb.Item active>{this.state.channelName}</Breadcrumb.Item>
+                                <Breadcrumb.Item active>{this.state.channelName || "-"}</Breadcrumb.Item>
                             </Breadcrumb>
                         </div>
                         <div className="col-md-12">
@@ -343,7 +343,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
                                         <>
                                             <div className="row">
                                                 <div className="col-md-12">
-                                                    <h2>{this.state.channelName}</h2>
+                                                    <h2>{this.state.channelName || "-"}</h2>
                                                 </div>
                                             </div>
 

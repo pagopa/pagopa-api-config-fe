@@ -120,7 +120,7 @@ export default class PaymentServiceProvider extends React.Component<IProps, ISta
                     <div className="col-md-12 mb-5">
                         <Breadcrumb>
                             <Breadcrumb.Item href="/payment-service-providers">Prestatori Servizio di Pagamento</Breadcrumb.Item>
-                            <Breadcrumb.Item active>{this.state.paymentServiceProvider.business_name}</Breadcrumb.Item>
+                            <Breadcrumb.Item active>{this.state.paymentServiceProvider.business_name || "-"}</Breadcrumb.Item>
                         </Breadcrumb>
                     </div>
                     <div className="col-md-12">
@@ -135,7 +135,7 @@ export default class PaymentServiceProvider extends React.Component<IProps, ISta
                                 <>
                                     <div className="row">
                                         <div className="col-md-12">
-                                            <h2>{this.state.paymentServiceProvider.business_name}</h2>
+                                            <h2>{this.state.paymentServiceProvider.business_name || "-"}</h2>
                                         </div>
                                     </div>
                                     <div className="row">

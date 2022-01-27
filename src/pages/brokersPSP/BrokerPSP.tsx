@@ -76,7 +76,7 @@ export default class BrokerPSP extends React.Component<IProps, IState> {
                     <div className="col-md-12 mb-5">
                         <Breadcrumb>
                             <Breadcrumb.Item href="/brokers-psp">Intermediari PSP</Breadcrumb.Item>
-                            <Breadcrumb.Item active>{this.state.brokerPSP.description}</Breadcrumb.Item>
+                            <Breadcrumb.Item active>{this.state.brokerPSP.description || "-"}</Breadcrumb.Item>
                         </Breadcrumb>
                     </div>
                     <div className="col-md-12">
@@ -91,7 +91,7 @@ export default class BrokerPSP extends React.Component<IProps, IState> {
                                 <>
                                     <div className="row">
                                         <div className="col-md-12">
-                                            <h2>{this.state.brokerPSP.description}</h2>
+                                            <h2>{this.state.brokerPSP.description || "-"}</h2>
                                         </div>
                                     </div>
                                     <div className="row">

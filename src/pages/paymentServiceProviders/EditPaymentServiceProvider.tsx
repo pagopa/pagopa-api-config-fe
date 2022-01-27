@@ -188,7 +188,7 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                     <div className="col-md-12 mb-5">
                         <Breadcrumb>
                             <Breadcrumb.Item href={this.service}>Prestatori Servizio di Pagamento</Breadcrumb.Item>
-                            <Breadcrumb.Item active>{this.state.pspName}</Breadcrumb.Item>
+                            <Breadcrumb.Item active>{this.state.pspName || "-"}</Breadcrumb.Item>
                         </Breadcrumb>
                     </div>
                     <div className="col-md-12">
@@ -203,7 +203,7 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                                 <>
                                     <div className="row">
                                         <div className="col-md-12">
-                                            <h2>{this.state.pspName}</h2>
+                                            <h2>{this.state.pspName || "-"}</h2>
                                         </div>
                                     </div>
 

@@ -288,7 +288,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                     <div className="col-md-12 mb-5">
                         <Breadcrumb>
                             <Breadcrumb.Item href="/creditor-institutions">Enti Creditori</Breadcrumb.Item>
-                            <Breadcrumb.Item active>{this.state.ciName}</Breadcrumb.Item>
+                            <Breadcrumb.Item active>{this.state.ciName || "-"}</Breadcrumb.Item>
                         </Breadcrumb>
                     </div>
                     <div className="col-md-12">
@@ -303,7 +303,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                 <>
                                     <div className="row">
                                         <div className="col-md-12">
-                                            <h2>{this.state.ciName}</h2>
+                                            <h2>{this.state.ciName || "-"}</h2>
                                         </div>
                                     </div>
                                     <Card>
