@@ -193,7 +193,7 @@ export default class Channel extends React.Component<IProps, IState> {
                     <div className="col-md-12 mb-5">
                         <Breadcrumb>
                             <Breadcrumb.Item href="/channels">Canali</Breadcrumb.Item>
-                            <Breadcrumb.Item active>{this.state.channel.description || "-"}</Breadcrumb.Item>
+                            <Breadcrumb.Item active>{this.state.channel.description}</Breadcrumb.Item>
                         </Breadcrumb>
                     </div>
                     <div className="col-md-12">
@@ -208,13 +208,13 @@ export default class Channel extends React.Component<IProps, IState> {
                                 <>
                                     <div className="row">
                                         <div className="col-md-12">
-                                            <h2>{this.state.channel.description || "-"}</h2>
+                                            <h2>{this.state.channel.description}</h2>
                                         </div>
                                     </div>
                                     <div className="row">
                                         <Form.Group controlId="code" className="col-md-3">
                                             <Form.Label>Codice</Form.Label>
-                                            <Form.Control type="code" placeholder="-" value={this.state.channel.channel_code || ""} readOnly/>
+                                            <Form.Control type="code" placeholder="-" value={this.state.channel.channel_code} readOnly/>
                                         </Form.Group>
 
                                         <Form.Group controlId="enabled" className="col-md-2">
@@ -227,7 +227,7 @@ export default class Channel extends React.Component<IProps, IState> {
 
                                         <Form.Group controlId="broker_psp_code" className="col-md-3">
                                             <Form.Label>Codice Intermediario PSP</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.channel.broker_psp_code || ""} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.channel.broker_psp_code} readOnly/>
                                         </Form.Group>
                                         <Form.Group controlId="password" className="col-md-2">
                                             <Form.Label>Password</Form.Label>
@@ -242,48 +242,48 @@ export default class Channel extends React.Component<IProps, IState> {
                                     <div className="row">
                                         <Form.Group controlId="protocol" className="col-md-2">
                                             <Form.Label>Protocollo</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.channel.protocol || ""} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.channel.protocol} readOnly/>
                                         </Form.Group>
 
                                         <Form.Group controlId="ip" className="col-md-2">
                                             <Form.Label>IP</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.channel.ip || ""} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.channel.ip} readOnly/>
                                         </Form.Group>
 
                                         <Form.Group controlId="port" className="col-md-2">
                                             <Form.Label>Porta</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.channel.port || ""} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.channel.port} readOnly/>
                                         </Form.Group>
 
                                         <Form.Group controlId="service" className="col-md-3">
                                             <Form.Label>Servizio</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.channel.service || ""} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.channel.service} readOnly/>
                                         </Form.Group>
                                     </div>
                                     <div className="row">
                                         <Form.Group controlId="redirect_protocol" className="col-md-2">
                                             <Form.Label>Protocollo Redirect</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.channel.redirect_protocol || ""} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.channel.redirect_protocol} readOnly/>
                                         </Form.Group>
 
                                         <Form.Group controlId="redirect_ip" className="col-md-2">
                                             <Form.Label>IP Redirect</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.channel.redirect_ip || ""} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.channel.redirect_ip} readOnly/>
                                         </Form.Group>
 
                                         <Form.Group controlId="redirect_port" className="col-md-2">
                                             <Form.Label>Porta Redirect</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.channel.redirect_port || ""} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.channel.redirect_port} readOnly/>
                                         </Form.Group>
 
                                         <Form.Group controlId="redirect_path" className="col-md-3">
                                             <Form.Label>Servizio Redirect</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.channel.redirect_path || ""} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.channel.redirect_path} readOnly/>
                                         </Form.Group>
 
                                         <Form.Group controlId="redirect_query_string" className="col-md-3">
                                             <Form.Label>Parametri Redirect</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.channel.redirect_query_string || ""} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.channel.redirect_query_string} readOnly/>
                                         </Form.Group>
                                     </div>
                                     <div className="row">
@@ -297,43 +297,43 @@ export default class Channel extends React.Component<IProps, IState> {
 
                                         <Form.Group controlId="proxy_host" className="col-md-2">
                                             <Form.Label>Indirizzo Proxy</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.channel.proxy_host || ""} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.channel.proxy_host} readOnly/>
                                         </Form.Group>
 
                                         <Form.Group controlId="proxy_port" className="col-md-2">
                                             <Form.Label>Porta Proxy</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.channel.proxy_port || ""} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.channel.proxy_port} readOnly/>
                                         </Form.Group>
                                     </div>
                                     <div className="row">
                                         <Form.Group controlId="payment_model" className="col-md-2">
                                             <Form.Label>Modello Pagamento</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.channel.payment_model || ""} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.channel.payment_model} readOnly/>
                                         </Form.Group>
 
                                         <Form.Group controlId="serv_plugin" className="col-md-2">
                                             <Form.Label>Plugin WFESP</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.channel.serv_plugin || ""} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.channel.serv_plugin} readOnly/>
                                         </Form.Group>
 
                                         <Form.Group controlId="thread_number" className="col-md-2">
                                             <Form.Label>Numero Thread</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.channel.thread_number || ""} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.channel.thread_number} readOnly/>
                                         </Form.Group>
 
                                         <Form.Group controlId="timeout_a" className="col-md-2">
                                             <Form.Label>Timeout A</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.channel.timeout_a || ""} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.channel.timeout_a} readOnly/>
                                         </Form.Group>
 
                                         <Form.Group controlId="timeout_b" className="col-md-2">
                                             <Form.Label>Timeout B</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.channel.timeout_b || ""} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.channel.timeout_b} readOnly/>
                                         </Form.Group>
 
                                         <Form.Group controlId="timeout_c" className="col-md-2">
                                             <Form.Label>Timeout C</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.channel.timeout_c || ""} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.channel.timeout_c} readOnly/>
                                         </Form.Group>
 
                                     </div>
