@@ -162,7 +162,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
         this.getPaymentTypeList(code);
     }
 
-    handleChange(event: any)
+    handleChange(event: any) {
         // eslint-disable-next-line functional/no-let
         let channel: ChannelDetails = this.state.channel;
         const key = event.target.name as string;
