@@ -4,7 +4,7 @@ import {FaInfoCircle, FaSpinner} from "react-icons/fa";
 import {MsalContext} from "@azure/msal-react";
 import {apiClient} from "../../util/apiClient";
 import {loginRequest} from "../../authConfig";
-import {ChannelDetails} from "../../../generated/api/ChannelDetails";
+import {ChannelDetails, Payment_modelEnum} from "../../../generated/api/ChannelDetails";
 
 interface IProps {
     match: {
@@ -23,6 +23,7 @@ interface IState {
 
 export default class Channel extends React.Component<IProps, IState> {
     static contextType = MsalContext;
+    private readonly paymentTypeLegend: { [index: string]: string };
 
     constructor(props: IProps) {
         super(props);
@@ -31,9 +32,54 @@ export default class Channel extends React.Component<IProps, IState> {
             isError: false,
             isLoading: true,
             code: "",
-            channel: {} as ChannelDetails,
+            channel: {
+                channel_code: "",
+                enabled: false,
+                broker_psp_code: "",
+                password: "",
+                new_password: "",
+                protocol: "",
+                ip: "",
+                port: 80,
+                service: "",
+                proxy_enabled: false,
+                proxy_host: "",
+                proxy_port: 80,
+                thread_number: 2,
+                timeout_a: 15,
+                timeout_b: 30,
+                timeout_c: 120,
+                new_fault_code: false,
+                redirect_protocol: "",
+                redirect_ip: "",
+                redirect_port: 80,
+                redirect_path: "",
+                redirect_query_string: "",
+                payment_model: Payment_modelEnum.IMMEDIATE,
+                rt_push: false,
+                on_us: false,
+                card_chart: false,
+                recovery: false,
+                digital_stamp_brand: false,
+                serv_plugin: "",
+                flag_io: false,
+                agid: false,
+                description: "",
+            } as ChannelDetails,
             paymentTypeList: [],
             edit: false
+        };
+
+        this.paymentTypeLegend = {
+            BBT: "Bonifico Bancario di Tesoreria",
+            BP: "Bollettino Postale",
+            AD: "Addebito Diretto",
+            CP: "Carta di Pagamento",
+            PO: "Pagamento attivato presso PSP",
+            JIF: "Bancomat Pay",
+            MYBK: "MyBank Seller Bank",
+            PPAL: "PayPal",
+            OBEP: "Online Banking Electronic Payment"
         };
     }
 
@@ -50,7 +96,8 @@ export default class Channel extends React.Component<IProps, IState> {
                     })
                             .then((response: any) => {
                                 if (response.right.status === 200) {
-                                    this.setState({channel: response.right.value});
+                                    const channel = {...this.state.channel, ...response.right.value};
+                                    this.setState({channel});
                                 } else {
                                     this.setState({isError: true});
                                 }
@@ -97,23 +144,10 @@ export default class Channel extends React.Component<IProps, IState> {
     render(): React.ReactNode {
         const isError = this.state.isError;
         const isLoading = this.state.isLoading;
-
-        const paymentTypeLegend: {[index: string]: string} = {
-            BBT: "Bonifico Bancario di Tesoreria",
-            BP: "Bollettino Postale",
-            AD: "Addebito Diretto",
-            CP: "Carta di Pagamento",
-            PO: "Pagamento attivato presso PSP",
-            JIF: "Bancomat Pay",
-            MYBK: "MyBank Seller Bank",
-            PPAL: "PayPal",
-            OBEP: "Online Banking Electronic Payment"
-        };
+        const paymentTypeLegend = this.paymentTypeLegend;
 
         // create rows for payment types table
-        const paymentTypeList: any = [];
-        this.state.paymentTypeList.map((item: any, index: number) => {
-            const row = (
+        const paymentTypeList: any = this.state.paymentTypeList.map((item: any, index: number) => (
                     <tr key={index}>
                         <td>{item}</td>
                         <td>
@@ -125,10 +159,32 @@ export default class Channel extends React.Component<IProps, IState> {
                             }
                         </td>
                     </tr>
-            );
-            // <span dangerouslySetInnerHTML={{__html: paymentTypeLegend[item]}}></span>
-            paymentTypeList.push(row);
-        });
+            ));
+
+        const getPaymentTypeContent = () => {
+            if (Object.keys(paymentTypeList).length > 0) {
+               return (
+                <Table hover responsive size="sm">
+                   <thead>
+                   <tr>
+                       <th className="">Codice</th>
+                       <th></th>
+                   </tr>
+                   </thead>
+                   <tbody>
+                   {paymentTypeList}
+                   </tbody>
+               </Table>
+                );
+            }
+            else {
+                return (
+                <Alert className={'col-md-12'} variant={"warning"}>
+                    <FaInfoCircle className="mr-1"/>Tipi Versamento non presenti
+                </Alert>
+                );
+            }
+        };
 
         return (
             <div className="container-fluid channel">
@@ -136,7 +192,7 @@ export default class Channel extends React.Component<IProps, IState> {
                     <div className="col-md-12 mb-5">
                         <Breadcrumb>
                             <Breadcrumb.Item href="/channels">Canali</Breadcrumb.Item>
-                            <Breadcrumb.Item active>{this.state.channel.description || "-"}</Breadcrumb.Item>
+                            <Breadcrumb.Item active>{this.state.channel.description}</Breadcrumb.Item>
                         </Breadcrumb>
                     </div>
                     <div className="col-md-12">
@@ -151,13 +207,13 @@ export default class Channel extends React.Component<IProps, IState> {
                                 <>
                                     <div className="row">
                                         <div className="col-md-12">
-                                            <h2>{this.state.channel.description || "-"}</h2>
+                                            <h2>{this.state.channel.description}</h2>
                                         </div>
                                     </div>
                                     <div className="row">
                                         <Form.Group controlId="code" className="col-md-3">
                                             <Form.Label>Codice</Form.Label>
-                                            <Form.Control type="code" placeholder="-" value={this.state.channel.channel_code || ""} readOnly/>
+                                            <Form.Control type="code" placeholder="-" value={this.state.channel.channel_code} readOnly/>
                                         </Form.Group>
 
                                         <Form.Group controlId="enabled" className="col-md-2">
@@ -167,17 +223,18 @@ export default class Channel extends React.Component<IProps, IState> {
                                                 {!this.state.channel.enabled && <option>Non Abilitato</option>}
                                             </Form.Control>
                                         </Form.Group>
+
                                         <Form.Group controlId="broker_psp_code" className="col-md-3">
                                             <Form.Label>Codice Intermediario PSP</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.channel.broker_psp_code || ""} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.channel.broker_psp_code} readOnly/>
                                         </Form.Group>
                                         <Form.Group controlId="password" className="col-md-2">
                                             <Form.Label>Password</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.channel.password || ""} readOnly/>
+                                            <Form.Control placeholder="" value={this.state.channel.password} readOnly/>
                                         </Form.Group>
                                         <Form.Group controlId="new_password" className="col-md-2">
                                             <Form.Label>Nuova Password</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.channel.new_password || ""} readOnly/>
+                                            <Form.Control placeholder="" value={this.state.channel.new_password} readOnly/>
                                         </Form.Group>
 
                                     </div>
@@ -185,48 +242,48 @@ export default class Channel extends React.Component<IProps, IState> {
                                     <div className="row">
                                         <Form.Group controlId="protocol" className="col-md-2">
                                             <Form.Label>Protocollo</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.channel.protocol || ""} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.channel.protocol} readOnly/>
                                         </Form.Group>
 
                                         <Form.Group controlId="ip" className="col-md-2">
                                             <Form.Label>IP</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.channel.ip || ""} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.channel.ip} readOnly/>
                                         </Form.Group>
 
                                         <Form.Group controlId="port" className="col-md-2">
                                             <Form.Label>Porta</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.channel.port || ""} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.channel.port} readOnly/>
                                         </Form.Group>
 
                                         <Form.Group controlId="service" className="col-md-3">
                                             <Form.Label>Servizio</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.channel.service || ""} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.channel.service} readOnly/>
                                         </Form.Group>
                                     </div>
                                     <div className="row">
                                         <Form.Group controlId="redirect_protocol" className="col-md-2">
                                             <Form.Label>Protocollo Redirect</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.channel.redirect_protocol || ""} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.channel.redirect_protocol} readOnly/>
                                         </Form.Group>
 
                                         <Form.Group controlId="redirect_ip" className="col-md-2">
                                             <Form.Label>IP Redirect</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.channel.redirect_ip || ""} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.channel.redirect_ip} readOnly/>
                                         </Form.Group>
 
                                         <Form.Group controlId="redirect_port" className="col-md-2">
                                             <Form.Label>Porta Redirect</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.channel.redirect_port || ""} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.channel.redirect_port} readOnly/>
                                         </Form.Group>
 
                                         <Form.Group controlId="redirect_path" className="col-md-3">
                                             <Form.Label>Servizio Redirect</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.channel.redirect_path || ""} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.channel.redirect_path} readOnly/>
                                         </Form.Group>
 
                                         <Form.Group controlId="redirect_query_string" className="col-md-3">
                                             <Form.Label>Parametri Redirect</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.channel.redirect_query_string || ""} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.channel.redirect_query_string} readOnly/>
                                         </Form.Group>
                                     </div>
                                     <div className="row">
@@ -240,43 +297,43 @@ export default class Channel extends React.Component<IProps, IState> {
 
                                         <Form.Group controlId="proxy_host" className="col-md-2">
                                             <Form.Label>Indirizzo Proxy</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.channel.proxy_host || ""} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.channel.proxy_host} readOnly/>
                                         </Form.Group>
 
                                         <Form.Group controlId="proxy_port" className="col-md-2">
                                             <Form.Label>Porta Proxy</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.channel.proxy_port || ""} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.channel.proxy_port} readOnly/>
                                         </Form.Group>
                                     </div>
                                     <div className="row">
                                         <Form.Group controlId="payment_model" className="col-md-2">
                                             <Form.Label>Modello Pagamento</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.channel.payment_model || ""} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.channel.payment_model} readOnly/>
                                         </Form.Group>
 
                                         <Form.Group controlId="serv_plugin" className="col-md-2">
                                             <Form.Label>Plugin WFESP</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.channel.serv_plugin || ""} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.channel.serv_plugin} readOnly/>
                                         </Form.Group>
 
                                         <Form.Group controlId="thread_number" className="col-md-2">
                                             <Form.Label>Numero Thread</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.channel.thread_number || ""} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.channel.thread_number} readOnly/>
                                         </Form.Group>
 
                                         <Form.Group controlId="timeout_a" className="col-md-2">
                                             <Form.Label>Timeout A</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.channel.timeout_a || ""} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.channel.timeout_a} readOnly/>
                                         </Form.Group>
 
                                         <Form.Group controlId="timeout_b" className="col-md-2">
                                             <Form.Label>Timeout B</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.channel.timeout_b || ""} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.channel.timeout_b} readOnly/>
                                         </Form.Group>
 
                                         <Form.Group controlId="timeout_c" className="col-md-2">
                                             <Form.Label>Timeout C</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.channel.timeout_c || ""} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.channel.timeout_c} readOnly/>
                                         </Form.Group>
 
                                     </div>
@@ -355,23 +412,7 @@ export default class Channel extends React.Component<IProps, IState> {
                                                     <h5>Tipo Versamento</h5>
                                                 </Card.Header>
                                                 <Card.Body>
-                                                    {Object.keys(paymentTypeList).length === 0 && (
-                                                            <Alert className={'col-md-12'} variant={"warning"}><FaInfoCircle
-                                                                    className="mr-1"/>Tipi Versamento non presenti</Alert>
-                                                    )}
-                                                    {Object.keys(paymentTypeList).length > 0 &&
-													<Table hover responsive size="sm">
-														<thead>
-														<tr>
-															<th className="">Codice</th>
-															<th></th>
-														</tr>
-														</thead>
-														<tbody>
-                                                            {paymentTypeList}
-														</tbody>
-													</Table>
-                                                    }
+                                                    { getPaymentTypeContent() }
                                                 </Card.Body>
                                             </Card>
                                         </div>

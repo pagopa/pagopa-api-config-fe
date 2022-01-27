@@ -5,7 +5,7 @@ import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
 import {apiClient} from "../../util/apiClient";
 import {loginRequest} from "../../authConfig";
-import {ChannelDetails} from "../../../generated/api/ChannelDetails";
+import {ChannelDetails, Payment_modelEnum} from "../../../generated/api/ChannelDetails";
 import ConfirmationModal from "../../components/ConfirmationModal";
 
 interface IProps {
@@ -46,7 +46,40 @@ export default class EditChannel extends React.Component<IProps, IState> {
             },
             channelName: "",
             code: "",
-            channel: {} as ChannelDetails,
+            channel: {
+                channel_code: "",
+                enabled: false,
+                broker_psp_code: "",
+                password: "",
+                new_password: "",
+                protocol: "",
+                ip: "",
+                port: 80,
+                service: "",
+                proxy_enabled: false,
+                proxy_host: "",
+                proxy_port: 80,
+                thread_number: 2,
+                timeout_a: 15,
+                timeout_b: 30,
+                timeout_c: 120,
+                new_fault_code: false,
+                redirect_protocol: "",
+                redirect_ip: "",
+                redirect_port: 80,
+                redirect_path: "",
+                redirect_query_string: "",
+                payment_model: Payment_modelEnum.IMMEDIATE,
+                rt_push: false,
+                on_us: false,
+                card_chart: false,
+                recovery: false,
+                digital_stamp_brand: false,
+                serv_plugin: "",
+                flag_io: false,
+                agid: false,
+                description: "",
+            } as ChannelDetails,
             paymentTypeList: [],
             edit: false,
             newPaymentType: false,
@@ -81,7 +114,8 @@ export default class EditChannel extends React.Component<IProps, IState> {
                         channelcode: code
                     }).then((response: any) => {
                         if (response.right.status === 200) {
-                            this.setState({channel: response.right.value});
+                            const channel = {...this.state.channel, ...response.right.value};
+                            this.setState({channel});
                             this.setState({channelName: response.right.value.description});
                             this.updateBackup("channel", response.right.value);
                         } else {
@@ -128,7 +162,6 @@ export default class EditChannel extends React.Component<IProps, IState> {
     }
 
     handleChange(event: any) {
-        console.log("event", event);
         // eslint-disable-next-line functional/no-let
         let channel: ChannelDetails = this.state.channel;
         const key = event.target.name as string;
@@ -138,7 +171,6 @@ export default class EditChannel extends React.Component<IProps, IState> {
     }
 
     handlePaymentType(paymentType: string) {
-        console.log("payment ", paymentType);
         this.setState({paymentType});
     }
 
@@ -235,7 +267,6 @@ export default class EditChannel extends React.Component<IProps, IState> {
                         channelcode: this.state.code,
                         body: data
                     }).then((response: any) => {
-                        console.log("RESPONSE", response);
                         if (response.right.status === 201) {
                             toast.info("Modifica avvenuta con successo.");
                             this.setState({paymentTypeList: response.right.value.payment_types});
