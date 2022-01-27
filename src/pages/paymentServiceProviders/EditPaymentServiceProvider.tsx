@@ -1,6 +1,6 @@
 import React from "react";
 import {Alert, Badge, Breadcrumb, Button, Card, Form, Table} from "react-bootstrap";
-import {FaCheck, FaInfoCircle, FaPlus, FaSpinner, FaTimes} from "react-icons/fa";
+import {FaCheck, FaInfoCircle, FaSpinner, FaTimes} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
 import {apiClient} from "../../util/apiClient";

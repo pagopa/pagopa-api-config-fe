@@ -7,6 +7,7 @@ import {apiClient} from "../../util/apiClient";
 import {loginRequest} from "../../authConfig";
 import {ChannelDetails, Payment_modelEnum} from "../../../generated/api/ChannelDetails";
 import ConfirmationModal from "../../components/ConfirmationModal";
+import {PspChannelPaymentTypes} from "../../../generated/api/PspChannelPaymentTypes";
 
 interface IProps {
     match: {
@@ -21,7 +22,7 @@ interface IState {
     channelName: string;
     code: string;
     channel: ChannelDetails;
-    paymentTypeList: [];
+    paymentTypeList: Array<string>;
     edit: boolean;
     newPaymentType: boolean;
     paymentType: string;
@@ -134,24 +135,24 @@ export default class EditChannel extends React.Component<IProps, IState> {
             ...loginRequest,
             account: this.context.accounts[0]
         })
-                .then((response: any) => {
-                    apiClient.getPaymentTypes({
-                        Authorization: `Bearer ${response.accessToken}`,
-                        ApiKey: "",
-                        channelcode: code
+            .then((response: any) => {
+                apiClient.getPaymentTypes({
+                    Authorization: `Bearer ${response.accessToken}`,
+                    ApiKey: "",
+                    channelcode: code
+                })
+                    .then((response: any) => {
+                        if (response.right.status === 200) {
+                            this.setState({paymentTypeList: response.right.value.payment_types});
+                        } else {
+                            this.setState({isError: true});
+                        }
                     })
-                            .then((response: any) => {
-                                if (response.right.status === 200) {
-                                    this.setState({paymentTypeList: response.right.value.payment_types});
-                                } else {
-                                    this.setState({isError: true});
-                                }
-                            })
-                            .catch(() => {
-                                this.setState({isError: true});
-                            })
-                            .finally(() => this.setState({isLoading: false}));
-                });
+                    .catch(() => {
+                        this.setState({isError: true});
+                    })
+                    .finally(() => this.setState({isLoading: false}));
+            });
     }
 
     componentDidMount(): void {
@@ -257,29 +258,30 @@ export default class EditChannel extends React.Component<IProps, IState> {
             ...loginRequest,
             account: this.context.accounts[0]
         })
-                .then((response: any) => {
-                    const data = {
-                        "payment_types": [this.state.paymentType]
-                    };
-                    apiClient.createPaymentType({
-                        Authorization: `Bearer ${response.accessToken}`,
-                        ApiKey: "",
-                        channelcode: this.state.code,
-                        body: data
-                    }).then((response: any) => {
-                        if (response.right.status === 201) {
-                            toast.info("Modifica avvenuta con successo.");
-                            this.setState({paymentTypeList: response.right.value.payment_types});
-                        } else {
-                            const message = "detail" in response.right.value ? response.right.value.detail : "Operazione non avvenuta a causa di un errore";
-                            toast.error(message, {theme: "colored"});
-                        }
-                    }).catch(() => {
-                        toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
-                    }).finally(() => {
-                        this.setState({newPaymentType: false});
-                    });
+            .then((response: any) => {
+                const paymentTypes: Array<string> = [this.state.paymentType];
+                const data = {
+                    "payment_types": paymentTypes
+                } as PspChannelPaymentTypes;
+                apiClient.createPaymentType({
+                    Authorization: `Bearer ${response.accessToken}`,
+                    ApiKey: "",
+                    channelcode: this.state.code,
+                    body: data
+                }).then((response: any) => {
+                    if (response.right.status === 201) {
+                        toast.info("Modifica avvenuta con successo.");
+                        this.setState({paymentTypeList: response.right.value.payment_types});
+                    } else {
+                        const message = "detail" in response.right.value ? response.right.value.detail : "Operazione non avvenuta a causa di un errore";
+                        toast.error(message, {theme: "colored"});
+                    }
+                }).catch(() => {
+                    toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                }).finally(() => {
+                    this.setState({newPaymentType: false});
                 });
+            });
     }
 
     render(): React.ReactNode {
@@ -302,27 +304,23 @@ export default class EditChannel extends React.Component<IProps, IState> {
         };
 
         // create rows for payment types table
-        const paymentTypeList: any = [];
-        this.state.paymentTypeList.map((item: any, index: number) => {
-            const row = (
-                    <tr key={index}>
-                        <td>{item}</td>
-                        <td>
-                            {paymentTypeLegend[item]}
-                            {
-                                item === "OBEP" && <span className="badge badge-danger ml-2">DEPRECATO</span>
-                            }
-                        </td>
-                        <td className={"text-right"}>
-                            <OverlayTrigger placement="top"
-                                            overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
-                                <FaTrash role="button" className="mr-3" onClick={() => this.handlePaymentTypeDelete(item)}/>
-                            </OverlayTrigger>
-                        </td>
-                    </tr>
-            );
-            paymentTypeList.push(row);
-        });
+        const paymentTypeList: any = this.state.paymentTypeList.map((item: any, index: number) =>  (
+            <tr key={index}>
+                <td>{item}</td>
+                <td>
+                    {paymentTypeLegend[item]}
+                    {
+                        item === "OBEP" && <span className="badge badge-danger ml-2">DEPRECATO</span>
+                    }
+                </td>
+                <td className={"text-right"}>
+                    <OverlayTrigger placement="top"
+                                    overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
+                        <FaTrash role="button" className="mr-3" onClick={() => this.handlePaymentTypeDelete(item)}/>
+                    </OverlayTrigger>
+                </td>
+            </tr>
+        ));
 
         return (
                 <div className="container-fluid creditor-institutions">
@@ -648,7 +646,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
 																				<option></option>
                                                                                 {
                                                                                     Object.keys(paymentTypeLegend)
-                                                                                            .filter(p => this.state.paymentTypeList.indexOf(p) === -1)
+                                                                                            .filter((p: string) => this.state.paymentTypeList.indexOf(p) === -1)
                                                                                             .map((p, index) =>
                                                                                                     <option key={index} value={p}>
                                                                                                         {p} - {paymentTypeLegend[p]}
