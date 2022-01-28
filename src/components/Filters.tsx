@@ -1,10 +1,11 @@
 import React from "react";
-import {Card, Form} from "react-bootstrap";
+import {Form} from "react-bootstrap";
 import debounce from "lodash.debounce";
+import {FaFilter} from "react-icons/all";
 
 
 interface IProps {
-    showName: boolean;
+    configuration: any;
     // eslint-disable-next-line @typescript-eslint/ban-types
     onFilter: (...args: any) => any;
 }
@@ -22,34 +23,34 @@ export default class Filters extends React.Component<IProps, IState> {
 
     render(): React.ReactNode {
         return (
-            <div>
-                <Card>
-                    <Card.Header>
-                        <h5>Filtri</h5>
-                    </Card.Header>
-                    <Card.Body className="d-flex p-2">
-                        {this.props.showName && (
-                            <Form.Group id="filters" controlId="filter_name" className={"p-2"}>
-                                <Form.Label>Nome</Form.Label>
-                                <Form.Control name="filter_name" placeholder=""
-                                              onChange={event => this.onFilter({
-                                                  ...this.state,
-                                                  name: event.target.value
-                                              })}/>
-                            </Form.Group>
-                        )}
-
-                        <Form.Group controlId="filter_code" className={"p-2"}>
-                            <Form.Label>Codice</Form.Label>
-                            <Form.Control name="filter_code" placeholder=""
+                <div className={"row mb-5"}>
+                    <div className="d-flex ml-3 align-items-center">
+                        <FaFilter />
+                    </div>
+                    {
+                        this.props.configuration.name?.visible && (
+                        <div className="col-md-2 align-items-center">
+                            <Form.Control name="filter_name" placeholder={this.props.configuration.name.placeholder}
                                           onChange={event => this.onFilter({
                                               ...this.state,
-                                              code: event.target.value
+                                              name: event.target.value
                                           })}/>
-                        </Form.Group>
-                    </Card.Body>
-                </Card>
-            </div>
+                        </div>
+                    )
+                    }
+
+                    {
+                        this.props.configuration.code?.visible && (
+                            <div className="col-md-2 align-items-center">
+                                <Form.Control name="filter_code" placeholder={this.props.configuration.code.placeholder}
+                                              onChange={event => this.onFilter({
+                                                  ...this.state,
+                                                  code: event.target.value
+                                              })}/>
+                            </div>
+                        )
+                    }
+                </div>
         );
     }
 

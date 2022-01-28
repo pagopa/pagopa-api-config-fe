@@ -34,6 +34,7 @@ interface IState {
 
 export default class Channels extends React.Component<IProps, IState> {
     static contextType = MsalContext;
+    private filter: {[item: string]: any};
 
     service = "/channels";
 
@@ -55,6 +56,17 @@ export default class Channels extends React.Component<IProps, IState> {
             showDeleteModal: false,
             channelToDelete: {},
             channelIndex: -1
+        };
+
+        this.filter = {
+            name: {
+                visible: false,
+                placeholder: "Descrizione"
+            },
+            code: {
+                visible: true,
+                placeholder: "Codice"
+            }
         };
 
         this.handlePageChange = this.handlePageChange.bind(this);
@@ -212,8 +224,7 @@ export default class Channels extends React.Component<IProps, IState> {
                         <Button onClick={this.create}>Nuovo <FaPlus/></Button>
                     </div>
                     <div className="col-md-12">
-                        <Filters showName={false}
-                                 onFilter={this.handleFilterCallback}/>
+                        <Filters configuration={this.filter} onFilter={this.handleFilterCallback} />
                         {isLoading && (<FaSpinner className="spinner"/>)}
                         {
                             !isLoading && (

@@ -35,6 +35,7 @@ interface IState {
 
 export default class PaymentServiceProviders extends React.Component<IProps, IState> {
     static contextType = MsalContext;
+    private filter: {[item: string]: any};
 
     service = "/payment-service-providers";
 
@@ -57,6 +58,17 @@ export default class PaymentServiceProviders extends React.Component<IProps, ISt
             showDeleteModal: false,
             paymentServiceProviderToDelete: {},
             paymentServiceProviderIndex: -1
+        };
+
+        this.filter = {
+            name: {
+                visible: true,
+                placeholder: "Prestatore Servizio di Pagamento"
+            },
+            code: {
+                visible: true,
+                placeholder: "Codice"
+            }
         };
 
         this.handlePageChange = this.handlePageChange.bind(this);
@@ -213,8 +225,7 @@ export default class PaymentServiceProviders extends React.Component<IProps, ISt
                         <Button onClick={this.create}>Nuovo <FaPlus/></Button>
                     </div>
                     <div className="col-md-12">
-                        <Filters showName={true}
-                                 onFilter={this.handleFilterCallback}/>
+                        <Filters configuration={this.filter} onFilter={this.handleFilterCallback}/>
                         {isLoading && (<FaSpinner className="spinner"/>)}
                         {
                             !isLoading && (

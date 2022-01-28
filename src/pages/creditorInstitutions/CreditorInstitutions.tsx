@@ -35,6 +35,7 @@ interface IState {
 
 export default class CreditorInstitutions extends React.Component<IProps, IState> {
     static contextType = MsalContext;
+    private filter: {[item: string]: any};
 
     constructor(props: IProps) {
         super(props);
@@ -55,6 +56,17 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
             showDeleteModal: false,
             creditorInstitutionToDelete: {},
             creditorInstitutionIndex: -1
+        };
+
+        this.filter = {
+            name: {
+                visible: true,
+                placeholder: "Ente Creditore"
+            },
+            code: {
+                visible: true,
+                placeholder: "Codice"
+            }
         };
 
         this.handlePageChange = this.handlePageChange.bind(this);
@@ -213,8 +225,7 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
                         <Button onClick={this.createCreditorInstitution}>Nuovo <FaPlus/></Button>
                     </div>
                     <div className="col-md-12">
-                        <Filters showName={true}
-                                 onFilter={this.handleFilterCallback}/>
+                        <Filters configuration={this.filter} onFilter={this.handleFilterCallback} />
                         {isLoading && (<FaSpinner className="spinner"/>)}
                         {
                             !isLoading && (

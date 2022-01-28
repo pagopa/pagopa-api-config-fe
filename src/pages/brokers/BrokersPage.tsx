@@ -34,6 +34,7 @@ interface IState {
 
 export default class BrokersPage extends React.Component<IProps, IState> {
     static contextType = MsalContext;
+    private filter: {[item: string]: any};
 
     constructor(props: IProps) {
         super(props);
@@ -45,6 +46,17 @@ export default class BrokersPage extends React.Component<IProps, IState> {
                 code: "",
                 name: "",
             },
+        };
+
+        this.filter = {
+            name: {
+                visible: true,
+                placeholder: "Descrizione"
+            },
+            code: {
+                visible: true,
+                placeholder: "Codice"
+            }
         };
 
         this.handlePageChange = this.handlePageChange.bind(this);
@@ -225,8 +237,7 @@ export default class BrokersPage extends React.Component<IProps, IState> {
                     <Button onClick={this.createBrokerPage}>Nuovo <FaPlus/></Button>
                 </div>
                 <div className="col-md-12">
-                    <Filters showName={true}
-                             onFilter={this.handleFilterCallback}/>
+                    <Filters configuration={this.filter} onFilter={this.handleFilterCallback}/>
                     {isLoading && (<p>Loading ...</p>)}
                     {
                         !isLoading && (
