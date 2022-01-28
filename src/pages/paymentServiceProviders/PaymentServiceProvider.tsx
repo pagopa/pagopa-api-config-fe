@@ -1,5 +1,5 @@
 import React from "react";
-import {Alert, Breadcrumb, Card, Form, Table} from "react-bootstrap";
+import {Alert, Badge, Breadcrumb, Card, Form, Table} from "react-bootstrap";
 import {FaCheck, FaInfoCircle, FaSpinner, FaTimes} from "react-icons/fa";
 import {MsalContext} from "@azure/msal-react";
 import {apiClient} from "../../util/apiClient";
@@ -108,7 +108,7 @@ export default class PaymentServiceProvider extends React.Component<IProps, ISta
                             {item.enabled && <FaCheck className="text-success"/>}
                             {!item.enabled && <FaTimes className="text-danger"/>}
                         </td>
-                        <td className="text-center">{item.payment_type.join(" ")}</td>
+                        <td className="text-center">{item.payment_types.join(" ")}</td>
                     </tr>
             );
             channelList.push(row);
@@ -120,7 +120,7 @@ export default class PaymentServiceProvider extends React.Component<IProps, ISta
                     <div className="col-md-12 mb-5">
                         <Breadcrumb>
                             <Breadcrumb.Item href="/payment-service-providers">Prestatori Servizio di Pagamento</Breadcrumb.Item>
-                            <Breadcrumb.Item active>{this.state.paymentServiceProvider.business_name}</Breadcrumb.Item>
+                            <Breadcrumb.Item active>{this.state.paymentServiceProvider.business_name || "-"}</Breadcrumb.Item>
                         </Breadcrumb>
                     </div>
                     <div className="col-md-12">
@@ -135,7 +135,7 @@ export default class PaymentServiceProvider extends React.Component<IProps, ISta
                                 <>
                                     <div className="row">
                                         <div className="col-md-12">
-                                            <h2>{this.state.paymentServiceProvider.business_name}</h2>
+                                            <h2>{this.state.paymentServiceProvider.business_name || "-"}</h2>
                                         </div>
                                     </div>
                                     <div className="row">
@@ -236,6 +236,20 @@ export default class PaymentServiceProvider extends React.Component<IProps, ISta
 								</Table>
                                 }
                             </Card.Body>
+                            <Card.Footer>
+                                <div className="legend">
+                                    <span className="font-weight-bold mr-2">Legenda:</span>
+                                    <span className="mr-2 badge badge-secondary">BBT: Bonifico Bancario di Tesoreria</span>
+                                    <span className="mr-2 badge badge-secondary">BP: Bollettino Postale</span>
+                                    <span className="mr-2 badge badge-secondary">AD: Addebito Diretto</span>
+                                    <span className="mr-2 badge badge-secondary">CP: Carta di Pagamento</span>
+                                    <span className="mr-2 badge badge-secondary">PO: Pagamento attivato presso PSP</span>
+                                    <span className="mr-2 badge badge-secondary">JIF: Bancomat Pay</span>
+                                    <span className="mr-2 badge badge-secondary">MYBK: MyBank Seller Bank</span>
+                                    <span className="mr-2 badge badge-secondary">PPAL: PayPal</span>
+                                    <span className="mr-2 badge badge-secondary">OBEB: Online Banking Electronic Payment <Badge variant="danger">DEPRECATO</Badge> </span>
+                                </div>
+                            </Card.Footer>
                         </Card>
                     </div>
                 </div>

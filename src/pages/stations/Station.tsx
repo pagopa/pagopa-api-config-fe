@@ -76,7 +76,7 @@ export default class Station extends React.Component<IProps, IState> {
                     <div className="col-md-12 mb-5">
                         <Breadcrumb>
                             <Breadcrumb.Item href="/stations">Stazioni</Breadcrumb.Item>
-                            <Breadcrumb.Item active>{this.state.station.station_code}</Breadcrumb.Item>
+                            <Breadcrumb.Item active>{this.state.station.station_code || "-"}</Breadcrumb.Item>
                         </Breadcrumb>
                     </div>
                     <div className="col-md-12">
@@ -91,7 +91,7 @@ export default class Station extends React.Component<IProps, IState> {
                                 <>
                                     <div className="row">
                                         <div className="col-md-12">
-                                            <h2>{this.state.station.station_code}</h2>
+                                            <h2>{this.state.station.station_code || "-"}</h2>
                                         </div>
                                     </div>
                                     <div className="row">

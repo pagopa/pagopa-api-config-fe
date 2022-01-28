@@ -227,7 +227,7 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
                     <div className="col-md-12 mb-5">
                         <Breadcrumb>
                             <Breadcrumb.Item href="/creditor-institutions">Enti Creditori</Breadcrumb.Item>
-                            <Breadcrumb.Item active>{this.state.creditorInstitution.business_name}</Breadcrumb.Item>
+                            <Breadcrumb.Item active>{this.state.creditorInstitution.business_name || "-"}</Breadcrumb.Item>
                         </Breadcrumb>
                     </div>
                     <div className="col-md-12">
@@ -242,7 +242,7 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
                                 <>
                                     <div className="row">
                                         <div className="col-md-12">
-                                            <h2>{this.state.creditorInstitution.business_name}</h2>
+                                            <h2>{this.state.creditorInstitution.business_name || "-"}</h2>
                                         </div>
                                     </div>
                                     <div className="row">

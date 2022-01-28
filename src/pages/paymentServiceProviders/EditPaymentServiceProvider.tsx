@@ -1,6 +1,6 @@
 import React from "react";
-import {Alert, Breadcrumb, Button, Card, Form, Table} from "react-bootstrap";
-import {FaCheck, FaInfoCircle, FaPlus, FaSpinner, FaTimes} from "react-icons/fa";
+import {Alert, Badge, Breadcrumb, Button, Card, Form, Table} from "react-bootstrap";
+import {FaCheck, FaInfoCircle, FaSpinner, FaTimes} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
 import {apiClient} from "../../util/apiClient";
@@ -176,7 +176,7 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                             {item.enabled && <FaCheck className="text-success"/>}
                             {!item.enabled && <FaTimes className="text-danger"/>}
                         </td>
-                        <td className="text-center">{item.payment_type.join(" ")}</td>
+                        <td className="text-center">{item.payment_types.join(" ")}</td>
                     </tr>
             );
             channelList.push(row);
@@ -188,7 +188,7 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                     <div className="col-md-12 mb-5">
                         <Breadcrumb>
                             <Breadcrumb.Item href={this.service}>Prestatori Servizio di Pagamento</Breadcrumb.Item>
-                            <Breadcrumb.Item active>{this.state.pspName}</Breadcrumb.Item>
+                            <Breadcrumb.Item active>{this.state.pspName || "-"}</Breadcrumb.Item>
                         </Breadcrumb>
                     </div>
                     <div className="col-md-12">
@@ -203,7 +203,7 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                                 <>
                                     <div className="row">
                                         <div className="col-md-12">
-                                            <h2>{this.state.pspName}</h2>
+                                            <h2>{this.state.pspName || "-"}</h2>
                                         </div>
                                     </div>
 
@@ -333,11 +333,18 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                                                 <Card.Footer>
                                                     <div className="row">
                                                         <div className="col-md-12">
-                                                            <Button className="float-md-right" onClick={() => {
-                                                                this.createChannel();
-                                                            }} disabled>
-                                                                Nuovo <FaPlus/>
-                                                            </Button>
+                                                            <div className="legend">
+                                                                <span className="font-weight-bold mr-2">Legenda:</span>
+                                                                <span className="mr-2 badge badge-secondary">BBT: Bonifico Bancario di Tesoreria</span>
+                                                                <span className="mr-2 badge badge-secondary">BP: Bollettino Postale</span>
+                                                                <span className="mr-2 badge badge-secondary">AD: Addebito Diretto</span>
+                                                                <span className="mr-2 badge badge-secondary">CP: Carta di Pagamento</span>
+                                                                <span className="mr-2 badge badge-secondary">PO: Pagamento attivato presso PSP</span>
+                                                                <span className="mr-2 badge badge-secondary">JIF: Bancomat Pay</span>
+                                                                <span className="mr-2 badge badge-secondary">MYBK: MyBank Seller Bank</span>
+                                                                <span className="mr-2 badge badge-secondary">PPAL: PayPal</span>
+                                                                <span className="mr-2 badge badge-secondary">OBEB: Online Banking Electronic Payment <Badge variant="danger">DEPRECATO</Badge> </span>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </Card.Footer>

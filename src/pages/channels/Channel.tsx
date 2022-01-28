@@ -1,10 +1,10 @@
 import React from "react";
-import {Alert, Breadcrumb, Form} from "react-bootstrap";
-import {FaSpinner} from "react-icons/fa";
+import {Alert, Breadcrumb, Card, Form, Table} from "react-bootstrap";
+import {FaInfoCircle, FaSpinner} from "react-icons/fa";
 import {MsalContext} from "@azure/msal-react";
 import {apiClient} from "../../util/apiClient";
 import {loginRequest} from "../../authConfig";
-import {ChannelDetails} from "../../../generated/api/ChannelDetails";
+import {ChannelDetails, Payment_modelEnum} from "../../../generated/api/ChannelDetails";
 
 interface IProps {
     match: {
@@ -17,11 +17,13 @@ interface IState {
     isLoading: boolean;
     code: string;
     channel: ChannelDetails;
+    paymentTypeList: [];
     edit: boolean;
 }
 
 export default class Channel extends React.Component<IProps, IState> {
     static contextType = MsalContext;
+    private readonly paymentTypeLegend: { [index: string]: string };
 
     constructor(props: IProps) {
         super(props);
@@ -30,8 +32,54 @@ export default class Channel extends React.Component<IProps, IState> {
             isError: false,
             isLoading: true,
             code: "",
-            channel: {} as ChannelDetails,
+            channel: {
+                channel_code: "",
+                enabled: false,
+                broker_psp_code: "",
+                password: "",
+                new_password: "",
+                protocol: "",
+                ip: "",
+                port: 80,
+                service: "",
+                proxy_enabled: false,
+                proxy_host: "",
+                proxy_port: 80,
+                thread_number: 2,
+                timeout_a: 15,
+                timeout_b: 30,
+                timeout_c: 120,
+                new_fault_code: false,
+                redirect_protocol: "",
+                redirect_ip: "",
+                redirect_port: 80,
+                redirect_path: "",
+                redirect_query_string: "",
+                payment_model: Payment_modelEnum.IMMEDIATE,
+                rt_push: false,
+                on_us: false,
+                card_chart: false,
+                recovery: false,
+                digital_stamp_brand: false,
+                serv_plugin: "",
+                flag_io: false,
+                agid: false,
+                description: "",
+            } as ChannelDetails,
+            paymentTypeList: [],
             edit: false
+        };
+
+        this.paymentTypeLegend = {
+            BBT: "Bonifico Bancario di Tesoreria",
+            BP: "Bollettino Postale",
+            AD: "Addebito Diretto",
+            CP: "Carta di Pagamento",
+            PO: "Pagamento attivato presso PSP",
+            JIF: "Bancomat Pay",
+            MYBK: "MyBank Seller Bank",
+            PPAL: "PayPal",
+            OBEP: "Online Banking Electronic Payment"
         };
     }
 
@@ -40,35 +88,103 @@ export default class Channel extends React.Component<IProps, IState> {
             ...loginRequest,
             account: this.context.accounts[0]
         })
-            .then((response: any) => {
-                apiClient.getChannel({
-                    Authorization: `Bearer ${response.accessToken}`,
-                    ApiKey: "",
-                    channelcode: code
-                })
-                    .then((response: any) => {
-                        if (response.right.status === 200) {
-                            this.setState({channel: response.right.value});
-                        } else {
-                            this.setState({isError: true});
-                        }
+                .then((response: any) => {
+                    apiClient.getChannel({
+                        Authorization: `Bearer ${response.accessToken}`,
+                        ApiKey: "",
+                        channelcode: code
                     })
-                    .catch(() => {
-                        this.setState({isError: true});
+                            .then((response: any) => {
+                                if (response.right.status === 200) {
+                                    const channel = {...this.state.channel, ...response.right.value};
+                                    this.setState({channel});
+                                } else {
+                                    this.setState({isError: true});
+                                }
+                            })
+                            .catch(() => {
+                                this.setState({isError: true});
+                            })
+                            .finally(() => this.setState({isLoading: false}));
+                });
+    }
+
+    getPaymentTypeList(code: string): void {
+        this.context.instance.acquireTokenSilent({
+            ...loginRequest,
+            account: this.context.accounts[0]
+        })
+                .then((response: any) => {
+                    apiClient.getPaymentTypes({
+                        Authorization: `Bearer ${response.accessToken}`,
+                        ApiKey: "",
+                        channelcode: code
                     })
-                    .finally(() => this.setState({isLoading: false}));
-            });
+                            .then((response: any) => {
+                                if (response.right.status === 200) {
+                                    this.setState({paymentTypeList: response.right.value.payment_types});
+                                } else {
+                                    this.setState({isError: true});
+                                }
+                            })
+                            .catch(() => {
+                                this.setState({isError: true});
+                            })
+                            .finally(() => this.setState({isLoading: false}));
+                });
     }
 
     componentDidMount(): void {
         const code: string = this.props.match.params.code as string;
         this.setState({isError: false});
         this.getChannel(code);
+        this.getPaymentTypeList(code);
     }
 
     render(): React.ReactNode {
         const isError = this.state.isError;
         const isLoading = this.state.isLoading;
+        const paymentTypeLegend = this.paymentTypeLegend;
+
+        // create rows for payment types table
+        const paymentTypeList: any = this.state.paymentTypeList.map((item: any, index: number) => (
+                    <tr key={index}>
+                        <td>{item}</td>
+                        <td>
+                            {
+                                paymentTypeLegend[item]
+                            }
+                            {
+                                item === "OBEP" && <span className="badge badge-danger ml-2">DEPRECATO</span>
+                            }
+                        </td>
+                    </tr>
+            ));
+
+        const getPaymentTypeContent = () => {
+            if (Object.keys(paymentTypeList).length > 0) {
+               return (
+                <Table hover responsive size="sm">
+                   <thead>
+                   <tr>
+                       <th className="">Codice</th>
+                       <th></th>
+                   </tr>
+                   </thead>
+                   <tbody>
+                   {paymentTypeList}
+                   </tbody>
+               </Table>
+                );
+            }
+            else {
+                return (
+                <Alert className={'col-md-12'} variant={"warning"}>
+                    <FaInfoCircle className="mr-1"/>Tipi Versamento non presenti
+                </Alert>
+                );
+            }
+        };
 
         return (
             <div className="container-fluid channel">
@@ -76,7 +192,7 @@ export default class Channel extends React.Component<IProps, IState> {
                     <div className="col-md-12 mb-5">
                         <Breadcrumb>
                             <Breadcrumb.Item href="/channels">Canali</Breadcrumb.Item>
-                            <Breadcrumb.Item active>{this.state.channel.description}</Breadcrumb.Item>
+                            <Breadcrumb.Item active>{this.state.channel.description || "-"}</Breadcrumb.Item>
                         </Breadcrumb>
                     </div>
                     <div className="col-md-12">
@@ -91,14 +207,15 @@ export default class Channel extends React.Component<IProps, IState> {
                                 <>
                                     <div className="row">
                                         <div className="col-md-12">
-                                            <h2>{this.state.channel.description}</h2>
+                                            <h2>{this.state.channel.description || "-"}</h2>
                                         </div>
                                     </div>
                                     <div className="row">
-                                        <Form.Group controlId="code" className="col-md-4">
+                                        <Form.Group controlId="code" className="col-md-3">
                                             <Form.Label>Codice</Form.Label>
                                             <Form.Control type="code" placeholder="-" value={this.state.channel.channel_code} readOnly/>
                                         </Form.Group>
+
                                         <Form.Group controlId="enabled" className="col-md-2">
                                             <Form.Label>Stato</Form.Label>
                                             <Form.Control as="select" type="enabled" placeholder="stato" readOnly>
@@ -106,19 +223,22 @@ export default class Channel extends React.Component<IProps, IState> {
                                                 {!this.state.channel.enabled && <option>Non Abilitato</option>}
                                             </Form.Control>
                                         </Form.Group>
+
                                         <Form.Group controlId="broker_psp_code" className="col-md-3">
                                             <Form.Label>Codice Intermediario PSP</Form.Label>
                                             <Form.Control placeholder="-" value={this.state.channel.broker_psp_code} readOnly/>
                                         </Form.Group>
-                                        <Form.Group controlId="password" className="col-md-3">
+                                        <Form.Group controlId="password" className="col-md-2">
                                             <Form.Label>Password</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.channel.password} readOnly/>
+                                            <Form.Control placeholder="" value={this.state.channel.password} readOnly/>
                                         </Form.Group>
-                                        <Form.Group controlId="new_password" className="col-md-3">
+                                        <Form.Group controlId="new_password" className="col-md-2">
                                             <Form.Label>Nuova Password</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.channel.new_password} readOnly/>
+                                            <Form.Control placeholder="" value={this.state.channel.new_password} readOnly/>
                                         </Form.Group>
+
                                     </div>
+
                                     <div className="row">
                                         <Form.Group controlId="protocol" className="col-md-2">
                                             <Form.Label>Protocollo</Form.Label>
@@ -218,7 +338,6 @@ export default class Channel extends React.Component<IProps, IState> {
 
                                     </div>
                                     <div className="row">
-
                                         <Form.Group controlId="flag_io" className="col-md-2 custom-control-box">
                                             <Form.Check
                                                     custom
@@ -284,6 +403,19 @@ export default class Channel extends React.Component<IProps, IState> {
                                                     label={'Marca Bollo Digitale'}
                                             />
                                         </Form.Group>
+                                    </div>
+
+                                    <div className="row mt-3">
+                                        <div className="col-md-12">
+                                            <Card>
+                                                <Card.Header>
+                                                    <h5>Tipo Versamento</h5>
+                                                </Card.Header>
+                                                <Card.Body>
+                                                    { getPaymentTypeContent() }
+                                                </Card.Body>
+                                            </Card>
+                                        </div>
                                     </div>
                                 </>
                             )

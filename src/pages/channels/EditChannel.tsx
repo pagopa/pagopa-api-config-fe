@@ -1,11 +1,13 @@
 import React from "react";
-import {Alert, Breadcrumb, Button, Card, Form} from "react-bootstrap";
-import {FaSpinner} from "react-icons/fa";
+import {Alert, Breadcrumb, Button, Card, Form, OverlayTrigger, Table, Tooltip} from "react-bootstrap";
+import {FaInfoCircle, FaPlus, FaSpinner, FaTrash} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
 import {apiClient} from "../../util/apiClient";
 import {loginRequest} from "../../authConfig";
-import {ChannelDetails} from "../../../generated/api/ChannelDetails";
+import {ChannelDetails, Payment_modelEnum} from "../../../generated/api/ChannelDetails";
+import ConfirmationModal from "../../components/ConfirmationModal";
+import {PspChannelPaymentTypes} from "../../../generated/api/PspChannelPaymentTypes";
 
 interface IProps {
     match: {
@@ -20,7 +22,13 @@ interface IState {
     channelName: string;
     code: string;
     channel: ChannelDetails;
+    paymentTypeList: Array<string>;
     edit: boolean;
+    newPaymentType: boolean;
+    paymentType: string;
+    paymentTypeToDelete: string;
+    showDeleteModal: boolean;
+
 }
 
 export default class EditChannel extends React.Component<IProps, IState> {
@@ -39,13 +47,53 @@ export default class EditChannel extends React.Component<IProps, IState> {
             },
             channelName: "",
             code: "",
-            channel: {} as ChannelDetails,
-            edit: false
+            channel: {
+                channel_code: "",
+                enabled: false,
+                broker_psp_code: "",
+                password: "",
+                new_password: "",
+                protocol: "",
+                ip: "",
+                port: 80,
+                service: "",
+                proxy_enabled: false,
+                proxy_host: "",
+                proxy_port: 80,
+                thread_number: 2,
+                timeout_a: 15,
+                timeout_b: 30,
+                timeout_c: 120,
+                new_fault_code: false,
+                redirect_protocol: "",
+                redirect_ip: "",
+                redirect_port: 80,
+                redirect_path: "",
+                redirect_query_string: "",
+                payment_model: Payment_modelEnum.IMMEDIATE,
+                rt_push: false,
+                on_us: false,
+                card_chart: false,
+                recovery: false,
+                digital_stamp_brand: false,
+                serv_plugin: "",
+                flag_io: false,
+                agid: false,
+                description: "",
+            } as ChannelDetails,
+            paymentTypeList: [],
+            edit: false,
+            newPaymentType: false,
+            paymentType: "",
+            paymentTypeToDelete: "",
+            showDeleteModal: false
         };
 
         this.handleChange = this.handleChange.bind(this);
+        this.handlePaymentType = this.handlePaymentType.bind(this);
         this.saveChannel = this.saveChannel.bind(this);
         this.discard = this.discard.bind(this);
+        this.newPaymentType = this.newPaymentType.bind(this);
     }
 
     updateBackup(section: string, data: ChannelDetails | any) {
@@ -67,7 +115,8 @@ export default class EditChannel extends React.Component<IProps, IState> {
                         channelcode: code
                     }).then((response: any) => {
                         if (response.right.status === 200) {
-                            this.setState({channel: response.right.value});
+                            const channel = {...this.state.channel, ...response.right.value};
+                            this.setState({channel});
                             this.setState({channelName: response.right.value.description});
                             this.updateBackup("channel", response.right.value);
                         } else {
@@ -81,10 +130,36 @@ export default class EditChannel extends React.Component<IProps, IState> {
                 });
     }
 
+    getPaymentTypeList(code: string): void {
+        this.context.instance.acquireTokenSilent({
+            ...loginRequest,
+            account: this.context.accounts[0]
+        })
+            .then((response: any) => {
+                apiClient.getPaymentTypes({
+                    Authorization: `Bearer ${response.accessToken}`,
+                    ApiKey: "",
+                    channelcode: code
+                })
+                    .then((response: any) => {
+                        if (response.right.status === 200) {
+                            this.setState({paymentTypeList: response.right.value.payment_types});
+                        } else {
+                            this.setState({isError: true});
+                        }
+                    })
+                    .catch(() => {
+                        this.setState({isError: true});
+                    })
+                    .finally(() => this.setState({isLoading: false}));
+            });
+    }
+
     componentDidMount(): void {
         const code: string = this.props.match.params.code as string;
         this.setState({code, isError: false});
         this.getChannel(code);
+        this.getPaymentTypeList(code);
     }
 
     handleChange(event: any) {
@@ -94,6 +169,10 @@ export default class EditChannel extends React.Component<IProps, IState> {
         const value = event.target.type === "checkbox" ? event.target.checked : event.target.value;
         channel = {...channel, [key]: value};
         this.setState({channel});
+    }
+
+    handlePaymentType(paymentType: string) {
+        this.setState({paymentType});
     }
 
     saveChannel() {
@@ -128,9 +207,120 @@ export default class EditChannel extends React.Component<IProps, IState> {
         this.setState({[section]: Object.assign({}, this.state.backup[section])} as any);
     }
 
+    handlePaymentTypeDelete(paymentType: string) {
+        this.setState({showDeleteModal: true});
+        this.setState({paymentTypeToDelete: paymentType});
+    }
+
+    hideDeleteModal = (status: string) => {
+        if (status === "ok") {
+            this.context.instance.acquireTokenSilent({
+                ...loginRequest,
+                account: this.context.accounts[0]
+            })
+                    .then((response: any) => {
+                        apiClient.deletePaymentType({
+                            Authorization: `Bearer ${response.accessToken}`,
+                            ApiKey: "",
+                            channelcode: this.state.code,
+                            paymenttypecode: this.state.paymentTypeToDelete
+                        })
+                                .then((res: any) => {
+                                    if (res.right.status === 200) {
+                                        toast.info("Rimozione avvenuta con successo");
+                                        this.removePaymentType(this.state.paymentTypeToDelete);
+                                    } else {
+                                        toast.error(res.right.value.title, {theme: "colored"});
+                                    }
+                                })
+                                .catch(() => {
+                                    toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                                });
+                    });
+        }
+        this.setState({showDeleteModal: false});
+    };
+
+    removePaymentType(paymentType: string) {
+        this.setState({paymentTypeList: this.state.paymentTypeList.filter((p) => p !== paymentType)});
+    }
+
+    newPaymentType() {
+        this.setState({newPaymentType: true, paymentType: ""});
+    }
+
+    discardPaymentType() {
+        this.setState({newPaymentType: false});
+    }
+
+    savePaymentType() {
+        this.context.instance.acquireTokenSilent({
+            ...loginRequest,
+            account: this.context.accounts[0]
+        })
+            .then((response: any) => {
+                const ptList: Array<string> = [this.state.paymentType];
+                const data = {
+                    "payment_types": ptList
+                } as PspChannelPaymentTypes;
+                apiClient.createPaymentType({
+                    Authorization: `Bearer ${response.accessToken}`,
+                    ApiKey: "",
+                    channelcode: this.state.code,
+                    body: data
+                }).then((response: any) => {
+                    if (response.right.status === 201) {
+                        toast.info("Modifica avvenuta con successo.");
+                        this.setState({paymentTypeList: response.right.value.payment_types});
+                    } else {
+                        const message = "detail" in response.right.value ? response.right.value.detail : "Operazione non avvenuta a causa di un errore";
+                        toast.error(message, {theme: "colored"});
+                    }
+                }).catch(() => {
+                    toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                }).finally(() => {
+                    this.setState({newPaymentType: false});
+                });
+            });
+    }
+
     render(): React.ReactNode {
         const isError = this.state.isError;
         const isLoading = this.state.isLoading;
+        const newPaymentType = this.state.newPaymentType;
+        const showDeleteModal = this.state.showDeleteModal;
+        const paymentTypeToDelete = this.state.paymentTypeToDelete;
+
+        const paymentTypeLegend: {[index: string]: string} = {
+            BBT: "Bonifico Bancario di Tesoreria",
+            BP: "Bollettino Postale",
+            AD: "Addebito Diretto",
+            CP: "Carta di Pagamento",
+            PO: "Pagamento attivato presso PSP",
+            JIF: "Bancomat Pay",
+            MYBK: "MyBank Seller Bank",
+            PPAL: "PayPal",
+            OBEP: "Online Banking Electronic Payment"
+        };
+
+        // create rows for payment types table
+        const paymentTypeList: any = this.state.paymentTypeList.map((item: any, index: number) =>  (
+            <tr key={index}>
+                <td>{item}</td>
+                <td>
+                    {paymentTypeLegend[item]}
+                    {
+                        item === "OBEP" && <span className="badge badge-danger ml-2">DEPRECATO</span>
+                    }
+                </td>
+                <td className={"text-right"}>
+                    <OverlayTrigger placement="top"
+                                    overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
+                        <FaTrash role="button" className="mr-3" onClick={() => this.handlePaymentTypeDelete(item)}/>
+                    </OverlayTrigger>
+                </td>
+            </tr>
+        ));
 
         return (
                 <div className="container-fluid creditor-institutions">
@@ -138,7 +328,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
                         <div className="col-md-12 mb-5">
                             <Breadcrumb>
                                 <Breadcrumb.Item href={this.service}>Canali</Breadcrumb.Item>
-                                <Breadcrumb.Item active>{this.state.channelName}</Breadcrumb.Item>
+                                <Breadcrumb.Item active>{this.state.channelName || "-"}</Breadcrumb.Item>
                             </Breadcrumb>
                         </div>
                         <div className="col-md-12">
@@ -153,7 +343,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
                                         <>
                                             <div className="row">
                                                 <div className="col-md-12">
-                                                    <h2>{this.state.channelName}</h2>
+                                                    <h2>{this.state.channelName || "-"}</h2>
                                                 </div>
                                             </div>
 
@@ -425,11 +615,87 @@ export default class EditChannel extends React.Component<IProps, IState> {
                                                     </div>
                                                 </Card.Footer>
                                             </Card>
+
+                                            <div className="row mt-3">
+                                                <div className="col-md-12">
+                                                    <Card>
+                                                        <Card.Header>
+                                                            <h5>Tipo Versamento</h5>
+                                                        </Card.Header>
+                                                        <Card.Body>
+                                                            {Object.keys(paymentTypeList).length === 0 && (
+                                                                    <Alert className={'col-md-12'} variant={"warning"}><FaInfoCircle
+                                                                            className="mr-1"/>Tipi Versamento non presenti</Alert>
+                                                            )}
+                                                            {Object.keys(paymentTypeList).length > 0 &&
+															<Table hover responsive size="sm">
+																<thead>
+																<tr>
+																	<th className="">Codice</th>
+																	<th>Descrizione</th>
+																	<th></th>
+																</tr>
+																</thead>
+																<tbody>
+                                                                {paymentTypeList}
+                                                                {
+                                                                    newPaymentType &&
+																	<tr>
+																		<td>
+																			<Form.Control as="select" name="paymentToken" onChange={(e) => this.handlePaymentType(e.target.value)}>
+																				<option></option>
+                                                                                {
+                                                                                    Object.keys(paymentTypeLegend)
+                                                                                            .filter((p: string) => this.state.paymentTypeList.indexOf(p) === -1)
+                                                                                            .map((p, index) =>
+                                                                                                    <option key={index} value={p}>
+                                                                                                        {p} - {paymentTypeLegend[p]}
+                                                                                                        {
+                                                                                                            p === "OBEP" && " DEPRECATO"
+                                                                                                        }
+                                                                                                    </option>)
+                                                                                }
+																			</Form.Control>
+																		</td>
+																		<td></td>
+																		<td></td>
+																	</tr>
+                                                                }
+
+																</tbody>
+															</Table>
+                                                            }
+                                                        </Card.Body>
+                                                        <Card.Footer>
+                                                            <div className="row">
+                                                                <div className="col-md-12">
+                                                                    {
+                                                                        !newPaymentType && <Button className="float-md-right" onClick={() => this.newPaymentType()} >Nuovo <FaPlus/></Button>
+                                                                    }
+                                                                    {
+                                                                        newPaymentType && <Button className="ml-2 float-md-right" variant="secondary" onClick={() => { this.discardPaymentType(); }}>Annulla</Button>
+                                                                    }
+                                                                    {
+                                                                        newPaymentType && <Button className="float-md-right" onClick={() => {this.savePaymentType();}}>Salva</Button>
+                                                                    }
+
+                                                                </div>
+                                                            </div>
+                                                        </Card.Footer>
+                                                    </Card>
+                                                </div>
+                                            </div>
                                         </>
                                 )
                             }
                         </div>
                     </div>
+                    <ConfirmationModal show={showDeleteModal} handleClose={this.hideDeleteModal}>
+                        <p>Sei sicuro di voler eliminare il seguente tipo versamento?</p>
+                        <ul>
+                            <li>{paymentTypeToDelete}</li>
+                        </ul>
+                    </ConfirmationModal>
                 </div>
         );
     }

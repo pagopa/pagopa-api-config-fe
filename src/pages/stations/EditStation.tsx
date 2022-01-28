@@ -138,7 +138,7 @@ export default class EditStation extends React.Component<IProps, IState> {
                     <div className="col-md-12 mb-5">
                         <Breadcrumb>
                             <Breadcrumb.Item href={this.service}>Stazioni</Breadcrumb.Item>
-                            <Breadcrumb.Item active>{this.state.stationName}</Breadcrumb.Item>
+                            <Breadcrumb.Item active>{this.state.stationName || "-"}</Breadcrumb.Item>
                         </Breadcrumb>
                     </div>
                     <div className="col-md-12">
@@ -153,7 +153,7 @@ export default class EditStation extends React.Component<IProps, IState> {
                                 <>
                                     <div className="row">
                                         <div className="col-md-12">
-                                            <h2>{this.state.stationName}</h2>
+                                            <h2>{this.state.stationName || "-"}</h2>
                                         </div>
                                     </div>
 

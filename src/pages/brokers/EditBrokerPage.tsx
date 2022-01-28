@@ -134,7 +134,7 @@ export default class EditBrokersPage extends React.Component<IProps, IState> {
                     <div className="col-md-12 mb-5">
                         <Breadcrumb>
                             <Breadcrumb.Item href="/brokers">Intermediario</Breadcrumb.Item>
-                            <Breadcrumb.Item active>{this.state.backup.brokerDetails.description}</Breadcrumb.Item>
+                            <Breadcrumb.Item active>{this.state.backup.brokerDetails.description || "-"}</Breadcrumb.Item>
                         </Breadcrumb>
                     </div>
                     <div className="col-md-12">
@@ -149,7 +149,7 @@ export default class EditBrokersPage extends React.Component<IProps, IState> {
                                 <>
                                     <div className="row">
                                         <div className="col-md-12">
-                                            <h2>{this.state.backup.brokerDetails.description}</h2>
+                                            <h2>{this.state.backup.brokerDetails.description || "-"}</h2>
                                         </div>
                                     </div>
                                     <Card>

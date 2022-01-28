@@ -81,7 +81,7 @@ export default class BrokerPage extends React.Component<IProps, IState> {
                     <div className="col-md-12 mb-5">
                         <Breadcrumb>
                             <Breadcrumb.Item href="/brokers">Intermediari</Breadcrumb.Item>
-                            <Breadcrumb.Item active>{this.state.broker?.description}</Breadcrumb.Item>
+                            <Breadcrumb.Item active>{this.state.broker?.description || "-"}</Breadcrumb.Item>
                         </Breadcrumb>
                     </div>
 
@@ -91,7 +91,7 @@ export default class BrokerPage extends React.Component<IProps, IState> {
                             <>
                                 <div className="row">
                                     <div className="col-md-12">
-                                        <h2>{this.state.broker?.description}</h2>
+                                        <h2>{this.state.broker?.description || "-"}</h2>
                                     </div>
                                 </div>
                                 <div className="row">
