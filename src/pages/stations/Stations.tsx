@@ -8,6 +8,7 @@ import Paginator from "../../components/Paginator";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import {loginRequest} from "../../authConfig";
 import Filters from "../../components/Filters";
+import Ordering from "../../components/Ordering";
 
 interface IProps {
     history: {
@@ -30,6 +31,7 @@ interface IState {
     showDeleteModal: boolean;
     stationToDelete: any;
     stationIndex: number;
+    order: any;
 }
 
 export default class Stations extends React.Component<IProps, IState> {
@@ -55,7 +57,11 @@ export default class Stations extends React.Component<IProps, IState> {
             isLoading: false,
             showDeleteModal: false,
             stationToDelete: {},
-            stationIndex: -1
+            stationIndex: -1,
+            order: {
+                by: "CODE",
+                ing: "DESC"
+            }
         };
 
         this.filter = {
@@ -69,6 +75,7 @@ export default class Stations extends React.Component<IProps, IState> {
             }
         };
 
+        this.handleOrder = this.handleOrder.bind(this);
         this.handlePageChange = this.handlePageChange.bind(this);
         this.create = this.create.bind(this);
     }
@@ -86,7 +93,8 @@ export default class Stations extends React.Component<IProps, IState> {
                     ApiKey: "",
                     limit: 10,
                     page,
-                    code: this.state.filters.code
+                    code: this.state.filters.code,
+                    ordering: this.state.order.ing
                 }).then((response: any) => {
                         this.setState({
                             stations: response.right.value.stations,
@@ -172,6 +180,16 @@ export default class Stations extends React.Component<IProps, IState> {
         this.getPage(0);
     };
 
+    handleOrder(orderBy: string, ordering: string) {
+        this.setState({
+            order: {
+                by: orderBy,
+                ing: ordering
+            }
+        });
+        this.getPage(0);
+    }
+
     render(): React.ReactNode {
         const isLoading = this.state.isLoading;
         const pageInfo = this.state.page_info;
@@ -231,7 +249,10 @@ export default class Stations extends React.Component<IProps, IState> {
                                     <Table hover responsive size="sm">
                                         <thead>
                                         <tr>
-                                            <th className="fixed-td-width">Stazione</th>
+                                            <th className="fixed-td-width">
+                                                <Ordering currentOrderBy={this.state.order.by} currentOrdering={this.state.order.ing} orderBy={"CODE"} ordering={"DESC"} handleOrder={this.handleOrder} />
+                                                Codice
+                                            </th>
                                             <th className="fixed-td-width">Versione</th>
                                             <th className="text-center">Abilitato</th>
                                             <th/>

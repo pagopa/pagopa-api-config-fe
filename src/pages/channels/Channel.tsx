@@ -95,6 +95,7 @@ export default class Channel extends React.Component<IProps, IState> {
                         channelcode: code
                     })
                             .then((response: any) => {
+                                console.log("CHANNEL", response);
                                 if (response.right.status === 200) {
                                     const channel = {...this.state.channel, ...response.right.value};
                                     this.setState({channel});
@@ -193,7 +194,7 @@ export default class Channel extends React.Component<IProps, IState> {
                     <div className="col-md-12 mb-5">
                         <Breadcrumb>
                             <Breadcrumb.Item href="/channels">Canali</Breadcrumb.Item>
-                            <Breadcrumb.Item active>{this.state.channel.description || "-"}</Breadcrumb.Item>
+                            <Breadcrumb.Item active>{this.state.channel.channel_code || "-"}</Breadcrumb.Item>
                         </Breadcrumb>
                     </div>
                     <div className="col-md-12">
@@ -208,7 +209,7 @@ export default class Channel extends React.Component<IProps, IState> {
                                 <>
                                     <div className="row">
                                         <div className="col-md-12">
-                                            <h2>{this.state.channel.description || "-"}</h2>
+                                            <h2>{this.state.channel.channel_code || "-"}</h2>
                                         </div>
                                     </div>
                                     <div className="row">

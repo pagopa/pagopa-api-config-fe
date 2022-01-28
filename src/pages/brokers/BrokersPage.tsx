@@ -14,7 +14,7 @@ import ConfirmationModal from "../../components/ConfirmationModal";
 import {PageInfo} from "../../../generated/api/PageInfo";
 import {loginRequest} from "../../authConfig";
 import Filters from "../../components/Filters";
-
+import Ordering from "../../components/Ordering";
 
 interface IProps {
     history: any;
@@ -30,6 +30,7 @@ interface IState {
         code: string;
         name: string;
     };
+    order: any;
 }
 
 export default class BrokersPage extends React.Component<IProps, IState> {
@@ -42,6 +43,7 @@ export default class BrokersPage extends React.Component<IProps, IState> {
             isLoading: true,
             showDeleteModal: false,
             pageIndex: 0,
+<<<<<<< HEAD
             filters: {
                 code: "",
                 name: "",
@@ -56,10 +58,16 @@ export default class BrokersPage extends React.Component<IProps, IState> {
             code: {
                 visible: true,
                 placeholder: "Codice"
+=======
+            order: {
+                by: "CODE",
+                ing: "DESC"
+>>>>>>> 7bcb38f (ordering and other cosmetic fix)
             }
         };
 
         this.handlePageChange = this.handlePageChange.bind(this);
+        this.handleOrder = this.handleOrder.bind(this);
         this.createBrokerPage = this.createBrokerPage.bind(this);
     }
 
@@ -80,8 +88,13 @@ export default class BrokersPage extends React.Component<IProps, IState> {
                     ApiKey: "",
                     limit: 10,
                     page,
+<<<<<<< HEAD
                     code: this.state.filters.code,
                     name: this.state.filters.name
+=======
+                    orderby: this.state.order.by,
+                    ordering: this.state.order.ing
+>>>>>>> 7bcb38f (ordering and other cosmetic fix)
                 })
                     .then((response: Validation<IResponseType<number, Brokers | ProblemJson | undefined>>) => {
                         // eslint-disable-next-line no-underscore-dangle
@@ -111,6 +124,16 @@ export default class BrokersPage extends React.Component<IProps, IState> {
                         this.setState({isLoading: false});
                     });
             });
+    }
+
+    handleOrder(orderBy: string, ordering: string) {
+        this.setState({
+            order: {
+                by: orderBy,
+                ing: ordering
+            }
+        });
+        this.getPage(0);
     }
 
     handlePageChange(requestedPage: number) {
@@ -200,8 +223,8 @@ export default class BrokersPage extends React.Component<IProps, IState> {
         this.state.brokersPaginated?.brokers.map((elem, index) => {
             const code = (
                 <tr key={index}>
-                    <td>{elem.description}</td>
                     <td>{elem.broker_code}</td>
+                    <td>{elem.description}</td>
                     <td className="text-center">
                         {elem.enabled && <FaCheck className="text-success"/>}
                         {!elem.enabled && <FaTimes className="text-danger"/>}
@@ -245,8 +268,14 @@ export default class BrokersPage extends React.Component<IProps, IState> {
                                 <Table hover responsive size="sm">
                                     <thead>
                                     <tr>
-                                        <th className="fixed-td-width">Nome</th>
-                                        <th className="fixed-td-width">Codice</th>
+                                        <th className="fixed-td-width">
+                                            <Ordering currentOrderBy={this.state.order.by} currentOrdering={this.state.order.ing} orderBy={"CODE"} ordering={"DESC"} handleOrder={this.handleOrder} />
+                                            Codice
+                                        </th>
+                                        <th className="fixed-td-width">
+                                            <Ordering currentOrderBy={this.state.order.by} currentOrdering={this.state.order.ing} orderBy={"NAME"} ordering={"DESC"} handleOrder={this.handleOrder} />
+                                            Descrizione
+                                        </th>
                                         <th className="text-center">Abilitato</th>
                                         <th/>
                                     </tr>

@@ -81,7 +81,7 @@ export default class BrokerPage extends React.Component<IProps, IState> {
                     <div className="col-md-12 mb-5">
                         <Breadcrumb>
                             <Breadcrumb.Item href="/brokers">Intermediari</Breadcrumb.Item>
-                            <Breadcrumb.Item active>{this.state.broker?.description || "-"}</Breadcrumb.Item>
+                            <Breadcrumb.Item active>{this.state.broker?.broker_code || "-"}</Breadcrumb.Item>
                         </Breadcrumb>
                     </div>
 
@@ -91,13 +91,17 @@ export default class BrokerPage extends React.Component<IProps, IState> {
                             <>
                                 <div className="row">
                                     <div className="col-md-12">
-                                        <h2>{this.state.broker?.description || "-"}</h2>
+                                        <h2>{this.state.broker?.broker_code || "-"}</h2>
                                     </div>
                                 </div>
                                 <div className="row">
                                     <Form.Group controlId="code" className="col-md-2">
                                         <Form.Label>Codice</Form.Label>
-                                        <Form.Control type="code" placeholder="-" value={this.state.broker?.broker_code} readOnly/>
+                                        <Form.Control placeholder="-" value={this.state.broker?.broker_code} readOnly/>
+                                    </Form.Group>
+                                    <Form.Group controlId="description" className="col-md-2">
+                                        <Form.Label>Descrizione</Form.Label>
+                                        <Form.Control placeholder="-" value={this.state.broker?.description} readOnly/>
                                     </Form.Group>
                                     <Form.Group controlId="enabled" className="col-md-2">
                                         <Form.Label>Stato</Form.Label>

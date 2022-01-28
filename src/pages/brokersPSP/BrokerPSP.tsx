@@ -76,7 +76,7 @@ export default class BrokerPSP extends React.Component<IProps, IState> {
                     <div className="col-md-12 mb-5">
                         <Breadcrumb>
                             <Breadcrumb.Item href="/brokers-psp">Intermediari PSP</Breadcrumb.Item>
-                            <Breadcrumb.Item active>{this.state.brokerPSP.description || "-"}</Breadcrumb.Item>
+                            <Breadcrumb.Item active>{this.state.brokerPSP.broker_psp_code || "-"}</Breadcrumb.Item>
                         </Breadcrumb>
                     </div>
                     <div className="col-md-12">
@@ -91,14 +91,20 @@ export default class BrokerPSP extends React.Component<IProps, IState> {
                                 <>
                                     <div className="row">
                                         <div className="col-md-12">
-                                            <h2>{this.state.brokerPSP.description || "-"}</h2>
+                                            <h2>{this.state.brokerPSP.broker_psp_code || "-"}</h2>
                                         </div>
                                     </div>
                                     <div className="row">
                                         <Form.Group controlId="code" className="col-md-4">
                                             <Form.Label>Codice</Form.Label>
-                                            <Form.Control type="code" placeholder="-"
+                                            <Form.Control placeholder="-"
                                                           value={this.state.brokerPSP.broker_psp_code}
+                                                          readOnly/>
+                                        </Form.Group>
+                                        <Form.Group controlId="description" className="col-md-4">
+                                            <Form.Label>Descrizione</Form.Label>
+                                            <Form.Control placeholder="-"
+                                                          value={this.state.brokerPSP.description}
                                                           readOnly/>
                                         </Form.Group>
                                         <Form.Group controlId="enabled" className="col-md-2">

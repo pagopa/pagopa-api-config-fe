@@ -8,6 +8,7 @@ import Paginator from "../../components/Paginator";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import {loginRequest} from "../../authConfig";
 import Filters from "../../components/Filters";
+import Ordering from "../../components/Ordering";
 
 interface IProps {
     history: {
@@ -31,6 +32,7 @@ interface IState {
     showDeleteModal: boolean;
     paymentServiceProviderToDelete: any;
     paymentServiceProviderIndex: number;
+    order: any;
 }
 
 export default class PaymentServiceProviders extends React.Component<IProps, IState> {
@@ -57,7 +59,11 @@ export default class PaymentServiceProviders extends React.Component<IProps, ISt
             isLoading: false,
             showDeleteModal: false,
             paymentServiceProviderToDelete: {},
-            paymentServiceProviderIndex: -1
+            paymentServiceProviderIndex: -1,
+            order: {
+                by: "NAME",
+                ing: "DESC"
+            }
         };
 
         this.filter = {
@@ -71,6 +77,7 @@ export default class PaymentServiceProviders extends React.Component<IProps, ISt
             }
         };
 
+        this.handleOrder = this.handleOrder.bind(this);
         this.handlePageChange = this.handlePageChange.bind(this);
         this.create = this.create.bind(this);
     }
@@ -89,7 +96,9 @@ export default class PaymentServiceProviders extends React.Component<IProps, ISt
                     limit: 10,
                     page,
                     code: this.state.filters.code,
-                    name: this.state.filters.name
+                    name: this.state.filters.name,
+                    orderby: this.state.order.by,
+                    ordering: this.state.order.ing
                 }).then((data: any) => {
                         this.setState({
                             payment_service_providers: data.right.value.payment_service_providers,
@@ -129,6 +138,16 @@ export default class PaymentServiceProviders extends React.Component<IProps, ISt
         this.setState({showDeleteModal: true});
         this.setState({paymentServiceProviderToDelete: paymentServiceProvider});
         this.setState({paymentServiceProviderIndex: index});
+    }
+
+    handleOrder(orderBy: string, ordering: string) {
+        this.setState({
+            order: {
+                by: orderBy,
+                ing: ordering
+            }
+        });
+        this.getPage(0);
     }
 
     removePaymentServiceProvider() {
@@ -233,8 +252,14 @@ export default class PaymentServiceProviders extends React.Component<IProps, ISt
                                     <Table hover responsive size="sm">
                                         <thead>
                                         <tr>
-                                            <th className="fixed-td-width">Prestatore Servizio di Pagamento</th>
-                                            <th className="fixed-td-width">Codice</th>
+                                            <th className="fixed-td-width">
+                                                <Ordering currentOrderBy={this.state.order.by} currentOrdering={this.state.order.ing} orderBy={"NAME"} ordering={"DESC"} handleOrder={this.handleOrder} />
+                                                Prestatore Servizio di Pagamento
+                                            </th>
+                                            <th className="fixed-td-width">
+                                                <Ordering currentOrderBy={this.state.order.by} currentOrdering={this.state.order.ing} orderBy={"CODE"} ordering={"DESC"} handleOrder={this.handleOrder} />
+                                                Codice
+                                            </th>
                                             <th className="text-center">Abilitato</th>
                                             <th/>
                                         </tr>
