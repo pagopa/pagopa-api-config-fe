@@ -1,7 +1,7 @@
 import React from "react";
 import {Form} from "react-bootstrap";
 import debounce from "lodash.debounce";
-import {FaFilter} from "react-icons/all";
+import {FaFilter} from "react-icons/fa";
 
 
 interface IProps {
