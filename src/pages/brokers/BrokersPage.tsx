@@ -1,53 +1,69 @@
 import React from 'react';
-import {toast} from "react-toastify";
 import {Button, OverlayTrigger, Table, Tooltip} from "react-bootstrap";
-import {FaCheck, FaEdit, FaEye, FaPlus, FaTimes, FaTrash} from "react-icons/fa";
-import {IResponseType} from "@pagopa/ts-commons/lib/requests";
-import {Validation} from "io-ts";
-import {ProblemJson} from "@pagopa/ts-commons/lib/responses";
+import {FaCheck, FaEdit, FaEye, FaPlus, FaSpinner, FaTimes, FaTrash} from "react-icons/fa";
+import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
-import {Brokers} from "../../../generated/api/Brokers";
-import {Broker} from "../../../generated/api/Broker";
 import {apiClient} from "../../util/apiClient";
 import Paginator from "../../components/Paginator";
 import ConfirmationModal from "../../components/ConfirmationModal";
-import {PageInfo} from "../../../generated/api/PageInfo";
 import {loginRequest} from "../../authConfig";
 import Filters from "../../components/Filters";
 import Ordering from "../../components/Ordering";
 
 interface IProps {
-    history: any;
+    history: {
+        push(url: string): void;
+    };
 }
 
 interface IState {
-    brokersPaginated?: Brokers;
-    isLoading: boolean;
-    showDeleteModal: boolean;
-    brokerToDelete?: Broker;
-    pageIndex: number;
+    brokers_psp: any;
+    page_info: {
+        page: 0;
+        limit: 50;
+        items_found: 0;
+        total_pages: 1;
+    };
     filters: {
         code: string;
         name: string;
     };
+    isLoading: boolean;
+    showDeleteModal: boolean;
+    brokerToDelete: any;
+    brokerIndex: number;
     order: any;
 }
 
-export default class BrokersPage extends React.Component<IProps, IState> {
+export default class BrokersPSP extends React.Component<IProps, IState> {
     static contextType = MsalContext;
     private filter: {[item: string]: any};
 
+    service = "/brokers-psp";
+
     constructor(props: IProps) {
         super(props);
+
         this.state = {
-            isLoading: true,
-            showDeleteModal: false,
-            pageIndex: 0,
-<<<<<<< HEAD
+            brokers_psp: [],
+            page_info: {
+                page: 0,
+                limit: 50,
+                items_found: 0,
+                total_pages: 1
+            },
             filters: {
                 code: "",
                 name: "",
             },
+            isLoading: false,
+            showDeleteModal: false,
+            brokerToDelete: {},
+            brokerIndex: -1,
+            order: {
+                by: "CODE",
+                ing: "DESC"
+            }
         };
 
         this.filter = {
@@ -58,158 +74,120 @@ export default class BrokersPage extends React.Component<IProps, IState> {
             code: {
                 visible: true,
                 placeholder: "Codice"
-=======
-            order: {
-                by: "CODE",
-                ing: "DESC"
->>>>>>> 7bcb38f (ordering and other cosmetic fix)
             }
         };
 
-        this.handlePageChange = this.handlePageChange.bind(this);
         this.handleOrder = this.handleOrder.bind(this);
-        this.createBrokerPage = this.createBrokerPage.bind(this);
+        this.handlePageChange = this.handlePageChange.bind(this);
+        this.create = this.create.bind(this);
+    }
+
+    getPage(page: number) {
+        this.setState({isLoading: true});
+
+        this.context.instance.acquireTokenSilent({
+            ...loginRequest,
+            account: this.context.accounts[0]
+        })
+                .then((response: any) => {
+                    apiClient.getBrokersPsp({
+                        Authorization: `Bearer ${response.accessToken}`,
+                        ApiKey: "",
+                        limit: 10,
+                        page,
+                        code: this.state.filters.code,
+                        name: this.state.filters.name,
+                        orderby: this.state.order.by,
+                        ordering: this.state.order.ing
+                    }).then((response: any) => {
+                        this.setState({
+                            brokers_psp: response.right.value.brokers_psp,
+                            page_info: response.right.value.page_info
+                        });
+                    })
+                            .catch(() => {
+                                toast.error("Problema nel recuperare i prestatori servizi di pagamento", {theme: "colored"});
+                            })
+                            .finally(() => {
+                                this.setState({isLoading: false});
+                            });
+                });
+
     }
 
     componentDidMount(): void {
         this.getPage(0);
     }
 
-    getPage(page: number) {
-
-        this.setState({isLoading: true});
-        this.context.instance.acquireTokenSilent({
-            ...loginRequest,
-            account: this.context.accounts[0]
-        })
-            .then((response: any) => {
-                apiClient.getBrokers({
-                    Authorization: `Bearer ${response.accessToken}`,
-                    ApiKey: "",
-                    limit: 10,
-                    page,
-<<<<<<< HEAD
-                    code: this.state.filters.code,
-                    name: this.state.filters.name
-=======
-                    orderby: this.state.order.by,
-                    ordering: this.state.order.ing
->>>>>>> 7bcb38f (ordering and other cosmetic fix)
-                })
-                    .then((response: Validation<IResponseType<number, Brokers | ProblemJson | undefined>>) => {
-                        // eslint-disable-next-line no-underscore-dangle
-                        switch (response._tag) {
-                            case "Right":
-                                if (response.right.status === 200) {
-                                    const body = response.right.value as Brokers;
-                                    this.setState({
-                                        brokersPaginated: body,
-                                        pageIndex: page
-                                    });
-                                } else {
-                                    const body = response.right.value as ProblemJson;
-                                    toast.error(body.title, {theme: "colored"});
-                                }
-                                break;
-                            case "Left":
-                                toast.error("Errore", {theme: "colored"});
-                                break;
-                        }
-
-                    })
-                    .catch(() => {
-                        toast.error("Problema nel recuperare gli intermediari", {theme: "colored"});
-                    })
-                    .finally(() => {
-                        this.setState({isLoading: false});
-                    });
-            });
-    }
-
-    handleOrder(orderBy: string, ordering: string) {
-        this.setState({
-            order: {
-                by: orderBy,
-                ing: ordering
-            }
-        });
-        this.getPage(0);
+    create() {
+        this.props.history.push(this.service + "/create");
     }
 
     handlePageChange(requestedPage: number) {
         this.getPage(requestedPage);
     }
 
-    handleDelete(broker: Broker) {
-        this.setState({showDeleteModal: true});
-        this.setState({brokerToDelete: broker});
+    handleDetails(code: string) {
+        this.props.history.push( this.service + "/" + code);
     }
 
-    removeBroker() {
-        if (this.state.brokersPaginated?.page_info.items_found === 1) {
-            // if the last one in the page was removed, get previous page...
-            this.getPage(this.state.pageIndex - 1);
-        } else {
-            // ... else stay in that page
-            this.getPage(this.state.pageIndex);
+    handleEdit(code: string) {
+        this.props.history.push(this.service + "/" + code + "?edit");
+    }
+
+    handleDelete(brokerPSP: string, index: number) {
+        this.setState({showDeleteModal: true});
+        this.setState({brokerToDelete: brokerPSP});
+        this.setState({brokerIndex: index});
+    }
+
+    removeCreditorInstitution() {
+        const filteredPSP = this.state.brokers_psp.filter((ci: any) => ci.psp_code !== this.state.brokerToDelete.psp_code);
+        this.setState({brokers_psp: filteredPSP});
+
+        if (filteredPSP.length === 0 && this.state.page_info.total_pages > 1) {
+            this.getPage(0);
         }
     }
 
-    deleteBrokerCall(access_token: string, broker_code: string) {
-        apiClient.deleteBroker({
-            Authorization: `Bearer ${access_token}`,
-            ApiKey: "",
-            brokercode: broker_code
-        })
-            .then((response: Validation<IResponseType<number, ProblemJson | undefined>>) => {
-                // eslint-disable-next-line no-underscore-dangle
-                switch (response._tag) {
-                    case "Right":
-                        if (response.right.status === 200) {
-                            toast.info("Rimozione avvenuta con successo");
-                            this.removeBroker();
-                        } else {
-                            const body = response.right.value as ProblemJson;
-                            toast.error(body.title, {theme: "colored"});
-                        }
-                        break;
-                    case "Left":
-                        toast.error("Errore", {theme: "colored"});
-                        break;
+        handleOrder(orderBy: string, ordering: string) {
+            this.setState({
+                order: {
+                    by: orderBy,
+                    ing: ordering
                 }
-            })
-            .catch(() => {
-                toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
             });
-    }
+            this.getPage(0);
+        }
 
     hideDeleteModal = (status: string) => {
+
         if (status === "ok") {
             this.context.instance.acquireTokenSilent({
                 ...loginRequest,
                 account: this.context.accounts[0]
             })
-                .then((response: any) => {
-                    if (this.state.brokerToDelete) {
-                        this.deleteBrokerCall(response.accessToken, this.state.brokerToDelete.broker_code);
-                    }
-                });
-
+                    .then((response: any) => {
+                        apiClient.deleteBrokerPsp({
+                            Authorization: `Bearer ${response.accessToken}`,
+                            ApiKey: "",
+                            brokerpspcode: this.state.brokerToDelete.broker_psp_code
+                        })
+                                .then((res: any) => {
+                                    if (res.right.status === 200) {
+                                        toast.info("Rimozione avvenuta con successo");
+                                        this.removeCreditorInstitution();
+                                    } else {
+                                        toast.error(res.right.value.title, {theme: "colored"});
+                                    }
+                                })
+                                .catch(() => {
+                                    toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                                });
+                    });
         }
         this.setState({showDeleteModal: false});
     };
-
-    handleDetails(code: string) {
-        this.props.history.push("/brokers/" + code);
-    }
-
-    createBrokerPage() {
-        this.props.history.push("/brokers/create");
-    }
-
-    handleEdit(code: string) {
-        this.props.history.push("/brokers/" + code + "?edit");
-    }
 
     handleFilterCallback = (filters: any) => {
         this.setState({filters});
@@ -218,87 +196,96 @@ export default class BrokersPage extends React.Component<IProps, IState> {
 
     render(): React.ReactNode {
         const isLoading = this.state.isLoading;
-        const brokers: any = [];
+        const pageInfo = this.state.page_info;
+        const showDeleteModal = this.state.showDeleteModal;
+        const brokerPSPList: any = [];
+        const brokerPSPToDeleteName = this.state.brokerToDelete.description;
+        const brokerPSPToDeleteCode = this.state.brokerToDelete.broker_psp_code;
 
-        this.state.brokersPaginated?.brokers.map((elem, index) => {
+        this.state.brokers_psp.map((broker: any, index: number) => {
             const code = (
-                <tr key={index}>
-                    <td>{elem.broker_code}</td>
-                    <td>{elem.description}</td>
-                    <td className="text-center">
-                        {elem.enabled && <FaCheck className="text-success"/>}
-                        {!elem.enabled && <FaTimes className="text-danger"/>}
-                    </td>
-                    <td className="text-right">
-                        <OverlayTrigger placement="top"
-                                        overlay={<Tooltip id={`tooltip-details-${index}`}>View details</Tooltip>}>
-                            <FaEye role="button" className="mr-3"
-                                   onClick={() => this.handleDetails(elem.broker_code)}/>
-                        </OverlayTrigger>
-                        <OverlayTrigger placement="top"
-                                        overlay={<Tooltip id={`tooltip-edit-${index}`}>Modifica</Tooltip>}>
-                            <FaEdit role="button" className="mr-3"
-                                    onClick={() => this.handleEdit(elem.broker_code)}/>
-                        </OverlayTrigger>
-                        <OverlayTrigger placement="top"
-                                        overlay={<Tooltip id={`tooltip-delete-${index}`}>Delete item</Tooltip>}>
-                            <FaTrash role="button" className="mr-3" onClick={() => this.handleDelete(elem)}/>
-                        </OverlayTrigger>
-                    </td>
-                </tr>
+                    <tr key={index}>
+                        <td>{broker.broker_psp_code}</td>
+                        <td>{broker.description}</td>
+                        <td className="text-center">
+                            {broker.enabled && <FaCheck className="text-success"/>}
+                            {!broker.enabled && <FaTimes className="text-danger"/>}
+                        </td>
+                        <td className="text-right">
+                            {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
+                            <OverlayTrigger placement="top"
+                                            overlay={<Tooltip id={`tooltip-details-${index}`}>Visualizza</Tooltip>}>
+                                <FaEye role="button" className="mr-3"
+                                       onClick={() => this.handleDetails(broker.broker_psp_code)}/>
+                            </OverlayTrigger>
+                            {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
+                            <OverlayTrigger placement="top"
+                                            overlay={<Tooltip id={`tooltip-edit-${index}`}>Modifica</Tooltip>}>
+                                {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
+                                <FaEdit role="button" className="mr-3" onClick={() => this.handleEdit(broker.broker_psp_code)}/>
+                            </OverlayTrigger>
+                            {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
+                            <OverlayTrigger placement="top"
+                                            overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
+                                {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
+                                <FaTrash role="button" className="mr-3" onClick={() => this.handleDelete(broker, index)}/>
+                            </OverlayTrigger>
+                        </td>
+                    </tr>
             );
-            brokers.push(code);
+            brokerPSPList.push(code);
         });
 
+        return (
+                <div className="container-fluid creditor-institutions">
+                    <div className="row">
+                        <div className="col-md-10 mb-3">
+                            <h2>Intermediari PSP</h2>
+                        </div>
+                        <div className="col-md-2 text-right">
+                            <Button onClick={this.create}>Nuovo <FaPlus/></Button>
+                        </div>
+                        <div className="col-md-12">
+                            <Filters configuration={this.filter} onFilter={this.handleFilterCallback} />
 
-        return <div className="container-fluid creditor-institutions">
-            <div className="row">
-                <div className="col-md-10 mb-3">
-                    <h2>Intermediari EC</h2>
-                </div>
-                <div className="col-md-2 text-right">
-                    <Button onClick={this.createBrokerPage}>Nuovo <FaPlus/></Button>
-                </div>
-                <div className="col-md-12">
-                    <Filters configuration={this.filter} onFilter={this.handleFilterCallback}/>
-                    {isLoading && (<p>Loading ...</p>)}
-                    {
-                        !isLoading && (
-                            <>
-                                <Table hover responsive size="sm">
-                                    <thead>
-                                    <tr>
-                                        <th className="fixed-td-width">
-                                            <Ordering currentOrderBy={this.state.order.by} currentOrdering={this.state.order.ing} orderBy={"CODE"} ordering={"DESC"} handleOrder={this.handleOrder} />
-                                            Codice
-                                        </th>
-                                        <th className="fixed-td-width">
-                                            <Ordering currentOrderBy={this.state.order.by} currentOrdering={this.state.order.ing} orderBy={"NAME"} ordering={"DESC"} handleOrder={this.handleOrder} />
-                                            Descrizione
-                                        </th>
-                                        <th className="text-center">Abilitato</th>
-                                        <th/>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {brokers}
-                                    </tbody>
-                                </Table>
+                            {isLoading && (<FaSpinner className="spinner"/>)}
+                            {
+                                !isLoading && (
+                                        <>
+                                            <Table hover responsive size="sm">
+                                                <thead>
+                                                <tr>
+                                                    <th className="fixed-td-width">
+                                                        <Ordering currentOrderBy={this.state.order.by} currentOrdering={this.state.order.ing} orderBy={"CODE"} ordering={"DESC"} handleOrder={this.handleOrder} />
+                                                        Codice
+                                                    </th>
+                                                    <th className="fixed-td-width">
+                                                        <Ordering currentOrderBy={this.state.order.by} currentOrdering={this.state.order.ing} orderBy={"NAME"} ordering={"DESC"} handleOrder={this.handleOrder} />
+                                                        Descrizione
+                                                    </th>
+                                                    <th className="text-center">Abilitato</th>
+                                                    <th/>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {brokerPSPList}
+                                                </tbody>
+                                            </Table>
 
-                                <Paginator pageInfo={this.state.brokersPaginated?.page_info as PageInfo}
-                                           onPageChanged={this.handlePageChange}/>
-                            </>
-                        )
-                    }
-                </div>
-            </div>
+                                            <Paginator pageInfo={pageInfo} onPageChanged={this.handlePageChange}/>
+                                        </>
+                                )
+                            }
+                        </div>
+                    </div>
+                    <ConfirmationModal show={showDeleteModal} handleClose={this.hideDeleteModal}>
+                        <p>Sei sicuro di voler eliminare il seguente intermediario PSP?</p>
+                        <ul>
+                            <li>{brokerPSPToDeleteName} - {brokerPSPToDeleteCode}</li>
+                        </ul>
+                    </ConfirmationModal>
 
-            <ConfirmationModal show={this.state.showDeleteModal} handleClose={this.hideDeleteModal}>
-                <p>Sei sicuro di voler eliminare il seguente intermediario?</p>
-                <ul>
-                    <li>{this.state.brokerToDelete?.description} - {this.state.brokerToDelete?.broker_code}</li>
-                </ul>
-            </ConfirmationModal>
-        </div>;
+                </div>
+        );
     }
 }

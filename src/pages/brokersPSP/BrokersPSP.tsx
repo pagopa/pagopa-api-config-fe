@@ -104,7 +104,7 @@ export default class BrokersPSP extends React.Component<IProps, IState> {
                     limit: 10,
                     page,
                     code: this.state.filters.code,
-                    name: this.state.filters.name
+                    name: this.state.filters.name,
                     orderby: this.state.order.by,
                     ordering: this.state.order.ing
                 }).then((response: any) => {
