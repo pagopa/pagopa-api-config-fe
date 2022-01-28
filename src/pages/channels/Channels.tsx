@@ -93,11 +93,8 @@ export default class Channels extends React.Component<IProps, IState> {
                     ApiKey: "",
                     limit: 10,
                     page,
-<<<<<<< HEAD
-                    code: this.state.filters.code
-=======
+                    code: this.state.filters.code,
                     ordering: this.state.order.ing
->>>>>>> 7bcb38f (ordering and other cosmetic fix)
                 }).then((response: any) => {
                     this.setState({
                         channels: response.right.value.channels,
