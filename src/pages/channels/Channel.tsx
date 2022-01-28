@@ -88,26 +88,27 @@ export default class Channel extends React.Component<IProps, IState> {
             ...loginRequest,
             account: this.context.accounts[0]
         })
+            .then((response: any) => {
+                apiClient.getChannel({
+                    Authorization: `Bearer ${response.accessToken}`,
+                    ApiKey: "",
+                    channelcode: code
+                })
                 .then((response: any) => {
-                    apiClient.getChannel({
-                        Authorization: `Bearer ${response.accessToken}`,
-                        ApiKey: "",
-                        channelcode: code
-                    })
-                            .then((response: any) => {
-                                console.log("CHANNEL", response);
-                                if (response.right.status === 200) {
-                                    const channel = {...this.state.channel, ...response.right.value};
-                                    this.setState({channel});
-                                } else {
-                                    this.setState({isError: true});
-                                }
-                            })
-                            .catch(() => {
-                                this.setState({isError: true});
-                            })
-                            .finally(() => this.setState({isLoading: false}));
-                });
+                    // eslint-disable-next-line no-console
+                    console.log("CHANNEL", response);
+                    if (response.right.status === 200) {
+                        const channel = {...this.state.channel, ...response.right.value};
+                        this.setState({channel});
+                    } else {
+                        this.setState({isError: true});
+                    }
+                })
+                .catch(() => {
+                    this.setState({isError: true});
+                })
+                .finally(() => this.setState({isLoading: false}));
+            });
     }
 
     getPaymentTypeList(code: string): void {
