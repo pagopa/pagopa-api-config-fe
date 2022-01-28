@@ -1,6 +1,14 @@
 import React from 'react';
 import {Button, OverlayTrigger, Table, Tooltip} from "react-bootstrap";
-import {FaCheck, FaEdit, FaEye, FaPlus, FaSpinner, FaTimes, FaTrash} from "react-icons/fa";
+import {
+    FaCheck,
+    FaEdit,
+    FaEye,
+    FaPlus,
+    FaSpinner,
+    FaTimes,
+    FaTrash
+} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
 import {apiClient} from "../../util/apiClient";
@@ -8,6 +16,7 @@ import Paginator from "../../components/Paginator";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import {loginRequest} from "../../authConfig";
 import Filters from "../../components/Filters";
+import Ordering from "../../components/Ordering";
 
 interface IProps {
     history: {
@@ -31,6 +40,7 @@ interface IState {
     showDeleteModal: boolean;
     creditorInstitutionToDelete: any;
     creditorInstitutionIndex: number;
+    order: any;
 }
 
 export default class CreditorInstitutions extends React.Component<IProps, IState> {
@@ -55,7 +65,11 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
             isLoading: false,
             showDeleteModal: false,
             creditorInstitutionToDelete: {},
-            creditorInstitutionIndex: -1
+            creditorInstitutionIndex: -1,
+            order: {
+                by: "NAME",
+                ing: "DESC"
+            }
         };
 
         this.filter = {
@@ -70,6 +84,7 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
         };
 
         this.handlePageChange = this.handlePageChange.bind(this);
+        this.handleOrder = this.handleOrder.bind(this);
         this.createCreditorInstitution = this.createCreditorInstitution.bind(this);
     }
 
@@ -87,7 +102,9 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
                     limit: 10,
                     page,
                     code: this.state.filters.code,
-                    name: this.state.filters.name
+                    name: this.state.filters.name,
+                    orderby: this.state.order.by,
+                    ordering: this.state.order.ing
                 })
                     .then((response: any) => {
 
@@ -112,6 +129,16 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
 
     createCreditorInstitution() {
         this.props.history.push("/creditor-institutions/create");
+    }
+
+    handleOrder(orderBy: string, ordering: string) {
+        this.setState({
+            order: {
+                by: orderBy,
+                ing: ordering
+            }
+        });
+        this.getPage(0);
     }
 
     handlePageChange(requestedPage: number) {
@@ -235,8 +262,14 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
                                     <Table hover responsive size="sm">
                                         <thead>
                                         <tr>
-                                            <th className="fixed-td-width">Ente creditore</th>
-                                            <th className="fixed-td-width">Codice</th>
+                                            <th className="fixed-td-width">
+                                                <Ordering currentOrderBy={this.state.order.by} currentOrdering={this.state.order.ing} orderBy={"NAME"} ordering={"DESC"} handleOrder={this.handleOrder} />
+                                                Ente creditore
+                                            </th>
+                                            <th className="fixed-td-width">
+                                                <Ordering currentOrderBy={this.state.order.by} currentOrdering={this.state.order.ing} orderBy={"CODE"} ordering={"DESC"} handleOrder={this.handleOrder} />
+                                                Codice
+                                            </th>
                                             <th className="text-center">Abilitato</th>
                                             <th/>
                                         </tr>

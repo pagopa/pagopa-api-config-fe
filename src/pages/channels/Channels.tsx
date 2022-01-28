@@ -8,6 +8,7 @@ import Paginator from "../../components/Paginator";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import {loginRequest} from "../../authConfig";
 import Filters from "../../components/Filters";
+import Ordering from "../../components/Ordering";
 
 interface IProps {
     history: {
@@ -30,6 +31,7 @@ interface IState {
     showDeleteModal: boolean;
     channelToDelete: any;
     channelIndex: number;
+    order: any;
 }
 
 export default class Channels extends React.Component<IProps, IState> {
@@ -55,7 +57,11 @@ export default class Channels extends React.Component<IProps, IState> {
             isLoading: false,
             showDeleteModal: false,
             channelToDelete: {},
-            channelIndex: -1
+            channelIndex: -1,
+            order: {
+                by: "CODE",
+                ing: "DESC"
+            }
         };
 
         this.filter = {
@@ -70,6 +76,7 @@ export default class Channels extends React.Component<IProps, IState> {
         };
 
         this.handlePageChange = this.handlePageChange.bind(this);
+        this.handleOrder = this.handleOrder.bind(this);
         this.create = this.create.bind(this);
     }
 
@@ -86,7 +93,11 @@ export default class Channels extends React.Component<IProps, IState> {
                     ApiKey: "",
                     limit: 10,
                     page,
+<<<<<<< HEAD
                     code: this.state.filters.code
+=======
+                    ordering: this.state.order.ing
+>>>>>>> 7bcb38f (ordering and other cosmetic fix)
                 }).then((response: any) => {
                     this.setState({
                         channels: response.right.value.channels,
@@ -113,6 +124,16 @@ export default class Channels extends React.Component<IProps, IState> {
 
     handlePageChange(requestedPage: number) {
         this.getPage(requestedPage);
+    }
+
+    handleOrder(orderBy: string, ordering: string) {
+        this.setState({
+            order: {
+                by: orderBy,
+                ing: ordering
+            }
+        });
+        this.getPage(0);
     }
 
     handleDetails(code: string) {
@@ -183,8 +204,8 @@ export default class Channels extends React.Component<IProps, IState> {
         this.state.channels.map((channel: any, index: number) => {
             const code = (
                 <tr key={index}>
-                    <td>{channel.description}</td>
                     <td>{channel.channel_code}</td>
+                    <td>{channel.description}</td>
                     <td className="text-center">
                         {channel.enabled && <FaCheck className="text-success"/>}
                         {!channel.enabled && <FaTimes className="text-danger"/>}
@@ -232,8 +253,13 @@ export default class Channels extends React.Component<IProps, IState> {
                                     <Table hover responsive size="sm">
                                         <thead>
                                         <tr>
-                                            <th className="fixed-td-width">Canale</th>
-                                            <th className="fixed-td-width">Codice</th>
+                                            <th className="fixed-td-width">
+                                                <Ordering currentOrderBy={this.state.order.by} currentOrdering={this.state.order.ing} orderBy={"CODE"} ordering={"DESC"} handleOrder={this.handleOrder} />
+                                                Codice
+                                            </th>
+                                            <th className="fixed-td-width">
+                                                Descrizione
+                                            </th>
                                             <th className="text-center">Abilitato</th>
                                             <th/>
                                         </tr>

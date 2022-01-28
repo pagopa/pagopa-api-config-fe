@@ -117,7 +117,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
                         if (response.right.status === 200) {
                             const channel = {...this.state.channel, ...response.right.value};
                             this.setState({channel});
-                            this.setState({channelName: response.right.value.description});
+                            this.setState({channelName: response.right.value.channel_code});
                             this.updateBackup("channel", response.right.value);
                         } else {
                             this.setState({isError: true});

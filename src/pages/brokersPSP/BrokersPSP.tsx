@@ -1,6 +1,14 @@
 import React from 'react';
 import {Button, OverlayTrigger, Table, Tooltip} from "react-bootstrap";
-import {FaCheck, FaEdit, FaEye, FaPlus, FaSpinner, FaTimes, FaTrash} from "react-icons/fa";
+import {
+    FaCheck,
+    FaEdit,
+    FaEye,
+    FaPlus,
+    FaSpinner,
+    FaTimes,
+    FaTrash
+} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
 import {apiClient} from "../../util/apiClient";
@@ -8,6 +16,7 @@ import Paginator from "../../components/Paginator";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import {loginRequest} from "../../authConfig";
 import Filters from "../../components/Filters";
+import Ordering from "../../components/Ordering";
 
 interface IProps {
     history: {
@@ -31,6 +40,7 @@ interface IState {
     showDeleteModal: boolean;
     brokerToDelete: any;
     brokerIndex: number;
+    order: any;
 }
 
 export default class BrokersPSP extends React.Component<IProps, IState> {
@@ -57,7 +67,11 @@ export default class BrokersPSP extends React.Component<IProps, IState> {
             isLoading: false,
             showDeleteModal: false,
             brokerToDelete: {},
-            brokerIndex: -1
+            brokerIndex: -1,
+            order: {
+                by: "CODE",
+                ing: "DESC"
+            }
         };
 
         this.filter = {
@@ -71,6 +85,7 @@ export default class BrokersPSP extends React.Component<IProps, IState> {
             }
         };
 
+        this.handleOrder = this.handleOrder.bind(this);
         this.handlePageChange = this.handlePageChange.bind(this);
         this.create = this.create.bind(this);
     }
@@ -90,6 +105,8 @@ export default class BrokersPSP extends React.Component<IProps, IState> {
                     page,
                     code: this.state.filters.code,
                     name: this.state.filters.name
+                    orderby: this.state.order.by,
+                    ordering: this.state.order.ing
                 }).then((response: any) => {
                         this.setState({
                             brokers_psp: response.right.value.brokers_psp,
@@ -176,6 +193,16 @@ export default class BrokersPSP extends React.Component<IProps, IState> {
         this.getPage(0);
     };
 
+    handleOrder(orderBy: string, ordering: string) {
+        this.setState({
+            order: {
+                by: orderBy,
+                ing: ordering
+            }
+        });
+        this.getPage(0);
+    }
+
     render(): React.ReactNode {
         const isLoading = this.state.isLoading;
         const pageInfo = this.state.page_info;
@@ -187,8 +214,8 @@ export default class BrokersPSP extends React.Component<IProps, IState> {
         this.state.brokers_psp.map((broker: any, index: number) => {
             const code = (
                 <tr key={index}>
-                    <td>{broker.description}</td>
                     <td>{broker.broker_psp_code}</td>
+                    <td>{broker.description}</td>
                     <td className="text-center">
                         {broker.enabled && <FaCheck className="text-success"/>}
                         {!broker.enabled && <FaTimes className="text-danger"/>}
@@ -237,8 +264,14 @@ export default class BrokersPSP extends React.Component<IProps, IState> {
                                     <Table hover responsive size="sm">
                                         <thead>
                                         <tr>
-                                            <th className="fixed-td-width">Intermediario PSP</th>
-                                            <th className="fixed-td-width">Codice</th>
+                                            <th className="fixed-td-width">
+                                                <Ordering currentOrderBy={this.state.order.by} currentOrdering={this.state.order.ing} orderBy={"CODE"} ordering={"DESC"} handleOrder={this.handleOrder} />
+                                                Codice
+                                            </th>
+                                            <th className="fixed-td-width">
+                                                <Ordering currentOrderBy={this.state.order.by} currentOrdering={this.state.order.ing} orderBy={"NAME"} ordering={"DESC"} handleOrder={this.handleOrder} />
+                                                Descrizione
+                                            </th>
                                             <th className="text-center">Abilitato</th>
                                             <th/>
                                         </tr>
@@ -257,7 +290,7 @@ export default class BrokersPSP extends React.Component<IProps, IState> {
                 <ConfirmationModal show={showDeleteModal} handleClose={this.hideDeleteModal}>
                     <p>Sei sicuro di voler eliminare il seguente intermediario PSP?</p>
                     <ul>
-                        <li>{brokerPSPToDeleteName} - {brokerPSPToDeleteCode}</li>
+                        <li>{brokerPSPToDeleteCode} - {brokerPSPToDeleteName}</li>
                     </ul>
                 </ConfirmationModal>
 

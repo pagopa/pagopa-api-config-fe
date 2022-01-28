@@ -68,7 +68,7 @@ export default class EditBrokerPSP extends React.Component<IProps, IState> {
                 }).then((response: any) => {
                     if (response.right.status === 200) {
                         this.setState({brokerPSP: response.right.value});
-                        this.setState({brokerPspName: response.right.value.description});
+                        this.setState({brokerPspName: response.right.value.broker_psp_code});
                         this.updateBackup("brokerPSP", response.right.value);
                     } else {
                         this.setState({isError: true});
@@ -163,17 +163,16 @@ export default class EditBrokerPSP extends React.Component<IProps, IState> {
                                         </Card.Header>
                                         <Card.Body>
                                             <div className="row">
-                                                <Form.Group controlId="code" className="col-md-4">
-                                                    <Form.Label>Descrizione</Form.Label>
-                                                    <Form.Control name="description" placeholder=""
-                                                                  value={this.state.brokerPSP.description}
-                                                                  onChange={(e) => this.handleChange(e)}/>
-                                                </Form.Group>
-
                                                 <Form.Group controlId="code" className="col-md-3">
                                                     <Form.Label>Codice</Form.Label>
                                                     <Form.Control name="broker_psp_code" placeholder=""
                                                                   value={this.state.brokerPSP.broker_psp_code}
+                                                                  onChange={(e) => this.handleChange(e)}/>
+                                                </Form.Group>
+                                                <Form.Group controlId="code" className="col-md-4">
+                                                    <Form.Label>Descrizione</Form.Label>
+                                                    <Form.Control name="description" placeholder=""
+                                                                  value={this.state.brokerPSP.description}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
                                                 <Form.Group controlId="enabled" className="col-md-2">

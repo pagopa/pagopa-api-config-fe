@@ -134,7 +134,7 @@ export default class EditBrokersPage extends React.Component<IProps, IState> {
                     <div className="col-md-12 mb-5">
                         <Breadcrumb>
                             <Breadcrumb.Item href="/brokers">Intermediario</Breadcrumb.Item>
-                            <Breadcrumb.Item active>{this.state.backup.brokerDetails.description || "-"}</Breadcrumb.Item>
+                            <Breadcrumb.Item active>{this.state.backup.brokerDetails.broker_code || "-"}</Breadcrumb.Item>
                         </Breadcrumb>
                     </div>
                     <div className="col-md-12">
@@ -149,7 +149,7 @@ export default class EditBrokersPage extends React.Component<IProps, IState> {
                                 <>
                                     <div className="row">
                                         <div className="col-md-12">
-                                            <h2>{this.state.backup.brokerDetails.description || "-"}</h2>
+                                            <h2>{this.state.backup.brokerDetails.broker_code || "-"}</h2>
                                         </div>
                                     </div>
                                     <Card>
@@ -159,15 +159,15 @@ export default class EditBrokersPage extends React.Component<IProps, IState> {
                                         <Card.Body>
                                             <div className="row">
                                                 <Form.Group controlId="code" className="col-md-3">
-                                                    <Form.Label>Nome</Form.Label>
-                                                    <Form.Control name="description" placeholder=""
-                                                                  value={this.state.brokerDetails.description}
-                                                                  onChange={(e) => this.handleChange(e)}/>
-                                                </Form.Group>
-                                                <Form.Group controlId="code" className="col-md-3">
                                                     <Form.Label>Codice</Form.Label>
                                                     <Form.Control name="broker_code" placeholder=""
                                                                   value={this.state.brokerDetails.broker_code}
+                                                                  onChange={(e) => this.handleChange(e)}/>
+                                                </Form.Group>
+                                                <Form.Group controlId="description" className="col-md-3">
+                                                    <Form.Label>Descrizione</Form.Label>
+                                                    <Form.Control name="description" placeholder=""
+                                                                  value={this.state.brokerDetails.description}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
                                                 <Form.Group controlId="enabled" className="col-md-3">
