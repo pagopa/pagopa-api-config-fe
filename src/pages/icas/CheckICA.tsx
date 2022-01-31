@@ -2,7 +2,7 @@ import React from 'react';
 import {Breadcrumb, Form, Table} from 'react-bootstrap';
 import {Props} from "io-ts";
 import {FaCheck, FaExclamationTriangle, FaMinus, FaSpinner, FaTimes} from "react-icons/fa";
-import IBAN from "iban";
+import {isValidIBAN} from "ibantools";
 import {MsalContext} from "@azure/msal-react";
 import axios from "axios";
 import {apiClient} from "../../util/apiClient";
@@ -243,7 +243,7 @@ export default class CheckIca extends React.Component<IProps, IState> {
      * @param encodings: Encoding list of Creditor Institution
      */
     evaluateBarcode128aim(iban: XMLData, encodings: Array<Encoding>) {
-        const postalCode = iban.value.substr(16);
+        const postalCode = iban.value.substring(16);
         // eslint-disable-next-line functional/no-let
         let found = false;
         for (const encoding of encodings) {
@@ -253,14 +253,14 @@ export default class CheckIca extends React.Component<IProps, IState> {
                     // eslint-disable-next-line functional/immutable-data
                     iban.valid = "valid";
                     // eslint-disable-next-line functional/immutable-data
-                    iban.note = "IBAN nuovo";
+                    iban.note = "IBAN nuovo. Codice postale presente.";
                 }
                 break;
             }
         }
         if (!found) {
             // eslint-disable-next-line functional/immutable-data
-            iban.valid = "undefined";
+            iban.valid = "not valid";
             // eslint-disable-next-line functional/immutable-data
             iban.note = "Codice postale non presente";
             // eslint-disable-next-line functional/immutable-data
@@ -268,13 +268,16 @@ export default class CheckIca extends React.Component<IProps, IState> {
         }
 
         const ibanList = this.state.ibans;
-        // eslint-disable-next-line functional/no-let
-        for (let i of ibanList) {
+        ibanList.forEach((i) => {
             if (i.value === iban.value) {
-                i = {...iban};
-                break;
+                // eslint-disable-next-line functional/immutable-data
+                i.valid = iban.valid;
+                // eslint-disable-next-line functional/immutable-data
+                i.note = iban.note;
+                // eslint-disable-next-line functional/immutable-data
+                i.action = iban.action;
             }
-        }
+        });
         this.setState({ibans: ibanList});
     }
 
@@ -330,7 +333,7 @@ export default class CheckIca extends React.Component<IProps, IState> {
 
         if (!found) {
             // check ABI
-            if (iban.value.substr(5, 5) === "07601") {
+            if (iban.value.substring(5, 10) === "07601") {
                 // postal iban
                 this.checkBarcode128aim(creditorInstitutionCode, iban);
             } else {
@@ -362,14 +365,14 @@ export default class CheckIca extends React.Component<IProps, IState> {
                         const checkedIbans: Array<XMLData> = [];
                         this.state.ibans.forEach((iban: XMLData) => {
                             // validate iban
-                            if (IBAN.isValid(iban.value)) {
+                            if (isValidIBAN(iban.value)) {
                                 // eslint-disable-next-line no-param-reassign
                                 iban = this.evaluateIban(creditorInstitutionCode, response.right.value.ibans, iban);
                             } else {
                                 // eslint-disable-next-line functional/immutable-data
                                 iban.valid = "not valid";
                                 // eslint-disable-next-line functional/immutable-data
-                                iban.note = "IBAN non corretto";
+                                iban.note = "IBAN non valido: non rispetta ISO 13616";
                             }
 
                             const ibanToPush = {
@@ -646,6 +649,9 @@ export default class CheckIca extends React.Component<IProps, IState> {
 
                                 </tbody>
                             </Table>
+                            <p className={"small font-italic"}>
+                                *Tutti gli IBAN sono stati validati nel rispetto della ISO 13616.
+                            </p>
                         </div>
                     }
                 </div>
