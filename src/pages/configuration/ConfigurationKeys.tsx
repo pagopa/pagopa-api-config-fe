@@ -349,6 +349,7 @@ export default class ConfigurationKeys extends React.Component<IProps, IState> {
                 filtered_configuration_keys: this.state.configuration_keys.filter((c: ConfigurationKey) => c.config_key.toLowerCase().includes(filters.code.toLowerCase()))
             });
         }
+
         this.order(this.state.order.by, this.state.order.ing);
     };
 
