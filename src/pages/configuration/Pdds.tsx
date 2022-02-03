@@ -99,6 +99,7 @@ export default class Pdds extends React.Component<IProps, IState> {
                             pdds: response.right.value.pdds,
                             filtered_pdds: response.right.value.pdds
                         });
+
                         this.order(this.state.order.by, this.state.order.ing);
                     })
                     .catch(() => {
@@ -136,6 +137,7 @@ export default class Pdds extends React.Component<IProps, IState> {
                 ing: ordering
             }
         });
+
         this.order(orderBy, ordering);
     }
 
@@ -339,6 +341,7 @@ export default class Pdds extends React.Component<IProps, IState> {
                 filtered_pdds: this.state.pdds.filter((c: Pdd) => c.id_pdd.toLowerCase().includes(filters.code.toLowerCase()))
             });
         }
+
         this.order(this.state.order.by, this.state.order.ing);
     };
 
