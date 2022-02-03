@@ -177,6 +177,9 @@ export default class EditChannel extends React.Component<IProps, IState> {
                             });
                             this.setState({paymentTypeLegend});
                         }
+                    })
+                    .catch(() => {
+                        this.setState({isError: true});
                     });
             });
     }

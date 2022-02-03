@@ -145,6 +145,9 @@ export default class Channel extends React.Component<IProps, IState> {
                     });
                     this.setState({paymentTypeLegend});
                 }
+            })
+            .catch(() => {
+                this.setState({isError: true});
             });
         });
     }

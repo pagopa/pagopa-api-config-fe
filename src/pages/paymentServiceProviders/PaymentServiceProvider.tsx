@@ -1,5 +1,5 @@
 import React from "react";
-import {Alert, Badge, Breadcrumb, Card, Form, Table} from "react-bootstrap";
+import {Alert, Breadcrumb, Card, Form, Table} from "react-bootstrap";
 import {FaCheck, FaInfoCircle, FaSpinner, FaTimes} from "react-icons/fa";
 import {MsalContext} from "@azure/msal-react";
 import {apiClient} from "../../util/apiClient";
@@ -109,6 +109,9 @@ export default class PaymentServiceProvider extends React.Component<IProps, ISta
                             });
                             this.setState({paymentTypeLegend});
                         }
+                    })
+                    .catch(() => {
+                        this.setState({isError: true});
                     });
             });
     }
