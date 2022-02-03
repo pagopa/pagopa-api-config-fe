@@ -117,7 +117,7 @@ export default class Channel extends React.Component<IProps, IState> {
             account: this.context.accounts[0]
         })
                 .then((response: any) => {
-                    apiClient.getPaymentTypes({
+                    apiClient.getChannelPaymentTypes({
                         Authorization: `Bearer ${response.accessToken}`,
                         ApiKey: "",
                         channelcode: code

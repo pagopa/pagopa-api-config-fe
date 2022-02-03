@@ -136,7 +136,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
             account: this.context.accounts[0]
         })
             .then((response: any) => {
-                apiClient.getPaymentTypes({
+                apiClient.getChannelPaymentTypes({
                     Authorization: `Bearer ${response.accessToken}`,
                     ApiKey: "",
                     channelcode: code
@@ -219,7 +219,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
                 account: this.context.accounts[0]
             })
                     .then((response: any) => {
-                        apiClient.deletePaymentType({
+                        apiClient.deleteChannelPaymentType({
                             Authorization: `Bearer ${response.accessToken}`,
                             ApiKey: "",
                             channelcode: this.state.code,
@@ -263,7 +263,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
                 const data = {
                     "payment_types": ptList
                 } as PspChannelPaymentTypes;
-                apiClient.createPaymentType({
+                apiClient.createChannelPaymentType({
                     Authorization: `Bearer ${response.accessToken}`,
                     ApiKey: "",
                     channelcode: this.state.code,
