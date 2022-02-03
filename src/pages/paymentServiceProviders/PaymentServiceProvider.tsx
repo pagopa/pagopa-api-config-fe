@@ -5,6 +5,7 @@ import {MsalContext} from "@azure/msal-react";
 import {apiClient} from "../../util/apiClient";
 import {loginRequest} from "../../authConfig";
 import {PaymentServiceProviderDetails} from "../../../generated/api/PaymentServiceProviderDetails";
+import {PaymentType} from "../../../generated/api/PaymentType";
 
 interface IProps {
     match: {
@@ -18,6 +19,7 @@ interface IState {
     code: string;
     paymentServiceProvider: PaymentServiceProviderDetails;
     channelList: any;
+    paymentTypeLegend: any;
     edit: boolean;
 }
 
@@ -33,6 +35,7 @@ export default class PaymentServiceProvider extends React.Component<IProps, ISta
             code: "",
             paymentServiceProvider: {} as PaymentServiceProviderDetails,
             channelList: [],
+            paymentTypeLegend: {},
             edit: false
         };
     }
@@ -67,24 +70,47 @@ export default class PaymentServiceProvider extends React.Component<IProps, ISta
             ...loginRequest,
             account: this.context.accounts[0]
         })
-                .then((response: any) => {
-                    apiClient.getPaymentServiceProvidersChannels({
-                        Authorization: `Bearer ${response.accessToken}`,
-                        ApiKey: "",
-                        pspcode: code
+            .then((response: any) => {
+                apiClient.getPaymentServiceProvidersChannels({
+                    Authorization: `Bearer ${response.accessToken}`,
+                    ApiKey: "",
+                    pspcode: code
+                })
+                    .then((response: any) => {
+                        if (response.right.status === 200) {
+                            this.setState({channelList: response.right.value.channels});
+                        } else {
+                            this.setState({isError: true});
+                        }
                     })
-                            .then((response: any) => {
-                                if (response.right.status === 200) {
-                                    this.setState({channelList: response.right.value.channels});
-                                } else {
-                                    this.setState({isError: true});
-                                }
-                            })
-                            .catch(() => {
-                                this.setState({isError: true});
-                            })
-                            .finally(() => this.setState({isLoading: false}));
-                });
+                    .catch(() => {
+                        this.setState({isError: true});
+                    })
+                    .finally(() => this.setState({isLoading: false}));
+            });
+    }
+
+    getPaymentTypeLegend(): void {
+        this.context.instance.acquireTokenSilent({
+            ...loginRequest,
+            account: this.context.accounts[0]
+        })
+            .then((response: any) => {
+                apiClient.getPaymentTypes({
+                    Authorization: `Bearer ${response.accessToken}`,
+                    ApiKey: ""
+                })
+                    .then((response: any) => {
+                        if (response.right.status === 200) {
+                            const paymentTypeLegend = {} as any;
+                            response.right.value.payment_types.forEach((pt: PaymentType) => {
+                                // eslint-disable-next-line functional/immutable-data
+                                paymentTypeLegend[pt.payment_type] = pt.description;
+                            });
+                            this.setState({paymentTypeLegend});
+                        }
+                    });
+            });
     }
 
     componentDidMount(): void {
@@ -92,6 +118,7 @@ export default class PaymentServiceProvider extends React.Component<IProps, ISta
         this.setState({isError: false});
         this.getPaymentServiceProvider(code);
         this.getChannels(code);
+        this.getPaymentTypeLegend();
     }
 
     render(): React.ReactNode {
@@ -113,6 +140,13 @@ export default class PaymentServiceProvider extends React.Component<IProps, ISta
             );
             channelList.push(row);
         });
+
+        const paymentTypeLegend: any = Object.keys(this.state.paymentTypeLegend).map((item: any, index: number) => (
+                <span key={index} className="mr-2 badge badge-secondary">
+                    {item}: {this.state.paymentTypeLegend[item]}
+                    {item === "OBEP" && <span className="badge badge-danger ml-2">DEPRECATO</span>}
+                </span>
+        ));
 
         return (
             <div className="container-fluid payment-service-providers">
@@ -239,15 +273,7 @@ export default class PaymentServiceProvider extends React.Component<IProps, ISta
                             <Card.Footer>
                                 <div className="legend">
                                     <span className="font-weight-bold mr-2">Legenda:</span>
-                                    <span className="mr-2 badge badge-secondary">BBT: Bonifico Bancario di Tesoreria</span>
-                                    <span className="mr-2 badge badge-secondary">BP: Bollettino Postale</span>
-                                    <span className="mr-2 badge badge-secondary">AD: Addebito Diretto</span>
-                                    <span className="mr-2 badge badge-secondary">CP: Carta di Pagamento</span>
-                                    <span className="mr-2 badge badge-secondary">PO: Pagamento attivato presso PSP</span>
-                                    <span className="mr-2 badge badge-secondary">JIF: Bancomat Pay</span>
-                                    <span className="mr-2 badge badge-secondary">MYBK: MyBank Seller Bank</span>
-                                    <span className="mr-2 badge badge-secondary">PPAL: PayPal</span>
-                                    <span className="mr-2 badge badge-secondary">OBEB: Online Banking Electronic Payment <Badge variant="danger">DEPRECATO</Badge> </span>
+                                    {paymentTypeLegend}
                                 </div>
                             </Card.Footer>
                         </Card>

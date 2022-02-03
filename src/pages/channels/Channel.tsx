@@ -5,6 +5,7 @@ import {MsalContext} from "@azure/msal-react";
 import {apiClient} from "../../util/apiClient";
 import {loginRequest} from "../../authConfig";
 import {ChannelDetails, Payment_modelEnum} from "../../../generated/api/ChannelDetails";
+import {PaymentType} from "../../../generated/api/PaymentType";
 
 interface IProps {
     match: {
@@ -18,12 +19,12 @@ interface IState {
     code: string;
     channel: ChannelDetails;
     paymentTypeList: [];
+    paymentTypeLegend: any;
     edit: boolean;
 }
 
 export default class Channel extends React.Component<IProps, IState> {
     static contextType = MsalContext;
-    private readonly paymentTypeLegend: { [index: string]: string };
 
     constructor(props: IProps) {
         super(props);
@@ -67,19 +68,8 @@ export default class Channel extends React.Component<IProps, IState> {
                 description: "",
             } as ChannelDetails,
             paymentTypeList: [],
+            paymentTypeLegend: {},
             edit: false
-        };
-
-        this.paymentTypeLegend = {
-            BBT: "Bonifico Bancario di Tesoreria",
-            BP: "Bollettino Postale",
-            AD: "Addebito Diretto",
-            CP: "Carta di Pagamento",
-            PO: "Pagamento attivato presso PSP",
-            JIF: "Bancomat Pay",
-            MYBK: "MyBank Seller Bank",
-            PPAL: "PayPal",
-            OBEP: "Online Banking Electronic Payment"
         };
     }
 
@@ -136,18 +126,40 @@ export default class Channel extends React.Component<IProps, IState> {
                 });
     }
 
+    getPaymentTypeLegend(): void {
+        this.context.instance.acquireTokenSilent({
+            ...loginRequest,
+            account: this.context.accounts[0]
+        })
+        .then((response: any) => {
+            apiClient.getPaymentTypes({
+                Authorization: `Bearer ${response.accessToken}`,
+                ApiKey: ""
+            })
+            .then((response: any) => {
+                if (response.right.status === 200) {
+                    const paymentTypeLegend = {} as any;
+                    response.right.value.payment_types.forEach((pt: PaymentType) => {
+                        // eslint-disable-next-line functional/immutable-data
+                        paymentTypeLegend[pt.payment_type] = pt.description;
+                    });
+                    this.setState({paymentTypeLegend});
+                }
+            });
+        });
+    }
+
     componentDidMount(): void {
         const code: string = this.props.match.params.code as string;
         this.setState({isError: false});
         this.getChannel(code);
         this.getPaymentTypeList(code);
+        this.getPaymentTypeLegend();
     }
 
     render(): React.ReactNode {
         const isError = this.state.isError;
         const isLoading = this.state.isLoading;
-
-        const paymentTypeLegend = this.paymentTypeLegend;
 
         // create rows for payment types table
         const paymentTypeList: any = this.state.paymentTypeList.map((item: any, index: number) => (
@@ -155,7 +167,7 @@ export default class Channel extends React.Component<IProps, IState> {
                         <td>{item}</td>
                         <td>
                             {
-                                paymentTypeLegend[item]
+                                this.state.paymentTypeLegend[item]
                             }
                             {
                                 item === "OBEP" && <span className="badge badge-danger ml-2">DEPRECATO</span>
