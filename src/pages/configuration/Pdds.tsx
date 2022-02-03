@@ -352,7 +352,7 @@ export default class Pdds extends React.Component<IProps, IState> {
                 <tr key={index}>
                     <td className="key-td-width">{configuration.id_pdd}</td>
                     <td className="text-center">
-                        {!this.state.edit.enabled &&
+                        {(!this.state.edit.enabled || (this.state.edit.enabled && this.state.edit.configuration.id_pdd !== configuration.id_pdd)) &&
 						<>
                             {configuration.enabled && <FaCheck className="text-success"/>}
                             {!configuration.enabled && <FaTimes className="text-danger"/>}
@@ -369,7 +369,8 @@ export default class Pdds extends React.Component<IProps, IState> {
                         }
                     </td>
                     <td className="description-td-width text-left">
-                        {!this.state.edit.enabled && configuration.description}
+                        {(!this.state.edit.enabled || (this.state.edit.enabled && this.state.edit.configuration.id_pdd !== configuration.id_pdd))
+                            && configuration.description}
                         {
                             this.state.edit.enabled && this.state.edit.configuration.id_pdd === configuration.id_pdd &&
 							<Form.Control name="description" placeholder=""
@@ -377,8 +378,10 @@ export default class Pdds extends React.Component<IProps, IState> {
 										  onChange={(e) => this.handleChange(e, configuration)}/>
                         }
                     </td>
-                    <td className="description-td-width text-left">
-                        {!this.state.edit.enabled && configuration.ip}
+                    <td className="text-left">
+                        {(!this.state.edit.enabled || (this.state.edit.enabled && this.state.edit.configuration.id_pdd !== configuration.id_pdd)) 
+                            && configuration.ip
+                        }
                         {
                             this.state.edit.enabled && this.state.edit.configuration.id_pdd === configuration.id_pdd &&
 							<Form.Control name="ip" placeholder=""
@@ -387,7 +390,8 @@ export default class Pdds extends React.Component<IProps, IState> {
                         }
                     </td>
                     <td className="description-td-width text-left">
-                        {!this.state.edit.enabled && configuration.port}
+                        {(!this.state.edit.enabled || (this.state.edit.enabled && this.state.edit.configuration.id_pdd !== configuration.id_pdd))
+                            && configuration.port}
                         {
                             this.state.edit.enabled && this.state.edit.configuration.id_pdd === configuration.id_pdd &&
 							<Form.Control name="port" placeholder=""
