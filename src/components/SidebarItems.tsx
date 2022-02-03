@@ -39,6 +39,11 @@ const SidebarItems = [
         route: "/configuration-keys",
         domain: "configuration"
     },
+    {
+        name: "PDD",
+        route: "/pdds",
+        domain: "configuration"
+    },
 ];
 // {
 //     name: "Informativa Conto Accredito - ICA",
