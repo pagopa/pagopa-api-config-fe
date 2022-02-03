@@ -348,18 +348,18 @@ export default class Pdds extends React.Component<IProps, IState> {
 
         this.state.filtered_pdds.map((configuration: any) => {
             const index = String(configuration.id_pdd);
+            const readOnly = (!this.state.edit.enabled || (this.state.edit.enabled && this.state.edit.configuration.id_pdd !== configuration.id_pdd));
             const code = (
-                <tr key={index}>
+                <tr key={configuration.id_pdd}>
                     <td className="key-td-width">{configuration.id_pdd}</td>
                     <td className="text-center">
-                        {(!this.state.edit.enabled || (this.state.edit.enabled && this.state.edit.configuration.id_pdd !== configuration.id_pdd)) &&
+                        {readOnly &&
 						<>
                             {configuration.enabled && <FaCheck className="text-success"/>}
                             {!configuration.enabled && <FaTimes className="text-danger"/>}
 						</>
                         }
-                        {
-                            this.state.edit.enabled && this.state.edit.configuration.id_pdd === configuration.id_pdd &&
+                        {!readOnly &&
 							<Form.Control as="select" name="enabled" placeholder="stato"
 										  onChange={(e) => this.handleChange(e, configuration)}
 										  defaultValue={String(configuration.enabled)}>
@@ -369,39 +369,26 @@ export default class Pdds extends React.Component<IProps, IState> {
                         }
                     </td>
                     <td className="description-td-width text-left">
-                        {(!this.state.edit.enabled || (this.state.edit.enabled && this.state.edit.configuration.id_pdd !== configuration.id_pdd))
-                            && configuration.description}
-                        {
-                            this.state.edit.enabled && this.state.edit.configuration.id_pdd === configuration.id_pdd &&
-							<Form.Control name="description" placeholder=""
-										  value={configuration.description}
-										  onChange={(e) => this.handleChange(e, configuration)}/>
+                        {readOnly && configuration.description}
+                        {!readOnly &&
+							<Form.Control name="description" placeholder="" value={configuration.description} onChange={(e) => this.handleChange(e, configuration)}/>
                         }
                     </td>
                     <td className="text-left">
-                        {(!this.state.edit.enabled || (this.state.edit.enabled && this.state.edit.configuration.id_pdd !== configuration.id_pdd)) 
-                            && configuration.ip
+                        {readOnly && configuration.ip
                         }
-                        {
-                            this.state.edit.enabled && this.state.edit.configuration.id_pdd === configuration.id_pdd &&
-							<Form.Control name="ip" placeholder=""
-										  value={configuration.ip}
-										  onChange={(e) => this.handleChange(e, configuration)}/>
+                        {!readOnly &&
+							<Form.Control name="ip" placeholder="" value={configuration.ip} onChange={(e) => this.handleChange(e, configuration)}/>
                         }
                     </td>
                     <td className="description-td-width text-left">
-                        {(!this.state.edit.enabled || (this.state.edit.enabled && this.state.edit.configuration.id_pdd !== configuration.id_pdd))
-                            && configuration.port}
-                        {
-                            this.state.edit.enabled && this.state.edit.configuration.id_pdd === configuration.id_pdd &&
-							<Form.Control name="port" placeholder=""
-										  value={configuration.port}
-										  onChange={(e) => this.handleChange(e, configuration)}/>
+                        {readOnly && configuration.port}
+                        {!readOnly &&
+                            <Form.Control name="port" placeholder="" value={configuration.port} onChange={(e) => this.handleChange(e, configuration)}/>
                         }
                     </td>
                     <td className="text-right">
-                        {(!this.state.edit.enabled || this.state.edit.enabled &&
-                                this.state.edit.configuration.id_pdd !== configuration.id_pdd ) &&
+                        {readOnly &&
 						<>
                             <OverlayTrigger placement="top"
 										  overlay={<Tooltip id={`tooltip-edit-${index}`}>Modifica</Tooltip>}>
@@ -416,8 +403,8 @@ export default class Pdds extends React.Component<IProps, IState> {
                             </OverlayTrigger>
                         </>
                         }
-                        {this.state.edit.enabled && this.state.edit.configuration.id_pdd === configuration.id_pdd &&
-						<div className="row">
+                        {!readOnly &&
+                        <div className="row">
 							<div className="col-md-12">
 								<Button className="ml-2 float-md-right" variant="secondary" size={"sm"}
 										onClick={() => {
