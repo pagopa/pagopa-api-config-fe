@@ -101,7 +101,7 @@ export default class ConfigurationKeys extends React.Component<IProps, IState> {
                             configuration_keys: response.right.value.configuration_keys,
                             filtered_configuration_keys: response.right.value.configuration_keys
                         });
-                        this.order();
+                        this.order(this.state.order.by, this.state.order.ing);
                     })
                     .catch(() => {
                         toast.error("Problema nel recuperare i parametri di configurazione", {theme: "colored"});
@@ -137,13 +137,13 @@ export default class ConfigurationKeys extends React.Component<IProps, IState> {
                 ing: ordering
             }
         });
-        setTimeout(this.order.bind(this), 1);
+        this.order(orderBy, ordering);
     }
 
-    order() {
+    order(order_by: string, order_ing: string) {
         const confList = this.state.filtered_configuration_keys;
-        const ordering = this.state.order.ing === "DESC" ? 1 : -1;
-        if (this.state.order.by === "NAME") {
+        const ordering = order_ing === "DESC" ? 1 : -1;
+        if (order_by === "NAME") {
             confList.sort((a: any, b: any) => a.config_category.toLowerCase() < b.config_category.toLowerCase() ? ordering : -ordering);
         }
         else {
@@ -349,7 +349,7 @@ export default class ConfigurationKeys extends React.Component<IProps, IState> {
                 filtered_configuration_keys: this.state.configuration_keys.filter((c: ConfigurationKey) => c.config_key.toLowerCase().includes(filters.code.toLowerCase()))
             });
         }
-        this.order();
+        this.order(this.state.order.by, this.state.order.ing);
     };
 
     render(): React.ReactNode {
