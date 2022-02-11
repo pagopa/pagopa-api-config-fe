@@ -27,6 +27,7 @@ import Channel from "../pages/channels/Channel";
 import CreateChannel from "../pages/channels/CreateChannel";
 import EditChannel from "../pages/channels/EditChannel";
 import ConfigurationKeys from "../pages/configuration/ConfigurationKeys";
+import Pdds from "../pages/configuration/Pdds";
 import Layout from "../components/Layout";
 import NotFound from "../pages/NotFound";
 
@@ -87,6 +88,7 @@ export default class Routes extends React.Component {
                                     }}/>
 
                                     <Route path="/configuration-keys" exact component={ConfigurationKeys}/>
+                                    <Route path="/pdds" exact component={Pdds}/>
 
                                     <Route component={NotFound}/>
                                 </Switch>

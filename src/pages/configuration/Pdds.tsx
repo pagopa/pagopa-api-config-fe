@@ -1,6 +1,6 @@
 import React from 'react';
 import {Button, Form, OverlayTrigger, Table, Tooltip} from "react-bootstrap";
-import {FaEdit, FaPlus, FaSpinner, FaTrash} from "react-icons/fa";
+import {FaCheck, FaEdit, FaPlus, FaSpinner, FaTimes, FaTrash} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
 import {apiClient} from "../../util/apiClient";
@@ -8,7 +8,7 @@ import ConfirmationModal from "../../components/ConfirmationModal";
 import {loginRequest} from "../../authConfig";
 import Filters from "../../components/Filters";
 import Ordering from "../../components/Ordering";
-import {ConfigurationKey} from "../../../generated/api/ConfigurationKey";
+import {Pdd} from "../../../generated/api/Pdd";
 
 interface IProps {
     history: {
@@ -17,8 +17,8 @@ interface IProps {
 }
 
 interface IState {
-    configuration_keys: any;
-    filtered_configuration_keys: any;
+    pdds: any;
+    filtered_pdds: any;
     filters: {
         code: string;
         name: string;
@@ -30,7 +30,7 @@ interface IState {
     delete: any;
 }
 
-export default class ConfigurationKeys extends React.Component<IProps, IState> {
+export default class Pdds extends React.Component<IProps, IState> {
     static contextType = MsalContext;
     private filter: {[item: string]: any};
 
@@ -38,15 +38,15 @@ export default class ConfigurationKeys extends React.Component<IProps, IState> {
         super(props);
 
         this.state = {
-            configuration_keys: [],
-            filtered_configuration_keys: [],
+            pdds: [],
+            filtered_pdds: [],
             filters: {
                 code: "",
                 name: "",
             },
             isLoading: false,
             order: {
-                by: "NAME",
+                by: "CODE",
                 ing: "DESC"
             },
             create: {
@@ -65,12 +65,12 @@ export default class ConfigurationKeys extends React.Component<IProps, IState> {
 
         this.filter = {
             name: {
-                visible: true,
-                placeholder: "Categoria"
+                visible: false,
+                placeholder: "-"
             },
             code: {
                 visible: true,
-                placeholder: "Chiave"
+                placeholder: "ID PDD"
             }
         };
 
@@ -90,14 +90,14 @@ export default class ConfigurationKeys extends React.Component<IProps, IState> {
             account: this.context.accounts[0]
         })
             .then((response: any) => {
-                apiClient.getConfigurationKeys({
+                apiClient.getPdds({
                     Authorization: `Bearer ${response.accessToken}`,
                     ApiKey: ""
                 })
                     .then((response: any) => {
                         this.setState({
-                            configuration_keys: response.right.value.configuration_keys,
-                            filtered_configuration_keys: response.right.value.configuration_keys
+                            pdds: response.right.value.pdds,
+                            filtered_pdds: response.right.value.pdds
                         });
                         this.order(this.state.order.by, this.state.order.ing);
                     })
@@ -119,10 +119,11 @@ export default class ConfigurationKeys extends React.Component<IProps, IState> {
             create: {
                 enabled: true,
                 configuration: {
-                    config_category: "",
-                    config_key: "",
-                    config_value: "",
-                    config_description: ""
+                    id_pdd: "",
+                    enabled: false,
+                    description: "",
+                    ip: "",
+                    port: 80
                 }
             }
         });
@@ -139,22 +140,21 @@ export default class ConfigurationKeys extends React.Component<IProps, IState> {
     }
 
     order(order_by: string, order_ing: string) {
-        const confList = this.state.filtered_configuration_keys;
+        const confList = this.state.filtered_pdds;
         const ordering = order_ing === "DESC" ? 1 : -1;
-        if (order_by === "NAME") {
-            confList.sort((a: any, b: any) => a.config_category.toLowerCase() < b.config_category.toLowerCase() ? ordering : -ordering);
-        }
-        else {
-            confList.sort((a: any, b: any) => a.config_key.toLowerCase() < b.config_key.toLowerCase() ? ordering : -ordering);
+        if (order_by === "CODE") {
+            confList.sort((a: any, b: any) => a.id_pdd.toLowerCase() < b.id_pdd.toLowerCase() ? ordering : -ordering);
         }
 
-        this.setState({filtered_configuration_keys: confList});
+        this.setState({filtered_pdds: confList});
     }
 
-    discard(operation: string, configuration: ConfigurationKey | null) {
+    discard(operation: string, configuration: Pdd | null) {
         if (operation === "edit") {
-            this.setConfigurationParam(configuration as ConfigurationKey, "config_value", this.state.edit.configuration.config_value);
-            this.setConfigurationParam(configuration as ConfigurationKey, "config_description", this.state.edit.configuration.config_description);
+            this.setConfigurationParam(configuration as Pdd, "enabled", this.state.edit.configuration.enabled);
+            this.setConfigurationParam(configuration as Pdd, "description", this.state.edit.configuration.description);
+            this.setConfigurationParam(configuration as Pdd, "ip", this.state.edit.configuration.ip);
+            this.setConfigurationParam(configuration as Pdd, "port", this.state.edit.configuration.port);
             this.setState({
                 edit: {
                     enabled: false,
@@ -172,17 +172,16 @@ export default class ConfigurationKeys extends React.Component<IProps, IState> {
         }
     }
 
-    edit(configuration: ConfigurationKey) {
+    edit(configuration: Pdd) {
         this.context.instance.acquireTokenSilent({
             ...loginRequest,
             account: this.context.accounts[0]
         })
             .then((response: any) => {
-                apiClient.updateConfigurationKey({
+                apiClient.updatePdd({
                     Authorization: `Bearer ${response.accessToken}`,
                     ApiKey: "",
-                    category: configuration.config_category,
-                    key: configuration.config_key,
+                    id_pdd: configuration.id_pdd,
                     body: configuration
                 })
                     .then((res: any) => {
@@ -213,7 +212,7 @@ export default class ConfigurationKeys extends React.Component<IProps, IState> {
             account: this.context.accounts[0]
         })
             .then((response: any) => {
-                apiClient.createConfigurationKey({
+                apiClient.createPdd({
                     Authorization: `Bearer ${response.accessToken}`,
                     ApiKey: "",
                     body: this.state.create.configuration
@@ -221,10 +220,10 @@ export default class ConfigurationKeys extends React.Component<IProps, IState> {
                     .then((res: any) => {
                         if (res.right.status === 201) {
                             toast.info("Salvataggio avvenuto con successo");
-                            const cList = this.state.configuration_keys;
+                            const cList = this.state.pdds;
                             cList.push(res.right.value);
                             this.setState({
-                                configuration_keys: cList
+                                pdds: cList
                             });
                             this.handleFilterCallback(this.state.filters);
                         } else {
@@ -245,7 +244,7 @@ export default class ConfigurationKeys extends React.Component<IProps, IState> {
             });
     }
 
-    handleEdit(configuration: ConfigurationKey) {
+    handleEdit(configuration: Pdd) {
         this.setState({
             edit: {
                 enabled: true,
@@ -254,7 +253,7 @@ export default class ConfigurationKeys extends React.Component<IProps, IState> {
         });
     }
 
-    handleDelete(configuration: ConfigurationKey) {
+    handleDelete(configuration: Pdd) {
         this.setState({
             delete: {
                 enabled: true,
@@ -263,11 +262,10 @@ export default class ConfigurationKeys extends React.Component<IProps, IState> {
         });
     }
 
-    removeConfiguration(configuration: ConfigurationKey) {
-        const cList = this.state.configuration_keys.filter((c: ConfigurationKey) =>
-                !(c.config_category === configuration.config_category && c.config_key === configuration.config_key));
+    removeConfiguration(configuration: Pdd) {
+        const cList = this.state.pdds.filter((c: Pdd) => c.id_pdd !== configuration.id_pdd);
         this.setState({
-            configuration_keys: cList
+            pdds: cList
         });
         this.handleFilterCallback(this.state.filters);
     }
@@ -280,11 +278,10 @@ export default class ConfigurationKeys extends React.Component<IProps, IState> {
                 account: this.context.accounts[0]
             })
                 .then((response: any) => {
-                    apiClient.deleteConfigurationKey({
+                    apiClient.deletePdd({
                         Authorization: `Bearer ${response.accessToken}`,
                         ApiKey: "",
-                        category: configuration.config_category,
-                        key: configuration.config_key
+                        id_pdd: configuration.id_pdd
                     })
                         .then((res: any) => {
                             if (res.right.status === 200) {
@@ -319,32 +316,27 @@ export default class ConfigurationKeys extends React.Component<IProps, IState> {
         });
     }
 
-    handleChange(event: any, configuration: ConfigurationKey) {
+    handleChange(event: any, configuration: Pdd) {
         this.setConfigurationParam(configuration, event.target.name, event.target.value);
     }
 
-    setConfigurationParam(configuration: ConfigurationKey, key: string, value: string) {
-        const cList = this.state.filtered_configuration_keys.map((c: any) => {
-            if (c.config_category === configuration.config_category && c.config_key === configuration.config_key) {
+    setConfigurationParam(configuration: Pdd, key: string, value: string) {
+        const cList = this.state.filtered_pdds.map((c: any) => {
+            if (c.id_pdd === configuration.id_pdd) {
                 // eslint-disable-next-line functional/immutable-data
                 c[key] = value;
             }
             return c;
         });
-        this.setState({filtered_configuration_keys: cList});
+        this.setState({filtered_pdds: cList});
     }
 
     handleFilterCallback = (filters: any) => {
         this.setState({filters});
-        if (this.filter.name.visible && "name" in filters) {
-            this.setState({
-                filtered_configuration_keys: this.state.configuration_keys.filter((c: ConfigurationKey) => c.config_category.toLowerCase().includes(filters.name.toLowerCase()))
-            });
-        }
 
         if (this.filter.code.visible && "code" in filters) {
             this.setState({
-                filtered_configuration_keys: this.state.configuration_keys.filter((c: ConfigurationKey) => c.config_key.toLowerCase().includes(filters.code.toLowerCase()))
+                filtered_pdds: this.state.pdds.filter((c: Pdd) => c.id_pdd.toLowerCase().includes(filters.code.toLowerCase()))
             });
         }
         this.order(this.state.order.by, this.state.order.ing);
@@ -352,38 +344,51 @@ export default class ConfigurationKeys extends React.Component<IProps, IState> {
 
     render(): React.ReactNode {
         const isLoading = this.state.isLoading;
-        const configurationKeys: any = [];
+        const pdds: any = [];
 
-        this.state.filtered_configuration_keys.map((configuration: any) => {
-            const index = String(configuration.config_category) + String(configuration.config_key);
+        this.state.filtered_pdds.map((configuration: any) => {
+            const index = String(configuration.id_pdd);
+            const readOnly = (!this.state.edit.enabled || (this.state.edit.enabled && this.state.edit.configuration.id_pdd !== configuration.id_pdd));
             const code = (
-                <tr key={index}>
-                    <td>{configuration.config_category}</td>
-                    <td className="key-td-width">{configuration.config_key}</td>
-                    <td className="text-left">
-                        {!this.state.edit.enabled && configuration.config_value}
-                        {
-                            this.state.edit.enabled && this.state.edit.configuration.config_category === configuration.config_category &&
-                            this.state.edit.configuration.config_key === configuration.config_key &&
-							<Form.Control name="config_value" placeholder=""
-                                          value={configuration.config_value}
-                                          onChange={(e) => this.handleChange(e, configuration)}/>
+                <tr key={configuration.id_pdd}>
+                    <td className="key-td-width">{configuration.id_pdd}</td>
+                    <td className="text-center">
+                        {readOnly &&
+						<>
+                            {configuration.enabled && <FaCheck className="text-success"/>}
+                            {!configuration.enabled && <FaTimes className="text-danger"/>}
+						</>
+                        }
+                        {!readOnly &&
+							<Form.Control as="select" name="enabled" placeholder="stato"
+										  onChange={(e) => this.handleChange(e, configuration)}
+										  defaultValue={String(configuration.enabled)}>
+								<option value="true">Abilitato</option>
+								<option value="false">Non Abilitato</option>
+							</Form.Control>
                         }
                     </td>
                     <td className="description-td-width text-left">
-                        {!this.state.edit.enabled && configuration.config_description}
-                        {
-                            this.state.edit.enabled && this.state.edit.configuration.config_category === configuration.config_category &&
-                            this.state.edit.configuration.config_key === configuration.config_key &&
-							<Form.Control name="config_description" placeholder=""
-										  value={configuration.config_description}
-										  onChange={(e) => this.handleChange(e, configuration)}/>
+                        {readOnly && configuration.description}
+                        {!readOnly &&
+							<Form.Control name="description" placeholder="" value={configuration.description} onChange={(e) => this.handleChange(e, configuration)}/>
+                        }
+                    </td>
+                    <td className="text-left">
+                        {readOnly && configuration.ip
+                        }
+                        {!readOnly &&
+							<Form.Control name="ip" placeholder="" value={configuration.ip} onChange={(e) => this.handleChange(e, configuration)}/>
+                        }
+                    </td>
+                    <td className="description-td-width text-left">
+                        {readOnly && configuration.port}
+                        {!readOnly &&
+                            <Form.Control name="port" placeholder="" value={configuration.port} onChange={(e) => this.handleChange(e, configuration)}/>
                         }
                     </td>
                     <td className="text-right">
-                        {(!this.state.edit.enabled || this.state.edit.enabled &&
-                                this.state.edit.configuration.config_category !== configuration.config_category &&
-                                this.state.edit.configuration.config_key !== configuration.config_key ) &&
+                        {readOnly &&
 						<>
                             <OverlayTrigger placement="top"
 										  overlay={<Tooltip id={`tooltip-edit-${index}`}>Modifica</Tooltip>}>
@@ -398,10 +403,8 @@ export default class ConfigurationKeys extends React.Component<IProps, IState> {
                             </OverlayTrigger>
                         </>
                         }
-                        {this.state.edit.enabled &&
-                        this.state.edit.configuration.config_category === configuration.config_category &&
-                        this.state.edit.configuration.config_key === configuration.config_key &&
-						<div className="row">
+                        {!readOnly &&
+                        <div className="row">
 							<div className="col-md-12">
 								<Button className="ml-2 float-md-right" variant="secondary" size={"sm"}
 										onClick={() => {
@@ -416,14 +419,14 @@ export default class ConfigurationKeys extends React.Component<IProps, IState> {
                     </td>
                 </tr>
             );
-            configurationKeys.push(code);
+            pdds.push(code);
         });
 
         return (
             <div className="container-fluid configuration">
                 <div className="row">
                     <div className="col-md-10 mb-3">
-                        <h2>Configuration Keys</h2>
+                        <h2>Porte di Dominio</h2>
                     </div>
                      <div className="col-md-2 text-right">
                         <Button onClick={this.create}>Nuovo <FaPlus/></Button>
@@ -437,16 +440,14 @@ export default class ConfigurationKeys extends React.Component<IProps, IState> {
                                     <Table hover responsive size="sm">
                                         <thead>
                                         <tr>
-                                            <th className="">
-                                                <Ordering currentOrderBy={this.state.order.by} currentOrdering={this.state.order.ing} orderBy={"NAME"} ordering={"DESC"} handleOrder={this.handleOrder} />
-                                                Categoria
-                                            </th>
                                             <th className="key-td-width">
                                                 <Ordering currentOrderBy={this.state.order.by} currentOrdering={this.state.order.ing} orderBy={"CODE"} ordering={"DESC"} handleOrder={this.handleOrder} />
-                                                Chiave
+                                                ID PDD
                                             </th>
-                                            <th className="text-left">Valore</th>
+                                            <th className="text-center">Abilitato</th>
                                             <th className="description-td-width text-left">Descrizione</th>
+                                            <th className="text-left">IP</th>
+                                            <th className="text-left">Porta</th>
                                             <th className="buttons-td-width" />
                                         </tr>
                                         </thead>
@@ -454,25 +455,33 @@ export default class ConfigurationKeys extends React.Component<IProps, IState> {
                                         {
                                             this.state.create.enabled &&
                                             <tr>
-												<td>
-													<Form.Control name="config_category" placeholder="Categoria"
-																  value={this.state.create.configuration.config_category}
-																  onChange={(e) => this.handleInput(e)}/>
-                                                </td>
 												<td className="key-td-width">
-													<Form.Control name="config_key" placeholder="Chiave"
-																  value={this.state.create.configuration.config_key}
+													<Form.Control name="id_pdd" placeholder="ID PDD"
+																  value={this.state.create.configuration.id_pdd}
 																  onChange={(e) => this.handleInput(e)}/>
                                                 </td>
-												<td className="text-left">
-                                                    <Form.Control name="config_value" placeholder="Valore"
-                                                              value={this.state.create.configuration.config_value}
-                                                              onChange={(e) => this.handleInput(e)}/>
+												<td>
+													<Form.Control as="select" name="enabled" placeholder="Stato"
+																  onChange={(e) => this.handleInput(e)}
+																  defaultValue={String(this.state.create.configuration.enabled)}>
+														<option value="true">Abilitato</option>
+														<option value="false">Non Abilitato</option>
+													</Form.Control>
 												</td>
 												<td className="description-td-width text-left">
-                                                    <Form.Control name="config_description" placeholder="Descrizione"
-                                                                  value={this.state.create.configuration.config_description}
+                                                    <Form.Control name="description" placeholder="Descrizione"
+                                                                  value={this.state.create.configuration.description}
                                                                   onChange={(e) => this.handleInput(e)}/>
+												</td>
+												<td className="text-left">
+													<Form.Control name="ip" placeholder="IP"
+																  value={this.state.create.configuration.ip}
+																  onChange={(e) => this.handleInput(e)}/>
+												</td>
+												<td className="text-left">
+													<Form.Control name="port" placeholder="Porta"
+																  value={this.state.create.configuration.port}
+																  onChange={(e) => this.handleInput(e)}/>
 												</td>
 												<td className="text-right">
                                                     <div className="row">
@@ -491,7 +500,7 @@ export default class ConfigurationKeys extends React.Component<IProps, IState> {
                                             </tr>
                                         }
 
-                                        {configurationKeys}
+                                        {pdds}
                                         </tbody>
                                     </Table>
                                 </>
@@ -502,7 +511,7 @@ export default class ConfigurationKeys extends React.Component<IProps, IState> {
                 <ConfirmationModal show={this.state.delete.enabled} handleClose={this.hideDeleteModal}>
                     <p>Sei sicuro di voler eliminare la seguente configurazione?</p>
                     <ul>
-                        <li>{this.state.delete.configuration.config_category} - {this.state.delete.configuration.config_key}</li>
+                        <li>{this.state.delete.configuration.id_pdd}</li>
                     </ul>
                 </ConfirmationModal>
 
