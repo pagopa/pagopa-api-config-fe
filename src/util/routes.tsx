@@ -28,6 +28,7 @@ import CreateChannel from "../pages/channels/CreateChannel";
 import EditChannel from "../pages/channels/EditChannel";
 import ConfigurationKeys from "../pages/configuration/ConfigurationKeys";
 import Pdds from "../pages/configuration/Pdds";
+import WFESPPlugins from "../pages/configuration/WFESPPlugins";
 import Layout from "../components/Layout";
 import NotFound from "../pages/NotFound";
 
@@ -89,6 +90,7 @@ export default class Routes extends React.Component {
 
                                     <Route path="/configuration-keys" exact component={ConfigurationKeys}/>
                                     <Route path="/pdds" exact component={Pdds}/>
+                                    <Route path="/wfesp-plugins" exact component={WFESPPlugins}/>
 
                                     <Route component={NotFound}/>
                                 </Switch>

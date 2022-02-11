@@ -44,6 +44,11 @@ const SidebarItems = [
         route: "/pdds",
         domain: "configuration"
     },
+    {
+        name: "WFESP Plugins",
+        route: "/wfesp-plugins",
+        domain: "configuration"
+    },
 ];
 // {
 //     name: "Informativa Conto Accredito - ICA",

@@ -8,6 +8,7 @@ import {loginRequest} from "../../authConfig";
 import {ChannelDetails, Payment_modelEnum} from "../../../generated/api/ChannelDetails";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import {PspChannelPaymentTypes} from "../../../generated/api/PspChannelPaymentTypes";
+import {PaymentType} from "../../../generated/api/PaymentType";
 
 interface IProps {
     match: {
@@ -23,6 +24,7 @@ interface IState {
     code: string;
     channel: ChannelDetails;
     paymentTypeList: Array<string>;
+    paymentTypeLegend: any;
     edit: boolean;
     newPaymentType: boolean;
     paymentType: string;
@@ -82,6 +84,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
                 description: "",
             } as ChannelDetails,
             paymentTypeList: [],
+            paymentTypeLegend: {},
             edit: false,
             newPaymentType: false,
             paymentType: "",
@@ -136,7 +139,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
             account: this.context.accounts[0]
         })
             .then((response: any) => {
-                apiClient.getPaymentTypes({
+                apiClient.getChannelPaymentTypes({
                     Authorization: `Bearer ${response.accessToken}`,
                     ApiKey: "",
                     channelcode: code
@@ -155,11 +158,38 @@ export default class EditChannel extends React.Component<IProps, IState> {
             });
     }
 
+    getPaymentTypeLegend(): void {
+        this.context.instance.acquireTokenSilent({
+            ...loginRequest,
+            account: this.context.accounts[0]
+        })
+            .then((response: any) => {
+                apiClient.getPaymentTypes({
+                    Authorization: `Bearer ${response.accessToken}`,
+                    ApiKey: ""
+                })
+                    .then((response: any) => {
+                        if (response.right.status === 200) {
+                            const paymentTypeLegend = {} as any;
+                            response.right.value.payment_types.forEach((pt: PaymentType) => {
+                                // eslint-disable-next-line functional/immutable-data
+                                paymentTypeLegend[pt.payment_type] = pt.description;
+                            });
+                            this.setState({paymentTypeLegend});
+                        }
+                    })
+                    .catch(() => {
+                        this.setState({isError: true});
+                    });
+            });
+    }
+
     componentDidMount(): void {
         const code: string = this.props.match.params.code as string;
         this.setState({code, isError: false});
         this.getChannel(code);
         this.getPaymentTypeList(code);
+        this.getPaymentTypeLegend();
     }
 
     handleChange(event: any) {
@@ -219,7 +249,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
                 account: this.context.accounts[0]
             })
                     .then((response: any) => {
-                        apiClient.deletePaymentType({
+                        apiClient.deleteChannelPaymentType({
                             Authorization: `Bearer ${response.accessToken}`,
                             ApiKey: "",
                             channelcode: this.state.code,
@@ -263,7 +293,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
                 const data = {
                     "payment_types": ptList
                 } as PspChannelPaymentTypes;
-                apiClient.createPaymentType({
+                apiClient.createChannelPaymentType({
                     Authorization: `Bearer ${response.accessToken}`,
                     ApiKey: "",
                     channelcode: this.state.code,
@@ -291,17 +321,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
         const showDeleteModal = this.state.showDeleteModal;
         const paymentTypeToDelete = this.state.paymentTypeToDelete;
 
-        const paymentTypeLegend: {[index: string]: string} = {
-            BBT: "Bonifico Bancario di Tesoreria",
-            BP: "Bollettino Postale",
-            AD: "Addebito Diretto",
-            CP: "Carta di Pagamento",
-            PO: "Pagamento attivato presso PSP",
-            JIF: "Bancomat Pay",
-            MYBK: "MyBank Seller Bank",
-            PPAL: "PayPal",
-            OBEP: "Online Banking Electronic Payment"
-        };
+        const paymentTypeLegend: {[index: string]: string} = this.state.paymentTypeLegend;
 
         // create rows for payment types table
         const paymentTypeList: any = this.state.paymentTypeList.map((item: any, index: number) =>  (

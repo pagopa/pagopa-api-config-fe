@@ -1,6 +1,6 @@
 import React from 'react';
 import {Button, Form, OverlayTrigger, Table, Tooltip} from "react-bootstrap";
-import {FaCheck, FaEdit, FaPlus, FaSpinner, FaTimes, FaTrash} from "react-icons/fa";
+import {FaEdit, FaPlus, FaSpinner, FaTrash} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
 import {apiClient} from "../../util/apiClient";
@@ -8,7 +8,7 @@ import ConfirmationModal from "../../components/ConfirmationModal";
 import {loginRequest} from "../../authConfig";
 import Filters from "../../components/Filters";
 import Ordering from "../../components/Ordering";
-import {Pdd} from "../../../generated/api/Pdd";
+import {WfespPluginConf} from "../../../generated/api/WfespPluginConf";
 
 interface IProps {
     history: {
@@ -17,8 +17,8 @@ interface IProps {
 }
 
 interface IState {
-    pdds: any;
-    filtered_pdds: any;
+    wfespplugins: any;
+    filtered_wfespplugins: any;
     filters: {
         code: string;
         name: string;
@@ -30,7 +30,7 @@ interface IState {
     delete: any;
 }
 
-export default class Pdds extends React.Component<IProps, IState> {
+export default class WFESPPlugins extends React.Component<IProps, IState> {
     static contextType = MsalContext;
     private filter: {[item: string]: any};
 
@@ -38,8 +38,8 @@ export default class Pdds extends React.Component<IProps, IState> {
         super(props);
 
         this.state = {
-            pdds: [],
-            filtered_pdds: [],
+            wfespplugins: [],
+            filtered_wfespplugins: [],
             filters: {
                 code: "",
                 name: "",
@@ -70,7 +70,7 @@ export default class Pdds extends React.Component<IProps, IState> {
             },
             code: {
                 visible: true,
-                placeholder: "ID PDD"
+                placeholder: "ID Serv Plugin"
             }
         };
 
@@ -90,16 +90,15 @@ export default class Pdds extends React.Component<IProps, IState> {
             account: this.context.accounts[0]
         })
             .then((response: any) => {
-                apiClient.getPdds({
+                apiClient.getWfespPlugins({
                     Authorization: `Bearer ${response.accessToken}`,
                     ApiKey: ""
                 })
                     .then((response: any) => {
                         this.setState({
-                            pdds: response.right.value.pdds,
-                            filtered_pdds: response.right.value.pdds
+                            wfespplugins: response.right.value.wfesp_plugin_confs,
+                            filtered_wfespplugins: response.right.value.wfesp_plugin_confs
                         });
-
                         this.order(this.state.order.by, this.state.order.ing);
                     })
                     .catch(() => {
@@ -120,11 +119,11 @@ export default class Pdds extends React.Component<IProps, IState> {
             create: {
                 enabled: true,
                 configuration: {
-                    id_pdd: "",
-                    enabled: false,
-                    description: "",
-                    ip: "",
-                    port: 80
+                    id_serv_plugin: "",
+                    pag_const_string_profile: "",
+                    pag_soap_rule_profile: "",
+                    pag_rpt_xpath_profile: "",
+                    id_bean: "",
                 }
             }
         });
@@ -137,26 +136,25 @@ export default class Pdds extends React.Component<IProps, IState> {
                 ing: ordering
             }
         });
-
         this.order(orderBy, ordering);
     }
 
     order(order_by: string, order_ing: string) {
-        const confList = this.state.filtered_pdds;
+        const confList = this.state.filtered_wfespplugins;
         const ordering = order_ing === "DESC" ? 1 : -1;
         if (order_by === "CODE") {
-            confList.sort((a: any, b: any) => a.id_pdd.toLowerCase() < b.id_pdd.toLowerCase() ? ordering : -ordering);
+            confList.sort((a: any, b: any) => a.id_serv_plugin.toLowerCase() < b.id_serv_plugin.toLowerCase() ? ordering : -ordering);
         }
 
-        this.setState({filtered_pdds: confList});
+        this.setState({filtered_wfespplugins: confList});
     }
 
-    discard(operation: string, configuration: Pdd | null) {
+    discard(operation: string, configuration: WfespPluginConf | null) {
         if (operation === "edit") {
-            this.setConfigurationParam(configuration as Pdd, "enabled", this.state.edit.configuration.enabled);
-            this.setConfigurationParam(configuration as Pdd, "description", this.state.edit.configuration.description);
-            this.setConfigurationParam(configuration as Pdd, "ip", this.state.edit.configuration.ip);
-            this.setConfigurationParam(configuration as Pdd, "port", this.state.edit.configuration.port);
+            this.setConfigurationParam(configuration as WfespPluginConf, "pag_const_string_profile", this.state.edit.configuration.pag_const_string_profile);
+            this.setConfigurationParam(configuration as WfespPluginConf, "pag_soap_rule_profile", this.state.edit.configuration.pag_soap_rule_profile);
+            this.setConfigurationParam(configuration as WfespPluginConf, "pag_rpt_xpath_profile", this.state.edit.configuration.pag_rpt_xpath_profile);
+            this.setConfigurationParam(configuration as WfespPluginConf, "id_bean", this.state.edit.configuration.id_bean);
             this.setState({
                 edit: {
                     enabled: false,
@@ -174,16 +172,16 @@ export default class Pdds extends React.Component<IProps, IState> {
         }
     }
 
-    edit(configuration: Pdd) {
+    edit(configuration: WfespPluginConf) {
         this.context.instance.acquireTokenSilent({
             ...loginRequest,
             account: this.context.accounts[0]
         })
             .then((response: any) => {
-                apiClient.updatePdd({
+                apiClient.updateWfespPlugin({
                     Authorization: `Bearer ${response.accessToken}`,
                     ApiKey: "",
-                    id_pdd: configuration.id_pdd,
+                    idServPlugin: configuration.id_serv_plugin,
                     body: configuration
                 })
                     .then((res: any) => {
@@ -214,7 +212,7 @@ export default class Pdds extends React.Component<IProps, IState> {
             account: this.context.accounts[0]
         })
             .then((response: any) => {
-                apiClient.createPdd({
+                apiClient.createWfespPlugin({
                     Authorization: `Bearer ${response.accessToken}`,
                     ApiKey: "",
                     body: this.state.create.configuration
@@ -222,10 +220,10 @@ export default class Pdds extends React.Component<IProps, IState> {
                     .then((res: any) => {
                         if (res.right.status === 201) {
                             toast.info("Salvataggio avvenuto con successo");
-                            const cList = this.state.pdds;
+                            const cList = this.state.wfespplugins;
                             cList.push(res.right.value);
                             this.setState({
-                                pdds: cList
+                                wfespplugins: cList
                             });
                             this.handleFilterCallback(this.state.filters);
                         } else {
@@ -246,7 +244,7 @@ export default class Pdds extends React.Component<IProps, IState> {
             });
     }
 
-    handleEdit(configuration: Pdd) {
+    handleEdit(configuration: WfespPluginConf) {
         this.setState({
             edit: {
                 enabled: true,
@@ -255,7 +253,7 @@ export default class Pdds extends React.Component<IProps, IState> {
         });
     }
 
-    handleDelete(configuration: Pdd) {
+    handleDelete(configuration: WfespPluginConf) {
         this.setState({
             delete: {
                 enabled: true,
@@ -264,10 +262,10 @@ export default class Pdds extends React.Component<IProps, IState> {
         });
     }
 
-    removeConfiguration(configuration: Pdd) {
-        const cList = this.state.pdds.filter((c: Pdd) => c.id_pdd !== configuration.id_pdd);
+    removeConfiguration(configuration: WfespPluginConf) {
+        const cList = this.state.wfespplugins.filter((c: WfespPluginConf) => c.id_serv_plugin !== configuration.id_serv_plugin);
         this.setState({
-            pdds: cList
+            wfespplugins: cList
         });
         this.handleFilterCallback(this.state.filters);
     }
@@ -280,10 +278,10 @@ export default class Pdds extends React.Component<IProps, IState> {
                 account: this.context.accounts[0]
             })
                 .then((response: any) => {
-                    apiClient.deletePdd({
+                    apiClient.deleteWfespPlugin({
                         Authorization: `Bearer ${response.accessToken}`,
                         ApiKey: "",
-                        id_pdd: configuration.id_pdd
+                        idServPlugin: configuration.id_serv_plugin
                     })
                         .then((res: any) => {
                             if (res.right.status === 200) {
@@ -318,19 +316,19 @@ export default class Pdds extends React.Component<IProps, IState> {
         });
     }
 
-    handleChange(event: any, configuration: Pdd) {
+    handleChange(event: any, configuration: WfespPluginConf) {
         this.setConfigurationParam(configuration, event.target.name, event.target.value);
     }
 
-    setConfigurationParam(configuration: Pdd, key: string, value: string) {
-        const cList = this.state.filtered_pdds.map((c: any) => {
-            if (c.id_pdd === configuration.id_pdd) {
+    setConfigurationParam(configuration: WfespPluginConf, key: string, value: string) {
+        const cList = this.state.filtered_wfespplugins.map((c: any) => {
+            if (c.id_serv_plugin === configuration.id_serv_plugin) {
                 // eslint-disable-next-line functional/immutable-data
                 c[key] = value;
             }
             return c;
         });
-        this.setState({filtered_pdds: cList});
+        this.setState({filtered_wfespplugins: cList});
     }
 
     handleFilterCallback = (filters: any) => {
@@ -338,56 +336,44 @@ export default class Pdds extends React.Component<IProps, IState> {
 
         if (this.filter.code.visible && "code" in filters) {
             this.setState({
-                filtered_pdds: this.state.pdds.filter((c: Pdd) => c.id_pdd.toLowerCase().includes(filters.code.toLowerCase()))
+                filtered_wfespplugins: this.state.wfespplugins.filter((c: WfespPluginConf) => c.id_serv_plugin.toLowerCase().includes(filters.code.toLowerCase()))
             });
         }
-
         this.order(this.state.order.by, this.state.order.ing);
     };
 
     render(): React.ReactNode {
         const isLoading = this.state.isLoading;
-        const pdds: any = [];
+        const wfespplugins: any = [];
 
-        this.state.filtered_pdds.map((configuration: any) => {
-            const index = String(configuration.id_pdd);
-            const readOnly = (!this.state.edit.enabled || (this.state.edit.enabled && this.state.edit.configuration.id_pdd !== configuration.id_pdd));
+        this.state.filtered_wfespplugins.map((configuration: any) => {
+            const index = String(configuration.id_serv_plugin);
+            const readOnly = (!this.state.edit.enabled || (this.state.edit.enabled && this.state.edit.configuration.id_serv_plugin !== configuration.id_serv_plugin));
             const code = (
-                <tr key={configuration.id_pdd}>
-                    <td className="key-td-width">{configuration.id_pdd}</td>
-                    <td className="text-center">
-                        {readOnly &&
-						<>
-                            {configuration.enabled && <FaCheck className="text-success"/>}
-                            {!configuration.enabled && <FaTimes className="text-danger"/>}
-						</>
-                        }
+                <tr key={index}>
+                    <td className="key-td-width">{configuration.id_serv_plugin}</td>
+                    <td className="description-td-width text-left">
+                        {readOnly && configuration.pag_const_string_profile}
                         {!readOnly &&
-							<Form.Control as="select" name="enabled" placeholder="stato"
-										  onChange={(e) => this.handleChange(e, configuration)}
-										  defaultValue={String(configuration.enabled)}>
-								<option value="true">Abilitato</option>
-								<option value="false">Non Abilitato</option>
-							</Form.Control>
+							<Form.Control name="pag_const_string_profile" placeholder="" value={configuration.pag_const_string_profile} onChange={(e) => this.handleChange(e, configuration)}/>
                         }
                     </td>
                     <td className="description-td-width text-left">
-                        {readOnly && configuration.description}
+                        {readOnly && configuration.pag_soap_rule_profile}
                         {!readOnly &&
-							<Form.Control name="description" placeholder="" value={configuration.description} onChange={(e) => this.handleChange(e, configuration)}/>
+							<Form.Control name="pag_soap_rule_profile" placeholder="" value={configuration.pag_soap_rule_profile} onChange={(e) => this.handleChange(e, configuration)}/>
+                        }
+                    </td>
+                    <td className="description-td-width text-left">
+                        {readOnly && configuration.pag_rpt_xpath_profile}
+                        {!readOnly &&
+						<Form.Control name="pag_rpt_xpath_profile" placeholder="" value={configuration.pag_rpt_xpath_profile} onChange={(e) => this.handleChange(e, configuration)}/>
                         }
                     </td>
                     <td className="text-left">
-                        {readOnly && configuration.ip
-                        }
+                        {readOnly && configuration.id_bean}
                         {!readOnly &&
-							<Form.Control name="ip" placeholder="" value={configuration.ip} onChange={(e) => this.handleChange(e, configuration)}/>
-                        }
-                    </td>
-                    <td className="description-td-width text-left">
-                        {readOnly && configuration.port}
-                        {!readOnly &&
-                            <Form.Control name="port" placeholder="" value={configuration.port} onChange={(e) => this.handleChange(e, configuration)}/>
+						<Form.Control name="id_bean" placeholder="" value={configuration.id_bean} onChange={(e) => this.handleChange(e, configuration)}/>
                         }
                     </td>
                     <td className="text-right">
@@ -422,14 +408,14 @@ export default class Pdds extends React.Component<IProps, IState> {
                     </td>
                 </tr>
             );
-            pdds.push(code);
+            wfespplugins.push(code);
         });
 
         return (
             <div className="container-fluid configuration">
                 <div className="row">
                     <div className="col-md-10 mb-3">
-                        <h2>Porte di Dominio</h2>
+                        <h2>WFESP Plugin</h2>
                     </div>
                      <div className="col-md-2 text-right">
                         <Button onClick={this.create}>Nuovo <FaPlus/></Button>
@@ -445,12 +431,12 @@ export default class Pdds extends React.Component<IProps, IState> {
                                         <tr>
                                             <th className="key-td-width">
                                                 <Ordering currentOrderBy={this.state.order.by} currentOrdering={this.state.order.ing} orderBy={"CODE"} ordering={"DESC"} handleOrder={this.handleOrder} />
-                                                ID PDD
+                                                ID Serv Plugin
                                             </th>
-                                            <th className="text-center">Abilitato</th>
-                                            <th className="description-td-width text-left">Descrizione</th>
-                                            <th className="text-left">IP</th>
-                                            <th className="text-left">Porta</th>
+                                            <th className="description-td-width text-left">Profilo PAG Const String</th>
+                                            <th className="description-td-width text-left">Profilo PAG SOAP Rule</th>
+                                            <th className="description-td-width text-left">Profilo PAG RPT XPath</th>
+                                            <th className="text-left">ID Bean</th>
                                             <th className="buttons-td-width" />
                                         </tr>
                                         </thead>
@@ -459,31 +445,28 @@ export default class Pdds extends React.Component<IProps, IState> {
                                             this.state.create.enabled &&
                                             <tr>
 												<td className="key-td-width">
-													<Form.Control name="id_pdd" placeholder="ID PDD"
-																  value={this.state.create.configuration.id_pdd}
+													<Form.Control name="id_serv_plugin" placeholder="ID Serv Plugin"
+																  value={this.state.create.configuration.id_serv_plugin}
 																  onChange={(e) => this.handleInput(e)}/>
                                                 </td>
-												<td>
-													<Form.Control as="select" name="enabled" placeholder="Stato"
-																  onChange={(e) => this.handleInput(e)}
-																  defaultValue={String(this.state.create.configuration.enabled)}>
-														<option value="true">Abilitato</option>
-														<option value="false">Non Abilitato</option>
-													</Form.Control>
+												<td className="description-td-width text-left">
+													<Form.Control name="pag_const_string_profile" placeholder="Profilo PAG Const String"
+																  value={this.state.create.configuration.pag_const_string_profile}
+																  onChange={(e) => this.handleInput(e)}/>
 												</td>
 												<td className="description-td-width text-left">
-                                                    <Form.Control name="description" placeholder="Descrizione"
-                                                                  value={this.state.create.configuration.description}
-                                                                  onChange={(e) => this.handleInput(e)}/>
+													<Form.Control name="pag_soap_rule_profile" placeholder="Profilo PAG SOAP Rule"
+																  value={this.state.create.configuration.pag_soap_rule_profile}
+																  onChange={(e) => this.handleInput(e)}/>
 												</td>
-												<td className="text-left">
-													<Form.Control name="ip" placeholder="IP"
-																  value={this.state.create.configuration.ip}
+												<td className="description-td-width text-left">
+													<Form.Control name="pag_rpt_xpath_profile" placeholder="Profilo PAG RPT XPath"
+																  value={this.state.create.configuration.pag_rpt_xpath_profile}
 																  onChange={(e) => this.handleInput(e)}/>
 												</td>
 												<td className="text-left">
-													<Form.Control name="port" placeholder="Porta"
-																  value={this.state.create.configuration.port}
+													<Form.Control name="id_bean" placeholder="Id Bean"
+																  value={this.state.create.configuration.id_bean}
 																  onChange={(e) => this.handleInput(e)}/>
 												</td>
 												<td className="text-right">
@@ -503,7 +486,7 @@ export default class Pdds extends React.Component<IProps, IState> {
                                             </tr>
                                         }
 
-                                        {pdds}
+                                        {wfespplugins}
                                         </tbody>
                                     </Table>
                                 </>
@@ -514,7 +497,7 @@ export default class Pdds extends React.Component<IProps, IState> {
                 <ConfirmationModal show={this.state.delete.enabled} handleClose={this.hideDeleteModal}>
                     <p>Sei sicuro di voler eliminare la seguente configurazione?</p>
                     <ul>
-                        <li>{this.state.delete.configuration.id_pdd}</li>
+                        <li>{this.state.delete.configuration.id_serv_plugin}</li>
                     </ul>
                 </ConfirmationModal>
 

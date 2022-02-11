@@ -237,7 +237,8 @@ pre {
     table-layout: fixed;
     width: 100%;
   }
-  td.key-td-width {
+  td.key-td-width,
+  td.description-td-width {
     overflow: auto;
   }
   .buttons-td-width {
