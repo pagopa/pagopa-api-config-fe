@@ -26,6 +26,7 @@ import Channels from "../pages/channels/Channels";
 import Channel from "../pages/channels/Channel";
 import CreateChannel from "../pages/channels/CreateChannel";
 import EditChannel from "../pages/channels/EditChannel";
+import ConfigurationKeys from "../pages/configuration/ConfigurationKeys";
 import Layout from "../components/Layout";
 import NotFound from "../pages/NotFound";
 
@@ -84,6 +85,8 @@ export default class Routes extends React.Component {
                                         const edit: boolean = new URLSearchParams(props.location.search).get("edit") !== null;
                                         return edit ? <EditChannel {...props} /> : <Channel {...props} />;
                                     }}/>
+
+                                    <Route path="/configuration-keys" exact component={ConfigurationKeys}/>
 
                                     <Route component={NotFound}/>
                                 </Switch>

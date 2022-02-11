@@ -27,6 +27,8 @@ export default class Ordering extends React.Component<IProps, IState> {
     handleSort() {
         // eslint-disable-next-line functional/immutable-data
         this.sortingMngmt.splice(this.sortingMngmt.indexOf(this.props.currentOrdering), 1);
+        // eslint-disable-next-line functional/immutable-data
+        this.sortingMngmt.push(this.props.currentOrdering);
         this.props.handleOrder(this.props.orderBy, this.sortingMngmt[0]);
     }
 

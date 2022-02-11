@@ -17,6 +17,7 @@ interface IState {
     domains: {
         ec: boolean;
         psp: boolean;
+        configuration: boolean;
     };
 }
 
@@ -27,7 +28,8 @@ export default class Sidebar extends React.Component<IProps, IState> {
         this.state = {
             domains: {
                 ec: true,
-                psp: false
+                psp: false,
+                configuration: false
             }
         };
     }
@@ -131,6 +133,22 @@ export default class Sidebar extends React.Component<IProps, IState> {
                         <div className="list-group">
                         {
                             SidebarItems.filter(item => item.domain === "psp").map((item) => getLink(item))
+                        }
+                        </div>
+                    </Accordion.Collapse>
+                </span>
+                <span>
+                    <Accordion.Toggle as="div" eventKey="2">
+                        <span className="navbar-heading" onClick={() => this.setDomainState("configuration")}>
+                            <FaExpand className={`ml-2 mr-2 ${getCompressionClass("configuration", true)}`} />
+                            <FaCompress className={`ml-2 mr-2 ${getCompressionClass("configuration", false)}`} />
+                            Configuration
+                        </span>
+                    </Accordion.Toggle>
+                    <Accordion.Collapse eventKey="2">
+                        <div className="list-group">
+                        {
+                            SidebarItems.filter(item => item.domain === "configuration").map((item) => getLink(item))
                         }
                         </div>
                     </Accordion.Collapse>

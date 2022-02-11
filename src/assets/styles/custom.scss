@@ -232,6 +232,19 @@ pre {
   }
 }
 
+.configuration {
+  table {
+    table-layout: fixed;
+    width: 100%;
+  }
+  td.key-td-width {
+    overflow: auto;
+  }
+  .buttons-td-width {
+    width: 10%;
+  }
+}
+
 .xsd-table {
   td:first-child {
     width: 35%;

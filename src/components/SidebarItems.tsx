@@ -33,7 +33,12 @@ const SidebarItems = [
         name: "Canali",
         route: "/channels",
         domain: "psp"
-    }
+    },
+    {
+        name: "Configuration Keys",
+        route: "/configuration-keys",
+        domain: "configuration"
+    },
 ];
 // {
 //     name: "Informativa Conto Accredito - ICA",
