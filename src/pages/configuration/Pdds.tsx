@@ -99,7 +99,7 @@ export default class Pdds extends React.Component<IProps, IState> {
                             pdds: response.right.value.pdds,
                             filtered_pdds: response.right.value.pdds
                         });
-                        this.order();
+                        this.order(this.state.order.by, this.state.order.ing);
                     })
                     .catch(() => {
                         toast.error("Problema nel recuperare i parametri di configurazione", {theme: "colored"});
@@ -136,13 +136,13 @@ export default class Pdds extends React.Component<IProps, IState> {
                 ing: ordering
             }
         });
-        setTimeout(this.order.bind(this), 1);
+        this.order(orderBy, ordering);
     }
 
-    order() {
+    order(order_by: string, order_ing: string) {
         const confList = this.state.filtered_pdds;
-        const ordering = this.state.order.ing === "DESC" ? 1 : -1;
-        if (this.state.order.by === "CODE") {
+        const ordering = order_ing === "DESC" ? 1 : -1;
+        if (order_by === "CODE") {
             confList.sort((a: any, b: any) => a.id_pdd.toLowerCase() < b.id_pdd.toLowerCase() ? ordering : -ordering);
         }
 
@@ -339,7 +339,7 @@ export default class Pdds extends React.Component<IProps, IState> {
                 filtered_pdds: this.state.pdds.filter((c: Pdd) => c.id_pdd.toLowerCase().includes(filters.code.toLowerCase()))
             });
         }
-        this.order();
+        this.order(this.state.order.by, this.state.order.ing);
     };
 
     render(): React.ReactNode {
