@@ -99,7 +99,7 @@ export default class WFESPPlugins extends React.Component<IProps, IState> {
                             wfespplugins: response.right.value.wfesp_plugin_confs,
                             filtered_wfespplugins: response.right.value.wfesp_plugin_confs
                         });
-                        this.order();
+                        this.order(this.state.order.by, this.state.order.ing);
                     })
                     .catch(() => {
                         toast.error("Problema nel recuperare i parametri di configurazione", {theme: "colored"});
@@ -136,13 +136,13 @@ export default class WFESPPlugins extends React.Component<IProps, IState> {
                 ing: ordering
             }
         });
-        setTimeout(this.order.bind(this), 1);
+        this.order(orderBy, ordering);
     }
 
-    order() {
+    order(order_by: string, order_ing: string) {
         const confList = this.state.filtered_wfespplugins;
-        const ordering = this.state.order.ing === "DESC" ? 1 : -1;
-        if (this.state.order.by === "CODE") {
+        const ordering = order_ing === "DESC" ? 1 : -1;
+        if (order_by === "CODE") {
             confList.sort((a: any, b: any) => a.id_serv_plugin.toLowerCase() < b.id_serv_plugin.toLowerCase() ? ordering : -ordering);
         }
 
@@ -339,7 +339,7 @@ export default class WFESPPlugins extends React.Component<IProps, IState> {
                 filtered_wfespplugins: this.state.wfespplugins.filter((c: WfespPluginConf) => c.id_serv_plugin.toLowerCase().includes(filters.code.toLowerCase()))
             });
         }
-        this.order();
+        this.order(this.state.order.by, this.state.order.ing);
     };
 
     render(): React.ReactNode {
