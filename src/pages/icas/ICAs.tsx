@@ -9,7 +9,6 @@ import Paginator from "../../components/Paginator";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import {loginRequest} from "../../authConfig";
 import Filters from "../../components/Filters";
-import Ordering from "../../components/Ordering";
 import {getConfig} from "../../util/config";
 
 interface IProps {
@@ -34,14 +33,11 @@ interface IState {
     showDeleteModal: boolean;
     icaToDelete: any;
     icaIndex: number;
-    order: any;
 }
 
 export default class Icas extends React.Component<IProps, IState> {
     static contextType = MsalContext;
     private filter: {[item: string]: any};
-
-    service = "/icas";
 
     constructor(props: IProps) {
         super(props);
@@ -62,10 +58,6 @@ export default class Icas extends React.Component<IProps, IState> {
             showDeleteModal: false,
             icaToDelete: {},
             icaIndex: -1,
-            order: {
-                by: "CODE",
-                ing: "DESC"
-            }
         };
 
         this.filter = {
@@ -80,7 +72,6 @@ export default class Icas extends React.Component<IProps, IState> {
         };
 
         this.handlePageChange = this.handlePageChange.bind(this);
-        this.handleOrder = this.handleOrder.bind(this);
         this.create = this.create.bind(this);
         this.upload = this.upload.bind(this);
     }
@@ -92,27 +83,27 @@ export default class Icas extends React.Component<IProps, IState> {
             ...loginRequest,
             account: this.context.accounts[0]
         })
-                .then((response: any) => {
-                    apiClient.getIcas({
-                        Authorization: `Bearer ${response.accessToken}`,
-                        ApiKey: "",
-                        limit: 10,
-                        page,
-                        idica: this.state.filters.name,
-                        creditorinstitutioncode: this.state.filters.code
-                    }).then((response: any) => {
-                        this.setState({
-                            icas: response.right.value.icas,
-                            page_info: response.right.value.page_info
-                        });
+            .then((response: any) => {
+                apiClient.getIcas({
+                    Authorization: `Bearer ${response.accessToken}`,
+                    ApiKey: "",
+                    limit: 10,
+                    page,
+                    idica: this.state.filters.name,
+                    creditorinstitutioncode: this.state.filters.code
+                }).then((response: any) => {
+                    this.setState({
+                        icas: response.right.value.icas,
+                        page_info: response.right.value.page_info
+                    });
+                })
+                    .catch(() => {
+                        toast.error("Problema nel recuperare le ica", {theme: "colored"});
                     })
-                            .catch(() => {
-                                toast.error("Problema nel recuperare le ica", {theme: "colored"});
-                            })
-                            .finally(() => {
-                                this.setState({isLoading: false});
-                            });
-                });
+                    .finally(() => {
+                        this.setState({isLoading: false});
+                    });
+            });
     }
 
     componentDidMount(): void {
@@ -120,7 +111,10 @@ export default class Icas extends React.Component<IProps, IState> {
     }
 
     create() {
-        document.querySelector("#fileUploader").click();
+        const element = document.getElementById("fileUploader");
+        if (element) {
+            element.click();
+        }
     }
 
     upload(event: any) {
@@ -145,7 +139,6 @@ export default class Icas extends React.Component<IProps, IState> {
                 toast.info("File ICA caricato con successo");
                 this.getPage(0);
             }).catch((err) => {
-                console.error("UPLOAD ERROR ", err, err.response);
                 if (err.response.status === 409) {
                     toast.error("Problema di conflitto nell'upload del file", {theme: "colored"});
                 }
@@ -163,16 +156,6 @@ export default class Icas extends React.Component<IProps, IState> {
 
     handlePageChange(requestedPage: number) {
         this.getPage(requestedPage);
-    }
-
-    handleOrder(orderBy: string, ordering: string) {
-        this.setState({
-            order: {
-                by: orderBy,
-                ing: ordering
-            }
-        });
-        this.getPage(0);
     }
 
     handleDetails(ica: any) {
@@ -194,7 +177,6 @@ export default class Icas extends React.Component<IProps, IState> {
             const url = `${String(baseUrl)}${String(basePath)}/icas/${ica.id_ica}?creditorinstitutioncode=${ica.creditor_institution_code}`;
             axios.get(url, config)
             .then((res: any) => {
-                console.log("RES", res);
                 if (res.data.size > 1) {
                     const objectUrl = window.URL.createObjectURL(res.data);
                     // eslint-disable-next-line functional/immutable-data
@@ -213,10 +195,6 @@ export default class Icas extends React.Component<IProps, IState> {
             });
         });
     }
-
-    // handleEdit(code: string) {
-    //     this.props.history.push(this.service + "/" + code + "?edit");
-    // }
 
     handleDelete(channel: string, index: number) {
         this.setState({showDeleteModal: true});
@@ -276,7 +254,6 @@ export default class Icas extends React.Component<IProps, IState> {
                 String(this.state.icaToDelete.creditor_institution_code) + ")";
 
         this.state.icas.map((ica: any, index: number) => {
-            const url = '/icas/' + ica.id_ica + '?creditorinstitutioncode=' + ica.creditor_institution_code;
             const code = (
                     <tr key={index}>
                         <td>{ica.id_ica}</td>
