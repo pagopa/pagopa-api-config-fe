@@ -40,6 +40,11 @@ const SidebarItems = [
         domain: "psp"
     },
     {
+        name: "Catalogo Dati Informativi",
+        route: "/cdis",
+        domain: "psp"
+    },
+    {
         name: "Configuration Keys",
         route: "/configuration-keys",
         domain: "configuration"
@@ -55,10 +60,5 @@ const SidebarItems = [
         domain: "configuration"
     },
 ];
-// {
-//     name: "Informativa Conto Accredito - ICA",
-//     route: "/icas",
-//     domain: "ec"
-// },
 
 export default SidebarItems;
