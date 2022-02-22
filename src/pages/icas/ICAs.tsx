@@ -224,17 +224,21 @@ export default class Icas extends React.Component<IProps, IState> {
                             idica: this.state.icaToDelete.id_ica,
                             creditorinstitutioncode: this.state.icaToDelete.creditor_institution_code
                         })
-                                .then((res: any) => {
-                                    if (res.right.status === 200) {
-                                        toast.info("Rimozione avvenuta con successo");
-                                        this.removeIca();
-                                    } else {
-                                        toast.error(res.right.value.title, {theme: "colored"});
-                                    }
-                                })
-                                .catch(() => {
-                                    toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
-                                });
+                            .then((res: any) => {
+                                if (res.right.status === 200) {
+                                    toast.info("Rimozione avvenuta con successo");
+                                    this.removeIca();
+                                }
+                                else if(res.right.value.status === 409){
+                                    toast.error("Non è possibile cancellare un file ICA in corso di validità.", {theme: "colored"});
+                                }
+                                else {
+                                    toast.error(res.right.value.details, {theme: "colored"});
+                                }
+                            })
+                            .catch(() => {
+                                toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                            });
                     });
         }
         this.setState({showDeleteModal: false});
