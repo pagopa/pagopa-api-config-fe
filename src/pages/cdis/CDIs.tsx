@@ -158,7 +158,7 @@ export default class Cdis extends React.Component<IProps, IState> {
         this.getPage(requestedPage);
     }
 
-    handleDetails(ica: any) {
+    handleDetails(cdi: any) {
         const baseUrl = getConfig("APICONFIG_HOST") as string;
         const basePath = getConfig("APICONFIG_BASEPATH") as string;
 
@@ -174,7 +174,7 @@ export default class Cdis extends React.Component<IProps, IState> {
             } as AxiosRequestConfig;
             const anchor = document.createElement("a");
             document.body.appendChild(anchor);
-            const url = `${String(baseUrl)}${String(basePath)}/cdis/${ica.id_cdi}?pspcode=${ica.psp_code}`;
+            const url = `${String(baseUrl)}${String(basePath)}/cdis/${cdi.id_cdi}?pspcode=${cdi.psp_code}`;
             axios.get(url, config)
             .then((res: any) => {
                 if (res.data.size > 1) {
@@ -182,12 +182,12 @@ export default class Cdis extends React.Component<IProps, IState> {
                     // eslint-disable-next-line functional/immutable-data
                     anchor.href = objectUrl;
                     // eslint-disable-next-line functional/immutable-data
-                    anchor.download = "cdi_" + String(ica.id_ica).replace(" ", "_") + '.xml';
+                    anchor.download = "cdi_" + String(cdi.id_cdi).replace(" ", "_") + "_" + String(cdi.psp_code).replace(" ", "_") + '.xml';
                     anchor.click();
                     window.URL.revokeObjectURL(objectUrl);
                 }
                 else {
-                    toast.warn("Problemi nella generazione dell'ICA richiesto.", {theme: "colored"});
+                    toast.warn("Problemi nella generazione del CDI richiesto.", {theme: "colored"});
                 }
             })
             .catch(() => {
@@ -202,7 +202,7 @@ export default class Cdis extends React.Component<IProps, IState> {
         this.setState({cdiIndex: index});
     }
 
-    removeIca() {
+    removeCdi() {
         const filteredCdis = this.state.cdis.filter((item: any) => item.id_cdi !== this.state.cdiToDelete.id_cdi);
         this.setState({cdis: filteredCdis});
 
@@ -227,7 +227,7 @@ export default class Cdis extends React.Component<IProps, IState> {
                         .then((res: any) => {
                             if (res.right.status === 200) {
                                 toast.info("Rimozione avvenuta con successo");
-                                this.removeIca();
+                                this.removeCdi();
                             } else {
                                 toast.error(res.right.value.title, {theme: "colored"});
                             }
