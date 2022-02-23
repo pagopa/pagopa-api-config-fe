@@ -89,7 +89,7 @@ export default class Stations extends React.Component<IProps, IState> {
         })
             .then((response: any) => {
                 apiClient.getStations({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     limit: 10,
                     page,
@@ -154,7 +154,7 @@ export default class Stations extends React.Component<IProps, IState> {
             })
                 .then((response: any) => {
                     apiClient.deleteStation({
-                        Authorization: `Bearer ${response.accessToken}`,
+                        Authorization: `Bearer ${response.idToken}`,
                         ApiKey: "",
                         stationcode: this.state.stationToDelete.station_code
                     })

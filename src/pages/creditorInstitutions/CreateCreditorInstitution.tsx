@@ -91,7 +91,7 @@ export default class CreateCreditorInstitution extends React.Component<IProps, I
         })
             .then((response: any) => {
                 apiClient.createCreditorInstitution({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     body: this.state.creditorInstitution
                 }).then((response: any) => {

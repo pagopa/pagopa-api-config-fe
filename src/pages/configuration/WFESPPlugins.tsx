@@ -91,7 +91,7 @@ export default class WFESPPlugins extends React.Component<IProps, IState> {
         })
             .then((response: any) => {
                 apiClient.getWfespPlugins({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: ""
                 })
                     .then((response: any) => {
@@ -179,7 +179,7 @@ export default class WFESPPlugins extends React.Component<IProps, IState> {
         })
             .then((response: any) => {
                 apiClient.updateWfespPlugin({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     idServPlugin: configuration.id_serv_plugin,
                     body: configuration
@@ -213,7 +213,7 @@ export default class WFESPPlugins extends React.Component<IProps, IState> {
         })
             .then((response: any) => {
                 apiClient.createWfespPlugin({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     body: this.state.create.configuration
                 })
@@ -279,7 +279,7 @@ export default class WFESPPlugins extends React.Component<IProps, IState> {
             })
                 .then((response: any) => {
                     apiClient.deleteWfespPlugin({
-                        Authorization: `Bearer ${response.accessToken}`,
+                        Authorization: `Bearer ${response.idToken}`,
                         ApiKey: "",
                         idServPlugin: configuration.id_serv_plugin
                     })

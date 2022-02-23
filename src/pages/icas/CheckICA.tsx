@@ -98,7 +98,7 @@ export default class CheckIca extends React.Component<IProps, IState> {
         })
             .then((response: any) => {
                 apiClient.getCreditorInstitution({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     creditorinstitutioncode: creditorInstitutionCode
                 }).then((response: any) => {
@@ -222,7 +222,7 @@ export default class CheckIca extends React.Component<IProps, IState> {
                 .then((response: any) => {
                     // eslint-disable-next-line @typescript-eslint/no-floating-promises
                     apiClient.getCreditorInstitutionEncodings({
-                        Authorization: `Bearer ${response.accessToken}`,
+                        Authorization: `Bearer ${response.idToken}`,
                         ApiKey: "",
                         creditorinstitutioncode: creditorInstitutionCode
                     }).then((response: any) => {
@@ -295,7 +295,7 @@ export default class CheckIca extends React.Component<IProps, IState> {
                 .then((response: any) => {
                     // eslint-disable-next-line @typescript-eslint/no-floating-promises
                     apiClient.getCreditorInstitutionEncodings({
-                        Authorization: `Bearer ${response.accessToken}`,
+                        Authorization: `Bearer ${response.idToken}`,
                         ApiKey: "",
                         creditorinstitutioncode: ciCode
                     }).then((response: any) => {
@@ -357,7 +357,7 @@ export default class CheckIca extends React.Component<IProps, IState> {
         })
             .then((response: any) => {
                 apiClient.getCreditorInstitutionsIbans({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     creditorinstitutioncode: creditorInstitutionCode
                 }).then((response: any) => {
@@ -517,7 +517,7 @@ export default class CheckIca extends React.Component<IProps, IState> {
             const config = {
                 headers: {
                     'Content-Type': 'multipart/form-data',
-                    Authorization: `Bearer ${response.accessToken}`
+                    Authorization: `Bearer ${response.idToken}`
                 }
             };
             axios.post(baseUrl + basePath + "/icas/xsd", data, config).then((response:any) => {

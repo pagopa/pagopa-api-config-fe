@@ -99,7 +99,7 @@ export default class CreateChannel extends React.Component<IProps, IState> {
         })
             .then((response: any) => {
                 apiClient.createChannel({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     body: this.state.channel
                 }).then((response: any) => {

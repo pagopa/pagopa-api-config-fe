@@ -42,7 +42,7 @@ export default class BrokerPSP extends React.Component<IProps, IState> {
         })
             .then((response: any) => {
                 apiClient.getBrokerPsp({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     brokerpspcode: code
                 })

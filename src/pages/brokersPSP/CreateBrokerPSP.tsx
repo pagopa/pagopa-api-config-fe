@@ -76,7 +76,7 @@ export default class CreateBrokerPSP extends React.Component<IProps, IState> {
         })
             .then((response: any) => {
                 apiClient.createBrokerPsp({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     body: this.state.brokerPSP
                 }).then((response: any) => {

@@ -47,7 +47,7 @@ export default class PaymentServiceProvider extends React.Component<IProps, ISta
         })
             .then((response: any) => {
                 apiClient.getPaymentServiceProvider({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     pspcode: code
                 })
@@ -72,7 +72,7 @@ export default class PaymentServiceProvider extends React.Component<IProps, ISta
         })
             .then((response: any) => {
                 apiClient.getPaymentServiceProvidersChannels({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     pspcode: code
                 })
@@ -97,7 +97,7 @@ export default class PaymentServiceProvider extends React.Component<IProps, ISta
         })
             .then((response: any) => {
                 apiClient.getPaymentTypes({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: ""
                 })
                     .then((response: any) => {

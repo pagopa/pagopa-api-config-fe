@@ -113,7 +113,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
         })
                 .then((response: any) => {
                     apiClient.getChannel({
-                        Authorization: `Bearer ${response.accessToken}`,
+                        Authorization: `Bearer ${response.idToken}`,
                         ApiKey: "",
                         channelcode: code
                     }).then((response: any) => {
@@ -140,7 +140,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
         })
             .then((response: any) => {
                 apiClient.getChannelPaymentTypes({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     channelcode: code
                 })
@@ -165,7 +165,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
         })
             .then((response: any) => {
                 apiClient.getPaymentTypes({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: ""
                 })
                     .then((response: any) => {
@@ -212,7 +212,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
         })
                 .then((response: any) => {
                     apiClient.updateChannel({
-                        Authorization: `Bearer ${response.accessToken}`,
+                        Authorization: `Bearer ${response.idToken}`,
                         ApiKey: "",
                         channelcode: this.state.code,
                         body: this.state.channel
@@ -250,7 +250,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
             })
                     .then((response: any) => {
                         apiClient.deleteChannelPaymentType({
-                            Authorization: `Bearer ${response.accessToken}`,
+                            Authorization: `Bearer ${response.idToken}`,
                             ApiKey: "",
                             channelcode: this.state.code,
                             paymenttypecode: this.state.paymentTypeToDelete
@@ -294,7 +294,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
                     "payment_types": ptList
                 } as PspChannelPaymentTypes;
                 apiClient.createChannelPaymentType({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     channelcode: this.state.code,
                     body: data
