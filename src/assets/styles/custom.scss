@@ -293,3 +293,16 @@ pre {
 .legend {
   font-size: 0.8rem;
 }
+
+.cpts {
+  .fixed-td-width {
+    width: 18%;
+  }
+  .fixed-td-width-sm {
+    width: 6%;
+  }
+
+  .hidden {
+    display: none;
+  }
+}
