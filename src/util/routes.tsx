@@ -4,6 +4,7 @@ import BrokerPage from "../pages/brokers/BrokerPage";
 import BrokersPage from "../pages/brokers/BrokersPage";
 import CreateBrokerPage from "../pages/brokers/CreateBrokerPage";
 import EditBrokerPage from "../pages/brokers/EditBrokerPage";
+import Icas from "../pages/icas/ICAs";
 import CheckICA from "../pages/icas/CheckICA";
 import CreditorInstitutions from "../pages/creditorInstitutions/CreditorInstitutions";
 import CreditorInstitution from "../pages/creditorInstitutions/CreditorInstitution";
@@ -13,7 +14,6 @@ import Stations from "../pages/stations/Stations";
 import Station from "../pages/stations/Station";
 import CreateStation from "../pages/stations/CreateStation";
 import EditStation from "../pages/stations/EditStation";
-import Ica from "../pages/icas/ICAs";
 import PaymentServiceProviders from "../pages/paymentServiceProviders/PaymentServiceProviders";
 import PaymentServiceProvider from "../pages/paymentServiceProviders/PaymentServiceProvider";
 import CreatePaymentServiceProvider from "../pages/paymentServiceProviders/CreatePaymentServiceProvider";
@@ -64,7 +64,7 @@ export default class Routes extends React.Component {
                                         return edit ? <EditStation {...props} /> : <Station {...props} />;
                                     }}/>
 
-                                    <Route path="/icas" exact component={Ica} />
+                                    <Route path="/icas" exact component={Icas} />
                                     <Route path="/icas/check" exact component={CheckICA} />
 
                                     <Route path="/payment-service-providers" exact component={PaymentServiceProviders}/>
