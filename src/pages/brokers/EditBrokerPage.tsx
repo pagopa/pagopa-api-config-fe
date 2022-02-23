@@ -58,7 +58,7 @@ export default class EditBrokersPage extends React.Component<IProps, IState> {
         })
             .then((response: any) => {
                 apiClient.getBroker({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     brokercode: code
                 }).then((response: any) => {
@@ -99,7 +99,7 @@ export default class EditBrokersPage extends React.Component<IProps, IState> {
         })
             .then((response: any) => {
                 apiClient.updateBroker({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     brokercode: this.state.code,
                     body: this.state.brokerDetails

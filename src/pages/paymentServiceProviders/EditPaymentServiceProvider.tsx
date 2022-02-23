@@ -65,7 +65,7 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
         })
             .then((response: any) => {
                 apiClient.getPaymentServiceProvider({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     pspcode: code
                 }).then((response: any) => {
@@ -91,7 +91,7 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
         })
                 .then((response: any) => {
                     apiClient.getPaymentServiceProvidersChannels({
-                        Authorization: `Bearer ${response.accessToken}`,
+                        Authorization: `Bearer ${response.idToken}`,
                         ApiKey: "",
                         pspcode: code
                     })
@@ -133,7 +133,7 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
         })
             .then((response: any) => {
                 apiClient.updatePaymentServiceProvider({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     pspcode: this.state.code,
                     body: this.state.paymentServiceProvider

@@ -80,7 +80,7 @@ export default class Channel extends React.Component<IProps, IState> {
         })
             .then((response: any) => {
                 apiClient.getChannel({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     channelcode: code
                 })
@@ -108,7 +108,7 @@ export default class Channel extends React.Component<IProps, IState> {
         })
                 .then((response: any) => {
                     apiClient.getChannelPaymentTypes({
-                        Authorization: `Bearer ${response.accessToken}`,
+                        Authorization: `Bearer ${response.idToken}`,
                         ApiKey: "",
                         channelcode: code
                     })
@@ -133,7 +133,7 @@ export default class Channel extends React.Component<IProps, IState> {
         })
         .then((response: any) => {
             apiClient.getPaymentTypes({
-                Authorization: `Bearer ${response.accessToken}`,
+                Authorization: `Bearer ${response.idToken}`,
                 ApiKey: ""
             })
             .then((response: any) => {

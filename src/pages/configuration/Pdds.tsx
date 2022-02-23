@@ -91,7 +91,7 @@ export default class Pdds extends React.Component<IProps, IState> {
         })
             .then((response: any) => {
                 apiClient.getPdds({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: ""
                 })
                     .then((response: any) => {
@@ -181,7 +181,7 @@ export default class Pdds extends React.Component<IProps, IState> {
         })
             .then((response: any) => {
                 apiClient.updatePdd({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     id_pdd: configuration.id_pdd,
                     body: configuration
@@ -215,7 +215,7 @@ export default class Pdds extends React.Component<IProps, IState> {
         })
             .then((response: any) => {
                 apiClient.createPdd({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     body: this.state.create.configuration
                 })
@@ -281,7 +281,7 @@ export default class Pdds extends React.Component<IProps, IState> {
             })
                 .then((response: any) => {
                     apiClient.deletePdd({
-                        Authorization: `Bearer ${response.accessToken}`,
+                        Authorization: `Bearer ${response.idToken}`,
                         ApiKey: "",
                         id_pdd: configuration.id_pdd
                     })

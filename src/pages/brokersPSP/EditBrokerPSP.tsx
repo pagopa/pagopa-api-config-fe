@@ -62,7 +62,7 @@ export default class EditBrokerPSP extends React.Component<IProps, IState> {
         })
             .then((response: any) => {
                 apiClient.getBrokerPsp({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     brokerpspcode: code
                 }).then((response: any) => {
@@ -103,7 +103,7 @@ export default class EditBrokerPSP extends React.Component<IProps, IState> {
         })
             .then((response: any) => {
                 apiClient.updateBrokerPsp({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     brokerpspcode: this.state.code,
                     body: this.state.brokerPSP

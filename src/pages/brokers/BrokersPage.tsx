@@ -91,7 +91,7 @@ export default class BrokersPSP extends React.Component<IProps, IState> {
         })
                 .then((response: any) => {
                     apiClient.getBrokersPsp({
-                        Authorization: `Bearer ${response.accessToken}`,
+                        Authorization: `Bearer ${response.idToken}`,
                         ApiKey: "",
                         limit: 10,
                         page,
@@ -169,7 +169,7 @@ export default class BrokersPSP extends React.Component<IProps, IState> {
             })
                     .then((response: any) => {
                         apiClient.deleteBrokerPsp({
-                            Authorization: `Bearer ${response.accessToken}`,
+                            Authorization: `Bearer ${response.idToken}`,
                             ApiKey: "",
                             brokerpspcode: this.state.brokerToDelete.broker_psp_code
                         })

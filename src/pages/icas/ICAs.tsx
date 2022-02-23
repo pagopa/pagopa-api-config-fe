@@ -85,7 +85,7 @@ export default class Icas extends React.Component<IProps, IState> {
         })
             .then((response: any) => {
                 apiClient.getIcas({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     limit: 10,
                     page,
@@ -132,7 +132,7 @@ export default class Icas extends React.Component<IProps, IState> {
             const config = {
                 headers: {
                     'Content-Type': 'multipart/form-data',
-                    Authorization: `Bearer ${response.accessToken}`
+                    Authorization: `Bearer ${response.idToken}`
                 }
             };
             axios.post(baseUrl + basePath + "/icas", data, config).then(() => {
@@ -168,7 +168,7 @@ export default class Icas extends React.Component<IProps, IState> {
         }).then((response: any) => {
             const config = {
                 headers: {
-                    Authorization: `Bearer ${response.accessToken}`
+                    Authorization: `Bearer ${response.idToken}`
                 },
                 responseType: 'blob'
             } as AxiosRequestConfig;
@@ -219,7 +219,7 @@ export default class Icas extends React.Component<IProps, IState> {
             })
                     .then((response: any) => {
                         apiClient.deleteIca({
-                            Authorization: `Bearer ${response.accessToken}`,
+                            Authorization: `Bearer ${response.idToken}`,
                             ApiKey: "",
                             idica: this.state.icaToDelete.id_ica,
                             creditorinstitutioncode: this.state.icaToDelete.creditor_institution_code

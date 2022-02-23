@@ -72,7 +72,7 @@ export default class CreateBrokerPage extends React.Component<IProps, IState> {
         })
             .then((response: any) => {
                 apiClient.createBroker({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     body: this.state.brokerDetails
                 }).then((response: any) => {

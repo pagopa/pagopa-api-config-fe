@@ -91,7 +91,7 @@ export default class PaymentServiceProviders extends React.Component<IProps, ISt
         })
             .then((response: any) => {
                 apiClient.getPaymentServiceProviders({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     limit: 10,
                     page,
@@ -167,7 +167,7 @@ export default class PaymentServiceProviders extends React.Component<IProps, ISt
             })
                 .then((response: any) => {
                     apiClient.deletePaymentServiceProvider({
-                        Authorization: `Bearer ${response.accessToken}`,
+                        Authorization: `Bearer ${response.idToken}`,
                         ApiKey: "",
                         pspcode: this.state.paymentServiceProviderToDelete.psp_code
                     })

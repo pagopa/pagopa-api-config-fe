@@ -97,7 +97,7 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
         })
             .then((response: any) => {
                 apiClient.getCreditorInstitutions({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     limit: 10,
                     page,
@@ -176,7 +176,7 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
             })
                 .then((response: any) => {
                     apiClient.deleteCreditorInstitution({
-                        Authorization: `Bearer ${response.accessToken}`,
+                        Authorization: `Bearer ${response.idToken}`,
                         ApiKey: "",
                         creditorinstitutioncode: this.state.creditorInstitutionToDelete.creditor_institution_code
                     })

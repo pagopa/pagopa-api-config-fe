@@ -101,7 +101,7 @@ export default class CreateStation extends React.Component<IProps, IState> {
         })
             .then((response: any) => {
                 apiClient.createStation({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     body: this.state.station
                 }).then((response: any) => {

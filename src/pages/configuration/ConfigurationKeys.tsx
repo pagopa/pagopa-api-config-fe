@@ -91,7 +91,7 @@ export default class ConfigurationKeys extends React.Component<IProps, IState> {
         })
             .then((response: any) => {
                 apiClient.getConfigurationKeys({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: ""
                 })
                     .then((response: any) => {
@@ -180,7 +180,7 @@ export default class ConfigurationKeys extends React.Component<IProps, IState> {
         })
             .then((response: any) => {
                 apiClient.updateConfigurationKey({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     category: configuration.config_category,
                     key: configuration.config_key,
@@ -215,7 +215,7 @@ export default class ConfigurationKeys extends React.Component<IProps, IState> {
         })
             .then((response: any) => {
                 apiClient.createConfigurationKey({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     body: this.state.create.configuration
                 })
@@ -282,7 +282,7 @@ export default class ConfigurationKeys extends React.Component<IProps, IState> {
             })
                 .then((response: any) => {
                     apiClient.deleteConfigurationKey({
-                        Authorization: `Bearer ${response.accessToken}`,
+                        Authorization: `Bearer ${response.idToken}`,
                         ApiKey: "",
                         category: configuration.config_category,
                         key: configuration.config_key

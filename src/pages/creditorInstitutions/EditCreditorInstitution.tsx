@@ -70,7 +70,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
         })
             .then((response: any) => {
                 apiClient.getCreditorInstitution({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     creditorinstitutioncode: code
                 }).then((response: any) => {
@@ -96,7 +96,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
         })
             .then((response: any) => {
                 apiClient.getCreditorInstitutionsIbans({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     creditorinstitutioncode: code
                 }).then((response: any) => {
@@ -120,7 +120,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
         })
             .then((response: any) => {
                 apiClient.getCreditorInstitutionStations({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     creditorinstitutioncode: code
                 }).then((response: any) => {
@@ -144,7 +144,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
         })
             .then((response: any) => {
                 apiClient.getCreditorInstitutionEncodings({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     creditorinstitutioncode: code
                 }).then((response: any) => {
@@ -192,7 +192,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
         })
             .then((response: any) => {
                 apiClient.updateCreditorInstitution({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     creditorinstitutioncode: this.state.code,
                     body: this.state.creditorInstitution

@@ -80,7 +80,7 @@ export default class CreatePaymentServiceProvider extends React.Component<IProps
         })
             .then((response: any) => {
                 apiClient.createPaymentServiceProvider({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     body: this.state.paymentServiceProvider
                 }).then((response: any) => {

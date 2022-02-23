@@ -42,7 +42,7 @@ export default class Station extends React.Component<IProps, IState> {
         })
             .then((response: any) => {
                 apiClient.getStation({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     stationcode: code
                 })

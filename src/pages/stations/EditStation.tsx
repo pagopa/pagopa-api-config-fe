@@ -62,7 +62,7 @@ export default class EditStation extends React.Component<IProps, IState> {
         })
             .then((response: any) => {
                 apiClient.getStation({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     stationcode: code
                 }).then((response: any) => {
@@ -103,7 +103,7 @@ export default class EditStation extends React.Component<IProps, IState> {
         })
             .then((response: any) => {
                 apiClient.updateStation({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     stationcode: this.state.code,
                     body: this.state.station

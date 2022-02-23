@@ -89,7 +89,7 @@ export default class Channels extends React.Component<IProps, IState> {
         })
             .then((response: any) => {
                 apiClient.getChannels({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     limit: 10,
                     page,
@@ -165,7 +165,7 @@ export default class Channels extends React.Component<IProps, IState> {
             })
                 .then((response: any) => {
                     apiClient.deleteChannel({
-                        Authorization: `Bearer ${response.accessToken}`,
+                        Authorization: `Bearer ${response.idToken}`,
                         ApiKey: "",
                         channelcode: this.state.channelToDelete.channel_code
                     })
