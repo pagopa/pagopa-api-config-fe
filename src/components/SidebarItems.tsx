@@ -25,6 +25,11 @@ const SidebarItems = [
         domain: "ec"
     },
     {
+        name: "Tabella delle Controparti",
+        route: "/counterparttables",
+        domain: "ec"
+    },
+    {
         name: "PSP",
         route: "/payment-service-providers",
         domain: "psp"

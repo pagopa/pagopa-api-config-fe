@@ -32,6 +32,7 @@ import Pdds from "../pages/configuration/Pdds";
 import WFESPPlugins from "../pages/configuration/WFESPPlugins";
 import Layout from "../components/Layout";
 import NotFound from "../pages/NotFound";
+import CounterpartTables from "../pages/counterparttables/CounterpartTables";
 
 export default class Routes extends React.Component {
 
@@ -67,6 +68,8 @@ export default class Routes extends React.Component {
 
                                     <Route path="/icas" exact component={Icas} />
                                     <Route path="/icas/check" exact component={CheckICA} />
+
+                                    <Route path="/counterparttables" exact component={CounterpartTables} />
 
                                     <Route path="/payment-service-providers" exact component={PaymentServiceProviders}/>
                                     <Route path="/payment-service-providers/create" component={CreatePaymentServiceProvider} />
