@@ -85,7 +85,7 @@ export default class Cdis extends React.Component<IProps, IState> {
         })
             .then((response: any) => {
                 apiClient.getCdis({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     limit: 10,
                     page,
@@ -132,7 +132,7 @@ export default class Cdis extends React.Component<IProps, IState> {
             const config = {
                 headers: {
                     'Content-Type': 'multipart/form-data',
-                    Authorization: `Bearer ${response.accessToken}`
+                    Authorization: `Bearer ${response.idToken}`
                 }
             };
             axios.post(baseUrl + basePath + "/cdis", data, config).then(() => {
@@ -168,7 +168,7 @@ export default class Cdis extends React.Component<IProps, IState> {
         }).then((response: any) => {
             const config = {
                 headers: {
-                    Authorization: `Bearer ${response.accessToken}`
+                    Authorization: `Bearer ${response.idToken}`
                 },
                 responseType: 'blob'
             } as AxiosRequestConfig;
@@ -219,7 +219,7 @@ export default class Cdis extends React.Component<IProps, IState> {
             })
                 .then((response: any) => {
                     apiClient.deleteCdi({
-                        Authorization: `Bearer ${response.accessToken}`,
+                        Authorization: `Bearer ${response.idToken}`,
                         ApiKey: "",
                         idcdi: this.state.cdiToDelete.id_cdi,
                         pspcode: this.state.cdiToDelete.psp_code

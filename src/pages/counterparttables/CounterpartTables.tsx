@@ -85,7 +85,7 @@ export default class CounterpartTables extends React.Component<IProps, IState> {
         })
             .then((response: any) => {
                 apiClient.getCounterpartTables({
-                    Authorization: `Bearer ${response.accessToken}`,
+                    Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     limit: 10,
                     page,
@@ -132,7 +132,7 @@ export default class CounterpartTables extends React.Component<IProps, IState> {
             const config = {
                 headers: {
                     'Content-Type': 'multipart/form-data',
-                    Authorization: `Bearer ${response.accessToken}`
+                    Authorization: `Bearer ${response.idToken}`
                 }
             };
             axios.post(baseUrl + basePath + "/counterparttables", data, config).then(() => {
@@ -168,7 +168,7 @@ export default class CounterpartTables extends React.Component<IProps, IState> {
         }).then((response: any) => {
             const config = {
                 headers: {
-                    Authorization: `Bearer ${response.accessToken}`
+                    Authorization: `Bearer ${response.idToken}`
                 },
                 responseType: 'blob'
             } as AxiosRequestConfig;
@@ -219,7 +219,7 @@ export default class CounterpartTables extends React.Component<IProps, IState> {
             })
                 .then((response: any) => {
                     apiClient.deleteCounterpartTable({
-                        Authorization: `Bearer ${response.accessToken}`,
+                        Authorization: `Bearer ${response.idToken}`,
                         ApiKey: "",
                         idcounterparttable: this.state.cptToDelete.id_counterpart_table,
                         creditorinstitutioncode: this.state.cptToDelete.creditor_institution_code
