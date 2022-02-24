@@ -26,6 +26,7 @@ import Channels from "../pages/channels/Channels";
 import Channel from "../pages/channels/Channel";
 import CreateChannel from "../pages/channels/CreateChannel";
 import EditChannel from "../pages/channels/EditChannel";
+import CDIs from "../pages/cdis/CDIs";
 import ConfigurationKeys from "../pages/configuration/ConfigurationKeys";
 import Pdds from "../pages/configuration/Pdds";
 import WFESPPlugins from "../pages/configuration/WFESPPlugins";
@@ -87,6 +88,8 @@ export default class Routes extends React.Component {
                                         const edit: boolean = new URLSearchParams(props.location.search).get("edit") !== null;
                                         return edit ? <EditChannel {...props} /> : <Channel {...props} />;
                                     }}/>
+
+                                    <Route path="/cdis" exact component={CDIs} />
 
                                     <Route path="/configuration-keys" exact component={ConfigurationKeys}/>
                                     <Route path="/pdds" exact component={Pdds}/>
