@@ -4,6 +4,7 @@ import BrokerPage from "../pages/brokers/BrokerPage";
 import BrokersPage from "../pages/brokers/BrokersPage";
 import CreateBrokerPage from "../pages/brokers/CreateBrokerPage";
 import EditBrokerPage from "../pages/brokers/EditBrokerPage";
+import Icas from "../pages/icas/ICAs";
 import CheckICA from "../pages/icas/CheckICA";
 import CreditorInstitutions from "../pages/creditorInstitutions/CreditorInstitutions";
 import CreditorInstitution from "../pages/creditorInstitutions/CreditorInstitution";
@@ -13,7 +14,6 @@ import Stations from "../pages/stations/Stations";
 import Station from "../pages/stations/Station";
 import CreateStation from "../pages/stations/CreateStation";
 import EditStation from "../pages/stations/EditStation";
-import Ica from "../pages/icas/ICAs";
 import PaymentServiceProviders from "../pages/paymentServiceProviders/PaymentServiceProviders";
 import PaymentServiceProvider from "../pages/paymentServiceProviders/PaymentServiceProvider";
 import CreatePaymentServiceProvider from "../pages/paymentServiceProviders/CreatePaymentServiceProvider";
@@ -26,6 +26,7 @@ import Channels from "../pages/channels/Channels";
 import Channel from "../pages/channels/Channel";
 import CreateChannel from "../pages/channels/CreateChannel";
 import EditChannel from "../pages/channels/EditChannel";
+import CDIs from "../pages/cdis/CDIs";
 import ConfigurationKeys from "../pages/configuration/ConfigurationKeys";
 import Pdds from "../pages/configuration/Pdds";
 import WFESPPlugins from "../pages/configuration/WFESPPlugins";
@@ -65,7 +66,7 @@ export default class Routes extends React.Component {
                                         return edit ? <EditStation {...props} /> : <Station {...props} />;
                                     }}/>
 
-                                    <Route path="/icas" exact component={Ica} />
+                                    <Route path="/icas" exact component={Icas} />
                                     <Route path="/icas/check" exact component={CheckICA} />
 
                                     <Route path="/counterparttables" exact component={CounterpartTables} />
@@ -90,6 +91,8 @@ export default class Routes extends React.Component {
                                         const edit: boolean = new URLSearchParams(props.location.search).get("edit") !== null;
                                         return edit ? <EditChannel {...props} /> : <Channel {...props} />;
                                     }}/>
+
+                                    <Route path="/cdis" exact component={CDIs} />
 
                                     <Route path="/configuration-keys" exact component={ConfigurationKeys}/>
                                     <Route path="/pdds" exact component={Pdds}/>

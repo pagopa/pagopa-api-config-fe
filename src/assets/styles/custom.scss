@@ -294,6 +294,28 @@ pre {
   font-size: 0.8rem;
 }
 
+.icas {
+  .fixed-td-width {
+    width: 20%;
+  }
+
+  .hidden {
+    display: none;
+  }
+}
+
+.cdis {
+  .fixed-td-width {
+    width: 18%;
+  }
+  .fixed-td-width-sm {
+    width: 5%;
+  }
+  .hidden {
+    display: none;
+  }
+}
+
 .cpts {
   .fixed-td-width {
     width: 18%;
@@ -301,7 +323,6 @@ pre {
   .fixed-td-width-sm {
     width: 6%;
   }
-
   .hidden {
     display: none;
   }

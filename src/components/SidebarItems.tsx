@@ -15,6 +15,11 @@ const SidebarItems = [
         domain: "ec"
     },
     {
+        name: "Informativa Conto Accredito",
+        route: "/icas",
+        domain: "ec"
+    },
+    {
         name: "Verifica Informativa Conto Accredito",
         route: "/icas/check",
         domain: "ec"
@@ -40,6 +45,11 @@ const SidebarItems = [
         domain: "psp"
     },
     {
+        name: "Catalogo Dati Informativi",
+        route: "/cdis",
+        domain: "psp"
+    },
+    {
         name: "Configuration Keys",
         route: "/configuration-keys",
         domain: "configuration"
@@ -55,10 +65,5 @@ const SidebarItems = [
         domain: "configuration"
     },
 ];
-// {
-//     name: "Informativa Conto Accredito - ICA",
-//     route: "/icas",
-//     domain: "ec"
-// },
 
 export default SidebarItems;
