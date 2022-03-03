@@ -1,11 +1,14 @@
 import React from "react";
-import {Alert, Badge, Breadcrumb, Button, Card, Form, Table} from "react-bootstrap";
-import {FaCheck, FaInfoCircle, FaSpinner, FaTimes} from "react-icons/fa";
+import {Alert, Breadcrumb, Button, Card, Form, OverlayTrigger, Table, Tooltip} from "react-bootstrap";
+import {FaCheck, FaEdit, FaInfoCircle, FaPlus, FaSpinner, FaTimes, FaTrash} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
 import {apiClient} from "../../util/apiClient";
 import {loginRequest} from "../../authConfig";
 import {PaymentServiceProviderDetails} from "../../../generated/api/PaymentServiceProviderDetails";
+import {PspChannelCode} from "../../../generated/api/PspChannelCode";
+import {PaymentType} from "../../../generated/api/PaymentType";
+import ConfirmationModal from "../../components/ConfirmationModal";
 
 interface IProps {
     match: {
@@ -22,6 +25,10 @@ interface IState {
     paymentServiceProvider: PaymentServiceProviderDetails;
     channelList: [];
     edit: boolean;
+    channelSection: any;
+    channelCode: string;
+    paymentTypes: [];
+    paymentTypeLegend: any;
 }
 
 export default class EditPaymentServiceProvider extends React.Component<IProps, IState> {
@@ -43,10 +50,25 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
             code: "",
             paymentServiceProvider: {} as PaymentServiceProviderDetails,
             channelList: [],
-            edit: false
+            edit: false,
+            channelSection: {
+                new: false,
+                edit: false,
+                delete: false
+            },
+            channelCode: "",
+            paymentTypes: [],
+            paymentTypeLegend: {},
         };
 
         this.handleChange = this.handleChange.bind(this);
+        this.handleChannel = this.handleChannel.bind(this);
+        this.handleChannelDelete = this.handleChannelDelete.bind(this);
+        this.handleChannelEdit = this.handleChannelEdit.bind(this);
+        this.handlePaymentTypes = this.handlePaymentTypes.bind(this);
+        this.newChannel = this.newChannel.bind(this);
+        this.saveChannel = this.saveChannel.bind(this);
+        this.discardChannel = this.discardChannel.bind(this);
         this.savePaymentServiceProvider = this.savePaymentServiceProvider.bind(this);
         this.discard = this.discard.bind(this);
     }
@@ -110,11 +132,38 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                 });
     }
 
+    getPaymentTypeLegend(): void {
+        this.context.instance.acquireTokenSilent({
+            ...loginRequest,
+            account: this.context.accounts[0]
+        })
+                .then((response: any) => {
+                    apiClient.getPaymentTypes({
+                        Authorization: `Bearer ${response.idToken}`,
+                        ApiKey: ""
+                    })
+                            .then((response: any) => {
+                                if (response.right.status === 200) {
+                                    const paymentTypeLegend = {} as any;
+                                    response.right.value.payment_types.forEach((pt: PaymentType) => {
+                                        // eslint-disable-next-line functional/immutable-data
+                                        paymentTypeLegend[pt.payment_type] = pt.description;
+                                    });
+                                    this.setState({paymentTypeLegend});
+                                }
+                            })
+                            .catch(() => {
+                                this.setState({isError: true});
+                            });
+                });
+    }
+
     componentDidMount(): void {
         const code: string = this.props.match.params.code as string;
         this.setState({code, isError: false});
         this.getPaymentServiceProvider(code);
         this.getChannels(code);
+        this.getPaymentTypeLegend();
     }
 
     handleChange(event: any) {
@@ -125,6 +174,148 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
         paymentServiceProvider = {...paymentServiceProvider, [key]: value};
         this.setState({paymentServiceProvider});
     }
+
+    handleChannel(channelCode: string) {
+        this.setState({channelCode});
+    }
+
+    handlePaymentTypes(paymentTypesString: string) {
+        const paymentTypes = paymentTypesString.toUpperCase().replace(/  +/g, ' ').split(" ") as [];
+        this.setState({paymentTypes});
+    }
+
+    newChannel() {
+        const channelSection = {new: true, edit: false, delete: false};
+        this.setState({channelSection});
+    }
+
+    discardChannel() {
+        const channelSection = {new: false, edit: false, delete: false};
+        this.setState({channelSection, channelCode: "", paymentTypes: []});
+    }
+
+    saveChannel() {
+        this.context.instance.acquireTokenSilent({
+            ...loginRequest,
+            account: this.context.accounts[0]
+        })
+            .then((response: any) => {
+                const data = {
+                    "channel_code": this.state.channelCode,
+                    "payment_types": this.state.paymentTypes
+                };
+
+                apiClient.createPaymentServiceProvidersChannels({
+                    Authorization: `Bearer ${response.idToken}`,
+                    ApiKey: "",
+                    pspcode: this.state.paymentServiceProvider.psp_code,
+                    body: data
+                })
+                    .then((response: any) => {
+                        if (response.right.status === 201) {
+                            this.getChannels(this.state.paymentServiceProvider.psp_code);
+                            toast.info("Relazione con canale salvata con successo");
+                        } else {
+                            const message = "detail" in response.right.value ? response.right.value.detail : "Operazione non avvenuta a causa di un errore";
+                            toast.error(message, {theme: "colored"});
+                        }
+                    })
+                    .catch(() => {
+                        toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                    })
+                    .finally(this.discardChannel);
+            });
+    }
+
+    handleChannelEdit(item: PspChannelCode) {
+        const channelSection = {new: false, edit: true, delete: false};
+        this.setState({channelSection, channelCode: item.channel_code, paymentTypes: item.payment_types as []});
+    }
+
+    handleChannelDelete(item: PspChannelCode) {
+        const channelSection = {new: false, edit: false, delete: true};
+        this.setState({channelSection, channelCode: item.channel_code, paymentTypes: item.payment_types as []});
+    }
+
+    editChannel() {
+        // eslint-disable-next-line functional/no-let
+        let exit = false;
+        for (const pt of this.state.paymentTypes) {
+            if (!Object.keys(this.state.paymentTypeLegend).includes(pt)) {
+                toast.warning(String(pt).toUpperCase() + " non è un tipo versamento valido", {theme: "colored"});
+                exit = true;
+                break;
+            }
+        }
+        if (!exit) {
+            this.context.instance.acquireTokenSilent({
+                ...loginRequest,
+                account: this.context.accounts[0]
+            })
+                .then((response: any) => {
+                        const data = {
+                            "payment_types": this.state.paymentTypes
+                        };
+
+                        apiClient.updatePaymentServiceProvidersChannels({
+                            Authorization: `Bearer ${response.idToken}`,
+                            ApiKey: "",
+                            pspcode: this.state.paymentServiceProvider.psp_code,
+                            channelcode: this.state.channelCode,
+                            body: data
+                        })
+                            .then((resp: any) => {
+                                if (resp.right.status === 200) {
+                                    this.getChannels(this.state.paymentServiceProvider.psp_code);
+                                    toast.info("Relazione con canale aggiornata con successo");
+                                } else {
+                                    const message = "detail" in resp.right.value ? resp.right.value.detail : "Operazione non avvenuta a causa di un errore";
+                                    toast.error(message, {theme: "colored"});
+                                }
+                            })
+                            .catch(() => {
+                                toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                            })
+                            .finally(this.discardChannel);
+                    });
+        }
+    }
+
+    hideDeleteModal = (status: string) => {
+        if (status === "ok") {
+            this.context.instance.acquireTokenSilent({
+                ...loginRequest,
+                account: this.context.accounts[0]
+            })
+                .then((response: any) => {
+                    apiClient.deletePaymentServiceProvidersChannels({
+                        Authorization: `Bearer ${response.idToken}`,
+                        ApiKey: "",
+                        pspcode: this.state.code,
+                        channelcode: this.state.channelCode
+                    })
+                        .then((res: any) => {
+                            if (res.right.status === 200) {
+                                toast.info("Rimozione avvenuta con successo");
+                                this.getChannels(this.state.code);
+                            } else {
+                                toast.error(res.right.value.title, {theme: "colored"});
+                            }
+                        })
+                        .catch(() => {
+                            toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                        })
+                        .finally(() => {
+                            const channelSection = {new: false, edit: false, delete: false};
+                            this.setState({channelSection, channelCode: "", paymentTypes: []});
+                        });
+                });
+        }
+        else {
+            const channelSection = {new: false, edit: false, delete: false};
+            this.setState({channelSection, channelCode: "", paymentTypes: []});
+        }
+    };
 
     savePaymentServiceProvider() {
         this.context.instance.acquireTokenSilent({
@@ -158,10 +349,6 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
         this.setState({[section]: Object.assign({}, this.state.backup[section])} as any);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    createChannel(): void {
-    }
-
     render(): React.ReactNode {
         const isError = this.state.isError;
         const isLoading = this.state.isLoading;
@@ -176,11 +363,59 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                             {item.enabled && <FaCheck className="text-success"/>}
                             {!item.enabled && <FaTimes className="text-danger"/>}
                         </td>
-                        <td className="text-center">{item.payment_types.join(" ")}</td>
+                        <td className="text-center">
+                            {
+                                !this.state.channelSection.edit && item.payment_types.join(" ")
+                            }
+                            {
+                                this.state.channelSection.edit &&
+								<Form.Control name="payment_types" placeholder="Tipi versamento"
+											  value={this.state.paymentTypes.join(" ")}
+                                              onChange={(e) => this.handlePaymentTypes(e.target.value)}/>
+                            }
+                        </td>
+                        <td className="text-right">
+                            {
+                                !this.state.channelSection.edit &&
+                                <>
+                                    {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
+									<OverlayTrigger placement="top"
+													overlay={<Tooltip id={`tooltip-edit-${index}`}>Modifica</Tooltip>}>
+										<FaEdit role="button" className="mr-3" onClick={() => this.handleChannelEdit(item)}/>
+									</OverlayTrigger>
+                                    {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
+									<OverlayTrigger placement="top"
+													overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
+										<FaTrash role="button" className="mr-3" onClick={() => this.handleChannelDelete(item)}/>
+									</OverlayTrigger>
+                                </>
+                            }
+                            {
+                                this.state.channelSection.edit &&
+                                <>
+									<Button className="ml-2 float-md-right"
+											variant="secondary" onClick={() => {
+                                        this.discardChannel();
+                                    }}>Annulla</Button>
+
+									<Button className="float-md-right" onClick={() => {
+                                        this.editChannel();
+                                    }}>Salva</Button>
+                                </>
+                            }
+
+                        </td>
                     </tr>
             );
             channelList.push(row);
         });
+
+        const paymentTypeLegend: any = Object.keys(this.state.paymentTypeLegend).map((item: any, index: number) => (
+                <span key={index} className="mr-2 badge badge-secondary">
+                    {item}: {this.state.paymentTypeLegend[item]}
+                    {item === "OBEP" && <span className="badge badge-danger ml-2">DEPRECATO</span>}
+                </span>
+        ));
 
         return (
             <div className="container-fluid creditor-institutions">
@@ -311,21 +546,35 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                                                     <h5>Canali</h5>
                                                 </Card.Header>
                                                 <Card.Body>
-                                                    {Object.keys(channelList).length === 0 && (
+                                                    {Object.keys(channelList).length === 0 && !this.state.channelSection.new && (
                                                             <Alert className={'col-md-12'} variant={"warning"}><FaInfoCircle
                                                                     className="mr-1"/>Canali non presenti</Alert>
                                                     )}
-                                                    {Object.keys(channelList).length > 0 &&
+                                                    {(Object.keys(channelList).length > 0 || this.state.channelSection.new) &&
 													<Table hover responsive size="sm">
 														<thead>
 														<tr>
 															<th className="">Codice</th>
-															<th className="text-center">Abilitata</th>
+															<th className="text-center">Abilitato</th>
 															<th className="text-center">Tipo Versamento</th>
+															<th className="text-right"></th>
 														</tr>
 														</thead>
 														<tbody>
                                                         {channelList}
+                                                        {
+                                                            this.state.channelSection.new &&
+															<tr>
+																<td>
+																	<Form.Control name="channel_code" placeholder="Codice Canale" onChange={(e) => this.handleChannel(e.target.value)}/>
+																</td>
+																<td></td>
+																<td>
+																	<Form.Control name="payment_types" placeholder="Tipi versamento" value={this.state.paymentTypes.join(" ")} onChange={(e) => this.handlePaymentTypes(e.target.value)}/>
+                                                                </td>
+																<td></td>
+															</tr>
+                                                        }
 														</tbody>
 													</Table>
                                                     }
@@ -335,17 +584,35 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                                                         <div className="col-md-12">
                                                             <div className="legend">
                                                                 <span className="font-weight-bold mr-2">Legenda:</span>
-                                                                <span className="mr-2 badge badge-secondary">BBT: Bonifico Bancario di Tesoreria</span>
-                                                                <span className="mr-2 badge badge-secondary">BP: Bollettino Postale</span>
-                                                                <span className="mr-2 badge badge-secondary">AD: Addebito Diretto</span>
-                                                                <span className="mr-2 badge badge-secondary">CP: Carta di Pagamento</span>
-                                                                <span className="mr-2 badge badge-secondary">PO: Pagamento attivato presso PSP</span>
-                                                                <span className="mr-2 badge badge-secondary">JIF: Bancomat Pay</span>
-                                                                <span className="mr-2 badge badge-secondary">MYBK: MyBank Seller Bank</span>
-                                                                <span className="mr-2 badge badge-secondary">PPAL: PayPal</span>
-                                                                <span className="mr-2 badge badge-secondary">OBEB: Online Banking Electronic Payment <Badge variant="danger">DEPRECATO</Badge> </span>
+                                                                {paymentTypeLegend}
                                                             </div>
                                                         </div>
+                                                    </div>
+                                                    <div className="row">
+                                                        {
+                                                            !this.state.channelSection.edit &&
+
+															<div className="col-md-12">
+                                                                {
+                                                                    !this.state.channelSection.new &&
+																	<Button className="float-md-right"
+																			onClick={() => this.newChannel()}>Nuovo <FaPlus/></Button>
+                                                                }
+                                                                {
+                                                                    this.state.channelSection.new &&
+																	<Button className="ml-2 float-md-right"
+																			variant="secondary" onClick={() => {
+                                                                        this.discardChannel();
+                                                                    }}>Annulla</Button>
+                                                                }
+                                                                {
+                                                                    this.state.channelSection.new &&
+																	<Button className="float-md-right" onClick={() => {
+                                                                        this.saveChannel();
+                                                                    }}>Salva</Button>
+                                                                }
+															</div>
+                                                        }
                                                     </div>
                                                 </Card.Footer>
                                             </Card>
@@ -356,6 +623,12 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                         }
                     </div>
                 </div>
+                <ConfirmationModal show={this.state.channelSection.delete} handleClose={this.hideDeleteModal}>
+                    <p>Sei sicuro di voler eliminare la seguente relazione PSP-Canale?</p>
+                    <ul>
+                        <li>{this.state.code} - {this.state.channelCode}</li>
+                    </ul>
+                </ConfirmationModal>
             </div>
         );
     }
