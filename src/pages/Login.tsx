@@ -1,19 +1,20 @@
 import React from 'react';
 import {useIsAuthenticated} from "@azure/msal-react";
+import ReactMarkdown from "react-markdown";
 import Topbar from "../components/Topbar";
+import content from "../assets/resources/login.md";
 
 const Login = () => {
     const isAuthenticated = useIsAuthenticated();
 
-
     return (
-        <div>
+        <>
             <Topbar isAuthenticated={isAuthenticated}/>
-            <br/>
-            <h5 className={"text-center m-3"}>
-                Effettua il Login
-            </h5>
-        </div>
+
+            <div className="container-fluid mt-3">
+                <ReactMarkdown>{content}</ReactMarkdown>
+            </div>
+        </>
     );
 };
 
