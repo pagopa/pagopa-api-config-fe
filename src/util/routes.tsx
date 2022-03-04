@@ -33,6 +33,7 @@ import WFESPPlugins from "../pages/configuration/WFESPPlugins";
 import Layout from "../components/Layout";
 import NotFound from "../pages/NotFound";
 import CounterpartTables from "../pages/counterparttables/CounterpartTables";
+import LandingPage from "../pages/LandingPage";
 
 export default class Routes extends React.Component {
 
@@ -43,7 +44,7 @@ export default class Routes extends React.Component {
                     <Route render={(props)=>(
                             <Layout {...props}>
                                 <Switch>
-                                    <Route path="/" exact component={CreditorInstitutions}/>
+                                    <Route path="/" exact component={LandingPage}/>
 
                                     <Route path="/creditor-institutions" exact component={CreditorInstitutions}/>
                                     <Route path="/creditor-institutions/create" component={CreateCreditorInstitution} />
