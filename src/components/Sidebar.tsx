@@ -1,6 +1,6 @@
 import React from "react";
 import {Link} from "react-router-dom";
-import {FaCompress, FaExpand} from "react-icons/fa";
+import {FaCompress, FaExpand, FaHome} from "react-icons/fa";
 import {Accordion} from "react-bootstrap";
 import SidebarItems from "./SidebarItems";
 
@@ -104,6 +104,12 @@ export default class Sidebar extends React.Component<IProps, IState> {
         }
 
         return (
+            <>
+            <Link to={"/"} key={"home"} className={`list-group-item-action `}>
+                <div className="ml-1">
+                    <FaHome></FaHome> <span className="ml-1">Home</span>
+                </div>
+            </Link>
             <Accordion onSelect={(activeIndex) => this.handleAccordion(activeIndex)}>
                 <span>
                     <Accordion.Toggle as="div" eventKey="0">
@@ -154,6 +160,7 @@ export default class Sidebar extends React.Component<IProps, IState> {
                     </Accordion.Collapse>
                 </span>
             </Accordion>
+            </>
         );
     }
 }

@@ -8,7 +8,7 @@ import Routes from "../util/routes";
  * @jest-environment jsdom
  */
 
-test("rendering ica through navigation on /cdis", () => {
+test("rendering cdi through navigation on /cdis", () => {
 
   const history = createMemoryHistory();
   const route = '/';
