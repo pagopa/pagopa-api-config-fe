@@ -8,19 +8,6 @@ import Routes from "../util/routes";
  * @jest-environment jsdom
  */
 
-test("rendering EC through navigation on /", () => {
-    const history = createMemoryHistory();
-    const route = '/';
-      history.push(route);
-
-      render(
-              <Router history={history}>
-                <Routes />
-              </Router>
-      );
-      // verify page content for expected route
-      expect(screen.getAllByText(/Enti Creditori/i));
-});
 
 test("rendering EC through navigation on /ec", () => {
 
