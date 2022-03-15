@@ -236,6 +236,14 @@ export default class EditStation extends React.Component<IProps, IState> {
                                                                   value={this.state.station.service}
                                                                   onChange={(e) => this.handleChange(e)} />
                                                 </Form.Group>
+
+
+                                                <Form.Group controlId="pof_service" className="col-md-3">
+                                                    <Form.Label>Servizio POF</Form.Label>
+                                                    <Form.Control name="pof_service"
+                                                                  value={this.state.station.pof_service}
+                                                                  onChange={(e) => this.handleChange(e)} />
+                                                </Form.Group>
                                             </div>
 
                                             <div className="row">

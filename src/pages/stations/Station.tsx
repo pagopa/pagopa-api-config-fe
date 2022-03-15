@@ -144,6 +144,10 @@ export default class Station extends React.Component<IProps, IState> {
                                             <Form.Label>Servizio</Form.Label>
                                             <Form.Control placeholder="-" value={this.state.station.service} readOnly/>
                                         </Form.Group>
+                                        <Form.Group controlId="pof_service" className="col-md-3">
+                                            <Form.Label>Servizio POF</Form.Label>
+                                            <Form.Control placeholder="-" value={this.state.station.pof_service} readOnly/>
+                                        </Form.Group>
                                     </div>
 
                                     <div className="row">
