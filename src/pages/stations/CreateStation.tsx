@@ -197,6 +197,13 @@ export default class CreateStation extends React.Component<IProps, IState> {
                                 <Form.Label>Servizio</Form.Label>
                                 <Form.Control name="service" onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
+
+                            <Form.Group controlId="pof_service" className="col-md-3">
+                                <Form.Label>Servizio POF</Form.Label>
+                                <Form.Control name="pof_service"
+                                              value={this.state.station.pof_service}
+                                              onChange={(e) => this.handleChange(e)} />
+                            </Form.Group>
                         </div>
 
                         <div className="row">
