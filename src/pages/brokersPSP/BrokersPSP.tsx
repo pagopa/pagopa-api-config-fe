@@ -75,10 +75,6 @@ export default class BrokersPSP extends React.Component<IProps, IState> {
         };
 
         this.filter = {
-            name: {
-                visible: true,
-                placeholder: "Descrizione"
-            },
             code: {
                 visible: true,
                 placeholder: "Codice"
