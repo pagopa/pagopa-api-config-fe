@@ -199,6 +199,7 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
                         {item.broadcast && <FaCheck className="text-success"/>}
                         {!item.broadcast && <FaTimes className="text-danger"/>}
                     </td>
+                    <td className="text-center">{item.aux_digit}</td>
                 </tr>
             );
             stationList.push(row);
@@ -401,6 +402,7 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
                                                             <th className="text-center">Versione</th>
                                                             <th className="text-center">Modello 4</th>
                                                             <th className="text-center">Broadcast</th>
+                                                            <th className="text-center">Aux Digit</th>
                                                         </tr>
                                                         </thead>
                                                         <tbody>
