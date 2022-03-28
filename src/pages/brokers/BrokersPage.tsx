@@ -61,7 +61,7 @@ export default class Brokers extends React.Component<IProps, IState> {
             brokerToDelete: {},
             brokerIndex: -1,
             order: {
-                by: "CODE",
+                by: "NAME",
                 ing: "DESC"
             }
         };
@@ -204,34 +204,34 @@ export default class Brokers extends React.Component<IProps, IState> {
 
         this.state.brokers.map((broker: any, index: number) => {
             const code = (
-                    <tr key={index}>
-                        <td>{broker.broker_code}</td>
-                        <td>{broker.description}</td>
-                        <td className="text-center">
-                            {broker.enabled && <FaCheck className="text-success"/>}
-                            {!broker.enabled && <FaTimes className="text-danger"/>}
-                        </td>
-                        <td className="text-right">
-                            {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
-                            <OverlayTrigger placement="top"
-                                            overlay={<Tooltip id={`tooltip-details-${index}`}>Visualizza</Tooltip>}>
-                                <FaEye role="button" className="mr-3"
-                                       onClick={() => this.handleDetails(broker.broker_code)}/>
-                            </OverlayTrigger>
-                            {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
-                            <OverlayTrigger placement="top"
-                                            overlay={<Tooltip id={`tooltip-edit-${index}`}>Modifica</Tooltip>}>
-                                {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
-                                <FaEdit role="button" className="mr-3" onClick={() => this.handleEdit(broker.broker_code)}/>
-                            </OverlayTrigger>
-                            {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
-                            <OverlayTrigger placement="top"
-                                            overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
-                                {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
-                                <FaTrash role="button" className="mr-3" onClick={() => this.handleDelete(broker, index)}/>
-                            </OverlayTrigger>
-                        </td>
-                    </tr>
+                <tr key={index}>
+                    <td>{broker.description}</td>
+                    <td>{broker.broker_code}</td>
+                    <td className="text-center">
+                        {broker.enabled && <FaCheck className="text-success"/>}
+                        {!broker.enabled && <FaTimes className="text-danger"/>}
+                    </td>
+                    <td className="text-right">
+                        {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
+                        <OverlayTrigger placement="top"
+                                        overlay={<Tooltip id={`tooltip-details-${index}`}>Visualizza</Tooltip>}>
+                            <FaEye role="button" className="mr-3"
+                                   onClick={() => this.handleDetails(broker.broker_code)}/>
+                        </OverlayTrigger>
+                        {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
+                        <OverlayTrigger placement="top"
+                                        overlay={<Tooltip id={`tooltip-edit-${index}`}>Modifica</Tooltip>}>
+                            {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
+                            <FaEdit role="button" className="mr-3" onClick={() => this.handleEdit(broker.broker_code)}/>
+                        </OverlayTrigger>
+                        {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
+                        <OverlayTrigger placement="top"
+                                        overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
+                            {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
+                            <FaTrash role="button" className="mr-3" onClick={() => this.handleDelete(broker, index)}/>
+                        </OverlayTrigger>
+                    </td>
+                </tr>
             );
             brokerList.push(code);
         });
@@ -256,12 +256,12 @@ export default class Brokers extends React.Component<IProps, IState> {
                                                 <thead>
                                                 <tr>
                                                     <th className="fixed-td-width">
-                                                        <Ordering currentOrderBy={this.state.order.by} currentOrdering={this.state.order.ing} orderBy={"CODE"} ordering={"DESC"} handleOrder={this.handleOrder} />
-                                                        Codice
-                                                    </th>
-                                                    <th className="fixed-td-width">
                                                         <Ordering currentOrderBy={this.state.order.by} currentOrdering={this.state.order.ing} orderBy={"NAME"} ordering={"DESC"} handleOrder={this.handleOrder} />
                                                         Descrizione
+                                                    </th>
+                                                    <th className="fixed-td-width">
+                                                        <Ordering currentOrderBy={this.state.order.by} currentOrdering={this.state.order.ing} orderBy={"CODE"} ordering={"DESC"} handleOrder={this.handleOrder} />
+                                                        Codice
                                                     </th>
                                                     <th className="text-center">Abilitato</th>
                                                     <th/>
