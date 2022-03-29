@@ -132,7 +132,6 @@ export default class EditStation extends React.Component<IProps, IState> {
     }
 
     discard(section: string) {
-        console.log("SECTION", section);
         // "as any" is necessary because it seems to be a bug: https://github.com/Microsoft/TypeScript/issues/13948
         this.setState({[section]: Object.assign({}, this.state.backup[section])} as any);
     }
