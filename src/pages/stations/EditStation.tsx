@@ -52,6 +52,14 @@ export default class EditStation extends React.Component<IProps, IState> {
         // eslint-disable-next-line functional/no-let
         let backup = {...this.state.backup};
         backup = {...backup, [section]: data};
+        const ports = ["port", "port_4mod", "proxy_port", "redirect_port"];
+        for (const key of ports) {
+            // eslint-disable-next-line no-prototype-builtins
+            if (!backup.station.hasOwnProperty(key)) {
+                // eslint-disable-next-line functional/immutable-data
+                backup.station[key] = "";
+            }
+        }
         this.setState({backup});
     }
 
@@ -173,7 +181,7 @@ export default class EditStation extends React.Component<IProps, IState> {
                                                     <Form.Label>Stato</Form.Label>
                                                     <Form.Control as="select" name="enabled" placeholder="stato"
                                                                   onChange={(e) => this.handleChange(e)}
-                                                                  defaultValue={String(this.state.station.enabled)}>
+                                                                  value={String(this.state.station.enabled)}>
                                                         <option value="true">Abilitato</option>
                                                         <option value="false">Non Abilitato</option>
                                                     </Form.Control>
@@ -318,7 +326,7 @@ export default class EditStation extends React.Component<IProps, IState> {
                                                     <Form.Label>Proxy</Form.Label>
                                                     <Form.Control as="select" name="proxy_enabled" placeholder="stato"
                                                                   onChange={(e) => this.handleChange(e)}
-                                                                  defaultValue={String(this.state.station.proxy_enabled)}>
+                                                                  value={String(this.state.station.proxy_enabled)}>
                                                         <option value="true">Abilitato</option>
                                                         <option value="false">Non Abilitato</option>
                                                     </Form.Control>
@@ -359,7 +367,7 @@ export default class EditStation extends React.Component<IProps, IState> {
                                                     <Form.Label>Flag Online</Form.Label>
                                                     <Form.Control as="select" name="flag_online" placeholder="stato"
                                                                   onChange={(e) => this.handleChange(e)}
-                                                                  defaultValue={String(this.state.station.flag_online)}>
+                                                                  value={String(this.state.station.flag_online)}>
                                                         <option value="true">Abilitato</option>
                                                         <option value="false">Non Abilitato</option>
                                                     </Form.Control>
@@ -402,7 +410,7 @@ export default class EditStation extends React.Component<IProps, IState> {
                                                 <div className="col-md-12">
                                                     <Button className="ml-2 float-md-right" variant="secondary"
                                                             onClick={() => {
-                                                                this.discard("brokerPSP");
+                                                                this.discard("station");
                                                             }}>Annulla</Button>
                                                     <Button className="float-md-right" onClick={() => {
                                                         this.saveStation();

@@ -179,7 +179,7 @@ export default class EditBrokerPSP extends React.Component<IProps, IState> {
                                                     <Form.Label>Stato</Form.Label>
                                                     <Form.Control as="select" name="enabled" placeholder="stato"
                                                                   onChange={(e) => this.handleChange(e)}
-                                                                  defaultValue={String(this.state.brokerPSP.enabled)}>
+                                                                  value={String(this.state.brokerPSP.enabled)}>
                                                         <option value="true">Abilitato</option>
                                                         <option value="false">Non Abilitato</option>
                                                     </Form.Control>
@@ -188,7 +188,7 @@ export default class EditBrokerPSP extends React.Component<IProps, IState> {
                                                     <Form.Label>Fault Bean esteso</Form.Label>
                                                     <Form.Control as="select" name="extended_fault_bean" placeholder="stato"
                                                                   onChange={(e) => this.handleChange(e)}
-                                                                  defaultValue={String(this.state.brokerPSP.extended_fault_bean)}>
+                                                                  value={String(this.state.brokerPSP.extended_fault_bean)}>
                                                         <option value="true">Abilitato</option>
                                                         <option value="false">Non Abilitato</option>
                                                     </Form.Control>

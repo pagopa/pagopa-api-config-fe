@@ -102,6 +102,16 @@ export default class EditChannel extends React.Component<IProps, IState> {
     updateBackup(section: string, data: ChannelDetails | any) {
         // eslint-disable-next-line functional/no-let
         let backup = {...this.state.backup};
+        if (section === "channel") {
+            const keys = ["new_password"];
+            for (const key of keys) {
+                // eslint-disable-next-line no-prototype-builtins
+                if (!data.hasOwnProperty(key)) {
+                    // eslint-disable-next-line functional/immutable-data
+                    data[key] = "";
+                }
+            }
+        }
         backup = {...backup, [section]: data};
         this.setState({backup});
     }
@@ -390,7 +400,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
                                                         <Form.Group controlId="enabled" className="col-md-2">
                                                             <Form.Label>Stato</Form.Label>
                                                             <Form.Control as="select" name="enabled" onChange={(e) => this.handleChange(e)}
-                                                                          defaultValue={String(this.state.channel.enabled)}>
+                                                                          value={String(this.state.channel.enabled)}>
                                                                 <option value="true">Abilitato</option>
                                                                 <option value="false">Non Abilitato</option>
                                                             </Form.Control>
@@ -484,7 +494,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
                                                             <Form.Label>Proxy</Form.Label>
                                                             <Form.Control as="select" onChange={(e) => this.handleChange(e)}
                                                                           name="proxy_enabled"
-                                                                          defaultValue={String(this.state.channel.proxy_enabled)}>
+                                                                          value={String(this.state.channel.proxy_enabled)}>
                                                                 <option value="true">Abilitato</option>
                                                                 <option value="false">Non Abilitato</option>
                                                             </Form.Control>
@@ -552,7 +562,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
                                                             <Form.Check
                                                                     custom
                                                                     name="flag_io"
-                                                                    defaultChecked={this.state.channel.flag_io === true}
+                                                                    checked={this.state.channel.flag_io === true}
                                                                     type={'checkbox'}
                                                                     id={'flag_io'}
                                                                     label={'PSP Notify Payment'}
@@ -563,7 +573,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
                                                         <Form.Group controlId="rt_push" className="col-md-2 custom-control-box">
                                                             <Form.Check
                                                                     custom
-                                                                    defaultChecked={this.state.channel.rt_push === true}
+                                                                    checked={this.state.channel.rt_push === true}
                                                                     type={'checkbox'}
                                                                     id={'rt_push'}
                                                                     label={'Push Ricevuta Telematica'}
@@ -575,7 +585,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
                                                         <Form.Group controlId="on_us" className="col-md-2 custom-control-box">
                                                             <Form.Check
                                                                     custom
-                                                                    defaultChecked={this.state.channel.on_us === true}
+                                                                    checked={this.state.channel.on_us === true}
                                                                     type={'checkbox'}
                                                                     id={'on_us'}
                                                                     label={'On Us'}
@@ -587,7 +597,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
                                                         <Form.Group controlId="card_chart" className="col-md-2 custom-control-box">
                                                             <Form.Check
                                                                     custom
-                                                                    defaultChecked={this.state.channel.card_chart === true}
+                                                                    checked={this.state.channel.card_chart === true}
                                                                     type={'checkbox'}
                                                                     id={'card_chart'}
                                                                     label={'Carrello RPT'}
@@ -599,7 +609,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
                                                         <Form.Group controlId="recovery" className="col-md-2 custom-control-box">
                                                             <Form.Check
                                                                     custom
-                                                                    defaultChecked={this.state.channel.recovery === true}
+                                                                    checked={this.state.channel.recovery === true}
                                                                     type={'checkbox'}
                                                                     id={'recovery'}
                                                                     label={'Processo di Recovery Pull'}
@@ -611,7 +621,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
                                                         <Form.Group controlId="digital_stamp_brand" className="col-md-2 custom-control-box">
                                                             <Form.Check
                                                                     custom
-                                                                    defaultChecked={this.state.channel.digital_stamp_brand === true}
+                                                                    checked={this.state.channel.digital_stamp_brand === true}
                                                                     type={'checkbox'}
                                                                     id={'digital_stamp_brand'}
                                                                     label={'Marca Bollo Digitale'}

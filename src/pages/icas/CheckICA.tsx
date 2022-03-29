@@ -586,7 +586,8 @@ export default class CheckIca extends React.Component<IProps, IState> {
                     <div className="col-md-12">
                         <Form.Group controlId="formFile" className="mb-3">
                             <Form.Label>File XML</Form.Label>
-                            <Form.Control type="file" accept=".xml" onChange={(e) => this.handleFile(e)}/>
+                            {/* eslint-disable-next-line functional/immutable-data */}
+                            <Form.Control type="file" accept=".xml" onChange={(e) => this.handleFile(e)} onClick={(e: any) => (e.target.value = null)} />
                         </Form.Group>
                     </div>
                     <div className="col-md-12">

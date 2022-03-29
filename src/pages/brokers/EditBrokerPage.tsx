@@ -133,7 +133,7 @@ export default class EditBrokersPage extends React.Component<IProps, IState> {
                 <div className="row">
                     <div className="col-md-12 mb-5">
                         <Breadcrumb>
-                            <Breadcrumb.Item href="/brokers">Intermediario</Breadcrumb.Item>
+                            <Breadcrumb.Item href="/brokers">Intermediari EC</Breadcrumb.Item>
                             <Breadcrumb.Item active>{this.state.backup.brokerDetails.broker_code || "-"}</Breadcrumb.Item>
                         </Breadcrumb>
                     </div>
@@ -174,7 +174,7 @@ export default class EditBrokersPage extends React.Component<IProps, IState> {
                                                     <Form.Label>Stato</Form.Label>
                                                     <Form.Control as="select" name="enabled" placeholder="stato"
                                                                   onChange={(e) => this.handleChange(e)}
-                                                                  defaultValue={String(this.state.brokerDetails.enabled)}>
+                                                                  value={String(this.state.brokerDetails.enabled)}>
                                                         <option value="true">Abilitato</option>
                                                         <option value="false">Non Abilitato</option>
                                                     </Form.Control>
@@ -183,7 +183,7 @@ export default class EditBrokersPage extends React.Component<IProps, IState> {
                                                     <Form.Label>Fault Bean Esteso</Form.Label>
                                                     <Form.Control as="select" name="extended_fault_bean" placeholder="fault bean"
                                                                   onChange={(e) => this.handleChange(e)}
-                                                                  defaultValue={this.state.brokerDetails.extended_fault_bean.toString()}>
+                                                                  value={this.state.brokerDetails.extended_fault_bean.toString()}>
                                                         <option value="true">Abilitato</option>
                                                         <option value="false">Non Abilitato</option>
                                                     </Form.Control>

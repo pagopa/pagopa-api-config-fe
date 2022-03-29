@@ -20,6 +20,7 @@ interface IState {
     ciName: string;
     code: string;
     creditorInstitution: CreditorInstitutionDetails;
+    address: any;
     edit: boolean;
     ibanList: [];
     stationList: [];
@@ -37,6 +38,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
             isLoading: true,
             backup: {
                 creditorInstitution: {} as CreditorInstitutionDetails,
+                address: {},
                 ibans: [],
                 stations: [],
                 encodings: []
@@ -44,6 +46,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
             ciName: "",
             code: "",
             creditorInstitution: {} as CreditorInstitutionDetails,
+            address: {},
             edit: false,
             ibanList: [],
             stationList: [],
@@ -56,11 +59,32 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
         this.createEncoding = this.createEncoding.bind(this);
     }
 
+    generateAddress(address: any) {
+        const addr = ["location", "city", "zip_code", "country_code", "tax_domicile"];
+        for (const key of addr) {
+            // eslint-disable-next-line no-prototype-builtins
+            if (!address.hasOwnProperty(key)) {
+                // eslint-disable-next-line functional/immutable-data
+                address[key] = "";
+            }
+        }
+        return address;
+    }
+
     updateBackup(section: string, data: CreditorInstitutionDetails | any) {
         // eslint-disable-next-line functional/no-let
         let backup = {...this.state.backup};
         backup = {...backup, [section]: data};
         this.setState({backup});
+    }
+
+    manageState(ciData: any) {
+        const ci = {...ciData, address: this.generateAddress(ciData.address)};
+        this.setState({creditorInstitution: ci});
+        this.setState({address: ci.address});
+        this.setState({ciName: ci.business_name});
+        this.updateBackup("creditorInstitution", ci);
+        this.updateBackup("address", ci.address);
     }
 
     getCreditorInstitution(code: string): void {
@@ -75,9 +99,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                     creditorinstitutioncode: code
                 }).then((response: any) => {
                     if (response.right.status === 200) {
-                        this.setState({creditorInstitution: response.right.value});
-                        this.setState({ciName: response.right.value.business_name});
-                        this.updateBackup("creditorInstitution", response.right.value);
+                        this.manageState(response.right.value);
                     } else {
                         this.setState({isError: true});
                     }
@@ -181,6 +203,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
             const value = event.target.value;
             const address = {...creditorInstitution.address, [key]: value};
             creditorInstitution = {...creditorInstitution, address};
+            this.setState({address});
         }
         this.setState({creditorInstitution});
     }
@@ -199,10 +222,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                 }).then((response: any) => {
                     if (response.right.status === 200) {
                         toast.info("Modifica avvenuta con successo.");
-                        this.setState({creditorInstitution: response.right.value});
-                        this.setState({creditorInstitution: response.right.value});
-                        this.setState({ciName: response.right.value.business_name});
-                        this.updateBackup("creditorInstitution", response.right.value);
+                        this.manageState(response.right.value);
                     } else {
                         const message = ("detail" in response.right.value) ? response.right.value.detail : "Operazione non avvenuta a causa di un errore";
                         toast.error(message, {theme: "colored"});
@@ -216,6 +236,8 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
     discard(section: string) {
         // "as any" is necessary because it seems to be a bug: https://github.com/Microsoft/TypeScript/issues/13948
         this.setState({[section]: Object.assign({}, this.state.backup[section])} as any);
+        this.setState({address: Object.assign({}, this.state.backup.address)} as any);
+        // this.setState({address: {...this.state.backup.address, location: ""}});
     }
 
     // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -281,7 +303,6 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
             encodingList.push(row);
         });
 
-
         return (
             <div className="container-fluid creditor-institutions">
                 <div className="row">
@@ -328,7 +349,8 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                                     <Form.Label>Stato</Form.Label>
                                                     <Form.Control as="select" name="enabled"
                                                                   onChange={(e) => this.handleChange(e, "creditorInstitution")}
-                                                                  defaultValue={String(this.state.creditorInstitution.enabled)}>
+                                                                  value={String(this.state.creditorInstitution.enabled)}
+                                                                  >
                                                         <option value="true">Abilitato</option>
                                                         <option value="false">Non Abilitato</option>
                                                     </Form.Control>
@@ -338,19 +360,19 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                                 <Form.Group controlId="location" className="col-md-4">
                                                     <Form.Label>Indirizzo</Form.Label>
                                                     <Form.Control name="location" placeholder=""
-                                                                  value={this.state.creditorInstitution.address?.location}
+                                                                  value={this.state.address?.location}
                                                                   onChange={(e) => this.handleChange(e, "address")}/>
                                                 </Form.Group>
                                                 <Form.Group controlId="city" className="col-md-3">
                                                     <Form.Label>Città</Form.Label>
                                                     <Form.Control name="city" placeholder=""
-                                                                  value={this.state.creditorInstitution.address?.city}
+                                                                  value={this.state.address?.city}
                                                                   onChange={(e) => this.handleChange(e, "address")}/>
                                                 </Form.Group>
                                                 <Form.Group controlId="country_code" className="col-md-2">
                                                     <Form.Label>Provincia</Form.Label>
                                                     <Form.Control as="select" placeholder="" name="country_code"
-                                                                  value={this.state.creditorInstitution.address?.country_code}
+                                                                  value={this.state.address?.country_code}
                                                                   onChange={(e) => this.handleChange(e, "address")}>
                                                         <option value="AG">Agrigento</option>
                                                         <option value="AL">Alessandria</option>
@@ -467,20 +489,21 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                                 <Form.Group controlId="cap" className="col-md-2">
                                                     <Form.Label>CAP</Form.Label>
                                                     <Form.Control name="zip_code" placeholder=""
-                                                                  value={this.state.creditorInstitution.address?.zip_code}
+                                                                  value={this.state.address?.zip_code}
                                                                   onChange={(e) => this.handleChange(e, "address")}/>
                                                 </Form.Group>
                                                 <Form.Group controlId="tax_domicile" className="col-md-4">
                                                     <Form.Label>Domicilio fiscale</Form.Label>
                                                     <Form.Control name="tax_domicile" placeholder=""
-                                                                  value={this.state.creditorInstitution.address?.tax_domicile}
+                                                                  value={this.state.address?.tax_domicile}
                                                                   onChange={(e) => this.handleChange(e, "address")}/>
                                                 </Form.Group>
                                                 <Form.Group controlId="psp_payment"
                                                             className="col-md-2 custom-control-box">
                                                     <Form.Check
                                                         custom
-                                                        defaultChecked={this.state.creditorInstitution.psp_payment === true}
+                                                        checked={this.state.creditorInstitution.psp_payment === true}
+                                                        onChange={(e) => this.handleChange(e, "creditorInstitution")}
                                                         name="psp_payment"
                                                         type={'checkbox'}
                                                         id={'psp-payment'}
@@ -491,7 +514,8 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                                             className="col-md-2 custom-control-box">
                                                     <Form.Check
                                                         custom
-                                                        defaultChecked={this.state.creditorInstitution.reporting_ftp === true}
+                                                        checked={this.state.creditorInstitution.reporting_ftp === true}
+                                                        onChange={(e) => this.handleChange(e, "creditorInstitution")}
                                                         type={'checkbox'}
                                                         id={'reporting-ftp'}
                                                         name="reporting_ftp"
@@ -502,7 +526,8 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                                             className="col-md-2 custom-control-box">
                                                     <Form.Check
                                                         custom
-                                                        defaultChecked={this.state.creditorInstitution.reporting_zip === true}
+                                                        checked={this.state.creditorInstitution.reporting_zip === true}
+                                                        onChange={(e) => this.handleChange(e, "creditorInstitution")}
                                                         type={'checkbox'}
                                                         id={'reporting-zip'}
                                                         name="reporting_zip"

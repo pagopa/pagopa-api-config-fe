@@ -54,7 +54,8 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
             channelSection: {
                 new: false,
                 edit: false,
-                delete: false
+                delete: false,
+                item: PspChannelCode
             },
             channelCode: "",
             paymentTypes: [],
@@ -228,12 +229,12 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
     }
 
     handleChannelEdit(item: PspChannelCode) {
-        const channelSection = {new: false, edit: true, delete: false};
+        const channelSection = {new: false, edit: true, delete: false, item};
         this.setState({channelSection, channelCode: item.channel_code, paymentTypes: item.payment_types as []});
     }
 
     handleChannelDelete(item: PspChannelCode) {
-        const channelSection = {new: false, edit: false, delete: true};
+        const channelSection = {new: false, edit: false, delete: true, item};
         this.setState({channelSection, channelCode: item.channel_code, paymentTypes: item.payment_types as []});
     }
 
@@ -368,7 +369,7 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                                 !this.state.channelSection.edit && item.payment_types.join(" ")
                             }
                             {
-                                this.state.channelSection.edit &&
+                                this.state.channelSection.edit && this.state.channelSection.item === item &&
 								<Form.Control name="payment_types" placeholder="Tipi versamento"
 											  value={this.state.paymentTypes.join(" ")}
                                               onChange={(e) => this.handlePaymentTypes(e.target.value)}/>
@@ -391,7 +392,7 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                                 </>
                             }
                             {
-                                this.state.channelSection.edit &&
+                                this.state.channelSection.edit && this.state.channelSection.item === item &&
                                 <>
 									<Button className="ml-2 float-md-right"
 											variant="secondary" onClick={() => {
@@ -465,7 +466,7 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                                                     <Form.Label>Stato</Form.Label>
                                                     <Form.Control as="select" name="enabled" placeholder="stato"
                                                                   onChange={(e) => this.handleChange(e)}
-                                                                  defaultValue={String(this.state.paymentServiceProvider.enabled)}>
+                                                                  value={String(this.state.paymentServiceProvider.enabled)}>
                                                         <option value="true">Abilitato</option>
                                                         <option value="false">Non Abilitato</option>
                                                     </Form.Control>
@@ -495,7 +496,7 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                                                 <Form.Group controlId="agid_psp" className="col-md-2 custom-control-box">
                                                     <Form.Check
                                                             custom
-                                                            defaultChecked={this.state.paymentServiceProvider.agid_psp === true}
+                                                            checked={this.state.paymentServiceProvider.agid_psp === true}
                                                             name="agid_psp"
                                                             type={'checkbox'}
                                                             id={'agid-psp'}
@@ -505,7 +506,7 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                                                 <Form.Group controlId="stamp" className="col-md-2 custom-control-box">
                                                     <Form.Check
                                                             custom
-                                                            defaultChecked={this.state.paymentServiceProvider.stamp === true}
+                                                            checked={this.state.paymentServiceProvider.stamp === true}
                                                             name="stamp"
                                                             type={'checkbox'}
                                                             id={'stamp'}
@@ -515,7 +516,7 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                                                 <Form.Group controlId="transfer" className="col-md-2 custom-control-box">
                                                     <Form.Check
                                                             custom
-                                                            defaultChecked={this.state.paymentServiceProvider.transfer === true}
+                                                            checked={this.state.paymentServiceProvider.transfer === true}
                                                             name="transfer"
                                                             type={'checkbox'}
                                                             id={'transfer'}
@@ -557,7 +558,7 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
 															<th className="">Codice</th>
 															<th className="text-center">Abilitato</th>
 															<th className="text-center">Tipo Versamento</th>
-															<th className="text-right"></th>
+															<th className="text-right" />
 														</tr>
 														</thead>
 														<tbody>
@@ -568,11 +569,11 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
 																<td>
 																	<Form.Control name="channel_code" placeholder="Codice Canale" onChange={(e) => this.handleChannel(e.target.value)}/>
 																</td>
-																<td></td>
+																<td />
 																<td>
 																	<Form.Control name="payment_types" placeholder="Tipi versamento" value={this.state.paymentTypes.join(" ")} onChange={(e) => this.handlePaymentTypes(e.target.value)}/>
                                                                 </td>
-																<td></td>
+																<td />
 															</tr>
                                                         }
 														</tbody>

@@ -287,7 +287,8 @@ export default class Cdis extends React.Component<IProps, IState> {
                         </div>
                         <div className="col-md-2 text-right">
                             <Button onClick={this.create}>Nuovo <FaPlus/></Button>
-                            <Form.Control id="fileUploader" className="hidden" type="file" accept=".xml" onChange={this.upload} />
+                            {/* eslint-disable-next-line functional/immutable-data */}
+                            <Form.Control id="fileUploader" className="hidden" type="file" accept=".xml" onChange={this.upload} onClick={(e: any) => (e.target.value = null)} />
                         </div>
                         <div className="col-md-12">
                             <Filters configuration={this.filter} onFilter={this.handleFilterCallback} />
