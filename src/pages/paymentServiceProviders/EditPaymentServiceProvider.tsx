@@ -112,25 +112,25 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
             ...loginRequest,
             account: this.context.accounts[0]
         })
-                .then((response: any) => {
-                    apiClient.getPaymentServiceProvidersChannels({
-                        Authorization: `Bearer ${response.idToken}`,
-                        ApiKey: "",
-                        pspcode: code
+            .then((response: any) => {
+                apiClient.getPaymentServiceProvidersChannels({
+                    Authorization: `Bearer ${response.idToken}`,
+                    ApiKey: "",
+                    pspcode: code
+                })
+                    .then((response: any) => {
+                        if (response.right.status === 200) {
+                            this.setState({channelList: response.right.value.channels});
+                            this.updateBackup("channelList", response.right.value.channels);
+                        } else {
+                            this.setState({isError: true});
+                        }
                     })
-                            .then((response: any) => {
-                                if (response.right.status === 200) {
-                                    this.setState({channelList: response.right.value.channels});
-                                    this.updateBackup("channelList", response.right.value.channels);
-                                } else {
-                                    this.setState({isError: true});
-                                }
-                            })
-                            .catch(() => {
-                                this.setState({isError: true});
-                            })
-                            .finally(() => this.setState({isLoading: false}));
-                });
+                    .catch(() => {
+                        this.setState({isError: true});
+                    })
+                    .finally(() => this.setState({isLoading: false}));
+            });
     }
 
     getPaymentTypeLegend(): void {
@@ -138,25 +138,25 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
             ...loginRequest,
             account: this.context.accounts[0]
         })
-                .then((response: any) => {
-                    apiClient.getPaymentTypes({
-                        Authorization: `Bearer ${response.idToken}`,
-                        ApiKey: ""
-                    })
-                            .then((response: any) => {
-                                if (response.right.status === 200) {
-                                    const paymentTypeLegend = {} as any;
-                                    response.right.value.payment_types.forEach((pt: PaymentType) => {
-                                        // eslint-disable-next-line functional/immutable-data
-                                        paymentTypeLegend[pt.payment_type] = pt.description;
-                                    });
-                                    this.setState({paymentTypeLegend});
-                                }
-                            })
-                            .catch(() => {
-                                this.setState({isError: true});
+            .then((response: any) => {
+                apiClient.getPaymentTypes({
+                    Authorization: `Bearer ${response.idToken}`,
+                    ApiKey: ""
+                })
+                    .then((response: any) => {
+                        if (response.right.status === 200) {
+                            const paymentTypeLegend = {} as any;
+                            response.right.value.payment_types.forEach((pt: PaymentType) => {
+                                // eslint-disable-next-line functional/immutable-data
+                                paymentTypeLegend[pt.payment_type] = pt.description;
                             });
-                });
+                            this.setState({paymentTypeLegend});
+                        }
+                    })
+                    .catch(() => {
+                        this.setState({isError: true});
+                    });
+            });
     }
 
     componentDidMount(): void {
@@ -254,31 +254,31 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                 account: this.context.accounts[0]
             })
                 .then((response: any) => {
-                        const data = {
-                            "payment_types": this.state.paymentTypes
-                        };
+                    const data = {
+                        "payment_types": this.state.paymentTypes
+                    };
 
-                        apiClient.updatePaymentServiceProvidersChannels({
-                            Authorization: `Bearer ${response.idToken}`,
-                            ApiKey: "",
-                            pspcode: this.state.paymentServiceProvider.psp_code,
-                            channelcode: this.state.channelCode,
-                            body: data
+                    apiClient.updatePaymentServiceProvidersChannels({
+                        Authorization: `Bearer ${response.idToken}`,
+                        ApiKey: "",
+                        pspcode: this.state.paymentServiceProvider.psp_code,
+                        channelcode: this.state.channelCode,
+                        body: data
+                    })
+                        .then((resp: any) => {
+                            if (resp.right.status === 200) {
+                                this.getChannels(this.state.paymentServiceProvider.psp_code);
+                                toast.info("Relazione con canale aggiornata con successo");
+                            } else {
+                                const message = "detail" in resp.right.value ? resp.right.value.detail : "Operazione non avvenuta a causa di un errore";
+                                toast.error(message, {theme: "colored"});
+                            }
                         })
-                            .then((resp: any) => {
-                                if (resp.right.status === 200) {
-                                    this.getChannels(this.state.paymentServiceProvider.psp_code);
-                                    toast.info("Relazione con canale aggiornata con successo");
-                                } else {
-                                    const message = "detail" in resp.right.value ? resp.right.value.detail : "Operazione non avvenuta a causa di un errore";
-                                    toast.error(message, {theme: "colored"});
-                                }
-                            })
-                            .catch(() => {
-                                toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
-                            })
-                            .finally(this.discardChannel);
-                    });
+                        .catch(() => {
+                            toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                        })
+                        .finally(this.discardChannel);
+                });
         }
     }
 
@@ -299,6 +299,9 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                             if (res.right.status === 200) {
                                 toast.info("Rimozione avvenuta con successo");
                                 this.getChannels(this.state.code);
+                            } else if (res.right.status === 409) {
+                                toast.error(res.right.value.detail, {theme: "colored"});
+
                             } else {
                                 toast.error(res.right.value.title, {theme: "colored"});
                             }
@@ -311,8 +314,7 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                             this.setState({channelSection, channelCode: "", paymentTypes: []});
                         });
                 });
-        }
-        else {
+        } else {
             const channelSection = {new: false, edit: false, delete: false};
             this.setState({channelSection, channelCode: "", paymentTypes: []});
         }
@@ -358,63 +360,65 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
         const channelList: any = [];
         this.state.channelList.map((item: any, index: number) => {
             const row = (
-                    <tr key={index}>
-                        <td>{item.channel_code}</td>
-                        <td className="text-center">
-                            {item.enabled && <FaCheck className="text-success"/>}
-                            {!item.enabled && <FaTimes className="text-danger"/>}
-                        </td>
-                        <td className="text-center">
-                            {
-                                !this.state.channelSection.edit && item.payment_types.join(" ")
-                            }
-                            {
-                                this.state.channelSection.edit && this.state.channelSection.item === item &&
-								<Form.Control name="payment_types" placeholder="Tipi versamento"
-											  value={this.state.paymentTypes.join(" ")}
-                                              onChange={(e) => this.handlePaymentTypes(e.target.value)}/>
-                            }
-                        </td>
-                        <td className="text-right">
-                            {
-                                !this.state.channelSection.edit &&
-                                <>
-                                    {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
-									<OverlayTrigger placement="top"
-													overlay={<Tooltip id={`tooltip-edit-${index}`}>Modifica</Tooltip>}>
-										<FaEdit role="button" className="mr-3" onClick={() => this.handleChannelEdit(item)}/>
-									</OverlayTrigger>
-                                    {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
-									<OverlayTrigger placement="top"
-													overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
-										<FaTrash role="button" className="mr-3" onClick={() => this.handleChannelDelete(item)}/>
-									</OverlayTrigger>
-                                </>
-                            }
-                            {
-                                this.state.channelSection.edit && this.state.channelSection.item === item &&
-                                <>
-									<Button className="ml-2 float-md-right"
-											variant="secondary" onClick={() => {
-                                        this.discardChannel();
-                                    }}>Annulla</Button>
+                <tr key={index}>
+                    <td>{item.channel_code}</td>
+                    <td className="text-center">
+                        {item.enabled && <FaCheck className="text-success"/>}
+                        {!item.enabled && <FaTimes className="text-danger"/>}
+                    </td>
+                    <td className="text-center">
+                        {
+                            !this.state.channelSection.edit && item.payment_types.join(" ")
+                        }
+                        {
+                            this.state.channelSection.edit && this.state.channelSection.item === item &&
+                            <Form.Control name="payment_types" placeholder="Tipi versamento"
+                                          value={this.state.paymentTypes.join(" ")}
+                                          onChange={(e) => this.handlePaymentTypes(e.target.value)}/>
+                        }
+                    </td>
+                    <td className="text-right">
+                        {
+                            !this.state.channelSection.edit &&
+                            <>
+                                {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
+                                <OverlayTrigger placement="top"
+                                                overlay={<Tooltip id={`tooltip-edit-${index}`}>Modifica</Tooltip>}>
+                                    <FaEdit role="button" className="mr-3"
+                                            onClick={() => this.handleChannelEdit(item)}/>
+                                </OverlayTrigger>
+                                {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
+                                <OverlayTrigger placement="top"
+                                                overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
+                                    <FaTrash role="button" className="mr-3"
+                                             onClick={() => this.handleChannelDelete(item)}/>
+                                </OverlayTrigger>
+                            </>
+                        }
+                        {
+                            this.state.channelSection.edit && this.state.channelSection.item === item &&
+                            <>
+                                <Button className="ml-2 float-md-right"
+                                        variant="secondary" onClick={() => {
+                                    this.discardChannel();
+                                }}>Annulla</Button>
 
-									<Button className="float-md-right" onClick={() => {
-                                        this.editChannel();
-                                    }}>Salva</Button>
-                                </>
-                            }
+                                <Button className="float-md-right" onClick={() => {
+                                    this.editChannel();
+                                }}>Salva</Button>
+                            </>
+                        }
 
-                        </td>
-                    </tr>
+                    </td>
+                </tr>
             );
             channelList.push(row);
         });
 
         const paymentTypeLegend: any = Object.keys(this.state.paymentTypeLegend).map((item: any, index: number) => (
-                <span key={index} className="mr-2 badge badge-secondary">
+            <span key={index} className="mr-2 badge badge-secondary">
                     {item}: {this.state.paymentTypeLegend[item]}
-                    {item === "OBEP" && <span className="badge badge-danger ml-2">DEPRECATO</span>}
+                {item === "OBEP" && <span className="badge badge-danger ml-2">DEPRECATO</span>}
                 </span>
         ));
 
@@ -495,33 +499,33 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                                             <div className="row">
                                                 <Form.Group controlId="agid_psp" className="col-md-2 custom-control-box">
                                                     <Form.Check
-                                                            custom
-                                                            checked={this.state.paymentServiceProvider.agid_psp === true}
-                                                            name="agid_psp"
-                                                            type={'checkbox'}
-                                                            id={'agid-psp'}
-                                                            label={'PSP interno'}
-                                                            onChange={(e) => this.handleChange(e)}/>
+                                                        custom
+                                                        checked={this.state.paymentServiceProvider.agid_psp === true}
+                                                        name="agid_psp"
+                                                        type={'checkbox'}
+                                                        id={'agid-psp'}
+                                                        label={'PSP interno'}
+                                                        onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
                                                 <Form.Group controlId="stamp" className="col-md-2 custom-control-box">
                                                     <Form.Check
-                                                            custom
-                                                            checked={this.state.paymentServiceProvider.stamp === true}
-                                                            name="stamp"
-                                                            type={'checkbox'}
-                                                            id={'stamp'}
-                                                            label={'Marca bollo digitale'}
-                                                            onChange={(e) => this.handleChange(e)}/>
+                                                        custom
+                                                        checked={this.state.paymentServiceProvider.stamp === true}
+                                                        name="stamp"
+                                                        type={'checkbox'}
+                                                        id={'stamp'}
+                                                        label={'Marca bollo digitale'}
+                                                        onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
                                                 <Form.Group controlId="transfer" className="col-md-2 custom-control-box">
                                                     <Form.Check
-                                                            custom
-                                                            checked={this.state.paymentServiceProvider.transfer === true}
-                                                            name="transfer"
-                                                            type={'checkbox'}
-                                                            id={'transfer'}
-                                                            label={'Storno pagamento'}
-                                                            onChange={(e) => this.handleChange(e)}/>
+                                                        custom
+                                                        checked={this.state.paymentServiceProvider.transfer === true}
+                                                        name="transfer"
+                                                        type={'checkbox'}
+                                                        id={'transfer'}
+                                                        label={'Storno pagamento'}
+                                                        onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
                                             </div>
                                         </Card.Body>
@@ -548,36 +552,41 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                                                 </Card.Header>
                                                 <Card.Body>
                                                     {Object.keys(channelList).length === 0 && !this.state.channelSection.new && (
-                                                            <Alert className={'col-md-12'} variant={"warning"}><FaInfoCircle
-                                                                    className="mr-1"/>Canali non presenti</Alert>
+                                                        <Alert className={'col-md-12'} variant={"warning"}><FaInfoCircle
+                                                            className="mr-1"/>Canali non presenti</Alert>
                                                     )}
                                                     {(Object.keys(channelList).length > 0 || this.state.channelSection.new) &&
-													<Table hover responsive size="sm">
-														<thead>
-														<tr>
-															<th className="">Codice</th>
-															<th className="text-center">Abilitato</th>
-															<th className="text-center">Tipo Versamento</th>
-															<th className="text-right" />
-														</tr>
-														</thead>
-														<tbody>
-                                                        {channelList}
-                                                        {
-                                                            this.state.channelSection.new &&
-															<tr>
-																<td>
-																	<Form.Control name="channel_code" placeholder="Codice Canale" onChange={(e) => this.handleChannel(e.target.value)}/>
-																</td>
-																<td />
-																<td>
-																	<Form.Control name="payment_types" placeholder="Tipi versamento" value={this.state.paymentTypes.join(" ")} onChange={(e) => this.handlePaymentTypes(e.target.value)}/>
-                                                                </td>
-																<td />
-															</tr>
-                                                        }
-														</tbody>
-													</Table>
+                                                        <Table hover responsive size="sm">
+                                                            <thead>
+                                                            <tr>
+                                                                <th className="">Codice</th>
+                                                                <th className="text-center">Abilitato</th>
+                                                                <th className="text-center">Tipo Versamento</th>
+                                                                <th className="text-right"/>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            {channelList}
+                                                            {
+                                                                this.state.channelSection.new &&
+                                                                <tr>
+                                                                    <td>
+                                                                        <Form.Control name="channel_code"
+                                                                                      placeholder="Codice Canale"
+                                                                                      onChange={(e) => this.handleChannel(e.target.value)}/>
+                                                                    </td>
+                                                                    <td/>
+                                                                    <td>
+                                                                        <Form.Control name="payment_types"
+                                                                                      placeholder="Tipi versamento"
+                                                                                      value={this.state.paymentTypes.join(" ")}
+                                                                                      onChange={(e) => this.handlePaymentTypes(e.target.value)}/>
+                                                                    </td>
+                                                                    <td/>
+                                                                </tr>
+                                                            }
+                                                            </tbody>
+                                                        </Table>
                                                     }
                                                 </Card.Body>
                                                 <Card.Footer>
@@ -593,26 +602,26 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                                                         {
                                                             !this.state.channelSection.edit &&
 
-															<div className="col-md-12">
+                                                            <div className="col-md-12">
                                                                 {
                                                                     !this.state.channelSection.new &&
-																	<Button className="float-md-right"
-																			onClick={() => this.newChannel()}>Nuovo <FaPlus/></Button>
+                                                                    <Button className="float-md-right"
+                                                                            onClick={() => this.newChannel()}>Nuovo <FaPlus/></Button>
                                                                 }
                                                                 {
                                                                     this.state.channelSection.new &&
-																	<Button className="ml-2 float-md-right"
-																			variant="secondary" onClick={() => {
+                                                                    <Button className="ml-2 float-md-right"
+                                                                            variant="secondary" onClick={() => {
                                                                         this.discardChannel();
                                                                     }}>Annulla</Button>
                                                                 }
                                                                 {
                                                                     this.state.channelSection.new &&
-																	<Button className="float-md-right" onClick={() => {
+                                                                    <Button className="float-md-right" onClick={() => {
                                                                         this.saveChannel();
                                                                     }}>Salva</Button>
                                                                 }
-															</div>
+                                                            </div>
                                                         }
                                                     </div>
                                                 </Card.Footer>
