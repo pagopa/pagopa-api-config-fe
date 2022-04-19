@@ -578,11 +578,11 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                                 <Card.Footer>
                                                     <div className="row">
                                                         <div className="col-md-12">
-                                                            <Button className="float-md-right" onClick={() => {
-                                                                this.createEncoding();
-                                                            }} disabled>
-                                                                Nuovo <FaPlus/>
-                                                            </Button>
+                                                            {/*<Button className="float-md-right" onClick={() => {*/}
+                                                            {/*    this.createEncoding();*/}
+                                                            {/*}} disabled>*/}
+                                                            {/*    Nuovo <FaPlus/>*/}
+                                                            {/*</Button>*/}
                                                         </div>
 
                                                     </div>
@@ -652,11 +652,10 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                                 <Card.Footer>
                                                     <div className="row">
                                                         <div className="col-md-12">
-                                                            <Button className="float-md-right" onClick={() => {
-                                                                this.createEncoding();
-                                                            }} disabled>
-                                                                Nuovo <FaPlus/>
-                                                            </Button>
+                                                            {/*<Button className="float-md-right" onClick={() => {*/}
+                                                            {/*}} disabled>*/}
+                                                            {/*    Nuovo <FaPlus/>*/}
+                                                            {/*</Button>*/}
                                                         </div>
                                                     </div>
                                                 </Card.Footer>
