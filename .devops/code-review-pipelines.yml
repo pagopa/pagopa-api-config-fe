@@ -16,7 +16,7 @@ parameters:
       - prod
 
 variables:
-  NODE_VERSION: '12.19.1'
+  NODE_VERSION: '14.19.0'
   YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.yarn
   APICONFIG_BASEPATH_VERSION: '/v1'
 
