@@ -1,6 +1,6 @@
 import React from "react";
 import {Alert, Badge, Breadcrumb, Button, Card, Form, Table} from "react-bootstrap";
-import {FaCheck, FaInfoCircle, FaPlus, FaSpinner, FaTimes} from "react-icons/fa";
+import {FaCheck, FaInfoCircle, FaSpinner, FaTimes} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
 import {apiClient} from "../../util/apiClient";
@@ -578,11 +578,6 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                                 <Card.Footer>
                                                     <div className="row">
                                                         <div className="col-md-12">
-                                                            <Button className="float-md-right" onClick={() => {
-                                                                this.createEncoding();
-                                                            }} disabled>
-                                                                Nuovo <FaPlus/>
-                                                            </Button>
                                                         </div>
 
                                                     </div>
@@ -652,11 +647,6 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                                 <Card.Footer>
                                                     <div className="row">
                                                         <div className="col-md-12">
-                                                            <Button className="float-md-right" onClick={() => {
-                                                                this.createEncoding();
-                                                            }} disabled>
-                                                                Nuovo <FaPlus/>
-                                                            </Button>
                                                         </div>
                                                     </div>
                                                 </Card.Footer>
