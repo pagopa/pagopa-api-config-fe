@@ -696,11 +696,17 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                                     <h5>Codifiche</h5>
                                                 </Card.Header>
                                                 <Card.Body>
-                                                    {Object.keys(encodingList).length === 0 && (
+                                                    {
+                                                        Object.keys(encodingList).length === 0 &&
+                                                        !this.state.encodingMgmt.create &&
+                                                    (
                                                         <Alert className={'col-md-12'} variant={"warning"}><FaInfoCircle
                                                             className="mr-1"/>Codifiche non presenti</Alert>
-                                                    )}
-                                                    {Object.keys(encodingList).length > 0 &&
+                                                    )
+                                                    }
+                                                    {
+                                                        (Object.keys(encodingList).length > 0 ||
+                                                                this.state.encodingMgmt.create) &&
                                                     <Table hover responsive size="sm">
                                                         <thead>
                                                         <tr>
