@@ -1,11 +1,12 @@
 import React from "react";
-import {Alert, Badge, Breadcrumb, Button, Card, Form, Table} from "react-bootstrap";
-import {FaCheck, FaInfoCircle, FaSpinner, FaTimes} from "react-icons/fa";
+import {Alert, Badge, Breadcrumb, Button, Card, Form, OverlayTrigger, Table, Tooltip} from "react-bootstrap";
+import {FaCheck, FaInfoCircle, FaPlus, FaSpinner, FaTimes, FaTrash} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
 import {apiClient} from "../../util/apiClient";
 import {CreditorInstitutionDetails} from "../../../generated/api/CreditorInstitutionDetails";
 import {loginRequest} from "../../authConfig";
+import ConfirmationModal from "../../components/ConfirmationModal";
 
 interface IProps {
     match: {
@@ -25,6 +26,8 @@ interface IState {
     ibanList: [];
     stationList: [];
     encodings: [];
+    encodingMgmt: any;
+    confirmationModal: any;
 }
 
 export default class EditCreditorInstitution extends React.Component<IProps, IState> {
@@ -50,13 +53,26 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
             edit: false,
             ibanList: [],
             stationList: [],
-            encodings: []
+            encodings: [],
+            encodingMgmt: {
+                create: false,
+                encoding: {}
+            },
+            confirmationModal: {
+                show: false,
+                description: "",
+                list: ""
+            }
         };
 
         this.handleChange = this.handleChange.bind(this);
         this.saveCreditorInstitution = this.saveCreditorInstitution.bind(this);
         this.discard = this.discard.bind(this);
         this.createEncoding = this.createEncoding.bind(this);
+        this.saveEncoding = this.saveEncoding.bind(this);
+        this.discardEncoding = this.discardEncoding.bind(this);
+        this.handleEncodingChange = this.handleEncodingChange.bind(this);
+        this.hideDeleteModal = this.hideDeleteModal.bind(this);
     }
 
     generateAddress(address: any) {
@@ -240,8 +256,124 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
         // this.setState({address: {...this.state.backup.address, location: ""}});
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     createEncoding(): void {
+        const encodingMgmt = {
+            create: true,
+            encode: {
+                code_type: "QR_CODE",
+                encoding_code: ""
+            }
+        };
+        this.setState({encodingMgmt});
+    }
+
+    saveEncoding(): void {
+        this.context.instance.acquireTokenSilent({
+            ...loginRequest,
+            account: this.context.accounts[0]
+        })
+            .then((response: any) => {
+                apiClient.createCreditorInstitutionEncoding({
+                    Authorization: `Bearer ${response.idToken}`,
+                    ApiKey: "",
+                    creditorinstitutioncode: this.state.code,
+                    body: this.state.encodingMgmt.encode
+                }).then((response: any) => {
+                    if (response.right.status === 201) {
+                        toast.info("Salvataggio avvenuto con successo.");
+                        this.getEncodings(this.state.code);
+                        this.discardEncoding();
+                    } else {
+                        const message = ("detail" in response.right.value) ? response.right.value.detail : "Operazione non avvenuta a causa di un errore";
+                        toast.error(message, {theme: "colored"});
+                    }
+                }).catch(() => {
+                    toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                });
+            });
+    }
+
+    discardEncoding(): void {
+        const encodingMgmt = {
+            create: false,
+            encode: {
+                code_type: "QR_CODE",
+                encoding_code: ""
+            }
+        };
+        this.setState({encodingMgmt});
+    }
+
+    handleEncodingChange(event: any) {
+        const key = event.target.name as string;
+        const value = event.target.value;
+        const encode = {...this.state.encodingMgmt.encode, [key]: value};
+        const encodingMgmt = {...this.state.encodingMgmt, encode};
+        this.setState({encodingMgmt});
+    }
+
+    handleEncodingDelete(item: any) {
+        const encodingMgmt = {...this.state.encodingMgmt, "encode": item};
+        const confirmationModal = {
+            show: true,
+            description: "Sei sicuro di voler eliminare la seguente codifica?",
+            list: `${item.code_type} - ${item.encoding_code}`
+        };
+        this.setState({encodingMgmt, confirmationModal});
+    }
+
+    hideDeleteModal(status: string) {
+        if (status === "ok") {
+            this.context.instance.acquireTokenSilent({
+                ...loginRequest,
+                account: this.context.accounts[0]
+            })
+                    .then((response: any) => {
+                        apiClient.deleteCreditorInstitutionEncoding({
+                            Authorization: `Bearer ${response.idToken}`,
+                            ApiKey: "",
+                            creditorinstitutioncode: this.state.code,
+                            encodingcode: this.state.encodingMgmt.encode.encoding_code
+                        })
+                            .then((res: any) => {
+                                if (res.right.status === 200) {
+                                    toast.info("Rimozione avvenuta con successo");
+                                    this.getEncodings(this.state.code);
+                                } else if (res.right.status === 409) {
+                                    toast.error(res.right.value.detail, {theme: "colored"});
+
+                                } else {
+                                    toast.error(res.right.value.title, {theme: "colored"});
+                                }
+                            })
+                            .catch(() => {
+                                toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                            })
+                            .finally(() => {
+                                const confirmationModal = {
+                                    show: false,
+                                    description: "",
+                                    list: ""
+                                };
+                                const encodingMgmt = {
+                                    create: false,
+                                    encode: {
+                                        code_type: "QR_CODE",
+                                        encoding_code: ""
+                                    }
+                                };
+                                this.setState({confirmationModal, encodingMgmt});
+                            });
+                    });
+        }
+        else {
+            const confirmationModal = {
+                show: false,
+                description: "",
+                list: ""
+            };
+            this.setState({confirmationModal});
+        }
     }
 
     render(): React.ReactNode {
@@ -297,7 +429,14 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                         {item.code_type.toUpperCase() === "BARCODE_GS1_128" &&
                         <Badge className="ml-2" variant="danger">DEPRECATO</Badge>}
                     </td>
-                    <td>{item.code}</td>
+                    <td>{item.encoding_code}</td>
+                    <td className="text-right">
+                        <OverlayTrigger placement="top"
+                                        overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
+                            <FaTrash role="button" className="mr-3"
+                                     onClick={() => this.handleEncodingDelete(item)}/>
+                        </OverlayTrigger>
+                    </td>
                 </tr>
             );
             encodingList.push(row);
@@ -567,10 +706,31 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                                         <tr>
                                                             <th className="">Tipo</th>
                                                             <th className="">Codice</th>
+                                                            <th className=""></th>
                                                         </tr>
                                                         </thead>
                                                         <tbody>
                                                         {encodingList}
+                                                        {
+                                                            this.state.encodingMgmt.create &&
+                                                            <tr>
+                                                                <td>
+                                                                    <Form.Control as="select" placeholder="Tipo codifica" name="code_type"
+                                                                                  value={this.state.encodingMgmt.encode?.code_type}
+                                                                                  onChange={(e) => this.handleEncodingChange(e)}>
+                                                                        <option value="BARCODE_GS1_128">BARCODE_GS1_128 - Deprecato</option>
+                                                                        <option value="BARCODE_128_AIM">BARCODE_128_AIM</option>
+                                                                        <option value="QR_CODE">QR_CODE</option>
+                                                                    </Form.Control>
+																</td>
+                                                                <td>
+																	<Form.Control name="encoding_code" placeholder="Codice codifica"
+																				  value={this.state.encodingMgmt.encode?.encoding_code}
+																				  onChange={(e) => this.handleEncodingChange(e)}/>
+                                                                </td>
+                                                                <td></td>
+                                                            </tr>
+                                                        }
                                                         </tbody>
                                                     </Table>
                                                     }
@@ -578,6 +738,28 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                                 <Card.Footer>
                                                     <div className="row">
                                                         <div className="col-md-12">
+                                                            {
+                                                                !this.state.encodingMgmt.create &&
+                                                                <Button className="float-md-right"
+                                                                        onClick={() => {
+                                                                            this.createEncoding();
+                                                                        }}>
+                                                                    Nuovo <FaPlus/>
+                                                                </Button>
+                                                            }
+                                                            {
+                                                                this.state.encodingMgmt.create &&
+																<>
+																	<Button className="ml-2 float-md-right"
+																			variant="secondary" onClick={() => {
+                                                                        this.discardEncoding();
+                                                                    }}>Annulla</Button>
+
+																	<Button className="float-md-right" onClick={() => {
+                                                                        this.saveEncoding();
+                                                                    }}>Salva</Button>
+																</>
+                                                            }
                                                         </div>
 
                                                     </div>
@@ -658,6 +840,14 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                         }
                     </div>
                 </div>
+
+                <ConfirmationModal show={this.state.confirmationModal.show} handleClose={this.hideDeleteModal}>
+                    <p>{this.state.confirmationModal.description}</p>
+                    <ul>
+                        <li>{this.state.confirmationModal.list}</li>
+                    </ul>
+                </ConfirmationModal>
+
             </div>
         );
     }
