@@ -1,8 +1,10 @@
 import React from "react";
 import {Alert, Badge, Breadcrumb, Button, Card, Form, OverlayTrigger, Table, Tooltip} from "react-bootstrap";
-import {FaCheck, FaInfoCircle, FaPlus, FaSpinner, FaTimes, FaTrash} from "react-icons/fa";
+import {FaCheck, FaEdit, FaInfoCircle, FaPlus, FaSpinner, FaTimes, FaTrash} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
+import AsyncSelect from 'react-select/async';
+import debounce from "lodash.debounce";
 import {apiClient} from "../../util/apiClient";
 import {CreditorInstitutionDetails} from "../../../generated/api/CreditorInstitutionDetails";
 import {loginRequest} from "../../authConfig";
@@ -27,6 +29,7 @@ interface IState {
     stationList: [];
     encodings: [];
     encodingMgmt: any;
+    stationMgmt: any;
     confirmationModal: any;
 }
 
@@ -56,7 +59,11 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
             encodings: [],
             encodingMgmt: {
                 create: false,
-                encoding: {}
+                encode: {}
+            },
+            stationMgmt: {
+                create: false,
+                station: {}
             },
             confirmationModal: {
                 show: false,
@@ -73,6 +80,12 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
         this.discardEncoding = this.discardEncoding.bind(this);
         this.handleEncodingChange = this.handleEncodingChange.bind(this);
         this.hideDeleteModal = this.hideDeleteModal.bind(this);
+        this.createStation = this.createStation.bind(this);
+        this.saveStation = this.saveStation.bind(this);
+        this.discardStation = this.discardStation.bind(this);
+        this.debouncedStationOptions = this.debouncedStationOptions.bind(this);
+        this.handleStationEdit = this.handleStationEdit.bind(this);
+        this.handleStationDelete = this.handleStationDelete.bind(this);
     }
 
     generateAddress(address: any) {
@@ -259,6 +272,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
     createEncoding(): void {
         const encodingMgmt = {
             create: true,
+            delete: false,
             encode: {
                 code_type: "QR_CODE",
                 encoding_code: ""
@@ -296,6 +310,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
     discardEncoding(): void {
         const encodingMgmt = {
             create: false,
+            delete: false,
             encode: {
                 code_type: "QR_CODE",
                 encoding_code: ""
@@ -313,7 +328,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
     }
 
     handleEncodingDelete(item: any) {
-        const encodingMgmt = {...this.state.encodingMgmt, "encode": item};
+        const encodingMgmt = {...this.state.encodingMgmt, "encode": item, "delete": true};
         const confirmationModal = {
             show: true,
             description: "Sei sicuro di voler eliminare la seguente codifica?",
@@ -322,23 +337,202 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
         this.setState({encodingMgmt, confirmationModal});
     }
 
+    deleteEncoding() {
+        this.context.instance.acquireTokenSilent({
+            ...loginRequest,
+            account: this.context.accounts[0]
+        })
+            .then((response: any) => {
+                apiClient.deleteCreditorInstitutionEncoding({
+                    Authorization: `Bearer ${response.idToken}`,
+                    ApiKey: "",
+                    creditorinstitutioncode: this.state.code,
+                    encodingcode: this.state.encodingMgmt.encode.encoding_code
+                })
+                    .then((res: any) => {
+                        if (res.right.status === 200) {
+                            toast.info("Rimozione avvenuta con successo");
+                            this.getEncodings(this.state.code);
+                        } else if (res.right.status === 409) {
+                            toast.error(res.right.value.detail, {theme: "colored"});
+
+                        } else {
+                            toast.error(res.right.value.title, {theme: "colored"});
+                        }
+                    })
+                    .catch(() => {
+                        toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                    })
+                    .finally(() => {
+                        const confirmationModal = {
+                            show: false,
+                            description: "",
+                            list: ""
+                        };
+                        const encodingMgmt = {
+                            create: false,
+                            delete: false,
+                            encode: {
+                                code_type: "QR_CODE",
+                                encoding_code: ""
+                            }
+                        };
+                        this.setState({confirmationModal, encodingMgmt});
+                    });
+            });
+    }
+
     hideDeleteModal(status: string) {
         if (status === "ok") {
-            this.context.instance.acquireTokenSilent({
-                ...loginRequest,
-                account: this.context.accounts[0]
-            })
-                    .then((response: any) => {
-                        apiClient.deleteCreditorInstitutionEncoding({
-                            Authorization: `Bearer ${response.idToken}`,
-                            ApiKey: "",
-                            creditorinstitutioncode: this.state.code,
-                            encodingcode: this.state.encodingMgmt.encode.encoding_code
-                        })
+            if (this.state.encodingMgmt.delete) {
+                this.deleteEncoding();
+            }
+            else if (this.state.stationMgmt.delete) {
+                this.deleteStation();
+            }
+        }
+        else {
+            const confirmationModal = {
+                show: false,
+                description: "",
+                list: ""
+            };
+            this.setState({confirmationModal});
+        }
+    }
+
+    createStation(): void {
+        const stationMgmt = {
+            create: true,
+            delete: false,
+            station: {
+                station_code: "",
+                enabled: false,
+                version: "",
+                application_code: "",
+                segregation_code: "",
+                aux_digit: "",
+                mod4: false,
+                broadcast: false
+            }
+        };
+        this.setState({stationMgmt});
+    }
+
+    saveStation(): void {
+        this.context.instance.acquireTokenSilent({
+            ...loginRequest,
+            account: this.context.accounts[0]
+        })
+            .then((response: any) => {
+                apiClient.createCreditorInstitutionStation({
+                    Authorization: `Bearer ${response.idToken}`,
+                    ApiKey: "",
+                    creditorinstitutioncode: this.state.code,
+                    body: this.state.stationMgmt.station
+                }).then((response: any) => {
+                    if (response.right.status === 201) {
+                        toast.info("Salvataggio avvenuto con successo.");
+                        this.getStations(this.state.code);
+                        this.discardStation();
+                    } else {
+                        const message = ("detail" in response.right.value) ? response.right.value.detail : "Operazione non avvenuta a causa di un errore";
+                        toast.error(message, {theme: "colored"});
+                    }
+                }).catch(() => {
+                    toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                });
+            });
+    }
+
+    discardStation(): void {
+        const stationMgmt = {
+            create: false,
+            station: {}
+        };
+        this.setState({stationMgmt});
+    }
+
+    debouncedStationOptions = debounce((inputValue, callback) => {
+        this.promiseStationOptions(inputValue, callback);
+    }, 500);
+
+    promiseStationOptions(inputValue: string, callback: any) {
+        const limit = inputValue.length === 0 ? 10 : 99999;
+        const code = inputValue.length === 0 ? "" : inputValue;
+
+        this.context.instance.acquireTokenSilent({
+            ...loginRequest,
+            account: this.context.accounts[0]
+        })
+            .then((response: any) => {
+                apiClient.getStations({
+                    Authorization: `Bearer ${response.idToken}`,
+                    ApiKey: "",
+                    page: 0,
+                    limit,
+                    code
+                }).then((resp: any) => {
+                    if (resp.right.status === 200) {
+                        const items: Array<any> = [];
+                        resp.right.value.stations.map((station: any) => {
+                            // eslint-disable-next-line functional/immutable-data
+                            items.push({
+                                value: station.station_code,
+                                label: station.station_code,
+                            });
+                        });
+                        callback(items);
+                    }
+                    else {
+                        callback([]);
+                    }
+                }).catch(() => {
+                    toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                    callback([]);
+                });
+            });
+    }
+
+    handleStationChange(event: any) {
+        const key = "value" in event ? "station_code" : event.target.name as string;
+        const value = "value" in event ? event.value : event.target.value;
+        const station = {...this.state.stationMgmt.station, [key]: value};
+        const stationMgmt = {...this.state.stationMgmt, station};
+        this.setState({stationMgmt});
+    }
+
+    handleStationEdit(item: any) {
+        const stationMgmt = {...this.state.stationMgmt, "station": item};
+        this.setState({stationMgmt});
+    }
+
+    handleStationDelete(item: any) {
+        const stationMgmt = {...this.state.stationMgmt, "station": item, "delete": true};
+        const confirmationModal = {
+            show: true,
+            description: "Sei sicuro di voler eliminare la relazione con la seguente stazione?",
+            list: `${item.station_code}`
+        };
+        this.setState({stationMgmt, confirmationModal});
+    }
+
+    deleteStation() {
+        this.context.instance.acquireTokenSilent({
+            ...loginRequest,
+            account: this.context.accounts[0]
+        })
+                .then((response: any) => {
+                    apiClient.deleteCreditorInstitutionStation({
+                        Authorization: `Bearer ${response.idToken}`,
+                        ApiKey: "",
+                        creditorinstitutioncode: this.state.code,
+                        stationcode: this.state.stationMgmt.station.station_code
+                    })
                             .then((res: any) => {
                                 if (res.right.status === 200) {
                                     toast.info("Rimozione avvenuta con successo");
-                                    this.getEncodings(this.state.code);
+                                    this.getStations(this.state.code);
                                 } else if (res.right.status === 409) {
                                     toast.error(res.right.value.detail, {theme: "colored"});
 
@@ -355,25 +549,23 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                     description: "",
                                     list: ""
                                 };
-                                const encodingMgmt = {
+                                const stationMgmt = {
                                     create: false,
-                                    encode: {
-                                        code_type: "QR_CODE",
-                                        encoding_code: ""
+                                    delete: false,
+                                    station: {
+                                        station_code: "",
+                                        enabled: false,
+                                        version: "",
+                                        application_code: "",
+                                        segregation_code: "",
+                                        aux_digit: "",
+                                        mod4: false,
+                                        broadcast: false
                                     }
                                 };
-                                this.setState({confirmationModal, encodingMgmt});
+                                this.setState({confirmationModal, stationMgmt});
                             });
-                    });
-        }
-        else {
-            const confirmationModal = {
-                show: false,
-                description: "",
-                list: ""
-            };
-            this.setState({confirmationModal});
-        }
+                });
     }
 
     render(): React.ReactNode {
@@ -405,6 +597,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                     </td>
                     <td className="text-center">{item.application_code}</td>
                     <td className="text-center">{item.segregation_code}</td>
+                    <td className="text-center">{item.aux_digit}</td>
                     <td className="text-center">{item.version}</td>
                     <td className="text-center">
                         {item.mod4 && <FaCheck className="text-success"/>}
@@ -413,6 +606,18 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                     <td className="text-center">
                         {item.broadcast && <FaCheck className="text-success"/>}
                         {!item.broadcast && <FaTimes className="text-danger"/>}
+                    </td>
+                    <td className="text-right">
+                        <OverlayTrigger placement="top"
+                                        overlay={<Tooltip id={`tooltip-edit-${index}`}>Modifica</Tooltip>}>
+                            <FaEdit role="button" className="mr-3"
+                                     onClick={() => this.handleStationEdit(item)}/>
+                        </OverlayTrigger>
+                        <OverlayTrigger placement="top"
+                                        overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
+                            <FaTrash role="button" className="mr-3"
+                                     onClick={() => this.handleStationDelete(item)}/>
+                        </OverlayTrigger>
                     </td>
                 </tr>
             );
@@ -767,7 +972,6 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
 																</>
                                                             }
                                                         </div>
-
                                                     </div>
                                                 </Card.Footer>
                                             </Card>
@@ -799,6 +1003,12 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                                     </Table>
                                                     }
                                                 </Card.Body>
+                                                <Card.Footer>
+                                                    <div className="legend">
+                                                        <span className="badge badge-info mr-1">Nota:</span>
+                                                        Gli Iban si aggiungono tramite l'ICA
+                                                    </div>
+                                                </Card.Footer>
                                             </Card>
                                         </div>
                                     </div>
@@ -821,13 +1031,83 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                                             <th className="text-center">Abilitata</th>
                                                             <th className="text-center">Application Code</th>
                                                             <th className="text-center">Codice Segregazione</th>
+                                                            <th className="text-center">Aux Digit</th>
                                                             <th className="text-center">Versione</th>
                                                             <th className="text-center">Modello 4</th>
                                                             <th className="text-center">Broadcast</th>
+                                                            <th></th>
                                                         </tr>
                                                         </thead>
                                                         <tbody>
                                                         {stationList}
+                                                        {
+                                                            this.state.stationMgmt.create &&
+                                                            <tr>
+                                                                <td className="">
+																	<AsyncSelect
+                                                                            cacheOptions defaultOptions
+                                                                            loadOptions={this.debouncedStationOptions}
+                                                                            placeholder="Cerca codice"
+																			menuPortalTarget={document.body}
+																			styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+																			name="station_code"
+                                                                            // value={this.state.stationMgmt.station?.station_code}
+                                                                            // getOptionValue={opt => opt.value}
+																			onChange={(e) => this.handleStationChange(e)}
+                                                                    />
+                                                                </td>
+                                                                <td className="text-center">
+																	<Form.Control as="select" placeholder="Stato" name="enabled"
+																				  value={this.state.stationMgmt.station?.enabled}
+																				  onChange={(e) => this.handleStationChange(e)}>
+																		<option value="true">Abilitato</option>
+																		<option value="false">Disabilitato</option>
+																	</Form.Control>
+                                                                </td>
+                                                                <td className="text-center">
+																	<Form.Control name="application_code" placeholder=""
+																				  value={this.state.stationMgmt.station?.application_code}
+																				  onChange={(e) => this.handleStationChange(e)}
+                                                                    />
+                                                                </td>
+																<td className="text-center">
+																	<Form.Control name="segregation_code" placeholder=""
+																				  value={this.state.stationMgmt.station?.segregation_code}
+																				  onChange={(e) => this.handleStationChange(e)}
+																	/>
+																</td>
+																<td className="text-center">
+																	<Form.Control name="aux_digit" placeholder=""
+																				  value={this.state.stationMgmt.station?.aux_digit}
+																				  onChange={(e) => this.handleStationChange(e)}
+																	/>
+																</td>
+                                                                <td className="text-center">
+																	<Form.Control name="version" placeholder=""
+																				  value={this.state.stationMgmt.station?.version}
+																				  onChange={(e) => this.handleStationChange(e)}
+																	/>
+                                                                </td>
+                                                                <td className="text-center">
+																	<Form.Control as="select" placeholder="Stato" name="mod4"
+																				  value={this.state.stationMgmt.station?.mod4}
+																				  onChange={(e) => this.handleStationChange(e)}>
+																		<option value="true">Abilitato</option>
+																		<option value="false">Disabilitato</option>
+																	</Form.Control>
+                                                                </td>
+                                                                <td className="text-center">
+																	<Form.Control as="select" placeholder="Stato" name="broadcast"
+																				  value={this.state.stationMgmt.station?.broadcast}
+																				  onChange={(e) => this.handleStationChange(e)}>
+																		<option value="true">Abilitato</option>
+																		<option value="false">Disabilitato</option>
+																	</Form.Control>
+                                                                </td>
+																<td></td>
+															</tr>
+                                                        }
+
                                                         </tbody>
                                                     </Table>
                                                     }
@@ -835,6 +1115,28 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                                 <Card.Footer>
                                                     <div className="row">
                                                         <div className="col-md-12">
+                                                            {
+                                                                !this.state.stationMgmt.create &&
+																<Button className="float-md-right"
+																		onClick={() => {
+                                                                            this.createStation();
+                                                                        }}>
+																	Nuovo <FaPlus/>
+																</Button>
+                                                            }
+                                                            {
+                                                                this.state.stationMgmt.create &&
+																<>
+																	<Button className="ml-2 float-md-right"
+																			variant="secondary" onClick={() => {
+                                                                        this.discardStation();
+                                                                    }}>Annulla</Button>
+
+																	<Button className="float-md-right" onClick={() => {
+                                                                        this.saveStation();
+                                                                    }}>Salva</Button>
+																</>
+                                                            }
                                                         </div>
                                                     </div>
                                                 </Card.Footer>
