@@ -63,6 +63,8 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
             },
             stationMgmt: {
                 create: false,
+                delete: false,
+                edit: false,
                 station: {}
             },
             confirmationModal: {
@@ -405,6 +407,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
         const stationMgmt = {
             create: true,
             delete: false,
+            edit: false,
             station: {
                 station_code: "",
                 enabled: false,
@@ -445,9 +448,38 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
             });
     }
 
+    editStation(): void {
+        this.context.instance.acquireTokenSilent({
+            ...loginRequest,
+            account: this.context.accounts[0]
+        })
+            .then((response: any) => {
+                apiClient.updateCreditorInstitutionStation({
+                    Authorization: `Bearer ${response.idToken}`,
+                    ApiKey: "",
+                    creditorinstitutioncode: this.state.code,
+                    stationcode: this.state.stationMgmt.station.station_code,
+                    body: this.state.stationMgmt.station
+                }).then((response: any) => {
+                    if (response.right.status === 200) {
+                        toast.info("Salvataggio avvenuto con successo.");
+                        this.getStations(this.state.code);
+                        this.discardStation();
+                    } else {
+                        const message = ("detail" in response.right.value) ? response.right.value.detail : "Operazione non avvenuta a causa di un errore";
+                        toast.error(message, {theme: "colored"});
+                    }
+                }).catch(() => {
+                    toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                });
+            });
+    }
+
     discardStation(): void {
         const stationMgmt = {
             create: false,
+            delete: false,
+            edit: false,
             station: {}
         };
         this.setState({stationMgmt});
@@ -497,13 +529,14 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
     handleStationChange(event: any) {
         const key = "value" in event ? "station_code" : event.target.name as string;
         const value = "value" in event ? event.value : event.target.value;
+        console.log("VEEEE", key, value);
         const station = {...this.state.stationMgmt.station, [key]: value};
         const stationMgmt = {...this.state.stationMgmt, station};
         this.setState({stationMgmt});
     }
 
     handleStationEdit(item: any) {
-        const stationMgmt = {...this.state.stationMgmt, "station": item};
+        const stationMgmt = {...this.state.stationMgmt, "station": item, "edit": true};
         this.setState({stationMgmt});
     }
 
@@ -522,50 +555,51 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
             ...loginRequest,
             account: this.context.accounts[0]
         })
-                .then((response: any) => {
-                    apiClient.deleteCreditorInstitutionStation({
-                        Authorization: `Bearer ${response.idToken}`,
-                        ApiKey: "",
-                        creditorinstitutioncode: this.state.code,
-                        stationcode: this.state.stationMgmt.station.station_code
-                    })
-                            .then((res: any) => {
-                                if (res.right.status === 200) {
-                                    toast.info("Rimozione avvenuta con successo");
-                                    this.getStations(this.state.code);
-                                } else if (res.right.status === 409) {
-                                    toast.error(res.right.value.detail, {theme: "colored"});
+            .then((response: any) => {
+                apiClient.deleteCreditorInstitutionStation({
+                    Authorization: `Bearer ${response.idToken}`,
+                    ApiKey: "",
+                    creditorinstitutioncode: this.state.code,
+                    stationcode: this.state.stationMgmt.station.station_code
+                })
+                    .then((res: any) => {
+                        if (res.right.status === 200) {
+                            toast.info("Rimozione avvenuta con successo");
+                            this.getStations(this.state.code);
+                        } else if (res.right.status === 409) {
+                            toast.error(res.right.value.detail, {theme: "colored"});
 
-                                } else {
-                                    toast.error(res.right.value.title, {theme: "colored"});
-                                }
-                            })
-                            .catch(() => {
-                                toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
-                            })
-                            .finally(() => {
-                                const confirmationModal = {
-                                    show: false,
-                                    description: "",
-                                    list: ""
-                                };
-                                const stationMgmt = {
-                                    create: false,
-                                    delete: false,
-                                    station: {
-                                        station_code: "",
-                                        enabled: false,
-                                        version: "",
-                                        application_code: "",
-                                        segregation_code: "",
-                                        aux_digit: "",
-                                        mod4: false,
-                                        broadcast: false
-                                    }
-                                };
-                                this.setState({confirmationModal, stationMgmt});
-                            });
-                });
+                        } else {
+                            toast.error(res.right.value.title, {theme: "colored"});
+                        }
+                    })
+                    .catch(() => {
+                        toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                    })
+                    .finally(() => {
+                        const confirmationModal = {
+                            show: false,
+                            description: "",
+                            list: ""
+                        };
+                        const stationMgmt = {
+                            create: false,
+                            delete: false,
+                            edit: false,
+                            station: {
+                                station_code: "",
+                                enabled: false,
+                                version: "",
+                                application_code: "",
+                                segregation_code: "",
+                                aux_digit: "",
+                                mod4: false,
+                                broadcast: false
+                            }
+                        };
+                        this.setState({confirmationModal, stationMgmt});
+                    });
+            });
     }
 
     render(): React.ReactNode {
@@ -588,39 +622,96 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
         // create rows for stations table
         const stationList: any = [];
         this.state.stationList.map((item: any, index: number) => {
-            const row = (
-                <tr key={index}>
-                    <td>{item.station_code}</td>
-                    <td className="text-center">
-                        {item.enabled && <FaCheck className="text-success"/>}
-                        {!item.enabled && <FaTimes className="text-danger"/>}
-                    </td>
-                    <td className="text-center">{item.application_code}</td>
-                    <td className="text-center">{item.segregation_code}</td>
-                    <td className="text-center">{item.aux_digit}</td>
-                    <td className="text-center">{item.version}</td>
-                    <td className="text-center">
-                        {item.mod4 && <FaCheck className="text-success"/>}
-                        {!item.mod4 && <FaTimes className="text-danger"/>}
-                    </td>
-                    <td className="text-center">
-                        {item.broadcast && <FaCheck className="text-success"/>}
-                        {!item.broadcast && <FaTimes className="text-danger"/>}
-                    </td>
-                    <td className="text-right">
-                        <OverlayTrigger placement="top"
-                                        overlay={<Tooltip id={`tooltip-edit-${index}`}>Modifica</Tooltip>}>
-                            <FaEdit role="button" className="mr-3"
-                                     onClick={() => this.handleStationEdit(item)}/>
-                        </OverlayTrigger>
-                        <OverlayTrigger placement="top"
-                                        overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
-                            <FaTrash role="button" className="mr-3"
-                                     onClick={() => this.handleStationDelete(item)}/>
-                        </OverlayTrigger>
-                    </td>
-                </tr>
-            );
+            // eslint-disable-next-line functional/no-let
+            let row;
+            if(this.state.stationMgmt.edit && this.state.stationMgmt.station.station_code === item.station_code) {
+                row = (
+                    <tr key={index}>
+                        <td>{item.station_code}</td>
+                        <td className="text-center">
+                            {item.enabled && <FaCheck className="text-success"/>}
+                            {!item.enabled && <FaTimes className="text-danger"/>}
+                        </td>
+                        <td className="text-center">
+                            <Form.Control name="application_code" placeholder=""
+                                          value={this.state.stationMgmt.station?.application_code}
+                                          onChange={(e) => this.handleStationChange(e)}
+                            />
+                        </td>
+                        <td className="text-center">
+                            <Form.Control name="segregation_code" placeholder=""
+                                          value={this.state.stationMgmt.station?.segregation_code}
+                                          onChange={(e) => this.handleStationChange(e)}
+                            />
+                        </td>
+                        <td className="text-center">
+                            <Form.Control name="aux_digit" placeholder=""
+                                          value={this.state.stationMgmt.station?.aux_digit}
+                                          onChange={(e) => this.handleStationChange(e)}
+                            />
+                        </td>
+                        <td className="text-center">
+                            <Form.Control name="version" placeholder=""
+                                          value={this.state.stationMgmt.station?.version}
+                                          onChange={(e) => this.handleStationChange(e)}
+                            />
+                        </td>
+                        <td className="text-center">
+                            <Form.Control as="select" placeholder="Stato" name="mod4"
+                                          value={this.state.stationMgmt.station?.mod4}
+                                          onChange={(e) => this.handleStationChange(e)}>
+                                <option value="true">Abilitato</option>
+                                <option value="false">Disabilitato</option>
+                            </Form.Control>
+                        </td>
+                        <td className="text-center">
+                            <Form.Control as="select" placeholder="Stato" name="broadcast"
+                                          value={this.state.stationMgmt.station?.broadcast}
+                                          onChange={(e) => this.handleStationChange(e)}>
+                                <option value="true">Abilitato</option>
+                                <option value="false">Disabilitato</option>
+                            </Form.Control>
+                        </td>
+                        <td></td>
+                    </tr>
+                );
+            }
+            else {
+                row = (
+                        <tr key={index}>
+                            <td>{item.station_code}</td>
+                            <td className="text-center">
+                                {item.enabled && <FaCheck className="text-success"/>}
+                                {!item.enabled && <FaTimes className="text-danger"/>}
+                            </td>
+                            <td className="text-center">{item.application_code}</td>
+                            <td className="text-center">{item.segregation_code}</td>
+                            <td className="text-center">{item.aux_digit}</td>
+                            <td className="text-center">{item.version}</td>
+                            <td className="text-center">
+                                {item.mod4 && <FaCheck className="text-success"/>}
+                                {!item.mod4 && <FaTimes className="text-danger"/>}
+                            </td>
+                            <td className="text-center">
+                                {item.broadcast && <FaCheck className="text-success"/>}
+                                {!item.broadcast && <FaTimes className="text-danger"/>}
+                            </td>
+                            <td className="text-right">
+                                <OverlayTrigger placement="top"
+                                                overlay={<Tooltip id={`tooltip-edit-${index}`}>Modifica</Tooltip>}>
+                                    <FaEdit role="button" className="mr-3"
+                                            onClick={() => this.handleStationEdit(item)}/>
+                                </OverlayTrigger>
+                                <OverlayTrigger placement="top"
+                                                overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
+                                    <FaTrash role="button" className="mr-3"
+                                             onClick={() => this.handleStationDelete(item)}/>
+                                </OverlayTrigger>
+                            </td>
+                        </tr>
+                );
+            }
+
             stationList.push(row);
         });
 
@@ -1013,7 +1104,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                         </div>
                                     </div>
                                     <div className="row mt-3">
-                                        <div className="col-md-12">
+                                        <div className="col-md-12 ec-station">
                                             <Card>
                                                 <Card.Header>
                                                     <h5>Stazioni</h5>
@@ -1027,7 +1118,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                                     <Table hover responsive size="sm">
                                                         <thead>
                                                         <tr>
-                                                            <th className="">Codice</th>
+                                                            <th className="fixed-td-width">Codice Stazione</th>
                                                             <th className="text-center">Abilitata</th>
                                                             <th className="text-center">Application Code</th>
                                                             <th className="text-center">Codice Segregazione</th>
@@ -1043,7 +1134,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                                         {
                                                             this.state.stationMgmt.create &&
                                                             <tr>
-                                                                <td className="">
+                                                                <td className="fixed-td-width">
 																	<AsyncSelect
                                                                             cacheOptions defaultOptions
                                                                             loadOptions={this.debouncedStationOptions}
@@ -1051,19 +1142,10 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
 																			menuPortalTarget={document.body}
 																			styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
 																			name="station_code"
-                                                                            // value={this.state.stationMgmt.station?.station_code}
-                                                                            // getOptionValue={opt => opt.value}
-																			onChange={(e) => this.handleStationChange(e)}
+                                                                            onChange={(e) => this.handleStationChange(e)}
                                                                     />
                                                                 </td>
-                                                                <td className="text-center">
-																	<Form.Control as="select" placeholder="Stato" name="enabled"
-																				  value={this.state.stationMgmt.station?.enabled}
-																				  onChange={(e) => this.handleStationChange(e)}>
-																		<option value="true">Abilitato</option>
-																		<option value="false">Disabilitato</option>
-																	</Form.Control>
-                                                                </td>
+                                                                <td className="text-center"></td>
                                                                 <td className="text-center">
 																	<Form.Control name="application_code" placeholder=""
 																				  value={this.state.stationMgmt.station?.application_code}
@@ -1116,7 +1198,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                                     <div className="row">
                                                         <div className="col-md-12">
                                                             {
-                                                                !this.state.stationMgmt.create &&
+                                                                !this.state.stationMgmt.create && !this.state.stationMgmt.edit &&
 																<Button className="float-md-right"
 																		onClick={() => {
                                                                             this.createStation();
@@ -1125,15 +1207,27 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
 																</Button>
                                                             }
                                                             {
-                                                                this.state.stationMgmt.create &&
+                                                                (this.state.stationMgmt.create || this.state.stationMgmt.edit) &&
 																<>
 																	<Button className="ml-2 float-md-right"
 																			variant="secondary" onClick={() => {
                                                                         this.discardStation();
                                                                     }}>Annulla</Button>
-
+																</>
+                                                            }
+                                                            {
+                                                                this.state.stationMgmt.create &&
+																<>
 																	<Button className="float-md-right" onClick={() => {
                                                                         this.saveStation();
+                                                                    }}>Salva</Button>
+																</>
+                                                            }
+                                                            {
+                                                                this.state.stationMgmt.edit &&
+																<>
+																	<Button className="float-md-right" onClick={() => {
+                                                                        this.editStation();
                                                                     }}>Salva</Button>
 																</>
                                                             }
