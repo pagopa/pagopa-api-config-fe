@@ -529,7 +529,6 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
     handleStationChange(event: any) {
         const key = "value" in event ? "station_code" : event.target.name as string;
         const value = "value" in event ? event.value : event.target.value;
-        console.log("VEEEE", key, value);
         const station = {...this.state.stationMgmt.station, [key]: value};
         const stationMgmt = {...this.state.stationMgmt, station};
         this.setState({stationMgmt});
@@ -602,82 +601,95 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
             });
     }
 
-    render(): React.ReactNode {
-        const isError = this.state.isError;
-        const isLoading = this.state.isLoading;
-
-        // create rows for ibans table
-        const ibanList: any = [];
-        this.state.ibanList.map((item: any, index: number) => {
-            const row = (
-                <tr key={index}>
-                    <td>{item.iban}</td>
-                    <td>{item.validity_date.toLocaleDateString()}</td>
-                    <td>{item.publication_date.toLocaleDateString()}</td>
-                </tr>
-            );
-            ibanList.push(row);
-        });
-
-        // create rows for stations table
-        const stationList: any = [];
-        this.state.stationList.map((item: any, index: number) => {
-            // eslint-disable-next-line functional/no-let
-            let row;
-            if(this.state.stationMgmt.edit && this.state.stationMgmt.station.station_code === item.station_code) {
-                row = (
+    getIbanListRender() {
+        return this.state.ibanList.map((item: any, index: number) => (
                     <tr key={index}>
-                        <td>{item.station_code}</td>
-                        <td className="text-center">
-                            {item.enabled && <FaCheck className="text-success"/>}
-                            {!item.enabled && <FaTimes className="text-danger"/>}
-                        </td>
-                        <td className="text-center">
-                            <Form.Control name="application_code" placeholder=""
-                                          value={this.state.stationMgmt.station?.application_code}
-                                          onChange={(e) => this.handleStationChange(e)}
-                            />
-                        </td>
-                        <td className="text-center">
-                            <Form.Control name="segregation_code" placeholder=""
-                                          value={this.state.stationMgmt.station?.segregation_code}
-                                          onChange={(e) => this.handleStationChange(e)}
-                            />
-                        </td>
-                        <td className="text-center">
-                            <Form.Control name="aux_digit" placeholder=""
-                                          value={this.state.stationMgmt.station?.aux_digit}
-                                          onChange={(e) => this.handleStationChange(e)}
-                            />
-                        </td>
-                        <td className="text-center">
-                            <Form.Control name="version" placeholder=""
-                                          value={this.state.stationMgmt.station?.version}
-                                          onChange={(e) => this.handleStationChange(e)}
-                            />
-                        </td>
-                        <td className="text-center">
-                            <Form.Control as="select" placeholder="Stato" name="mod4"
-                                          value={this.state.stationMgmt.station?.mod4}
-                                          onChange={(e) => this.handleStationChange(e)}>
-                                <option value="true">Abilitato</option>
-                                <option value="false">Disabilitato</option>
-                            </Form.Control>
-                        </td>
-                        <td className="text-center">
-                            <Form.Control as="select" placeholder="Stato" name="broadcast"
-                                          value={this.state.stationMgmt.station?.broadcast}
-                                          onChange={(e) => this.handleStationChange(e)}>
-                                <option value="true">Abilitato</option>
-                                <option value="false">Disabilitato</option>
-                            </Form.Control>
-                        </td>
-                        <td></td>
+                        <td>{item.iban}</td>
+                        <td>{item.validity_date.toLocaleDateString()}</td>
+                        <td>{item.publication_date.toLocaleDateString()}</td>
                     </tr>
+            ));
+    }
+
+    hasIbanWarning(ibanList: any) {
+        return Object.keys(ibanList).length === 0 &&
+                <Alert className={'col-md-12'} variant={"warning"}><FaInfoCircle
+                        className="mr-1"/>Iban non presenti</Alert>;
+    }
+
+    hasIbanContent(ibanList: any) {
+        return Object.keys(ibanList).length > 0
+                &&
+				<Table hover responsive size="sm">
+					<thead>
+					<tr>
+						<th className="">Iban</th>
+						<th className="">Validità</th>
+						<th className="">Pubblicazione</th>
+					</tr>
+					</thead>
+					<tbody>
+                    {ibanList}
+					</tbody>
+				</Table>;
+    }
+
+    getStationListRender() {
+        return this.state.stationList.map((item: any, index: number) => {
+            if(this.state.stationMgmt.edit && this.state.stationMgmt.station.station_code === item.station_code) {
+                return (
+                        <tr key={index}>
+                            <td>{item.station_code}</td>
+                            <td className="text-center">
+                                {item.enabled && <FaCheck className="text-success"/>}
+                                {!item.enabled && <FaTimes className="text-danger"/>}
+                            </td>
+                            <td className="text-center">
+                                <Form.Control name="application_code" placeholder=""
+                                              value={this.state.stationMgmt.station?.application_code}
+                                              onChange={(e) => this.handleStationChange(e)}
+                                />
+                            </td>
+                            <td className="text-center">
+                                <Form.Control name="segregation_code" placeholder=""
+                                              value={this.state.stationMgmt.station?.segregation_code}
+                                              onChange={(e) => this.handleStationChange(e)}
+                                />
+                            </td>
+                            <td className="text-center">
+                                <Form.Control name="aux_digit" placeholder=""
+                                              value={this.state.stationMgmt.station?.aux_digit}
+                                              onChange={(e) => this.handleStationChange(e)}
+                                />
+                            </td>
+                            <td className="text-center">
+                                <Form.Control name="version" placeholder=""
+                                              value={this.state.stationMgmt.station?.version}
+                                              onChange={(e) => this.handleStationChange(e)}
+                                />
+                            </td>
+                            <td className="text-center">
+                                <Form.Control as="select" placeholder="Stato" name="mod4"
+                                              value={this.state.stationMgmt.station?.mod4}
+                                              onChange={(e) => this.handleStationChange(e)}>
+                                    <option value="true">Abilitato</option>
+                                    <option value="false">Disabilitato</option>
+                                </Form.Control>
+                            </td>
+                            <td className="text-center">
+                                <Form.Control as="select" placeholder="Stato" name="broadcast"
+                                              value={this.state.stationMgmt.station?.broadcast}
+                                              onChange={(e) => this.handleStationChange(e)}>
+                                    <option value="true">Abilitato</option>
+                                    <option value="false">Disabilitato</option>
+                                </Form.Control>
+                            </td>
+                            <td></td>
+                        </tr>
                 );
             }
             else {
-                row = (
+                return (
                         <tr key={index}>
                             <td>{item.station_code}</td>
                             <td className="text-center">
@@ -711,32 +723,87 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                         </tr>
                 );
             }
-
-            stationList.push(row);
         });
+    }
+
+    getEncodingListRender() {
+        return this.state.encodings.map((item: any, index: number) => (
+                    <tr key={index}>
+                        <td>
+                            {item.code_type}
+                            {item.code_type.toUpperCase() === "BARCODE_GS1_128" &&
+							<Badge className="ml-2" variant="danger">DEPRECATO</Badge>}
+                        </td>
+                        <td>{item.encoding_code}</td>
+                        <td className="text-right">
+                            <OverlayTrigger placement="top"
+                                            overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
+                                <FaTrash role="button" className="mr-3"
+                                         onClick={() => this.handleEncodingDelete(item)}/>
+                            </OverlayTrigger>
+                        </td>
+                    </tr>
+            ));
+    }
+
+    hasEncodingWarning(encodingList: any) {
+        return Object.keys(encodingList).length === 0 && !this.state.encodingMgmt.create &&
+				<Alert className={'col-md-12'} variant={"warning"}><FaInfoCircle
+						className="mr-1"/>Codifiche non presenti</Alert>;
+    }
+
+    hasEncodingContent(encodingList: any) {
+        return Object.keys(encodingList).length > 0 || this.state.encodingMgmt.create &&
+				<Table hover responsive size="sm">
+					<thead>
+					<tr>
+						<th className="">Tipo</th>
+						<th className="">Codice</th>
+						<th/>
+					</tr>
+					</thead>
+					<tbody>
+                    {encodingList}
+                    {
+                        this.state.encodingMgmt.create &&
+						<tr>
+							<td>
+								<Form.Control as="select" placeholder="Tipo codifica" name="code_type"
+											  value={this.state.encodingMgmt.encode?.code_type}
+											  onChange={(e) => this.handleEncodingChange(e)}>
+									<option value="BARCODE_GS1_128">BARCODE_GS1_128 - Deprecato</option>
+									<option value="BARCODE_128_AIM">BARCODE_128_AIM</option>
+									<option value="QR_CODE">QR_CODE</option>
+								</Form.Control>
+							</td>
+							<td>
+								<Form.Control name="encoding_code" placeholder="Codice codifica"
+											  value={this.state.encodingMgmt.encode?.encoding_code}
+											  onChange={(e) => this.handleEncodingChange(e)}/>
+							</td>
+							<td/>
+						</tr>
+                    }
+					</tbody>
+				</Table>;
+    }
+
+    render(): React.ReactNode {
+        const isError = this.state.isError;
+        const isLoading = this.state.isLoading;
+
+        // create rows for ibans table
+        const ibanList = this.getIbanListRender();
+        const warningIbanContent = this.hasIbanWarning(ibanList);
+        const showIbanContent = this.hasIbanContent(ibanList);
+
+        // create rows for stations table
+        const stationList = this.getStationListRender();
 
         // create rows for encodings table
-        const encodingList: any = [];
-        this.state.encodings.map((item: any, index: number) => {
-            const row = (
-                <tr key={index}>
-                    <td>
-                        {item.code_type}
-                        {item.code_type.toUpperCase() === "BARCODE_GS1_128" &&
-                        <Badge className="ml-2" variant="danger">DEPRECATO</Badge>}
-                    </td>
-                    <td>{item.encoding_code}</td>
-                    <td className="text-right">
-                        <OverlayTrigger placement="top"
-                                        overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
-                            <FaTrash role="button" className="mr-3"
-                                     onClick={() => this.handleEncodingDelete(item)}/>
-                        </OverlayTrigger>
-                    </td>
-                </tr>
-            );
-            encodingList.push(row);
-        });
+        const encodingList = this.getEncodingListRender();
+        const warningEncodingContent = this.hasEncodingWarning(encodingList);
+        const showEncodingContent = this.hasEncodingContent(encodingList);
 
         return (
             <div className="container-fluid creditor-institutions">
@@ -992,50 +1059,8 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                                     <h5>Codifiche</h5>
                                                 </Card.Header>
                                                 <Card.Body>
-                                                    {
-                                                        Object.keys(encodingList).length === 0 &&
-                                                        !this.state.encodingMgmt.create &&
-                                                    (
-                                                        <Alert className={'col-md-12'} variant={"warning"}><FaInfoCircle
-                                                            className="mr-1"/>Codifiche non presenti</Alert>
-                                                    )
-                                                    }
-                                                    {
-                                                        (Object.keys(encodingList).length > 0 ||
-                                                                this.state.encodingMgmt.create) &&
-                                                    <Table hover responsive size="sm">
-                                                        <thead>
-                                                        <tr>
-                                                            <th className="">Tipo</th>
-                                                            <th className="">Codice</th>
-                                                            <th className=""></th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        {encodingList}
-                                                        {
-                                                            this.state.encodingMgmt.create &&
-                                                            <tr>
-                                                                <td>
-                                                                    <Form.Control as="select" placeholder="Tipo codifica" name="code_type"
-                                                                                  value={this.state.encodingMgmt.encode?.code_type}
-                                                                                  onChange={(e) => this.handleEncodingChange(e)}>
-                                                                        <option value="BARCODE_GS1_128">BARCODE_GS1_128 - Deprecato</option>
-                                                                        <option value="BARCODE_128_AIM">BARCODE_128_AIM</option>
-                                                                        <option value="QR_CODE">QR_CODE</option>
-                                                                    </Form.Control>
-																</td>
-                                                                <td>
-																	<Form.Control name="encoding_code" placeholder="Codice codifica"
-																				  value={this.state.encodingMgmt.encode?.encoding_code}
-																				  onChange={(e) => this.handleEncodingChange(e)}/>
-                                                                </td>
-                                                                <td></td>
-                                                            </tr>
-                                                        }
-                                                        </tbody>
-                                                    </Table>
-                                                    }
+                                                    { warningEncodingContent }
+                                                    { showEncodingContent }
                                                 </Card.Body>
                                                 <Card.Footer>
                                                     <div className="row">
@@ -1075,29 +1100,14 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                                     <h5>Iban</h5>
                                                 </Card.Header>
                                                 <Card.Body>
-                                                    {Object.keys(ibanList).length === 0 && (
-                                                        <Alert className={'col-md-12'} variant={"warning"}><FaInfoCircle
-                                                            className="mr-1"/>Iban non presenti</Alert>
-                                                    )}
-                                                    {Object.keys(ibanList).length > 0 &&
-                                                    <Table hover responsive size="sm">
-                                                        <thead>
-                                                        <tr>
-                                                            <th className="">Iban</th>
-                                                            <th className="">Validità</th>
-                                                            <th className="">Pubblicazione</th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        {ibanList}
-                                                        </tbody>
-                                                    </Table>
-                                                    }
+                                                    {warningIbanContent}
+
+                                                    {showIbanContent}
                                                 </Card.Body>
                                                 <Card.Footer>
                                                     <div className="legend">
                                                         <span className="badge badge-info mr-1">Nota:</span>
-                                                        Gli Iban si aggiungono tramite l'ICA
+                                                        Gli Iban si aggiungono tramite l&apos;ICA
                                                     </div>
                                                 </Card.Footer>
                                             </Card>
