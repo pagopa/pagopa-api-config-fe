@@ -3,10 +3,10 @@ import {Breadcrumb, Button, Card, Form} from 'react-bootstrap';
 import {Props} from "io-ts";
 import {MsalContext} from "@azure/msal-react";
 import {FaPlus} from "react-icons/fa";
-import {getConfig} from "../../util/config";
-import {loginRequest} from "../../authConfig";
 import axios from "axios";
 import {toast} from "react-toastify";
+import {getConfig} from "../../util/config";
+import {loginRequest} from "../../authConfig";
 
 interface XMLData {
     inProgress: boolean;
