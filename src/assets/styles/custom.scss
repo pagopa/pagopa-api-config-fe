@@ -333,3 +333,15 @@ pre {
     display: none;
   }
 }
+
+.massive-loading {
+
+  .hidden {
+    display: none;
+  }
+
+  pre {
+    white-space: pre-wrap;
+    word-break: keep-all
+  }
+}

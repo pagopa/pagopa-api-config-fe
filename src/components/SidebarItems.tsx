@@ -64,6 +64,11 @@ const SidebarItems = [
         route: "/wfesp-plugins",
         domain: "configuration"
     },
+    {
+        name: "Caricamenti Massivi",
+        route: "/massive-loading",
+        domain: "massiveloading"
+    },
 ];
 
 export default SidebarItems;

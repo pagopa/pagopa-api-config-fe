@@ -34,6 +34,7 @@ import Layout from "../components/Layout";
 import NotFound from "../pages/NotFound";
 import CounterpartTables from "../pages/counterparttables/CounterpartTables";
 import LandingPage from "../pages/LandingPage";
+import MassiveLoading from "../pages/massiveloading/MassiveLoading";
 
 export default class Routes extends React.Component {
 
@@ -98,6 +99,8 @@ export default class Routes extends React.Component {
                                     <Route path="/configuration-keys" exact component={ConfigurationKeys}/>
                                     <Route path="/pdds" exact component={Pdds}/>
                                     <Route path="/wfesp-plugins" exact component={WFESPPlugins}/>
+
+                                    <Route path="/massive-loading" exact component={MassiveLoading} />
 
                                     <Route component={NotFound}/>
                                 </Switch>
