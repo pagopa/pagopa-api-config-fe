@@ -103,12 +103,13 @@ export default class MassiveLoading extends React.Component<IProps, IState> {
             axios.post(baseUrl + basePath + "/massiveloading/creditorinstitution-station", data, config).then(() => {
                 toast.info("Relazioni gestite con successo");
             }).catch((err) => {
+                toast.error("Errore nell'elaborazione del file.", {theme: "colored"});
                 const error = {
                     isVisible: true,
                     message: err.response.data.detail
                 };
                 this.setState({error});
-                toast.error("Errore di validazione dei dati.", {theme: "colored"});
+
             });
         });
     }
@@ -176,9 +177,6 @@ export default class MassiveLoading extends React.Component<IProps, IState> {
                                     </div>
                                 </Card.Body>
                             </Card>
-
-
-
                         </div>
                     </div>
 
