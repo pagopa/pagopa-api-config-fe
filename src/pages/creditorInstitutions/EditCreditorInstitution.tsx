@@ -1,8 +1,10 @@
 import React from "react";
 import {Alert, Badge, Breadcrumb, Button, Card, Form, OverlayTrigger, Table, Tooltip} from "react-bootstrap";
-import {FaCheck, FaInfoCircle, FaPlus, FaSpinner, FaTimes, FaTrash} from "react-icons/fa";
+import {FaCheck, FaEdit, FaInfoCircle, FaPlus, FaSpinner, FaTimes, FaTrash} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
+import AsyncSelect from 'react-select/async';
+import debounce from "lodash.debounce";
 import {apiClient} from "../../util/apiClient";
 import {CreditorInstitutionDetails} from "../../../generated/api/CreditorInstitutionDetails";
 import {loginRequest} from "../../authConfig";
@@ -27,6 +29,7 @@ interface IState {
     stationList: [];
     encodings: [];
     encodingMgmt: any;
+    stationMgmt: any;
     confirmationModal: any;
 }
 
@@ -56,7 +59,13 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
             encodings: [],
             encodingMgmt: {
                 create: false,
-                encoding: {}
+                encode: {}
+            },
+            stationMgmt: {
+                create: false,
+                delete: false,
+                edit: false,
+                station: {}
             },
             confirmationModal: {
                 show: false,
@@ -73,6 +82,12 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
         this.discardEncoding = this.discardEncoding.bind(this);
         this.handleEncodingChange = this.handleEncodingChange.bind(this);
         this.hideDeleteModal = this.hideDeleteModal.bind(this);
+        this.createStation = this.createStation.bind(this);
+        this.saveStation = this.saveStation.bind(this);
+        this.discardStation = this.discardStation.bind(this);
+        this.debouncedStationOptions = this.debouncedStationOptions.bind(this);
+        this.handleStationEdit = this.handleStationEdit.bind(this);
+        this.handleStationDelete = this.handleStationDelete.bind(this);
     }
 
     generateAddress(address: any) {
@@ -259,6 +274,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
     createEncoding(): void {
         const encodingMgmt = {
             create: true,
+            delete: false,
             encode: {
                 code_type: "QR_CODE",
                 encoding_code: ""
@@ -296,6 +312,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
     discardEncoding(): void {
         const encodingMgmt = {
             create: false,
+            delete: false,
             encode: {
                 code_type: "QR_CODE",
                 encoding_code: ""
@@ -313,7 +330,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
     }
 
     handleEncodingDelete(item: any) {
-        const encodingMgmt = {...this.state.encodingMgmt, "encode": item};
+        const encodingMgmt = {...this.state.encodingMgmt, "encode": item, "delete": true};
         const confirmationModal = {
             show: true,
             description: "Sei sicuro di voler eliminare la seguente codifica?",
@@ -322,49 +339,59 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
         this.setState({encodingMgmt, confirmationModal});
     }
 
+    deleteEncoding() {
+        this.context.instance.acquireTokenSilent({
+            ...loginRequest,
+            account: this.context.accounts[0]
+        })
+            .then((response: any) => {
+                apiClient.deleteCreditorInstitutionEncoding({
+                    Authorization: `Bearer ${response.idToken}`,
+                    ApiKey: "",
+                    creditorinstitutioncode: this.state.code,
+                    encodingcode: this.state.encodingMgmt.encode.encoding_code
+                })
+                    .then((res: any) => {
+                        if (res.right.status === 200) {
+                            toast.info("Rimozione avvenuta con successo");
+                            this.getEncodings(this.state.code);
+                        } else if (res.right.status === 409) {
+                            toast.error(res.right.value.detail, {theme: "colored"});
+
+                        } else {
+                            toast.error(res.right.value.title, {theme: "colored"});
+                        }
+                    })
+                    .catch(() => {
+                        toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                    })
+                    .finally(() => {
+                        const confirmationModal = {
+                            show: false,
+                            description: "",
+                            list: ""
+                        };
+                        const encodingMgmt = {
+                            create: false,
+                            delete: false,
+                            encode: {
+                                code_type: "QR_CODE",
+                                encoding_code: ""
+                            }
+                        };
+                        this.setState({confirmationModal, encodingMgmt});
+                    });
+            });
+    }
+
     hideDeleteModal(status: string) {
         if (status === "ok") {
-            this.context.instance.acquireTokenSilent({
-                ...loginRequest,
-                account: this.context.accounts[0]
-            })
-                    .then((response: any) => {
-                        apiClient.deleteCreditorInstitutionEncoding({
-                            Authorization: `Bearer ${response.idToken}`,
-                            ApiKey: "",
-                            creditorinstitutioncode: this.state.code,
-                            encodingcode: this.state.encodingMgmt.encode.encoding_code
-                        })
-                            .then((res: any) => {
-                                if (res.right.status === 200) {
-                                    toast.info("Rimozione avvenuta con successo");
-                                    this.getEncodings(this.state.code);
-                                } else if (res.right.status === 409) {
-                                    toast.error(res.right.value.detail, {theme: "colored"});
-
-                                } else {
-                                    toast.error(res.right.value.title, {theme: "colored"});
-                                }
-                            })
-                            .catch(() => {
-                                toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
-                            })
-                            .finally(() => {
-                                const confirmationModal = {
-                                    show: false,
-                                    description: "",
-                                    list: ""
-                                };
-                                const encodingMgmt = {
-                                    create: false,
-                                    encode: {
-                                        code_type: "QR_CODE",
-                                        encoding_code: ""
-                                    }
-                                };
-                                this.setState({confirmationModal, encodingMgmt});
-                            });
-                    });
+            if (this.state.encodingMgmt.delete) {
+                this.deleteEncoding();
+            }
+            else if (this.state.stationMgmt.delete) {
+                this.deleteStation();
+            }
         }
         else {
             const confirmationModal = {
@@ -376,53 +403,330 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
         }
     }
 
-    render(): React.ReactNode {
-        const isError = this.state.isError;
-        const isLoading = this.state.isLoading;
+    createStation(): void {
+        const stationMgmt = {
+            create: true,
+            delete: false,
+            edit: false,
+            station: {
+                station_code: "",
+                enabled: false,
+                version: "",
+                application_code: "",
+                segregation_code: "",
+                aux_digit: "",
+                mod4: false,
+                broadcast: false
+            }
+        };
+        this.setState({stationMgmt});
+    }
 
-        // create rows for ibans table
-        const ibanList: any = [];
-        this.state.ibanList.map((item: any, index: number) => {
-            const row = (
-                <tr key={index}>
-                    <td>{item.iban}</td>
-                    <td>{item.validity_date.toLocaleDateString()}</td>
-                    <td>{item.publication_date.toLocaleDateString()}</td>
-                </tr>
-            );
-            ibanList.push(row);
+    saveStation(): void {
+        this.context.instance.acquireTokenSilent({
+            ...loginRequest,
+            account: this.context.accounts[0]
+        })
+            .then((response: any) => {
+                apiClient.createCreditorInstitutionStation({
+                    Authorization: `Bearer ${response.idToken}`,
+                    ApiKey: "",
+                    creditorinstitutioncode: this.state.code,
+                    body: this.state.stationMgmt.station
+                }).then((response: any) => {
+                    if (response.right.status === 201) {
+                        toast.info("Salvataggio avvenuto con successo.");
+                        this.getStations(this.state.code);
+                        this.discardStation();
+                    } else {
+                        const message = ("detail" in response.right.value) ? response.right.value.detail : "Operazione non avvenuta a causa di un errore";
+                        toast.error(message, {theme: "colored"});
+                    }
+                }).catch(() => {
+                    toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                });
+            });
+    }
+
+    editStation(): void {
+        this.context.instance.acquireTokenSilent({
+            ...loginRequest,
+            account: this.context.accounts[0]
+        })
+            .then((response: any) => {
+                apiClient.updateCreditorInstitutionStation({
+                    Authorization: `Bearer ${response.idToken}`,
+                    ApiKey: "",
+                    creditorinstitutioncode: this.state.code,
+                    stationcode: this.state.stationMgmt.station.station_code,
+                    body: this.state.stationMgmt.station
+                }).then((response: any) => {
+                    if (response.right.status === 200) {
+                        toast.info("Salvataggio avvenuto con successo.");
+                        this.getStations(this.state.code);
+                        this.discardStation();
+                    } else {
+                        const message = ("detail" in response.right.value) ? response.right.value.detail : "Operazione non avvenuta a causa di un errore";
+                        toast.error(message, {theme: "colored"});
+                    }
+                }).catch(() => {
+                    toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                });
+            });
+    }
+
+    discardStation(): void {
+        const stationMgmt = {
+            create: false,
+            delete: false,
+            edit: false,
+            station: {}
+        };
+        this.setState({stationMgmt});
+    }
+
+    debouncedStationOptions = debounce((inputValue, callback) => {
+        this.promiseStationOptions(inputValue, callback);
+    }, 500);
+
+    promiseStationOptions(inputValue: string, callback: any) {
+        const limit = inputValue.length === 0 ? 10 : 99999;
+        const code = inputValue.length === 0 ? "" : inputValue;
+
+        this.context.instance.acquireTokenSilent({
+            ...loginRequest,
+            account: this.context.accounts[0]
+        })
+            .then((response: any) => {
+                apiClient.getStations({
+                    Authorization: `Bearer ${response.idToken}`,
+                    ApiKey: "",
+                    page: 0,
+                    limit,
+                    code
+                }).then((resp: any) => {
+                    if (resp.right.status === 200) {
+                        const items: Array<any> = [];
+                        resp.right.value.stations.map((station: any) => {
+                            // eslint-disable-next-line functional/immutable-data
+                            items.push({
+                                value: station.station_code,
+                                label: station.station_code,
+                            });
+                        });
+                        callback(items);
+                    }
+                    else {
+                        callback([]);
+                    }
+                }).catch(() => {
+                    toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                    callback([]);
+                });
+            });
+    }
+
+    handleStationChange(event: any) {
+        const key = "value" in event ? "station_code" : event.target.name as string;
+        const value = "value" in event ? event.value : event.target.value;
+        const station = {...this.state.stationMgmt.station, [key]: value};
+        const stationMgmt = {...this.state.stationMgmt, station};
+        this.setState({stationMgmt});
+    }
+
+    handleStationEdit(item: any) {
+        const stationMgmt = {...this.state.stationMgmt, "station": item, "edit": true};
+        this.setState({stationMgmt});
+    }
+
+    handleStationDelete(item: any) {
+        const stationMgmt = {...this.state.stationMgmt, "station": item, "delete": true};
+        const confirmationModal = {
+            show: true,
+            description: "Sei sicuro di voler eliminare la relazione con la seguente stazione?",
+            list: `${item.station_code}`
+        };
+        this.setState({stationMgmt, confirmationModal});
+    }
+
+    deleteStation() {
+        this.context.instance.acquireTokenSilent({
+            ...loginRequest,
+            account: this.context.accounts[0]
+        })
+            .then((response: any) => {
+                apiClient.deleteCreditorInstitutionStation({
+                    Authorization: `Bearer ${response.idToken}`,
+                    ApiKey: "",
+                    creditorinstitutioncode: this.state.code,
+                    stationcode: this.state.stationMgmt.station.station_code
+                })
+                    .then((res: any) => {
+                        if (res.right.status === 200) {
+                            toast.info("Rimozione avvenuta con successo");
+                            this.getStations(this.state.code);
+                        } else if (res.right.status === 409) {
+                            toast.error(res.right.value.detail, {theme: "colored"});
+
+                        } else {
+                            toast.error(res.right.value.title, {theme: "colored"});
+                        }
+                    })
+                    .catch(() => {
+                        toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                    })
+                    .finally(() => {
+                        const confirmationModal = {
+                            show: false,
+                            description: "",
+                            list: ""
+                        };
+                        const stationMgmt = {
+                            create: false,
+                            delete: false,
+                            edit: false,
+                            station: {
+                                station_code: "",
+                                enabled: false,
+                                version: "",
+                                application_code: "",
+                                segregation_code: "",
+                                aux_digit: "",
+                                mod4: false,
+                                broadcast: false
+                            }
+                        };
+                        this.setState({confirmationModal, stationMgmt});
+                    });
+            });
+    }
+
+    getIbanListRender() {
+        return this.state.ibanList.map((item: any, index: number) => (
+                    <tr key={index}>
+                        <td>{item.iban}</td>
+                        <td>{item.validity_date.toLocaleDateString()}</td>
+                        <td>{item.publication_date.toLocaleDateString()}</td>
+                    </tr>
+            ));
+    }
+
+    hasIbanWarning(ibanList: any) {
+        return Object.keys(ibanList).length === 0 &&
+                <Alert className={'col-md-12'} variant={"warning"}><FaInfoCircle
+                        className="mr-1"/>Iban non presenti</Alert>;
+    }
+
+    hasIbanContent(ibanList: any) {
+        return Object.keys(ibanList).length > 0 &&
+				<Table hover responsive size="sm">
+					<thead>
+					<tr>
+						<th className="">Iban</th>
+						<th className="">Validità</th>
+						<th className="">Pubblicazione</th>
+					</tr>
+					</thead>
+					<tbody>
+                    {ibanList}
+					</tbody>
+				</Table>;
+    }
+
+    getStationListRender() {
+        return this.state.stationList.map((item: any, index: number) => {
+            if(this.state.stationMgmt.edit && this.state.stationMgmt.station.station_code === item.station_code) {
+                return (
+                        <tr key={index}>
+                            <td>{item.station_code}</td>
+                            <td className="text-center">
+                                {item.enabled && <FaCheck className="text-success"/>}
+                                {!item.enabled && <FaTimes className="text-danger"/>}
+                            </td>
+                            <td className="text-center">
+                                <Form.Control name="application_code" placeholder=""
+                                              value={this.state.stationMgmt.station?.application_code}
+                                              onChange={(e) => this.handleStationChange(e)}
+                                />
+                            </td>
+                            <td className="text-center">
+                                <Form.Control name="segregation_code" placeholder=""
+                                              value={this.state.stationMgmt.station?.segregation_code}
+                                              onChange={(e) => this.handleStationChange(e)}
+                                />
+                            </td>
+                            <td className="text-center">
+                                <Form.Control name="aux_digit" placeholder=""
+                                              value={this.state.stationMgmt.station?.aux_digit}
+                                              onChange={(e) => this.handleStationChange(e)}
+                                />
+                            </td>
+                            <td className="text-center">
+                                <Form.Control name="version" placeholder=""
+                                              value={this.state.stationMgmt.station?.version}
+                                              onChange={(e) => this.handleStationChange(e)}
+                                />
+                            </td>
+                            <td className="text-center">
+                                <Form.Control as="select" placeholder="Stato" name="mod4"
+                                              value={this.state.stationMgmt.station?.mod4}
+                                              onChange={(e) => this.handleStationChange(e)}>
+                                    <option value="true">Abilitato</option>
+                                    <option value="false">Disabilitato</option>
+                                </Form.Control>
+                            </td>
+                            <td className="text-center">
+                                <Form.Control as="select" placeholder="Stato" name="broadcast"
+                                              value={this.state.stationMgmt.station?.broadcast}
+                                              onChange={(e) => this.handleStationChange(e)}>
+                                    <option value="true">Abilitato</option>
+                                    <option value="false">Disabilitato</option>
+                                </Form.Control>
+                            </td>
+                            <td></td>
+                        </tr>
+                );
+            }
+            else {
+                return (
+                        <tr key={index}>
+                            <td>{item.station_code}</td>
+                            <td className="text-center">
+                                {item.enabled && <FaCheck className="text-success"/>}
+                                {!item.enabled && <FaTimes className="text-danger"/>}
+                            </td>
+                            <td className="text-center">{item.application_code}</td>
+                            <td className="text-center">{item.segregation_code}</td>
+                            <td className="text-center">{item.aux_digit}</td>
+                            <td className="text-center">{item.version}</td>
+                            <td className="text-center">
+                                {item.mod4 && <FaCheck className="text-success"/>}
+                                {!item.mod4 && <FaTimes className="text-danger"/>}
+                            </td>
+                            <td className="text-center">
+                                {item.broadcast && <FaCheck className="text-success"/>}
+                                {!item.broadcast && <FaTimes className="text-danger"/>}
+                            </td>
+                            <td className="text-right">
+                                <OverlayTrigger placement="top"
+                                                overlay={<Tooltip id={`tooltip-edit-${index}`}>Modifica</Tooltip>}>
+                                    <FaEdit role="button" className="mr-3"
+                                            onClick={() => this.handleStationEdit(item)}/>
+                                </OverlayTrigger>
+                                <OverlayTrigger placement="top"
+                                                overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
+                                    <FaTrash role="button" className="mr-3"
+                                             onClick={() => this.handleStationDelete(item)}/>
+                                </OverlayTrigger>
+                            </td>
+                        </tr>
+                );
+            }
         });
+    }
 
-        // create rows for stations table
-        const stationList: any = [];
-        this.state.stationList.map((item: any, index: number) => {
-            const row = (
-                <tr key={index}>
-                    <td>{item.station_code}</td>
-                    <td className="text-center">
-                        {item.enabled && <FaCheck className="text-success"/>}
-                        {!item.enabled && <FaTimes className="text-danger"/>}
-                    </td>
-                    <td className="text-center">{item.application_code}</td>
-                    <td className="text-center">{item.segregation_code}</td>
-                    <td className="text-center">{item.version}</td>
-                    <td className="text-center">
-                        {item.mod4 && <FaCheck className="text-success"/>}
-                        {!item.mod4 && <FaTimes className="text-danger"/>}
-                    </td>
-                    <td className="text-center">
-                        {item.broadcast && <FaCheck className="text-success"/>}
-                        {!item.broadcast && <FaTimes className="text-danger"/>}
-                    </td>
-                </tr>
-            );
-            stationList.push(row);
-        });
-
-        // create rows for encodings table
-        const encodingList: any = [];
-        this.state.encodings.map((item: any, index: number) => {
-            const row = (
+    getEncodingListRender() {
+        return this.state.encodings.map((item: any, index: number) => (
                 <tr key={index}>
                     <td>
                         {item.code_type}
@@ -435,12 +739,78 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                         overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
                             <FaTrash role="button" className="mr-3"
                                      onClick={() => this.handleEncodingDelete(item)}/>
-                        </OverlayTrigger>
+                            </OverlayTrigger>
                     </td>
                 </tr>
+            ));
+    }
+
+    hasStationWarning(stationList: any) {
+        return (Object.keys(stationList).length === 0 && !this.state.stationMgmt.create) && (
+                    <Alert className={'col-md-12'} variant={"warning"}><FaInfoCircle
+                            className="mr-1"/>Stazioni non presenti</Alert>
             );
-            encodingList.push(row);
-        });
+    }
+
+    hasEncodingWarning(encodingList: any) {
+        return Object.keys(encodingList).length === 0 && !this.state.encodingMgmt.create &&
+				<Alert className={'col-md-12'} variant={"warning"}><FaInfoCircle
+						className="mr-1"/>Codifiche non presenti</Alert>;
+    }
+
+    hasEncodingContent(encodingList: any) {
+        return (Object.keys(encodingList).length > 0 || this.state.encodingMgmt.create) &&
+				<Table hover responsive size="sm">
+					<thead>
+					<tr>
+						<th className="">Tipo</th>
+						<th className="">Codice</th>
+						<th/>
+					</tr>
+					</thead>
+					<tbody>
+                    {encodingList}
+                    {
+                        this.state.encodingMgmt.create &&
+						<tr>
+							<td>
+								<Form.Control as="select" placeholder="Tipo codifica" name="code_type"
+											  value={this.state.encodingMgmt.encode?.code_type}
+											  onChange={(e) => this.handleEncodingChange(e)}>
+									<option value="BARCODE_GS1_128">BARCODE_GS1_128 - Deprecato</option>
+									<option value="BARCODE_128_AIM">BARCODE_128_AIM</option>
+									<option value="QR_CODE">QR_CODE</option>
+								</Form.Control>
+							</td>
+							<td>
+								<Form.Control name="encoding_code" placeholder="Codice codifica"
+											  value={this.state.encodingMgmt.encode?.encoding_code}
+											  onChange={(e) => this.handleEncodingChange(e)}/>
+							</td>
+							<td/>
+						</tr>
+                    }
+					</tbody>
+				</Table>;
+    }
+
+    render(): React.ReactNode {
+        const isError = this.state.isError;
+        const isLoading = this.state.isLoading;
+
+        // create rows for ibans table
+        const ibanList = this.getIbanListRender();
+        const warningIbanContent = this.hasIbanWarning(ibanList);
+        const showIbanContent = this.hasIbanContent(ibanList);
+
+        // create rows for stations table
+        const stationList = this.getStationListRender();
+        const warningStationContent = this.hasStationWarning(stationList);
+
+        // create rows for encodings table
+        const encodingList = this.getEncodingListRender();
+        const warningEncodingContent = this.hasEncodingWarning(encodingList);
+        const showEncodingContent = this.hasEncodingContent(encodingList);
 
         return (
             <div className="container-fluid creditor-institutions">
@@ -696,50 +1066,8 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                                     <h5>Codifiche</h5>
                                                 </Card.Header>
                                                 <Card.Body>
-                                                    {
-                                                        Object.keys(encodingList).length === 0 &&
-                                                        !this.state.encodingMgmt.create &&
-                                                    (
-                                                        <Alert className={'col-md-12'} variant={"warning"}><FaInfoCircle
-                                                            className="mr-1"/>Codifiche non presenti</Alert>
-                                                    )
-                                                    }
-                                                    {
-                                                        (Object.keys(encodingList).length > 0 ||
-                                                                this.state.encodingMgmt.create) &&
-                                                    <Table hover responsive size="sm">
-                                                        <thead>
-                                                        <tr>
-                                                            <th className="">Tipo</th>
-                                                            <th className="">Codice</th>
-                                                            <th className=""></th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        {encodingList}
-                                                        {
-                                                            this.state.encodingMgmt.create &&
-                                                            <tr>
-                                                                <td>
-                                                                    <Form.Control as="select" placeholder="Tipo codifica" name="code_type"
-                                                                                  value={this.state.encodingMgmt.encode?.code_type}
-                                                                                  onChange={(e) => this.handleEncodingChange(e)}>
-                                                                        <option value="BARCODE_GS1_128">BARCODE_GS1_128 - Deprecato</option>
-                                                                        <option value="BARCODE_128_AIM">BARCODE_128_AIM</option>
-                                                                        <option value="QR_CODE">QR_CODE</option>
-                                                                    </Form.Control>
-																</td>
-                                                                <td>
-																	<Form.Control name="encoding_code" placeholder="Codice codifica"
-																				  value={this.state.encodingMgmt.encode?.encoding_code}
-																				  onChange={(e) => this.handleEncodingChange(e)}/>
-                                                                </td>
-                                                                <td></td>
-                                                            </tr>
-                                                        }
-                                                        </tbody>
-                                                    </Table>
-                                                    }
+                                                    { warningEncodingContent }
+                                                    { showEncodingContent }
                                                 </Card.Body>
                                                 <Card.Footer>
                                                     <div className="row">
@@ -767,7 +1095,6 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
 																</>
                                                             }
                                                         </div>
-
                                                     </div>
                                                 </Card.Footer>
                                             </Card>
@@ -780,54 +1107,103 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                                     <h5>Iban</h5>
                                                 </Card.Header>
                                                 <Card.Body>
-                                                    {Object.keys(ibanList).length === 0 && (
-                                                        <Alert className={'col-md-12'} variant={"warning"}><FaInfoCircle
-                                                            className="mr-1"/>Iban non presenti</Alert>
-                                                    )}
-                                                    {Object.keys(ibanList).length > 0 &&
-                                                    <Table hover responsive size="sm">
-                                                        <thead>
-                                                        <tr>
-                                                            <th className="">Iban</th>
-                                                            <th className="">Validità</th>
-                                                            <th className="">Pubblicazione</th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        {ibanList}
-                                                        </tbody>
-                                                    </Table>
-                                                    }
+                                                    {warningIbanContent}
+
+                                                    {showIbanContent}
                                                 </Card.Body>
+                                                <Card.Footer>
+                                                    <div className="legend">
+                                                        <span className="badge badge-info mr-1">Nota:</span>
+                                                        Gli Iban si aggiungono tramite l&apos;ICA
+                                                    </div>
+                                                </Card.Footer>
                                             </Card>
                                         </div>
                                     </div>
                                     <div className="row mt-3">
-                                        <div className="col-md-12">
+                                        <div className="col-md-12 ec-station">
                                             <Card>
                                                 <Card.Header>
                                                     <h5>Stazioni</h5>
                                                 </Card.Header>
                                                 <Card.Body>
-                                                    {Object.keys(stationList).length === 0 && (
-                                                        <Alert className={'col-md-12'} variant={"warning"}><FaInfoCircle
-                                                            className="mr-1"/>Stazioni non presenti</Alert>
-                                                    )}
-                                                    {Object.keys(stationList).length > 0 &&
+                                                    {warningStationContent}
+                                                    {(Object.keys(stationList).length > 0 || this.state.stationMgmt.create) &&
                                                     <Table hover responsive size="sm">
                                                         <thead>
                                                         <tr>
-                                                            <th className="">Codice</th>
+                                                            <th className="fixed-td-width">Codice Stazione</th>
                                                             <th className="text-center">Abilitata</th>
                                                             <th className="text-center">Application Code</th>
                                                             <th className="text-center">Codice Segregazione</th>
+                                                            <th className="text-center">Aux Digit</th>
                                                             <th className="text-center">Versione</th>
                                                             <th className="text-center">Modello 4</th>
                                                             <th className="text-center">Broadcast</th>
+                                                            <th></th>
                                                         </tr>
                                                         </thead>
                                                         <tbody>
                                                         {stationList}
+                                                        {
+                                                            this.state.stationMgmt.create &&
+                                                            <tr>
+                                                                <td className="fixed-td-width">
+																	<AsyncSelect
+                                                                            cacheOptions defaultOptions
+                                                                            loadOptions={this.debouncedStationOptions}
+                                                                            placeholder="Cerca codice"
+																			menuPortalTarget={document.body}
+																			styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+																			name="station_code"
+                                                                            onChange={(e) => this.handleStationChange(e)}
+                                                                    />
+                                                                </td>
+                                                                <td className="text-center"></td>
+                                                                <td className="text-center">
+																	<Form.Control name="application_code" placeholder=""
+																				  value={this.state.stationMgmt.station?.application_code}
+																				  onChange={(e) => this.handleStationChange(e)}
+                                                                    />
+                                                                </td>
+																<td className="text-center">
+																	<Form.Control name="segregation_code" placeholder=""
+																				  value={this.state.stationMgmt.station?.segregation_code}
+																				  onChange={(e) => this.handleStationChange(e)}
+																	/>
+																</td>
+																<td className="text-center">
+																	<Form.Control name="aux_digit" placeholder=""
+																				  value={this.state.stationMgmt.station?.aux_digit}
+																				  onChange={(e) => this.handleStationChange(e)}
+																	/>
+																</td>
+                                                                <td className="text-center">
+																	<Form.Control name="version" placeholder=""
+																				  value={this.state.stationMgmt.station?.version}
+																				  onChange={(e) => this.handleStationChange(e)}
+																	/>
+                                                                </td>
+                                                                <td className="text-center">
+																	<Form.Control as="select" placeholder="Stato" name="mod4"
+																				  value={this.state.stationMgmt.station?.mod4}
+																				  onChange={(e) => this.handleStationChange(e)}>
+																		<option value="true">Abilitato</option>
+																		<option value="false">Disabilitato</option>
+																	</Form.Control>
+                                                                </td>
+                                                                <td className="text-center">
+																	<Form.Control as="select" placeholder="Stato" name="broadcast"
+																				  value={this.state.stationMgmt.station?.broadcast}
+																				  onChange={(e) => this.handleStationChange(e)}>
+																		<option value="true">Abilitato</option>
+																		<option value="false">Disabilitato</option>
+																	</Form.Control>
+                                                                </td>
+																<td></td>
+															</tr>
+                                                        }
+
                                                         </tbody>
                                                     </Table>
                                                     }
@@ -835,6 +1211,40 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                                 <Card.Footer>
                                                     <div className="row">
                                                         <div className="col-md-12">
+                                                            {
+                                                                !this.state.stationMgmt.create && !this.state.stationMgmt.edit &&
+																<Button className="float-md-right"
+																		onClick={() => {
+                                                                            this.createStation();
+                                                                        }}>
+																	Nuovo <FaPlus/>
+																</Button>
+                                                            }
+                                                            {
+                                                                (this.state.stationMgmt.create || this.state.stationMgmt.edit) &&
+																<>
+																	<Button className="ml-2 float-md-right"
+																			variant="secondary" onClick={() => {
+                                                                        this.discardStation();
+                                                                    }}>Annulla</Button>
+																</>
+                                                            }
+                                                            {
+                                                                this.state.stationMgmt.create &&
+																<>
+																	<Button className="float-md-right" onClick={() => {
+                                                                        this.saveStation();
+                                                                    }}>Salva</Button>
+																</>
+                                                            }
+                                                            {
+                                                                this.state.stationMgmt.edit &&
+																<>
+																	<Button className="float-md-right" onClick={() => {
+                                                                        this.editStation();
+                                                                    }}>Salva</Button>
+																</>
+                                                            }
                                                         </div>
                                                     </div>
                                                 </Card.Footer>
