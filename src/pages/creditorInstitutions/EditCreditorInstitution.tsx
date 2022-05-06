@@ -618,8 +618,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
     }
 
     hasIbanContent(ibanList: any) {
-        return Object.keys(ibanList).length > 0
-                &&
+        return Object.keys(ibanList).length > 0 &&
 				<Table hover responsive size="sm">
 					<thead>
 					<tr>
@@ -728,21 +727,21 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
 
     getEncodingListRender() {
         return this.state.encodings.map((item: any, index: number) => (
-                    <tr key={index}>
-                        <td>
-                            {item.code_type}
-                            {item.code_type.toUpperCase() === "BARCODE_GS1_128" &&
-							<Badge className="ml-2" variant="danger">DEPRECATO</Badge>}
-                        </td>
-                        <td>{item.encoding_code}</td>
-                        <td className="text-right">
-                            <OverlayTrigger placement="top"
-                                            overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
-                                <FaTrash role="button" className="mr-3"
-                                         onClick={() => this.handleEncodingDelete(item)}/>
+                <tr key={index}>
+                    <td>
+                        {item.code_type}
+                        {item.code_type.toUpperCase() === "BARCODE_GS1_128" &&
+                        <Badge className="ml-2" variant="danger">DEPRECATO</Badge>}
+                    </td>
+                    <td>{item.encoding_code}</td>
+                    <td className="text-right">
+                        <OverlayTrigger placement="top"
+                                        overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
+                            <FaTrash role="button" className="mr-3"
+                                     onClick={() => this.handleEncodingDelete(item)}/>
                             </OverlayTrigger>
-                        </td>
-                    </tr>
+                    </td>
+                </tr>
             ));
     }
 
@@ -753,7 +752,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
     }
 
     hasEncodingContent(encodingList: any) {
-        return Object.keys(encodingList).length > 0 || this.state.encodingMgmt.create &&
+        return (Object.keys(encodingList).length > 0 || this.state.encodingMgmt.create) &&
 				<Table hover responsive size="sm">
 					<thead>
 					<tr>
@@ -1120,11 +1119,11 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                                     <h5>Stazioni</h5>
                                                 </Card.Header>
                                                 <Card.Body>
-                                                    {Object.keys(stationList).length === 0 && (
+                                                    {Object.keys(stationList).length === 0 && !this.state.stationMgmt.create && (
                                                         <Alert className={'col-md-12'} variant={"warning"}><FaInfoCircle
                                                             className="mr-1"/>Stazioni non presenti</Alert>
                                                     )}
-                                                    {Object.keys(stationList).length > 0 &&
+                                                    {(Object.keys(stationList).length > 0 || this.state.stationMgmt.create) &&
                                                     <Table hover responsive size="sm">
                                                         <thead>
                                                         <tr>
