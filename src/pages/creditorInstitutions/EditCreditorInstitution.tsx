@@ -745,6 +745,13 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
             ));
     }
 
+    hasStationWarning(stationList: any) {
+        return (Object.keys(stationList).length === 0 && !this.state.stationMgmt.create) && (
+                    <Alert className={'col-md-12'} variant={"warning"}><FaInfoCircle
+                            className="mr-1"/>Stazioni non presenti</Alert>
+            );
+    }
+
     hasEncodingWarning(encodingList: any) {
         return Object.keys(encodingList).length === 0 && !this.state.encodingMgmt.create &&
 				<Alert className={'col-md-12'} variant={"warning"}><FaInfoCircle
@@ -798,6 +805,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
 
         // create rows for stations table
         const stationList = this.getStationListRender();
+        const warningStationContent = this.hasStationWarning(stationList);
 
         // create rows for encodings table
         const encodingList = this.getEncodingListRender();
@@ -1119,10 +1127,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                                     <h5>Stazioni</h5>
                                                 </Card.Header>
                                                 <Card.Body>
-                                                    {Object.keys(stationList).length === 0 && !this.state.stationMgmt.create && (
-                                                        <Alert className={'col-md-12'} variant={"warning"}><FaInfoCircle
-                                                            className="mr-1"/>Stazioni non presenti</Alert>
-                                                    )}
+                                                    {warningStationContent}
                                                     {(Object.keys(stationList).length > 0 || this.state.stationMgmt.create) &&
                                                     <Table hover responsive size="sm">
                                                         <thead>
