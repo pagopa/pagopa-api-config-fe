@@ -1,6 +1,6 @@
 import React from "react";
 import {Link} from "react-router-dom";
-import {FaCompress, FaExpand, FaHome} from "react-icons/fa";
+import {FaCompress, FaExpand, FaHome, FaTasks} from "react-icons/fa";
 import {Accordion} from "react-bootstrap";
 import SidebarItems from "./SidebarItems";
 
@@ -160,6 +160,11 @@ export default class Sidebar extends React.Component<IProps, IState> {
                     </Accordion.Collapse>
                 </span>
             </Accordion>
+            <Link to={"/massive-loading"} key={"massive-loading"} className={`list-group-item-action `}>
+                <div className="ml-1 mt-1">
+                    <FaTasks></FaTasks> <span className="ml-1">Caricamenti Massivi</span>
+                </div>
+            </Link>
             </>
         );
     }
