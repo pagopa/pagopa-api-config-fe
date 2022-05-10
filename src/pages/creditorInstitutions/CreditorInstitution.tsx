@@ -215,7 +215,7 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
                         {item.code_type.toUpperCase() === "BARCODE_GS1_128" &&
                         <Badge className="ml-2" variant="danger">DEPRECATO</Badge>}
                     </td>
-                    <td>{item.code}</td>
+                    <td>{item.encoding_code}</td>
                 </tr>
             );
             encodingList.push(row);
