@@ -4,6 +4,7 @@ import {Form} from "react-bootstrap";
 interface IProps {
     name: string;
     obj: string;
+    value: string;
     // eslint-disable-next-line @typescript-eslint/ban-types
     handleChange: Function;
 }
@@ -18,7 +19,9 @@ export default class CountryCode extends React.Component<IProps, IState> {
 
     render(): React.ReactNode {
         return (
-                <Form.Control as="select" placeholder="" name={this.props.name} onChange={(e) => this.props.handleChange(e, this.props.obj)}>
+                <Form.Control as="select" placeholder="" name={this.props.name}
+                              value={this.props.value}
+                              onChange={(e) => this.props.handleChange(e, this.props.obj)}>
                     <option></option>
                     <option value="AG">Agrigento</option>
                     <option value="AL">Alessandria</option>
