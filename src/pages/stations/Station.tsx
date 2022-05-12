@@ -1,11 +1,14 @@
 import React from "react";
 import {Alert, Breadcrumb, Card, Form, OverlayTrigger, Table, Tooltip} from "react-bootstrap";
-import {FaCheck, FaEye, FaInfoCircle, FaSpinner, FaTimes} from "react-icons/fa";
+import {FaCheck, FaCloudDownloadAlt, FaEye, FaInfoCircle, FaSpinner, FaTimes} from "react-icons/fa";
 import {MsalContext} from "@azure/msal-react";
+import axios, {AxiosRequestConfig} from "axios";
+import {toast} from "react-toastify";
 import {apiClient} from "../../util/apiClient";
 import {loginRequest} from "../../authConfig";
 import {StationDetails} from "../../../generated/api/StationDetails";
 import Paginator from "../../components/Paginator";
+import {getConfig} from "../../util/config";
 
 interface IProps {
     match: {
@@ -48,25 +51,25 @@ export default class Station extends React.Component<IProps, IState> {
             ...loginRequest,
             account: this.context.accounts[0]
         })
-                .then((response: any) => {
-                    apiClient.getStation({
-                        Authorization: `Bearer ${response.idToken}`,
-                        ApiKey: "",
-                        stationcode: code
+            .then((response: any) => {
+                apiClient.getStation({
+                    Authorization: `Bearer ${response.idToken}`,
+                    ApiKey: "",
+                    stationcode: code
+                })
+                    .then((response: any) => {
+                        if (response.right.status === 200) {
+                            this.getStationCI(code, 0);
+                            this.setState({station: response.right.value});
+                        } else {
+                            this.setState({isError: true});
+                        }
                     })
-                            .then((response: any) => {
-                                if (response.right.status === 200) {
-                                    this.getStationCI(code, 0);
-                                    this.setState({station: response.right.value});
-                                } else {
-                                    this.setState({isError: true});
-                                }
-                            })
-                            .catch(() => {
-                                this.setState({isError: true});
-                            })
-                            .finally(() => this.setState({isLoading: false}));
-                });
+                    .catch(() => {
+                        this.setState({isError: true});
+                    })
+                    .finally(() => this.setState({isLoading: false}));
+            });
     }
 
     getStationCI(code: string, page: number): void {
@@ -74,14 +77,14 @@ export default class Station extends React.Component<IProps, IState> {
             ...loginRequest,
             account: this.context.accounts[0]
         })
-                .then((response: any) => {
-                    apiClient.getStationCreditorInstitutions({
-                        Authorization: `Bearer ${response.idToken}`,
-                        ApiKey: "",
-                        stationcode: code,
-                        page,
-                        limit: 5
-                    })
+            .then((response: any) => {
+                apiClient.getStationCreditorInstitutions({
+                    Authorization: `Bearer ${response.idToken}`,
+                    ApiKey: "",
+                    stationcode: code,
+                    page,
+                    limit: 5
+                })
                     .then((response: any) => {
                         if (response.right.status === 200) {
                             this.setState({ci: response.right.value});
@@ -93,7 +96,7 @@ export default class Station extends React.Component<IProps, IState> {
                         this.setState({isError: true});
                     })
                     .finally(() => this.setState({isLoading: false}));
-                });
+            });
     }
 
     handlePageChange(requestedPage: number) {
@@ -110,42 +113,81 @@ export default class Station extends React.Component<IProps, IState> {
         this.setState({isError: false});
         this.getStationCall(code);
     }
-    
+
     getCIList(): any {
         // eslint-disable-next-line functional/no-let
         let ciList = [];
         if (this.state.ci.creditor_institutions) {
             ciList = this.state.ci.creditor_institutions.map((item: any, index: number) => (
-                        <tr key={index}>
-                            <td>{item.business_name}</td>
-                            <td>{item.creditor_institution_code}</td>
-                            <td className="text-center">
-                                {item.enabled && <FaCheck className="text-success"/>}
-                                {!item.enabled && <FaTimes className="text-danger"/>}
-                            </td>
-                            <td className="text-center">{item.application_code}</td>
-                            <td className="text-center">{item.segregation_code}</td>
-                            <td className="text-center">{item.aux_digit}</td>
-                            <td className="text-center">
-                                {item.mod4 && <FaCheck className="text-success"/>}
-                                {!item.mod4 && <FaTimes className="text-danger"/>}
-                            </td>
-                            <td className="text-center">
-                                {item.broadcast && <FaCheck className="text-success"/>}
-                                {!item.broadcast && <FaTimes className="text-danger"/>}
-                            </td>
-                            <td className="text-right">
-                                <OverlayTrigger placement="top"
-                                                overlay={<Tooltip id={`tooltip-details-${index}`}>Visualizza</Tooltip>}>
-                                    <FaEye role="button" className="mr-3"
-                                           onClick={() => this.handleDetails(item.creditor_institution_code)}/>
-                                </OverlayTrigger>
-                            </td>
-                        </tr>
-                ));
+                <tr key={index}>
+                    <td>{item.business_name}</td>
+                    <td>{item.creditor_institution_code}</td>
+                    <td className="text-center">
+                        {item.enabled && <FaCheck className="text-success"/>}
+                        {!item.enabled && <FaTimes className="text-danger"/>}
+                    </td>
+                    <td className="text-center">{item.application_code}</td>
+                    <td className="text-center">{item.segregation_code}</td>
+                    <td className="text-center">{item.aux_digit}</td>
+                    <td className="text-center">
+                        {item.mod4 && <FaCheck className="text-success"/>}
+                        {!item.mod4 && <FaTimes className="text-danger"/>}
+                    </td>
+                    <td className="text-center">
+                        {item.broadcast && <FaCheck className="text-success"/>}
+                        {!item.broadcast && <FaTimes className="text-danger"/>}
+                    </td>
+                    <td className="text-right">
+                        <OverlayTrigger placement="top"
+                                        overlay={<Tooltip id={`tooltip-details-${index}`}>Visualizza</Tooltip>}>
+                            <FaEye role="button" className="mr-3"
+                                   onClick={() => this.handleDetails(item.creditor_institution_code)}/>
+                        </OverlayTrigger>
+                    </td>
+                </tr>
+            ));
         }
         return ciList;
     }
+
+    downloadCsv() {
+        const baseUrl = getConfig("APICONFIG_HOST") as string;
+        const basePath = getConfig("APICONFIG_BASEPATH") as string;
+
+        this.context.instance.acquireTokenSilent({
+            ...loginRequest,
+            account: this.context.accounts[0]
+        }).then((response: any) => {
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${response.idToken}`
+                },
+                responseType: 'blob'
+            } as AxiosRequestConfig;
+            const anchor = document.createElement("a");
+            document.body.appendChild(anchor);
+            const url = `${String(baseUrl)}${String(basePath)}/stations/${this.state.station.station_code}/creditorinstitutions/csv`;
+            axios.get(url, config)
+                .then((res: any) => {
+                    if (res.data.size > 1) {
+                        const objectUrl = window.URL.createObjectURL(res.data);
+                        // eslint-disable-next-line functional/immutable-data
+                        anchor.href = objectUrl;
+                        // eslint-disable-next-line functional/immutable-data
+                        anchor.download = this.state.station.station_code + '-enti_creditori.csv';
+                        anchor.click();
+                        window.URL.revokeObjectURL(objectUrl);
+                    }
+                    else {
+                        toast.warn("Problemi nella generazione del file CSV richiesto.", {theme: "colored"});
+                    }
+                })
+                .catch(() => {
+                    toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                });
+        });
+    }
+
 
     render(): React.ReactNode {
         const isError = this.state.isError;
@@ -237,7 +279,8 @@ export default class Station extends React.Component<IProps, IState> {
                                     <div className="row">
                                         <Form.Group controlId="protocol_4mod" className="col-md-2">
                                             <Form.Label>Protocollo Modello 4</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.protocol_4mod} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.station.protocol_4mod}
+                                                          readOnly/>
                                         </Form.Group>
 
                                         <Form.Group controlId="ip_4mod" className="col-md-2">
@@ -259,7 +302,8 @@ export default class Station extends React.Component<IProps, IState> {
                                     <div className="row">
                                         <Form.Group controlId="redirect_protocol" className="col-md-2">
                                             <Form.Label>Protocollo Redirect</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.redirect_protocol} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.station.redirect_protocol}
+                                                          readOnly/>
                                         </Form.Group>
 
                                         <Form.Group controlId="redirect_ip" className="col-md-2">
@@ -269,17 +313,20 @@ export default class Station extends React.Component<IProps, IState> {
 
                                         <Form.Group controlId="redirect_port" className="col-md-2">
                                             <Form.Label>Porta Redirect</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.redirect_port} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.station.redirect_port}
+                                                          readOnly/>
                                         </Form.Group>
 
                                         <Form.Group controlId="redirect_path" className="col-md-3">
                                             <Form.Label>Servizio Redirect</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.redirect_path} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.station.redirect_path}
+                                                          readOnly/>
                                         </Form.Group>
 
                                         <Form.Group controlId="redirect_query_string" className="col-md-3">
                                             <Form.Label>Parametri Redirect</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.redirect_query_string} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.station.redirect_query_string}
+                                                          readOnly/>
                                         </Form.Group>
                                     </div>
 
@@ -304,12 +351,14 @@ export default class Station extends React.Component<IProps, IState> {
 
                                         <Form.Group controlId="proxy_username" className="col-md-3">
                                             <Form.Label>Username Proxy</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.proxy_username} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.station.proxy_username}
+                                                          readOnly/>
                                         </Form.Group>
 
                                         <Form.Group controlId="proxy_password" className="col-md-3">
                                             <Form.Label>Password Proxy</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.proxy_password} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.station.proxy_password}
+                                                          readOnly/>
                                         </Form.Group>
                                     </div>
 
@@ -325,7 +374,8 @@ export default class Station extends React.Component<IProps, IState> {
 
                                         <Form.Group controlId="thread_number" className="col-md-2">
                                             <Form.Label>Numero Thread</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.thread_number} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.station.thread_number}
+                                                          readOnly/>
                                         </Form.Group>
 
                                         <Form.Group controlId="timeout_a" className="col-md-2">
@@ -349,12 +399,20 @@ export default class Station extends React.Component<IProps, IState> {
                                         <div className="col-md-12">
                                             <Card>
                                                 <Card.Header>
-                                                    <h5>Enti Creditori</h5>
+                                                    <div className={"d-flex justify-content-between align-items-center"}>
+                                                        <h5>Enti Creditori</h5>
+                                                        <OverlayTrigger placement="top"
+                                                                        overlay={<Tooltip>Scarica</Tooltip>}>
+                                                            <FaCloudDownloadAlt role="button" className="mr-3"
+                                                                                onClick={() => this.downloadCsv()}/>
+                                                        </OverlayTrigger>
+
+                                                    </div>
                                                 </Card.Header>
                                                 <Card.Body>
                                                     {Object.keys(ciList).length === 0 && (
-                                                            <Alert className={'col-md-12'} variant={"warning"}><FaInfoCircle
-                                                                    className="mr-1"/>EC non presenti</Alert>
+                                                        <Alert className={'col-md-12'} variant={"warning"}><FaInfoCircle
+                                                            className="mr-1"/>EC non presenti</Alert>
                                                     )}
                                                     {Object.keys(ciList).length > 0 &&
 													<Table hover responsive size="sm">
@@ -378,7 +436,8 @@ export default class Station extends React.Component<IProps, IState> {
                                                     }
                                                     {
                                                         this.state.ci.page_info &&
-                                                        <Paginator pageInfo={this.state.ci.page_info} onPageChanged={this.handlePageChange}/>
+                                                        <Paginator pageInfo={this.state.ci.page_info}
+                                                                   onPageChanged={this.handlePageChange}/>
                                                     }
                                                 </Card.Body>
                                             </Card>
