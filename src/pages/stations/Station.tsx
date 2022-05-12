@@ -117,11 +117,22 @@ export default class Station extends React.Component<IProps, IState> {
         if (this.state.ci.creditor_institutions) {
             ciList = this.state.ci.creditor_institutions.map((item: any, index: number) => (
                         <tr key={index}>
-                            <td>{item.creditor_institution_code}</td>
                             <td>{item.business_name}</td>
+                            <td>{item.creditor_institution_code}</td>
                             <td className="text-center">
                                 {item.enabled && <FaCheck className="text-success"/>}
                                 {!item.enabled && <FaTimes className="text-danger"/>}
+                            </td>
+                            <td className="text-center">{item.application_code}</td>
+                            <td className="text-center">{item.segregation_code}</td>
+                            <td className="text-center">{item.aux_digit}</td>
+                            <td className="text-center">
+                                {item.mod4 && <FaCheck className="text-success"/>}
+                                {!item.mod4 && <FaTimes className="text-danger"/>}
+                            </td>
+                            <td className="text-center">
+                                {item.broadcast && <FaCheck className="text-success"/>}
+                                {!item.broadcast && <FaTimes className="text-danger"/>}
                             </td>
                             <td className="text-right">
                                 <OverlayTrigger placement="top"
@@ -352,6 +363,11 @@ export default class Station extends React.Component<IProps, IState> {
 															<th className="">Ente creditore</th>
 															<th className="">Codice</th>
 															<th className="text-center">Abilitato</th>
+															<th className="text-center">Application Code</th>
+															<th className="text-center">Segregation Code</th>
+															<th className="text-center">Aux Digit</th>
+															<th className="text-center">Mod4</th>
+															<th className="text-center">Broadcast</th>
 															<th className="text-center"></th>
 														</tr>
 														</thead>
