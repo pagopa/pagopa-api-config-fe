@@ -402,7 +402,7 @@ export default class Station extends React.Component<IProps, IState> {
                                                     <div className={"d-flex justify-content-between align-items-center"}>
                                                         <h5>Enti Creditori</h5>
                                                         <OverlayTrigger placement="top"
-                                                                        overlay={<Tooltip>Scarica</Tooltip>}>
+                                                                        overlay={<Tooltip id="csv-download">Scarica</Tooltip>}>
                                                             <FaCloudDownloadAlt role="button" className="mr-3"
                                                                                 onClick={() => this.downloadCsv()}/>
                                                         </OverlayTrigger>
