@@ -164,7 +164,7 @@ export default class CreateCreditorInstitution extends React.Component<IProps, I
                             </Form.Group>
                             <Form.Group controlId="country_code" className="col-md-2">
                                 <Form.Label>Provincia</Form.Label>
-                                <CountryCode name="country_code" obj="address" handleChange={this.handleChange}/>
+                                <CountryCode name="country_code" obj="address" value={this.state.creditorInstitution.address?.country_code} handleChange={this.handleChange}/>
                             </Form.Group>
                             <Form.Group controlId="cap" className="col-md-2">
                                 <Form.Label>CAP</Form.Label>
