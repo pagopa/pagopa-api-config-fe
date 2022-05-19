@@ -34,7 +34,8 @@ import Layout from "../components/Layout";
 import NotFound from "../pages/NotFound";
 import CounterpartTables from "../pages/counterparttables/CounterpartTables";
 import LandingPage from "../pages/LandingPage";
-import MassiveLoading from "../pages/massiveloading/MassiveLoading";
+import MassiveLoading from "../pages/batchoperations/MassiveLoading";
+import MassiveMigration from "../pages/batchoperations/MassiveMigration";
 
 export default class Routes extends React.Component {
 
@@ -101,6 +102,7 @@ export default class Routes extends React.Component {
                                     <Route path="/wfesp-plugins" exact component={WFESPPlugins}/>
 
                                     <Route path="/massive-loading" exact component={MassiveLoading} />
+                                    <Route path="/massive-migration" exact component={MassiveMigration} />
 
                                     <Route component={NotFound}/>
                                 </Switch>
