@@ -155,9 +155,25 @@ export default class MassiveLoading extends React.Component<IProps, IState> {
                                                     le righe aventi valori <span className="badge badge-info">ESER</span> sono considerate in <span className="font-italic">produzione</span>, <span className="badge badge-info">COLL</span> per gli altri ambienti (<span className="font-italic">dev</span>, <span className="font-italic">uat</span>).
                                                 </li>
                                                 <li><span className="font-weight-bold">Broadcast</span>: può assumere valore <span className="badge badge-info">S</span> o <span className="badge badge-info">N</span></li>
-                                                <li><span className="font-weight-bold">AuxDigit</span>: può assumere valore <span className="badge badge-info">0</span>, <span className="badge badge-info">1</span>, <span className="badge badge-info">2</span>, <span className="badge badge-info">3</span>.</li>
-                                                <li><span className="font-weight-bold">Codice segregazione</span>: numero di 2 cifre (ex. 01) se <span className="badge badge-info">AuxDigit=3</span>, vuoto altrimenti.</li>
-                                                <li><span className="font-weight-bold">Application code</span>: numero di 2 cifre (ex. 01) se <span className="badge badge-info">AuxDigit=3</span>, vuoto altrimenti.</li>
+                                                <li>
+                                                    <span className="font-weight-bold">AuxDigit</span>: può assumere valore <span className="badge badge-info">0</span>, <span className="badge badge-info">1</span>, <span className="badge badge-info">2</span>, <span className="badge badge-info">3</span>.
+                                                </li>
+                                                <li>
+                                                    <span className="font-weight-bold">Codice segregazione</span>:
+                                                    <ul>
+                                                        <li>se AugDigit=<span className="badge badge-info">0</span> deve avere 2 cifre (ex. 01) oppure vuoto;</li>
+                                                        <li>se AugDigit=<span className="badge badge-info">1</span> o <span className="badge badge-info">2</span> deve essere vuoto;</li>
+                                                        <li>se AugDigit=<span className="badge badge-info">3</span> deve avere 2 cifre (ex. 01).</li>
+                                                    </ul>
+                                                </li>
+                                                <li>
+                                                    <span className="font-weight-bold">Application code</span>:
+                                                    <ul>
+                                                        <li>se AugDigit=<span className="badge badge-info">0</span> deve avere 2 cifre (ex. 01);</li>
+                                                        <li>se AugDigit=<span className="badge badge-info">1</span> o <span className="badge badge-info">2</span> deve essere vuoto;</li>
+                                                        <li>se AugDigit=<span className="badge badge-info">3</span> deve avere 2 cifre (ex. 01) oppure vuoto.</li>
+                                                    </ul>
+                                                </li>
                                                 <li><span className="font-weight-bold">Data validità</span>: opzionale, nessun controllo.</li>
                                                 <li><span className="font-weight-bold">Operazione</span>: può assumere valore <span className="badge badge-info">A</span> (aggiunta) o <span className="badge badge-info">C</span> (cancellazione).</li>
                                             </ul>

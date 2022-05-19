@@ -166,7 +166,7 @@ export default class Sidebar extends React.Component<IProps, IState> {
                         <span className="navbar-heading" onClick={() => this.setDomainState("batchoperation")}>
                             <FaExpand className={`ml-2 mr-2 ${getCompressionClass("batchoperation", true)}`} />
                             <FaCompress className={`ml-2 mr-2 ${getCompressionClass("batchoperation", false)}`} />
-                            Operazioni Batch
+                            Operazioni Massive
                         </span>
                     </Accordion.Toggle>
                     <Accordion.Collapse eventKey="3">

@@ -70,7 +70,7 @@ const SidebarItems = [
         domain: "batchoperation"
     },
     {
-        name: "Migrazione Massive",
+        name: "Migrazioni Massive",
         route: "/massive-migration",
         domain: "batchoperation"
     },
