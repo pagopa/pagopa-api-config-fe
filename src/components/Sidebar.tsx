@@ -1,6 +1,6 @@
 import React from "react";
 import {Link} from "react-router-dom";
-import {FaCompress, FaExpand, FaHome, FaTasks} from "react-icons/fa";
+import {FaCompress, FaExpand, FaHome} from "react-icons/fa";
 import {Accordion} from "react-bootstrap";
 import SidebarItems from "./SidebarItems";
 
@@ -18,6 +18,7 @@ interface IState {
         ec: boolean;
         psp: boolean;
         configuration: boolean;
+        batchoperation: boolean;
     };
 }
 
@@ -29,7 +30,8 @@ export default class Sidebar extends React.Component<IProps, IState> {
             domains: {
                 ec: true,
                 psp: false,
-                configuration: false
+                configuration: false,
+                batchoperation: false
             }
         };
     }
@@ -159,12 +161,23 @@ export default class Sidebar extends React.Component<IProps, IState> {
                         </div>
                     </Accordion.Collapse>
                 </span>
+                <span>
+                    <Accordion.Toggle as="div" eventKey="3">
+                        <span className="navbar-heading" onClick={() => this.setDomainState("batchoperation")}>
+                            <FaExpand className={`ml-2 mr-2 ${getCompressionClass("batchoperation", true)}`} />
+                            <FaCompress className={`ml-2 mr-2 ${getCompressionClass("batchoperation", false)}`} />
+                            Operazioni Batch
+                        </span>
+                    </Accordion.Toggle>
+                    <Accordion.Collapse eventKey="3">
+                        <div className="list-group">
+                        {
+                            SidebarItems.filter(item => item.domain === "batchoperation").map((item) => getLink(item))
+                        }
+                        </div>
+                    </Accordion.Collapse>
+                </span>
             </Accordion>
-            <Link to={"/massive-loading"} key={"massive-loading"} className={`list-group-item-action `}>
-                <div className="ml-1 mt-1">
-                    <FaTasks></FaTasks> <span className="ml-1">Caricamenti Massivi</span>
-                </div>
-            </Link>
             </>
         );
     }

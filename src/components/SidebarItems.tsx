@@ -67,7 +67,12 @@ const SidebarItems = [
     {
         name: "Caricamenti Massivi",
         route: "/massive-loading",
-        domain: "massiveloading"
+        domain: "batchoperation"
+    },
+    {
+        name: "Migrazione Massive",
+        route: "/massive-migration",
+        domain: "batchoperation"
     },
 ];
 
