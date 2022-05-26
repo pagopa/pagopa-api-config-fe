@@ -63,6 +63,10 @@ const SidebarItems = [
         name: "WFESP Plugins",
         route: "/wfesp-plugins",
         domain: "configuration"
+    }, {
+        name: "Tipo Versamento",
+        route: "/payment-type",
+        domain: "configuration"
     },
     {
         name: "Caricamenti Massivi",
