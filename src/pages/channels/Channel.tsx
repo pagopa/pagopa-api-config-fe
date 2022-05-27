@@ -11,6 +11,9 @@ interface IProps {
     match: {
         params: Record<string, unknown>;
     };
+    history: {
+        push(url: string): void;
+    };
 }
 
 interface IState {
@@ -152,6 +155,10 @@ export default class Channel extends React.Component<IProps, IState> {
         });
     }
 
+    handleEdit() {
+        this.props.history.push("/channels/" + String(this.props.match.params.code) + "?edit");
+    }
+
     componentDidMount(): void {
         const code: string = this.props.match.params.code as string;
         this.setState({isError: false});
@@ -224,8 +231,11 @@ export default class Channel extends React.Component<IProps, IState> {
                             !isLoading && (
                                 <>
                                     <div className="row">
-                                        <div className="col-md-12">
+                                        <div className="col-md-10">
                                             <h2>{this.state.channel.channel_code || "-"}</h2>
+                                        </div>
+                                        <div className="col-md-2 text-right">
+                                            <button className={"btn btn-primary"} onClick={() => this.handleEdit()} >Edit</button>
                                         </div>
                                     </div>
                                     <div className="row">
