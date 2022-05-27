@@ -101,7 +101,7 @@ export default class Routes extends React.Component {
                                     <Route path="/configuration-keys" exact component={ConfigurationKeys}/>
                                     <Route path="/pdds" exact component={Pdds}/>
                                     <Route path="/wfesp-plugins" exact component={WFESPPlugins}/>
-                                    <Route path="/payment-type" exact component={PaymentTypePage}/>
+                                    <Route path="/payment-types" exact component={PaymentTypePage}/>
 
                                     <Route path="/massive-loading" exact component={MassiveLoading} />
                                     <Route path="/massive-migration" exact component={MassiveMigration} />
