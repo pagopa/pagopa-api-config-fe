@@ -108,6 +108,10 @@ export default class Station extends React.Component<IProps, IState> {
         this.props.history.push("/creditor-institutions/" + code);
     }
 
+    handleEdit() {
+        this.props.history.push("/stations/" + String(this.props.match.params.code) + "?edit");
+    }
+
     componentDidMount(): void {
         const code: string = this.props.match.params.code as string;
         this.setState({isError: false});
@@ -126,9 +130,9 @@ export default class Station extends React.Component<IProps, IState> {
                         {item.enabled && <FaCheck className="text-success"/>}
                         {!item.enabled && <FaTimes className="text-danger"/>}
                     </td>
+                    <td className="text-center">{item.aux_digit}</td>
                     <td className="text-center">{item.application_code}</td>
                     <td className="text-center">{item.segregation_code}</td>
-                    <td className="text-center">{item.aux_digit}</td>
                     <td className="text-center">
                         {item.mod4 && <FaCheck className="text-success"/>}
                         {!item.mod4 && <FaTimes className="text-danger"/>}
@@ -216,8 +220,11 @@ export default class Station extends React.Component<IProps, IState> {
                             !isLoading && (
                                 <>
                                     <div className="row">
-                                        <div className="col-md-12">
+                                        <div className="col-md-10">
                                             <h2>{this.state.station.station_code || "-"}</h2>
+                                        </div>
+                                        <div className="col-md-2 text-right">
+                                            <button className={"btn btn-primary"} onClick={() => this.handleEdit()} >Edit</button>
                                         </div>
                                     </div>
                                     <div className="row">
@@ -401,12 +408,14 @@ export default class Station extends React.Component<IProps, IState> {
                                                 <Card.Header>
                                                     <div className={"d-flex justify-content-between align-items-center"}>
                                                         <h5>Enti Creditori</h5>
-                                                        <OverlayTrigger placement="top"
-                                                                        overlay={<Tooltip id="csv-download">Scarica</Tooltip>}>
-                                                            <FaCloudDownloadAlt role="button" className="mr-3"
-                                                                                onClick={() => this.downloadCsv()}/>
-                                                        </OverlayTrigger>
-
+                                                        {Object.keys(ciList).length > 0 &&
+                                                            <OverlayTrigger placement="top"
+                                                                            overlay={<Tooltip
+                                                                                    id="csv-download">Scarica</Tooltip>}>
+                                                                <FaCloudDownloadAlt role="button" className="mr-3"
+                                                                                    onClick={() => this.downloadCsv()}/>
+                                                            </OverlayTrigger>
+                                                        }
                                                     </div>
                                                 </Card.Header>
                                                 <Card.Body>
@@ -421,10 +430,10 @@ export default class Station extends React.Component<IProps, IState> {
 															<th className="">Ente creditore</th>
 															<th className="">Codice</th>
 															<th className="text-center">Abilitato</th>
-															<th className="text-center">Application Code</th>
-															<th className="text-center">Segregation Code</th>
 															<th className="text-center">Aux Digit</th>
-															<th className="text-center">Mod4</th>
+                                                            <th className="text-center">Application Code</th>
+                                                            <th className="text-center">Segregation Code</th>
+															<th className="text-center">Modello 4</th>
 															<th className="text-center">Broadcast</th>
 															<th className="text-center"></th>
 														</tr>
@@ -435,7 +444,7 @@ export default class Station extends React.Component<IProps, IState> {
 													</Table>
                                                     }
                                                     {
-                                                        this.state.ci.page_info &&
+                                                        Object.keys(ciList).length > 0 && this.state.ci.page_info &&
                                                         <Paginator pageInfo={this.state.ci.page_info}
                                                                    onPageChanged={this.handlePageChange}/>
                                                     }

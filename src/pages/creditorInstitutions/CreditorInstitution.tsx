@@ -1,6 +1,6 @@
 import React from "react";
-import {Alert, Badge, Breadcrumb, Card, Form, Table} from "react-bootstrap";
-import {FaCheck, FaInfoCircle, FaSpinner, FaTimes} from "react-icons/fa";
+import {Alert, Badge, Breadcrumb, Card, Form, OverlayTrigger, Table, Tooltip} from "react-bootstrap";
+import {FaCheck, FaEye, FaInfoCircle, FaSpinner, FaTimes} from "react-icons/fa";
 import {MsalContext} from "@azure/msal-react";
 import {apiClient} from "../../util/apiClient";
 import {CreditorInstitutionDetails} from "../../../generated/api/CreditorInstitutionDetails";
@@ -10,6 +10,9 @@ import {loginRequest} from "../../authConfig";
 interface IProps {
     match: {
         params: Record<string, unknown>;
+    };
+    history: {
+        push(url: string): void;
     };
 }
 
@@ -152,6 +155,14 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
             });
     }
 
+    handleDetails(code: string) {
+        this.props.history.push("/stations/" + code);
+    }
+
+    handleEdit() {
+        this.props.history.push("/creditor-institutions/" + String(this.props.match.params.code) + "?edit");
+    }
+
     componentDidMount(): void {
         const code: string = this.props.match.params.code as string;
         this.setState({isError: false});
@@ -188,6 +199,7 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
                         {item.enabled && <FaCheck className="text-success"/>}
                         {!item.enabled && <FaTimes className="text-danger"/>}
                     </td>
+                    <td className="text-center">{item.aux_digit}</td>
                     <td className="text-center">{item.application_code}</td>
                     <td className="text-center">{item.segregation_code}</td>
                     <td className="text-center">{item.version}</td>
@@ -199,7 +211,13 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
                         {item.broadcast && <FaCheck className="text-success"/>}
                         {!item.broadcast && <FaTimes className="text-danger"/>}
                     </td>
-                    <td className="text-center">{item.aux_digit}</td>
+                    <td className="text-right">
+                        <OverlayTrigger placement="top"
+                                        overlay={<Tooltip id={`tooltip-details-${index}`}>Visualizza</Tooltip>}>
+                            <FaEye role="button" className="mr-3"
+                                   onClick={() => this.handleDetails(item.station_code)}/>
+                        </OverlayTrigger>
+                    </td>
                 </tr>
             );
             stationList.push(row);
@@ -242,8 +260,11 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
                             !isLoading && (
                                 <>
                                     <div className="row">
-                                        <div className="col-md-12">
+                                        <div className="col-md-10">
                                             <h2>{this.state.creditorInstitution.business_name || "-"}</h2>
+                                        </div>
+                                        <div className="col-md-2 text-right">
+                                            <button className={"btn btn-primary"} onClick={() => this.handleEdit()} >Edit</button>
                                         </div>
                                     </div>
                                     <div className="row">
@@ -395,14 +416,15 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
                                                     <Table hover responsive size="sm">
                                                         <thead>
                                                         <tr>
-                                                            <th className="">Codice</th>
+                                                            <th className="">Codice Stazione</th>
                                                             <th className="text-center">Abilitata</th>
+															<th className="text-center">Aux Digit</th>
                                                             <th className="text-center">Application Code</th>
                                                             <th className="text-center">Codice Segregazione</th>
                                                             <th className="text-center">Versione</th>
                                                             <th className="text-center">Modello 4</th>
                                                             <th className="text-center">Broadcast</th>
-                                                            <th className="text-center">Aux Digit</th>
+                                                            <th className="text-right"></th>
                                                         </tr>
                                                         </thead>
                                                         <tbody>
