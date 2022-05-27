@@ -65,7 +65,7 @@ const SidebarItems = [
         domain: "configuration"
     }, {
         name: "Tipo Versamento",
-        route: "/payment-type",
+        route: "/payment-types",
         domain: "configuration"
     },
     {
