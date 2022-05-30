@@ -296,7 +296,11 @@ export default class Icas extends React.Component<IProps, IState> {
                             <Form.Control id="fileUploader" className="hidden" type="file" accept=".xml" onChange={this.upload} />
                         </div>
                         <div className="col-md-12">
-                            <Filters configuration={this.filter} onFilter={this.handleFilterCallback} />
+                            <div className="row">
+                                <div className="col-md-8">
+                                    <Filters configuration={this.filter} onFilter={this.handleFilterCallback} />
+                                </div>
+                            </div>
                             {isLoading && (<FaSpinner className="spinner"/>)}
                             {
                                 !isLoading && (

@@ -400,7 +400,11 @@ export default class PaymentTypePage extends React.Component<IProps, IState> {
                         <Button onClick={this.create}>Nuovo <FaPlus/></Button>
                     </div>
                     <div className="col-md-12">
-                        <Filters configuration={this.filter} onFilter={this.handleFilterCallback}/>
+                        <div className="row">
+                            <div className="col-md-8">
+                                <Filters configuration={this.filter} onFilter={this.handleFilterCallback}/>
+                            </div>
+                        </div>
                         {isLoading && (<FaSpinner className="spinner"/>)}
                         {
                             !isLoading && (
