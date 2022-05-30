@@ -29,7 +29,7 @@ export default class Filters extends React.Component<IProps, IState> {
                     </div>
                     {
                         this.props.configuration.name?.visible && (
-                        <div className="col-md-2 align-items-center">
+                        <div className="col-md-4 align-items-center">
                             <Form.Control name="filter_name" placeholder={this.props.configuration.name.placeholder}
                                           onChange={event => this.onFilter({
                                               ...this.state,
@@ -41,7 +41,7 @@ export default class Filters extends React.Component<IProps, IState> {
 
                     {
                         this.props.configuration.code?.visible && (
-                            <div className="col-md-2 align-items-center">
+                            <div className="col-md-4 align-items-center">
                                 <Form.Control name="filter_code" placeholder={this.props.configuration.code.placeholder}
                                               onChange={event => this.onFilter({
                                                   ...this.state,

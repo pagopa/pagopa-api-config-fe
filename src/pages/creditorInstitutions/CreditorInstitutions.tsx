@@ -1,10 +1,11 @@
 import React from 'react';
-import {Button, OverlayTrigger, Table, Tooltip} from "react-bootstrap";
+import {Button, Form, OverlayTrigger, Table, Tooltip} from "react-bootstrap";
 import {
     FaCheck,
     FaEdit,
     FaEye,
     FaPlus,
+    FaSearch,
     FaSpinner,
     FaTimes,
     FaTrash
@@ -17,6 +18,7 @@ import ConfirmationModal from "../../components/ConfirmationModal";
 import {loginRequest} from "../../authConfig";
 import Filters from "../../components/Filters";
 import Ordering from "../../components/Ordering";
+import CITableModal from "../../components/CITableModal";
 
 interface IProps {
     history: {
@@ -41,6 +43,7 @@ interface IState {
     creditorInstitutionToDelete: any;
     creditorInstitutionIndex: number;
     order: any;
+    iban: any;
 }
 
 export default class CreditorInstitutions extends React.Component<IProps, IState> {
@@ -69,6 +72,11 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
             order: {
                 by: "NAME",
                 ing: "DESC"
+            },
+            iban: {
+                search: "",
+                showModal: false,
+                ciList: []
             }
         };
 
@@ -86,6 +94,7 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
         this.handlePageChange = this.handlePageChange.bind(this);
         this.handleOrder = this.handleOrder.bind(this);
         this.createCreditorInstitution = this.createCreditorInstitution.bind(this);
+        this.searchIban = this.searchIban.bind(this);
     }
 
     getPage(page: number) {
@@ -201,6 +210,67 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
         this.getPage(0);
     };
 
+    findByIban(ibanToSearch: string) {
+        const iban = {
+            search: ibanToSearch,
+            showModal: false,
+            ciList: []
+        };
+        this.setState({iban});
+    }
+
+    searchIban() {
+        if (this.state.iban.search.length > 0) {
+            this.context.instance.acquireTokenSilent({
+                ...loginRequest,
+                account: this.context.accounts[0]
+            })
+                .then((response: any) => {
+                    apiClient.getCreditorInstitutionsByIban({
+                        Authorization: `Bearer ${response.idToken}`,
+                        ApiKey: "",
+                        iban: this.state.iban.search
+                    })
+                    .then((response: any) => {
+                        if (response.right.status === 200) {
+                            const ciList = response.right.value.creditor_institutions;
+                            if (ciList.length === 0) {
+                                toast.info("Nessun EC trovato con l'IBAN specificato.");
+                            }
+                            else {
+                                const iban = {
+                                    search: this.state.iban.search,
+                                    showModal: true,
+                                    ciList
+                                };
+                                this.setState({iban});
+                            }
+                        }
+                    })
+                    .catch(() => {
+                        toast.error("Problema nel recuperare gli enti creditori", {theme: "colored"});
+                    })
+                    .finally(() => {
+                        this.setState({isLoading: false});
+                    });
+                });
+        }
+        else {
+            toast.warn("Nessun IBAN specificato.");
+        }
+    }
+
+    hideIbanModal = (status: string) => {
+        if (status === "ko") {
+            const iban = {
+                search: "",
+                showModal: false,
+                ciList: []
+            };
+            this.setState({iban});
+        }
+    };
+
     render(): React.ReactNode {
         const isLoading = this.state.isLoading;
         const pageInfo = this.state.page_info;
@@ -252,13 +322,31 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
                         <Button onClick={this.createCreditorInstitution}>Nuovo <FaPlus/></Button>
                     </div>
                     <div className="col-md-12">
-                        <Filters configuration={this.filter} onFilter={this.handleFilterCallback} />
+                        <div className="row">
+                            <div className="col-md-8">
+                                <Filters configuration={this.filter} onFilter={this.handleFilterCallback} />
+                            </div>
+                            <div className="col-md-4">
+                                <div className="row">
+                                    <div className="d-flex align-items-center">
+                                        <FaSearch />
+                                    </div>
+                                    <div className="col-md-9">
+                                        <Form.Control name="filter_name" placeholder="Cerca per IBAN"
+                                                      value={this.state.iban.search}
+                                                      onChange={event => this.findByIban(event.target.value)} />
+                                    </div>
+                                    <div className="col-md-2">
+                                        <Button className="btn btn-primary" onClick={this.searchIban} >Cerca</Button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         {isLoading && (<FaSpinner className="spinner"/>)}
                         {
                             !isLoading && (
                                 <>
-
-
                                     <Table hover responsive size="sm">
                                         <thead>
                                         <tr>
@@ -291,6 +379,11 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
                         <li>{ciToDeleteName} - {ciToDeleteCode}</li>
                     </ul>
                 </ConfirmationModal>
+
+                <CITableModal show={this.state.iban.showModal} handleClose={this.hideIbanModal}
+                              iban={this.state.iban.search} creditorInstitutions={this.state.iban.ciList}
+                              history={this.props.history}
+                />
 
             </div>
         );
