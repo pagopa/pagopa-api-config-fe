@@ -84,7 +84,6 @@ stages:
   - stage: release_service
     # bump version if SEMVER is not 'skip'
     condition: ne('${{ parameters.SEMVER }}', 'skip')
-
     pool:
       vmImage: "ubuntu-latest"
     jobs:
@@ -95,7 +94,7 @@ stages:
               persistCredentials: true
               gitReference: $(SOURCE_BRANCH)
 
-          - template: templates/node-github-release/template.yaml@pagopaCommons
+          - template: azure-templates/node-versioning.yml
             parameters:
               semver: '${{ parameters.SEMVER }}'
               release_branch: $(SOURCE_BRANCH)
