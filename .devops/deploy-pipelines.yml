@@ -58,6 +58,11 @@ variables:
     APICONFIG_BASEPATH: $(APIM_BASEPATH_APICONFIG)$(APICONFIG_BASEPATH_VERSION)
     APICONFIG_REDIRECT_URI: $(PROD_APICONFIG_REDIRECT_URI)
     APICONFIG_CLIENT_ID: $(PROD_APICONFIG_CLIENT_ID)
+  # github action use 'merge' as value of SourceBranchName
+  ${{ if eq(variables['Build.SourceBranchName'], 'merge') }}:
+    SOURCE_BRANCH: "main" # force to main branch
+  ${{ if ne(variables['Build.SourceBranchName'], 'merge') }}:
+    SOURCE_BRANCH: ${{ variables['Build.SourceBranchName'] }}
 
 # Only manual triggers
 trigger: none
@@ -77,9 +82,8 @@ resources:
 stages:
   # Create a release on Github
   - stage: release_service
-    # bump version on main branch and if SEMVER is not 'skip'
-    condition: and(eq(variables['Build.SourceBranch'], 'refs/heads/main'), ne('${{ parameters.SEMVER }}', 'skip'))
-
+    # bump version if SEMVER is not 'skip'
+    condition: ne('${{ parameters.SEMVER }}', 'skip')
     pool:
       vmImage: "ubuntu-latest"
     jobs:
@@ -88,13 +92,12 @@ stages:
           - template: templates/node-job-setup/template.yaml@pagopaCommons
             parameters:
               persistCredentials: true
-              gitReference: 'main'
+              gitReference: $(SOURCE_BRANCH)
 
-          - template: templates/node-github-release/template.yaml@pagopaCommons
-
+          - template: azure-templates/node-versioning.yml
             parameters:
               semver: '${{ parameters.SEMVER }}'
-              release_branch: 'main'
+              release_branch: $(SOURCE_BRANCH)
               gitEmail: $(GIT_EMAIL)
               gitUsername: $(GIT_USERNAME)
               gitHubConnection: $(GITHUB_CONNECTION)
