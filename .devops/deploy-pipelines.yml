@@ -105,7 +105,6 @@ stages:
   # Prepare Artifact with application bundle
   - stage: prepare_artifact
     condition: not(failed('release_service'))
-
     pool:
       vmImage: 'ubuntu-latest'
     jobs:
@@ -143,8 +142,7 @@ stages:
 
   # Deploy on Azure
   - stage: deploy_staging
-    dependsOn:
-      - prepare_artifact
+    dependsOn: prepare_artifact
     jobs:
       - job: 'deploy_to_container'
         steps:
@@ -172,8 +170,7 @@ stages:
 #                call az storage blob sync --container $(BLOB_CONTAINER) --account-name $(STORAGE_ACCOUNT_NAME) -s "$(Pipeline.Workspace)\Bundle" -d .
 
   - stage: purge_cdn
-    dependsOn:
-      - deploy_staging
+    dependsOn: deploy_staging
     jobs:
       - job: 'purge_cdn'
         steps:
