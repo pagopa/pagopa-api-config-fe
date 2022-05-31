@@ -142,7 +142,7 @@ stages:
 
   # Deploy on Azure
   - stage: deploy_staging
-    dependsOn: prepare_artifact
+#    dependsOn: prepare_artifact
     jobs:
       - job: 'deploy_to_container'
         steps:
