@@ -220,6 +220,7 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
     }
 
     searchIban() {
+        const loading = toast.info("Ricerca in corso degli EC aventi l'IBAN specificato.");
         if (this.state.iban.search.length > 0) {
             this.context.instance.acquireTokenSilent({
                 ...loginRequest,
@@ -251,6 +252,7 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
                         toast.error("Problema nel recuperare gli enti creditori", {theme: "colored"});
                     })
                     .finally(() => {
+                        toast.dismiss(loading);
                         this.setState({isLoading: false});
                     });
                 });
