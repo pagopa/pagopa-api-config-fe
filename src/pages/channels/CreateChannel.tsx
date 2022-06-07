@@ -35,7 +35,7 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                 enabled: false,
                 description: "",
                 password: "",
-                protocol: "",
+                protocol: "https",
                 ip: "",
                 port: 0,
                 service: "",
@@ -44,11 +44,11 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                 proxy_host: "",
                 proxy_port: 0,
                 thread_number: 0,
-                timeout_a: 0,
-                timeout_b: 0,
-                timeout_c: 0,
+                timeout_a: 15,
+                timeout_b: 30,
+                timeout_c: 120,
                 new_fault_code: false,
-                redirect_protocol: "",
+                redirect_protocol: "https",
                 payment_model: "",
                 rt_push: false,
                 on_us: false,
@@ -174,6 +174,7 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                             <Form.Group controlId="protocol" className="col-md-2">
                                 <Form.Label>Protocollo</Form.Label>
                                 <Form.Control name="protocol" placeholder=""
+                                              value={String(this.state.channel.protocol)}
                                               onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
 
@@ -199,6 +200,7 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                             <Form.Group controlId="redirect_protocol" className="col-md-2">
                                 <Form.Label>Protocollo Redirect</Form.Label>
                                 <Form.Control name="redirect_protocol" placeholder=""
+                                              value={String(this.state.channel.redirect_protocol)}
                                               onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
 
@@ -271,18 +273,21 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                             <Form.Group controlId="timeout_a" className="col-md-2">
                                 <Form.Label>Timeout A</Form.Label>
                                 <Form.Control name="timeout_a" placeholder=""
+                                              value={String(this.state.channel.timeout_a)}
                                               onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
 
                             <Form.Group controlId="timeout_b" className="col-md-2">
                                 <Form.Label>Timeout B</Form.Label>
                                 <Form.Control name="timeout_b" placeholder=""
+                                              value={String(this.state.channel.timeout_b)}
                                               onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
 
                             <Form.Group controlId="timeout_c" className="col-md-2">
                                 <Form.Label>Timeout C</Form.Label>
                                 <Form.Control name="timeout_c" placeholder=""
+                                              value={String(this.state.channel.timeout_c)}
                                               onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
                         </div>
