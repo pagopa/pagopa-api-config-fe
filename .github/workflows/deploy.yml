@@ -48,12 +48,22 @@ jobs:
         if: ${{ contains(github.event.pull_request.labels.*.name, 'ignore-for-release') }}
 
 
-      - name: Azure Pipelines Action - Jversion
+      - name: Azure Pipelines Action DEV - Jversion
         uses: jacopocarlini/azure-pipelines@v1.3
         with:
           azure-devops-project-url: https://dev.azure.com/pagopaspa/pagoPA-projects
           azure-pipeline-name: 'pagopa-api-config-fe.deploy'
           azure-devops-token: ${{ secrets.AZURE_DEVOPS_TOKEN }}
           azure-template-parameters: '{"ENV": "dev", "SEMVER": "${{env.SEMVER}}"}'
+          azure-pipeline-variables: '{"system.debug": "true"}'
+
+
+      - name: Azure Pipelines Action UAT - Jversion
+        uses: jacopocarlini/azure-pipelines@v1.3
+        with:
+          azure-devops-project-url: https://dev.azure.com/pagopaspa/pagoPA-projects
+          azure-pipeline-name: 'pagopa-api-config-fe.deploy'
+          azure-devops-token: ${{ secrets.AZURE_DEVOPS_TOKEN }}
+          azure-template-parameters: '{"ENV": "uat", "SEMVER": "skip"'
           azure-pipeline-variables: '{"system.debug": "true"}'
 

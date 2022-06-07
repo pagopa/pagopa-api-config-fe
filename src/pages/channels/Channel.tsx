@@ -1,11 +1,14 @@
 import React from "react";
 import {Alert, Breadcrumb, Card, Form, OverlayTrigger, Table, Tooltip} from "react-bootstrap";
-import {FaCheck, FaEye, FaInfoCircle, FaSpinner, FaTimes} from "react-icons/fa";
+import {FaCheck, FaCloudDownloadAlt, FaEye, FaInfoCircle, FaSpinner, FaTimes} from "react-icons/fa";
 import {MsalContext} from "@azure/msal-react";
 import {apiClient} from "../../util/apiClient";
 import {loginRequest} from "../../authConfig";
 import {ChannelDetails, Payment_modelEnum} from "../../../generated/api/ChannelDetails";
 import {PaymentType} from "../../../generated/api/PaymentType";
+import {getConfig} from "../../util/config";
+import axios, {AxiosRequestConfig} from "axios";
+import {toast} from "react-toastify";
 
 interface IProps {
     match: {
@@ -191,6 +194,45 @@ export default class Channel extends React.Component<IProps, IState> {
     handlePspDetails(code: string) {
         this.props.history.push(this.pspService + "/" + code);
     }
+
+    downloadCsv() {
+        const baseUrl = getConfig("APICONFIG_HOST") as string;
+        const basePath = getConfig("APICONFIG_BASEPATH") as string;
+
+        this.context.instance.acquireTokenSilent({
+            ...loginRequest,
+            account: this.context.accounts[0]
+        }).then((response: any) => {
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${response.idToken}`
+                },
+                responseType: 'blob'
+            } as AxiosRequestConfig;
+            const anchor = document.createElement("a");
+            document.body.appendChild(anchor);
+            const url = `${String(baseUrl)}${String(basePath)}/channels/${this.state.channel.channel_code}/paymentserviceproviders/csv`;
+            axios.get(url, config)
+                .then((res: any) => {
+                    if (res.data.size > 1) {
+                        const objectUrl = window.URL.createObjectURL(res.data);
+                        // eslint-disable-next-line functional/immutable-data
+                        anchor.href = objectUrl;
+                        // eslint-disable-next-line functional/immutable-data
+                        anchor.download = this.state.channel.channel_code + '-psp.csv';
+                        anchor.click();
+                        window.URL.revokeObjectURL(objectUrl);
+                    }
+                    else {
+                        toast.warn("Problemi nella generazione del file CSV richiesto.", {theme: "colored"});
+                    }
+                })
+                .catch(() => {
+                    toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                });
+        });
+    }
+
 
     componentDidMount(): void {
         const code: string = this.props.match.params.code as string;
@@ -528,7 +570,17 @@ export default class Channel extends React.Component<IProps, IState> {
                     <div className="col-md-12">
                         <Card>
                             <Card.Header>
-                                <h5>PSP</h5>
+                                <div className={"d-flex justify-content-between align-items-center"}>
+                                    <h5>PSP</h5>
+                                    {Object.keys(pspList).length > 0 &&
+                                        <OverlayTrigger placement="top"
+                                                        overlay={<Tooltip
+                                                            id="csv-download">Scarica</Tooltip>}>
+                                            <FaCloudDownloadAlt role="button" className="mr-3"
+                                                                onClick={() => this.downloadCsv()}/>
+                                        </OverlayTrigger>
+                                    }
+                                </div>
                             </Card.Header>
                             <Card.Body>
                                 {Object.keys(pspList).length === 0 && (
