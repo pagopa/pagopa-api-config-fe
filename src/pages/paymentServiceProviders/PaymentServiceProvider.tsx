@@ -1,6 +1,6 @@
 import React from "react";
-import {Alert, Breadcrumb, Card, Form, Table} from "react-bootstrap";
-import {FaCheck, FaInfoCircle, FaSpinner, FaTimes} from "react-icons/fa";
+import {Alert, Breadcrumb, Card, Form, OverlayTrigger, Table, Tooltip} from "react-bootstrap";
+import {FaCheck, FaEye, FaInfoCircle, FaSpinner, FaTimes} from "react-icons/fa";
 import {MsalContext} from "@azure/msal-react";
 import {apiClient} from "../../util/apiClient";
 import {loginRequest} from "../../authConfig";
@@ -28,6 +28,7 @@ interface IState {
 
 export default class PaymentServiceProvider extends React.Component<IProps, IState> {
     static contextType = MsalContext;
+    private channelService: string = '/channels';
 
     constructor(props: IProps) {
         super(props);
@@ -123,6 +124,10 @@ export default class PaymentServiceProvider extends React.Component<IProps, ISta
         this.props.history.push("/payment-service-providers/" + String(this.props.match.params.code) + "?edit");
     }
 
+    handleChannelDetails(code: string) {
+        this.props.history.push(this.channelService + "/" + code);
+    }
+
     componentDidMount(): void {
         const code: string = this.props.match.params.code as string;
         this.setState({isError: false});
@@ -146,6 +151,14 @@ export default class PaymentServiceProvider extends React.Component<IProps, ISta
                             {!item.enabled && <FaTimes className="text-danger"/>}
                         </td>
                         <td className="text-center">{item.payment_types.join(" ")}</td>
+                        <td>
+                            {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
+                            <OverlayTrigger placement="top"
+                                            overlay={<Tooltip id={`tooltip-details-${index}`}>Visualizza</Tooltip>}>
+                                <FaEye role="button" className="mr-3"
+                                       onClick={() => this.handleChannelDetails(item.channel_code)}/>
+                            </OverlayTrigger>
+                        </td>
                     </tr>
             );
             channelList.push(row);
@@ -275,6 +288,7 @@ export default class PaymentServiceProvider extends React.Component<IProps, ISta
 										<th className="">Codice</th>
 										<th className="text-center">Abilitata</th>
 										<th className="text-center">Tipo Versamento</th>
+										<th className="text-center"></th>
 									</tr>
 									</thead>
 									<tbody>
