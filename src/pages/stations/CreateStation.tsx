@@ -36,19 +36,19 @@ export default class CreateStation extends React.Component<IProps, IState> {
                 ip: "",
                 password: "",
                 port: 0,
-                protocol: "",
+                protocol: "https",
                 service: "",
                 station_code: "",
                 thread_number: 0,
-                timeout_a: 0,
-                timeout_b: 0,
-                timeout_c: 0,
+                timeout_a: 15,
+                timeout_b: 30,
+                timeout_c: 120,
                 version: 0,
                 flag_online: false,
                 ip_4mod: false,
                 new_password: "",
                 port_4mod: 0,
-                protocol_4mod: "",
+                protocol_4mod: "https",
                 proxy_enabled: false,
                 proxy_host: "",
                 proxy_password: "",
@@ -57,7 +57,7 @@ export default class CreateStation extends React.Component<IProps, IState> {
                 redirect_ip: "",
                 redirect_path: "",
                 redirect_port: 0,
-                redirect_protocol: "",
+                redirect_protocol: "https",
                 redirect_query_string: "",
                 service_4mod: ""
             } as unknown as StationDetails,
@@ -180,7 +180,7 @@ export default class CreateStation extends React.Component<IProps, IState> {
                         <div className="row">
                             <Form.Group controlId="protocol" className="col-md-2">
                                 <Form.Label>Protocollo</Form.Label>
-                                <Form.Control name="protocol" onChange={(e) => this.handleChange(e)} />
+                                <Form.Control name="protocol" value={String(this.state.station.protocol)} onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
 
                             <Form.Group controlId="ip" className="col-md-2">
@@ -209,7 +209,7 @@ export default class CreateStation extends React.Component<IProps, IState> {
                         <div className="row">
                             <Form.Group controlId="protocol_4mod" className="col-md-2">
                                 <Form.Label>Protocollo Modello 4</Form.Label>
-                                <Form.Control name="protocol_4mod" onChange={(e) => this.handleChange(e)} />
+                                <Form.Control name="protocol_4mod" value={String(this.state.station.protocol_4mod)} onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
 
                             <Form.Group controlId="ip_4mod" className="col-md-2">
@@ -231,7 +231,7 @@ export default class CreateStation extends React.Component<IProps, IState> {
                         <div className="row">
                             <Form.Group controlId="redirect_protocol" className="col-md-2">
                                 <Form.Label>Protocollo Redirect</Form.Label>
-                                <Form.Control name="redirect_protocol" onChange={(e) => this.handleChange(e)} />
+                                <Form.Control name="redirect_protocol" value={String(this.state.station.redirect_protocol)} onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
 
                             <Form.Group controlId="redirect_ip" className="col-md-2">
@@ -306,17 +306,17 @@ export default class CreateStation extends React.Component<IProps, IState> {
 
                             <Form.Group controlId="timeout_a" className="col-md-2">
                                 <Form.Label>Timeout A</Form.Label>
-                                <Form.Control name="timeout_a" onChange={(e) => this.handleChange(e)} />
+                                <Form.Control name="timeout_a" value={String(this.state.station.timeout_a)} onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
 
                             <Form.Group controlId="timeout_b" className="col-md-2">
                                 <Form.Label>Timeout B</Form.Label>
-                                <Form.Control name="timeout_b" onChange={(e) => this.handleChange(e)} />
+                                <Form.Control name="timeout_b" value={String(this.state.station.timeout_b)} onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
 
                             <Form.Group controlId="timeout_c" className="col-md-2">
                                 <Form.Label>Timeout C</Form.Label>
-                                <Form.Control name="timeout_c" onChange={(e) => this.handleChange(e)} />
+                                <Form.Control name="timeout_c" value={String(this.state.station.timeout_c)} onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
 
                         </div>
