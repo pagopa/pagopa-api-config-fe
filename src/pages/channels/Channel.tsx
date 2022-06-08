@@ -2,13 +2,13 @@ import React from "react";
 import {Alert, Breadcrumb, Card, Form, OverlayTrigger, Table, Tooltip} from "react-bootstrap";
 import {FaCheck, FaCloudDownloadAlt, FaEye, FaInfoCircle, FaSpinner, FaTimes} from "react-icons/fa";
 import {MsalContext} from "@azure/msal-react";
+import axios, {AxiosRequestConfig} from "axios";
+import {toast} from "react-toastify";
 import {apiClient} from "../../util/apiClient";
 import {loginRequest} from "../../authConfig";
 import {ChannelDetails, Payment_modelEnum} from "../../../generated/api/ChannelDetails";
 import {PaymentType} from "../../../generated/api/PaymentType";
 import {getConfig} from "../../util/config";
-import axios, {AxiosRequestConfig} from "axios";
-import {toast} from "react-toastify";
 
 interface IProps {
     match: {
