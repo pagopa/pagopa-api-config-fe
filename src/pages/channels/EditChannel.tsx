@@ -653,11 +653,11 @@ export default class EditChannel extends React.Component<IProps, IState> {
                                                             <h5>Tipo Versamento</h5>
                                                         </Card.Header>
                                                         <Card.Body>
-                                                            {Object.keys(paymentTypeList).length === 0 && (
+                                                            {Object.keys(paymentTypeList).length === 0 && !newPaymentType && (
                                                                     <Alert className={'col-md-12'} variant={"warning"}><FaInfoCircle
                                                                             className="mr-1"/>Tipi Versamento non presenti</Alert>
                                                             )}
-                                                            {Object.keys(paymentTypeList).length > 0 &&
+                                                            {(Object.keys(paymentTypeList).length > 0 || newPaymentType) &&
 															<Table hover responsive size="sm">
 																<thead>
 																<tr>

@@ -175,6 +175,8 @@ export default class Channel extends React.Component<IProps, IState> {
                     .then((response: any) => {
                         if (response.right.status === 200) {
                             this.setState({pspList: response.right.value.payment_service_providers});
+                        } else if (response.right.status === 404) {
+                            this.setState({pspList: []});
                         } else {
                             this.setState({isError: true});
                         }
@@ -222,8 +224,7 @@ export default class Channel extends React.Component<IProps, IState> {
                         anchor.download = this.state.channel.channel_code + '-psp.csv';
                         anchor.click();
                         window.URL.revokeObjectURL(objectUrl);
-                    }
-                    else {
+                    } else {
                         toast.warn("Problemi nella generazione del file CSV richiesto.", {theme: "colored"});
                     }
                 })
