@@ -5,12 +5,12 @@ import {FaCheck, FaExclamationTriangle, FaMinus, FaPlus, FaSpinner, FaTimes} fro
 import {isValidIBAN} from "ibantools";
 import {MsalContext} from "@azure/msal-react";
 import axios from "axios";
+import {toast} from "react-toastify";
 import {apiClient} from "../../util/apiClient";
 import {Iban} from "../../../generated/api/Iban";
 import {Encoding} from "../../../generated/api/Encoding";
 import {loginRequest} from "../../authConfig";
 import {getConfig} from "../../util/config";
-import {toast} from "react-toastify";
 
 interface XMLData {
     inProgress: boolean;
