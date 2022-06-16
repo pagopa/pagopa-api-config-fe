@@ -1,10 +1,11 @@
 import React from 'react';
 import {Breadcrumb, Form, Table} from 'react-bootstrap';
 import {Props} from "io-ts";
-import {FaCheck, FaExclamationTriangle, FaMinus, FaSpinner, FaTimes} from "react-icons/fa";
+import {FaCheck, FaExclamationTriangle, FaMinus, FaPlus, FaSpinner, FaTimes} from "react-icons/fa";
 import {isValidIBAN} from "ibantools";
 import {MsalContext} from "@azure/msal-react";
 import axios from "axios";
+import {toast} from "react-toastify";
 import {apiClient} from "../../util/apiClient";
 import {Iban} from "../../../generated/api/Iban";
 import {Encoding} from "../../../generated/api/Encoding";
@@ -17,6 +18,7 @@ interface XMLData {
     valid: string;
     note: string;
     action: string;
+    operation: any;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -54,6 +56,7 @@ export default class CheckIca extends React.Component<IProps, IState> {
             xsd: this.initXMLData()
         };
         this.handleFile = this.handleFile.bind(this);
+        this.setEncoding = this.setEncoding.bind(this);
     }
 
     initState(): void {
@@ -80,12 +83,14 @@ export default class CheckIca extends React.Component<IProps, IState> {
             note: "",
             value: "",
             valid: "undefined",
-            action: ""
+            action: "",
+            operation: {}
         } as unknown as XMLData;
     }
 
     /**
      * Check if creditor institution code and business name are correct
+     * @param creditorInstitutionCode
      * @param code: creditor institution code
      */
     checkCreditorInstitution(creditorInstitutionCode: string, code: string): void {
@@ -114,7 +119,8 @@ export default class CheckIca extends React.Component<IProps, IState> {
                         value: codeData.value,
                         valid: "undefined",
                         note: "Problema di comunicazione con il servizio",
-                        action: ""
+                        action: "",
+                        operation: {}
                     } as XMLData;
 
                     const creditorInstitutionName = {
@@ -122,7 +128,8 @@ export default class CheckIca extends React.Component<IProps, IState> {
                         value: nameData.value,
                         valid: "undefined",
                         note: "Problema di comunicazione con il servizio",
-                        action: ""
+                        action: "",
+                        operation: {}
                     } as XMLData;
 
                     this.setState({creditorInstitutionCode});
@@ -149,7 +156,8 @@ export default class CheckIca extends React.Component<IProps, IState> {
                 note: "",
                 value: codeData.value,
                 valid: codeData.value === response.right.value.creditor_institution_code ? "valid" : "not valid",
-                action: ""
+                action: "",
+                operation: {}
             } as XMLData;
 
             creditorInstitutionName = {
@@ -157,7 +165,8 @@ export default class CheckIca extends React.Component<IProps, IState> {
                 note: "",
                 value: nameData.value,
                 valid: nameData.value === response.right.value.business_name ? "valid" : "not valid",
-                action: ""
+                action: "",
+                operation: {}
             } as XMLData;
 
             this.checkQRCode(codeData.value);
@@ -173,7 +182,8 @@ export default class CheckIca extends React.Component<IProps, IState> {
                 value: codeData.value,
                 valid: "not valid",
                 note: "Codice non trovato",
-                action: "Verificare il codice dell'Ente Creditore"
+                action: "Verificare il codice dell'Ente Creditore",
+                operation: {}
             } as XMLData;
 
             creditorInstitutionName = {
@@ -181,7 +191,8 @@ export default class CheckIca extends React.Component<IProps, IState> {
                 value: nameData.value,
                 valid: "not valid",
                 note: "Impossibile validare il nome dell'Ente senza il relativo codice corretto",
-                action: "Verificare il codice dell'Ente Creditore"
+                action: "Verificare il codice dell'Ente Creditore",
+                operation: {}
             } as XMLData;
         }
         this.setState({creditorInstitutionCode});
@@ -197,11 +208,24 @@ export default class CheckIca extends React.Component<IProps, IState> {
         const codeData = this.state.creditorInstitutionCode;
         // eslint-disable-next-line functional/immutable-data
         codeData.note = "QRCode non presente";
+        // eslint-disable-next-line functional/immutable-data
+        codeData.operation = {
+            enabled: true,
+            encoding: {
+                ci: code,
+                data: {
+                    code_type: "QR_CODE",
+                    encoding_code: code
+                }
+            }
+        };
         for (const encoding of encodings) {
             if (encoding.code_type.toLowerCase() === "qr_code") {
                 if (encoding.encoding_code === code) {
                     // eslint-disable-next-line functional/immutable-data
                     codeData.note = "QRCode presente";
+                    // eslint-disable-next-line functional/immutable-data
+                    codeData.operation = {};
                 }
                 break;
             }
@@ -211,7 +235,7 @@ export default class CheckIca extends React.Component<IProps, IState> {
 
     /**
      * Check if the creditor institution has the QRCode encoding
-     * @param code
+     * @param creditorInstitutionCode
      */
     checkQRCode(creditorInstitutionCode: string): void {
         if (this.state.encodings.length === 0) {
@@ -239,10 +263,11 @@ export default class CheckIca extends React.Component<IProps, IState> {
 
     /**
      * Evaluate if Iban is related to one of the BARCODE_128_AIM encodings
+     * @param ciCode: creditor institution code
      * @param iban: Iban to evaluate
      * @param encodings: Encoding list of Creditor Institution
      */
-    evaluateBarcode128aim(iban: XMLData, encodings: Array<Encoding>) {
+    evaluateBarcode128aim(ciCode: string, iban: XMLData, encodings: Array<Encoding>) {
         const postalCode = iban.value.substring(16);
         // eslint-disable-next-line functional/no-let
         let found = false;
@@ -265,6 +290,17 @@ export default class CheckIca extends React.Component<IProps, IState> {
             iban.note = "Codice postale non presente";
             // eslint-disable-next-line functional/immutable-data
             iban.action = "Inserire codifica postale";
+            // eslint-disable-next-line functional/immutable-data
+            iban.operation = {
+                enabled: true,
+                encoding: {
+                    ci: ciCode,
+                    data: {
+                        code_type: "BARCODE_128_AIM",
+                        encoding_code: postalCode
+                    }
+                }
+            };
         }
 
         const ibanList = this.state.ibans;
@@ -276,6 +312,8 @@ export default class CheckIca extends React.Component<IProps, IState> {
                 i.note = iban.note;
                 // eslint-disable-next-line functional/immutable-data
                 i.action = iban.action;
+                // eslint-disable-next-line functional/immutable-data
+                i.operation = iban.operation;
             }
         });
         this.setState({ibans: ibanList});
@@ -302,12 +340,12 @@ export default class CheckIca extends React.Component<IProps, IState> {
                         if (response.right.status === 200) {
                             this.setState({encodings: response.right.value.encodings});
 
-                            this.evaluateBarcode128aim(iban, response.right.value.encodings);
+                            this.evaluateBarcode128aim(ciCode, iban, response.right.value.encodings);
                         }
                     });
                 });
         } else {
-            this.evaluateBarcode128aim(iban, this.state.encodings);
+            this.evaluateBarcode128aim(ciCode, iban, this.state.encodings);
         }
     }
 
@@ -380,7 +418,8 @@ export default class CheckIca extends React.Component<IProps, IState> {
                                 value: iban.value,
                                 valid: iban.valid,
                                 note: iban.note,
-                                action: iban.action
+                                action: iban.action,
+                                operation: {}
                             } as XMLData;
                             // eslint-disable-next-line functional/immutable-data
                             checkedIbans.push(ibanToPush);
@@ -436,7 +475,8 @@ export default class CheckIca extends React.Component<IProps, IState> {
             inProgress: true,
             value,
             valid: "undefined",
-            action: ""
+            action: "",
+            operation: {}
         } as XMLData;
     }
 
@@ -470,6 +510,64 @@ export default class CheckIca extends React.Component<IProps, IState> {
         }
         const ciCode = code.getElementsByTagName("identificativoDominio")[0].textContent;
         this.checkIbans(ciCode);
+    }
+
+    resetCreateEncoding(encoding: any) {
+        if (encoding.code_type.toLowerCase() === "qr_code") {
+            const creditorInstitutionCode = this.state.creditorInstitutionCode;
+            // eslint-disable-next-line functional/immutable-data
+            creditorInstitutionCode.note = "";
+            // eslint-disable-next-line functional/immutable-data
+            creditorInstitutionCode.operation = {};
+            this.setState({creditorInstitutionCode});
+        }
+        else {
+            const ibans = this.state.ibans;
+            for (const iban of ibans) {
+                if (iban.value.search(encoding.encoding_code) !== -1) {
+                    // eslint-disable-next-line functional/immutable-data
+                    iban.action = "";
+                    // eslint-disable-next-line functional/immutable-data
+                    iban.note = "IBAN nuovo. Codice postale presente.";
+                    // eslint-disable-next-line functional/immutable-data
+                    iban.operation = {};
+                    break;
+                }
+            }
+            this.setState({ibans});
+        }
+    }
+
+    setEncoding(ciCode: string, encoding: any) {
+        const creating = toast.info("Creazione codifica in corso.");
+        this.context.instance.acquireTokenSilent({
+            ...loginRequest,
+            account: this.context.accounts[0]
+        })
+            .then((response: any) => {
+                apiClient.createCreditorInstitutionEncoding({
+                    Authorization: `Bearer ${response.idToken}`,
+                    ApiKey: "",
+                    creditorinstitutioncode: ciCode,
+                    body: encoding
+                }).then((response: any) => {
+                    if (response.right.status === 201) {
+                        toast.info("Salvataggio avvenuto con successo.");
+                    } else {
+                        const message = ("detail" in response.right.value) ? response.right.value.detail : "Operazione non avvenuta a causa di un errore";
+                        toast.error(message, {theme: "colored"});
+                    }
+                }).catch(() => {
+                    toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                })
+                .finally(() => {
+                    this.resetCreateEncoding(encoding);
+                });
+            })
+            .finally(() => {
+                    toast.dismiss(creating);
+                }
+            );
     }
 
     /**
@@ -554,7 +652,15 @@ export default class CheckIca extends React.Component<IProps, IState> {
                             {!data.inProgress && data.valid === "undefined" && <FaMinus  />}
                         </td>
                         <td>{data.action}</td>
-                        <td className="text-center">{data.note}</td>
+                        <td className="text-center">
+                            {data.note}
+                            {
+                                data.operation?.enabled &&
+                                <button className="btn btn-sm btn-primary ml-3" onClick={() => this.setEncoding(data.operation.encoding.ci, data.operation.encoding.data)}>
+									Aggiungi <FaPlus />
+                                </button>
+                            }
+                        </td>
                     </tr>
             );
 
