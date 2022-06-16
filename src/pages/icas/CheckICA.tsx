@@ -657,7 +657,7 @@ export default class CheckIca extends React.Component<IProps, IState> {
                             {
                                 data.operation?.enabled &&
                                 <button className="btn btn-sm btn-primary ml-3" onClick={() => this.setEncoding(data.operation.encoding.ci, data.operation.encoding.data)}>
-									Carica <FaPlus />
+									Aggiungi <FaPlus />
                                 </button>
                             }
                         </td>
