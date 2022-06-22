@@ -317,7 +317,7 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
                                             <Form.Check
                                                 custom
                                                 disabled
-                                                defaultChecked={this.state.creditorInstitution.psp_payment === true}
+                                                checked={this.state.creditorInstitution.psp_payment === true}
                                                 type={'checkbox'}
                                                 id={'psp-payment'}
                                                 label={'Pagamento PSP'}
@@ -327,7 +327,7 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
                                             <Form.Check
                                                 custom
                                                 disabled
-                                                defaultChecked={this.state.creditorInstitution.reporting_ftp === true}
+                                                checked={this.state.creditorInstitution.reporting_ftp === true}
                                                 type={'checkbox'}
                                                 id={'reporting-ftp'}
                                                 label={'Rendicontazione FTP'}
@@ -337,7 +337,7 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
                                             <Form.Check
                                                 custom
                                                 disabled
-                                                defaultChecked={this.state.creditorInstitution.reporting_zip === true}
+                                                checked={this.state.creditorInstitution.reporting_zip === true}
                                                 type={'checkbox'}
                                                 id={'reporting-zip'}
                                                 label={'Rendicontazione ZIP'}
