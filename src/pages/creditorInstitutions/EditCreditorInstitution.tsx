@@ -645,25 +645,25 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                 {!item.enabled && <FaTimes className="text-danger"/>}
                             </td>
                             <td className="text-center">
-                                <Form.Control name="application_code" placeholder=""
+                                <Form.Control name="application_code" placeholder="" type="number"
                                               value={this.state.stationMgmt.station?.application_code}
                                               onChange={(e) => this.handleStationChange(e)}
                                 />
                             </td>
                             <td className="text-center">
-                                <Form.Control name="segregation_code" placeholder=""
+                                <Form.Control name="segregation_code" placeholder="" type="number"
                                               value={this.state.stationMgmt.station?.segregation_code}
                                               onChange={(e) => this.handleStationChange(e)}
                                 />
                             </td>
                             <td className="text-center">
-                                <Form.Control name="aux_digit" placeholder=""
+                                <Form.Control name="aux_digit" placeholder="" type="number"
                                               value={this.state.stationMgmt.station?.aux_digit}
                                               onChange={(e) => this.handleStationChange(e)}
                                 />
                             </td>
                             <td className="text-center">
-                                <Form.Control name="version" placeholder=""
+                                <Form.Control name="version" placeholder="" type="number"
                                               value={this.state.stationMgmt.station?.version}
                                               onChange={(e) => this.handleStationChange(e)}
                                 />
@@ -1051,25 +1051,25 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                                                 </td>
                                                                 <td className="text-center"></td>
                                                                 <td className="text-center">
-																	<Form.Control name="application_code" placeholder=""
+																	<Form.Control name="application_code" placeholder="" type="number"
 																				  value={this.state.stationMgmt.station?.application_code}
 																				  onChange={(e) => this.handleStationChange(e)}
                                                                     />
                                                                 </td>
 																<td className="text-center">
-																	<Form.Control name="segregation_code" placeholder=""
+																	<Form.Control name="segregation_code" placeholder="" type="number"
 																				  value={this.state.stationMgmt.station?.segregation_code}
 																				  onChange={(e) => this.handleStationChange(e)}
 																	/>
 																</td>
 																<td className="text-center">
-																	<Form.Control name="aux_digit" placeholder=""
+																	<Form.Control name="aux_digit" placeholder="" type="number"
 																				  value={this.state.stationMgmt.station?.aux_digit}
 																				  onChange={(e) => this.handleStationChange(e)}
 																	/>
 																</td>
                                                                 <td className="text-center">
-																	<Form.Control name="version" placeholder=""
+																	<Form.Control name="version" placeholder="" type="number"
 																				  value={this.state.stationMgmt.station?.version}
 																				  onChange={(e) => this.handleStationChange(e)}
 																	/>
