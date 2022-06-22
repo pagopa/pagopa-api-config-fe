@@ -35,7 +35,7 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                 enabled: false,
                 description: "",
                 password: "",
-                protocol: "https",
+                protocol: "HTTPS",
                 ip: "",
                 port: 0,
                 service: "",
@@ -43,12 +43,12 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                 proxy_enabled: false,
                 proxy_host: "",
                 proxy_port: 0,
-                thread_number: 0,
+                thread_number: 1,
                 timeout_a: 15,
                 timeout_b: 30,
                 timeout_c: 120,
                 new_fault_code: false,
-                redirect_protocol: "https",
+                redirect_protocol: "HTTPS",
                 payment_model: "",
                 rt_push: false,
                 on_us: false,
@@ -173,9 +173,12 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                         <div className="row">
                             <Form.Group controlId="protocol" className="col-md-2">
                                 <Form.Label>Protocollo</Form.Label>
-                                <Form.Control name="protocol" placeholder=""
-                                              value={String(this.state.channel.protocol)}
-                                              onChange={(e) => this.handleChange(e)} />
+                                <Form.Control as="select" name="protocol"
+                                              onChange={(e) => this.handleChange(e)}
+                                              defaultValue={String(this.state.channel.protocol)}>
+                                    <option value="HTTP">HTTP</option>
+                                    <option value="HTTPS">HTTPS</option>
+                                </Form.Control>
                             </Form.Group>
 
                             <Form.Group controlId="ip" className="col-md-2">
@@ -186,7 +189,7 @@ export default class CreateChannel extends React.Component<IProps, IState> {
 
                             <Form.Group controlId="port" className="col-md-2">
                                 <Form.Label>Porta</Form.Label>
-                                <Form.Control name="port" placeholder=""
+                                <Form.Control name="port" placeholder="" type="number"
                                               onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
 
@@ -199,9 +202,12 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                         <div className="row">
                             <Form.Group controlId="redirect_protocol" className="col-md-2">
                                 <Form.Label>Protocollo Redirect</Form.Label>
-                                <Form.Control name="redirect_protocol" placeholder=""
-                                              value={String(this.state.channel.redirect_protocol)}
-                                              onChange={(e) => this.handleChange(e)} />
+                                <Form.Control as="select" name="redirect_protocol"
+                                              onChange={(e) => this.handleChange(e)}
+                                              defaultValue={String(this.state.channel.redirect_protocol)}>
+                                    <option value="HTTP">HTTP</option>
+                                    <option value="HTTPS">HTTPS</option>
+                                </Form.Control>
                             </Form.Group>
 
                             <Form.Group controlId="redirect_ip" className="col-md-2">
@@ -212,7 +218,7 @@ export default class CreateChannel extends React.Component<IProps, IState> {
 
                             <Form.Group controlId="redirect_port" className="col-md-2">
                                 <Form.Label>Porta Redirect</Form.Label>
-                                <Form.Control name="redirect_port" placeholder=""
+                                <Form.Control name="redirect_port" placeholder="" type="number"
                                               onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
 
@@ -247,7 +253,7 @@ export default class CreateChannel extends React.Component<IProps, IState> {
 
                             <Form.Group controlId="proxy_port" className="col-md-2">
                                 <Form.Label>Porta Proxy</Form.Label>
-                                <Form.Control name="proxy_port" placeholder=""
+                                <Form.Control name="proxy_port" placeholder="" type="number"
                                               onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
                         </div>
@@ -266,27 +272,28 @@ export default class CreateChannel extends React.Component<IProps, IState> {
 
                             <Form.Group controlId="thread_number" className="col-md-2">
                                 <Form.Label>Numero Thread</Form.Label>
-                                <Form.Control name="thread_number" placeholder=""
+                                <Form.Control name="thread_number" placeholder="" type="number"
+                                              value={String(this.state.channel.thread_number)}
                                               onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
 
                             <Form.Group controlId="timeout_a" className="col-md-2">
                                 <Form.Label>Timeout A</Form.Label>
-                                <Form.Control name="timeout_a" placeholder=""
+                                <Form.Control name="timeout_a" placeholder="" type="number"
                                               value={String(this.state.channel.timeout_a)}
                                               onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
 
                             <Form.Group controlId="timeout_b" className="col-md-2">
                                 <Form.Label>Timeout B</Form.Label>
-                                <Form.Control name="timeout_b" placeholder=""
+                                <Form.Control name="timeout_b" placeholder="" type="number"
                                               value={String(this.state.channel.timeout_b)}
                                               onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
 
                             <Form.Group controlId="timeout_c" className="col-md-2">
                                 <Form.Label>Timeout C</Form.Label>
-                                <Form.Control name="timeout_c" placeholder=""
+                                <Form.Control name="timeout_c" placeholder="" type="number"
                                               value={String(this.state.channel.timeout_c)}
                                               onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
