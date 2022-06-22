@@ -36,10 +36,10 @@ export default class CreateStation extends React.Component<IProps, IState> {
                 ip: "",
                 password: "",
                 port: 0,
-                protocol: "https",
+                protocol: "HTTPS",
                 service: "",
                 station_code: "",
-                thread_number: 0,
+                thread_number: 1,
                 timeout_a: 15,
                 timeout_b: 30,
                 timeout_c: 120,
@@ -48,7 +48,7 @@ export default class CreateStation extends React.Component<IProps, IState> {
                 ip_4mod: false,
                 new_password: "",
                 port_4mod: 0,
-                protocol_4mod: "https",
+                protocol_4mod: "HTTPS",
                 proxy_enabled: false,
                 proxy_host: "",
                 proxy_password: "",
@@ -57,7 +57,7 @@ export default class CreateStation extends React.Component<IProps, IState> {
                 redirect_ip: "",
                 redirect_path: "",
                 redirect_port: 0,
-                redirect_protocol: "https",
+                redirect_protocol: "HTTPS",
                 redirect_query_string: "",
                 service_4mod: ""
             } as unknown as StationDetails,
@@ -158,7 +158,7 @@ export default class CreateStation extends React.Component<IProps, IState> {
 
                             <Form.Group controlId="version" className="col-md-2">
                                 <Form.Label>Versione</Form.Label>
-                                <Form.Control name="version" onChange={(e) => this.handleChange(e)} />
+                                <Form.Control name="version" type="number" onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
 
                             <Form.Group controlId="broker_code" className="col-md-3">
@@ -180,7 +180,12 @@ export default class CreateStation extends React.Component<IProps, IState> {
                         <div className="row">
                             <Form.Group controlId="protocol" className="col-md-2">
                                 <Form.Label>Protocollo</Form.Label>
-                                <Form.Control name="protocol" value={String(this.state.station.protocol)} onChange={(e) => this.handleChange(e)} />
+                                <Form.Control as="select" name="protocol"
+                                              onChange={(e) => this.handleChange(e)}
+                                              defaultValue={String(this.state.station.protocol)}>
+                                    <option value="HTTP">HTTP</option>
+                                    <option value="HTTPS">HTTPS</option>
+                                </Form.Control>
                             </Form.Group>
 
                             <Form.Group controlId="ip" className="col-md-2">
@@ -190,7 +195,7 @@ export default class CreateStation extends React.Component<IProps, IState> {
 
                             <Form.Group controlId="port" className="col-md-2">
                                 <Form.Label>Porta</Form.Label>
-                                <Form.Control name="port" onChange={(e) => this.handleChange(e)} />
+                                <Form.Control name="port" type="number" onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
 
                             <Form.Group controlId="service" className="col-md-3">
@@ -209,7 +214,12 @@ export default class CreateStation extends React.Component<IProps, IState> {
                         <div className="row">
                             <Form.Group controlId="protocol_4mod" className="col-md-2">
                                 <Form.Label>Protocollo Modello 4</Form.Label>
-                                <Form.Control name="protocol_4mod" value={String(this.state.station.protocol_4mod)} onChange={(e) => this.handleChange(e)} />
+                                <Form.Control as="select" name="protocol_4mod"
+                                              onChange={(e) => this.handleChange(e)}
+                                              defaultValue={String(this.state.station.protocol_4mod)}>
+                                    <option value="HTTP">HTTP</option>
+                                    <option value="HTTPS">HTTPS</option>
+                                </Form.Control>
                             </Form.Group>
 
                             <Form.Group controlId="ip_4mod" className="col-md-2">
@@ -219,7 +229,7 @@ export default class CreateStation extends React.Component<IProps, IState> {
 
                             <Form.Group controlId="port_4mod" className="col-md-2">
                                 <Form.Label>Porta Modello 4</Form.Label>
-                                <Form.Control name="port_4mod" onChange={(e) => this.handleChange(e)} />
+                                <Form.Control name="port_4mod" type="number" onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
 
                             <Form.Group controlId="service_4mod" className="col-md-3">
@@ -231,7 +241,12 @@ export default class CreateStation extends React.Component<IProps, IState> {
                         <div className="row">
                             <Form.Group controlId="redirect_protocol" className="col-md-2">
                                 <Form.Label>Protocollo Redirect</Form.Label>
-                                <Form.Control name="redirect_protocol" value={String(this.state.station.redirect_protocol)} onChange={(e) => this.handleChange(e)} />
+                                <Form.Control as="select" name="redirect_protocol"
+                                              onChange={(e) => this.handleChange(e)}
+                                              defaultValue={String(this.state.station.redirect_protocol)}>
+                                    <option value="HTTP">HTTP</option>
+                                    <option value="HTTPS">HTTPS</option>
+                                </Form.Control>
                             </Form.Group>
 
                             <Form.Group controlId="redirect_ip" className="col-md-2">
@@ -241,7 +256,7 @@ export default class CreateStation extends React.Component<IProps, IState> {
 
                             <Form.Group controlId="redirect_port" className="col-md-2">
                                 <Form.Label>Porta Redirect</Form.Label>
-                                <Form.Control name="redirect_port" onChange={(e) => this.handleChange(e)} />
+                                <Form.Control name="redirect_port" type="number" onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
 
                             <Form.Group controlId="redirect_path" className="col-md-3">
@@ -273,7 +288,7 @@ export default class CreateStation extends React.Component<IProps, IState> {
 
                             <Form.Group controlId="proxy_port" className="col-md-2">
                                 <Form.Label>Porta Proxy</Form.Label>
-                                <Form.Control name="proxy_port" onChange={(e) => this.handleChange(e)} />
+                                <Form.Control name="proxy_port" type="number" onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
 
                             <Form.Group controlId="proxy_username" className="col-md-3">
@@ -301,22 +316,22 @@ export default class CreateStation extends React.Component<IProps, IState> {
 
                             <Form.Group controlId="thread_number" className="col-md-2">
                                 <Form.Label>Numero Thread</Form.Label>
-                                <Form.Control name="thread_number" onChange={(e) => this.handleChange(e)} />
+                                <Form.Control name="thread_number" type="number" value={String(this.state.station.thread_number)} onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
 
                             <Form.Group controlId="timeout_a" className="col-md-2">
                                 <Form.Label>Timeout A</Form.Label>
-                                <Form.Control name="timeout_a" value={String(this.state.station.timeout_a)} onChange={(e) => this.handleChange(e)} />
+                                <Form.Control name="timeout_a" type="number" value={String(this.state.station.timeout_a)} onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
 
                             <Form.Group controlId="timeout_b" className="col-md-2">
                                 <Form.Label>Timeout B</Form.Label>
-                                <Form.Control name="timeout_b" value={String(this.state.station.timeout_b)} onChange={(e) => this.handleChange(e)} />
+                                <Form.Control name="timeout_b" type="number" value={String(this.state.station.timeout_b)} onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
 
                             <Form.Group controlId="timeout_c" className="col-md-2">
                                 <Form.Label>Timeout C</Form.Label>
-                                <Form.Control name="timeout_c" value={String(this.state.station.timeout_c)} onChange={(e) => this.handleChange(e)} />
+                                <Form.Control name="timeout_c" type="number" value={String(this.state.station.timeout_c)} onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
 
                         </div>
