@@ -94,8 +94,6 @@ export default class Channel extends React.Component<IProps, IState> {
                     channelcode: code
                 })
                     .then((response: any) => {
-                        // eslint-disable-next-line no-console
-                        console.log("CHANNEL", response);
                         if (response.right.status === 200) {
                             const channel = {...this.state.channel, ...response.right.value};
                             this.setState({channel});
@@ -260,7 +258,7 @@ export default class Channel extends React.Component<IProps, IState> {
                         {!item.enabled && <FaTimes className="text-danger"/>}
                     </td>
                     <td className="text-center">{item.payment_types.join(" ")}</td>
-                    <td className="text-center">
+                    <td className="text-right">
                         {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
                         <OverlayTrigger placement="top"
                                         overlay={<Tooltip id={`tooltip-details-${index}`}>Visualizza</Tooltip>}>
@@ -487,7 +485,7 @@ export default class Channel extends React.Component<IProps, IState> {
                                             <Form.Check
                                                 custom
                                                 disabled
-                                                defaultChecked={this.state.channel.flag_io === true}
+                                                checked={this.state.channel.flag_io === true}
                                                 type={'checkbox'}
                                                 id={'flag_io'}
                                                 label={'PSP Notify Payment'}
@@ -498,7 +496,7 @@ export default class Channel extends React.Component<IProps, IState> {
                                             <Form.Check
                                                 custom
                                                 disabled
-                                                defaultChecked={this.state.channel.rt_push === true}
+                                                checked={this.state.channel.rt_push === true}
                                                 type={'checkbox'}
                                                 id={'rt_push'}
                                                 label={'Push Ricevuta Telematica'}
@@ -509,7 +507,7 @@ export default class Channel extends React.Component<IProps, IState> {
                                             <Form.Check
                                                 custom
                                                 disabled
-                                                defaultChecked={this.state.channel.on_us === true}
+                                                checked={this.state.channel.on_us === true}
                                                 type={'checkbox'}
                                                 id={'on_us'}
                                                 label={'On Us'}
@@ -520,7 +518,7 @@ export default class Channel extends React.Component<IProps, IState> {
                                             <Form.Check
                                                 custom
                                                 disabled
-                                                defaultChecked={this.state.channel.card_chart === true}
+                                                checked={this.state.channel.card_chart === true}
                                                 type={'checkbox'}
                                                 id={'card_chart'}
                                                 label={'Carrello RPT'}
@@ -531,7 +529,7 @@ export default class Channel extends React.Component<IProps, IState> {
                                             <Form.Check
                                                 custom
                                                 disabled
-                                                defaultChecked={this.state.channel.recovery === true}
+                                                checked={this.state.channel.recovery === true}
                                                 type={'checkbox'}
                                                 id={'recovery'}
                                                 label={'Processo di Recovery Pull'}
@@ -542,7 +540,7 @@ export default class Channel extends React.Component<IProps, IState> {
                                             <Form.Check
                                                 custom
                                                 disabled
-                                                defaultChecked={this.state.channel.digital_stamp_brand === true}
+                                                checked={this.state.channel.digital_stamp_brand === true}
                                                 type={'checkbox'}
                                                 id={'digital_stamp_brand'}
                                                 label={'Marca Bollo Digitale'}
@@ -596,7 +594,7 @@ export default class Channel extends React.Component<IProps, IState> {
                                             <th className="">Codice</th>
                                             <th className="text-center">Abilitato</th>
                                             <th className="text-center">Tipo Versamento</th>
-                                            <th className="text-center"></th>
+                                            <th className="text-right"></th>
                                         </tr>
                                         </thead>
                                         <tbody>

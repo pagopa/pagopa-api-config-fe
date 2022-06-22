@@ -151,7 +151,7 @@ export default class PaymentServiceProvider extends React.Component<IProps, ISta
                             {!item.enabled && <FaTimes className="text-danger"/>}
                         </td>
                         <td className="text-center">{item.payment_types.join(" ")}</td>
-                        <td>
+                        <td className="text-right">
                             {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
                             <OverlayTrigger placement="top"
                                             overlay={<Tooltip id={`tooltip-details-${index}`}>Visualizza</Tooltip>}>
@@ -238,7 +238,7 @@ export default class PaymentServiceProvider extends React.Component<IProps, ISta
                                             <Form.Check
                                                 custom
                                                 disabled
-                                                defaultChecked={this.state.paymentServiceProvider.agid_psp === true}
+                                                checked={this.state.paymentServiceProvider.agid_psp === true}
                                                 type={'checkbox'}
                                                 id={'agid-psp'}
                                                 label={'PSP interno'}
@@ -248,7 +248,7 @@ export default class PaymentServiceProvider extends React.Component<IProps, ISta
                                             <Form.Check
                                                 custom
                                                 disabled
-                                                defaultChecked={this.state.paymentServiceProvider.stamp === true}
+                                                checked={this.state.paymentServiceProvider.stamp === true}
                                                 type={'checkbox'}
                                                 id={'stamp'}
                                                 label={'Marca bollo digitale'}
@@ -258,7 +258,7 @@ export default class PaymentServiceProvider extends React.Component<IProps, ISta
                                             <Form.Check
                                                 custom
                                                 disabled
-                                                defaultChecked={this.state.paymentServiceProvider.transfer === true}
+                                                checked={this.state.paymentServiceProvider.transfer === true}
                                                 type={'checkbox'}
                                                 id={'transfer'}
                                                 label={'Storno pagamento'}
@@ -288,7 +288,7 @@ export default class PaymentServiceProvider extends React.Component<IProps, ISta
 										<th className="">Codice</th>
 										<th className="text-center">Abilitata</th>
 										<th className="text-center">Tipo Versamento</th>
-										<th className="text-center"></th>
+										<th className="text-right"></th>
 									</tr>
 									</thead>
 									<tbody>
