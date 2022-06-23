@@ -219,9 +219,12 @@ export default class EditStation extends React.Component<IProps, IState> {
                                             <div className="row">
                                                 <Form.Group controlId="protocol" className="col-md-2">
                                                     <Form.Label>Protocollo</Form.Label>
-                                                    <Form.Control name="protocol"
-                                                                  value={this.state.station.protocol}
-                                                                  onChange={(e) => this.handleChange(e)} />
+                                                    <Form.Control as="select" name="protocol"
+                                                                  defaultValue={String(this.state.station.protocol)}
+                                                                  onChange={(e) => this.handleChange(e)} >
+                                                        <option value="HTTPS">HTTPS</option>
+                                                        <option value="HTTP">HTTP</option>
+                                                    </Form.Control>
                                                 </Form.Group>
 
                                                 <Form.Group controlId="ip" className="col-md-2">
@@ -257,9 +260,12 @@ export default class EditStation extends React.Component<IProps, IState> {
                                             <div className="row">
                                                 <Form.Group controlId="protocol_4mod" className="col-md-2">
                                                     <Form.Label>Protocollo Modello 4</Form.Label>
-                                                    <Form.Control name="protocol_4mod"
-                                                                  value={this.state.station.protocol_4mod}
-                                                                  onChange={(e) => this.handleChange(e)} />
+                                                    <Form.Control as="select" name="protocol_4mod"
+                                                                  defaultValue={String(this.state.station.protocol_4mod)}
+                                                                  onChange={(e) => this.handleChange(e)} >
+                                                        <option value="HTTPS">HTTPS</option>
+                                                        <option value="HTTP">HTTP</option>
+                                                    </Form.Control>
                                                 </Form.Group>
 
                                                 <Form.Group controlId="ip_4mod" className="col-md-2">
@@ -287,9 +293,12 @@ export default class EditStation extends React.Component<IProps, IState> {
                                             <div className="row">
                                                 <Form.Group controlId="redirect_protocol" className="col-md-2">
                                                     <Form.Label>Protocollo Redirect</Form.Label>
-                                                    <Form.Control name="redirect_protocol"
-                                                                  value={this.state.station.redirect_protocol}
-                                                                  onChange={(e) => this.handleChange(e)} />
+                                                    <Form.Control as="select" name="redirect_protocol"
+                                                                  defaultValue={String(this.state.station.redirect_protocol)}
+                                                                  onChange={(e) => this.handleChange(e)} >
+                                                        <option value="HTTPS">HTTPS</option>
+                                                        <option value="HTTP">HTTP</option>
+                                                    </Form.Control>
                                                 </Form.Group>
 
                                                 <Form.Group controlId="redirect_ip" className="col-md-2">

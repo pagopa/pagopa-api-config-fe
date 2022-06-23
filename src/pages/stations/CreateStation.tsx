@@ -36,7 +36,7 @@ export default class CreateStation extends React.Component<IProps, IState> {
                 ip: "",
                 password: "",
                 port: 0,
-                protocol: "https",
+                protocol: "HTTPS",
                 service: "",
                 station_code: "",
                 thread_number: 0,
@@ -48,7 +48,7 @@ export default class CreateStation extends React.Component<IProps, IState> {
                 ip_4mod: false,
                 new_password: "",
                 port_4mod: 0,
-                protocol_4mod: "https",
+                protocol_4mod: "HTTPS",
                 proxy_enabled: false,
                 proxy_host: "",
                 proxy_password: "",
@@ -57,7 +57,7 @@ export default class CreateStation extends React.Component<IProps, IState> {
                 redirect_ip: "",
                 redirect_path: "",
                 redirect_port: 0,
-                redirect_protocol: "https",
+                redirect_protocol: "HTTPS",
                 redirect_query_string: "",
                 service_4mod: ""
             } as unknown as StationDetails,
@@ -180,7 +180,12 @@ export default class CreateStation extends React.Component<IProps, IState> {
                         <div className="row">
                             <Form.Group controlId="protocol" className="col-md-2">
                                 <Form.Label>Protocollo</Form.Label>
-                                <Form.Control name="protocol" value={String(this.state.station.protocol)} onChange={(e) => this.handleChange(e)} />
+                                <Form.Control as="select" name="protocol"
+                                              defaultValue={String(this.state.station.protocol)}
+                                              onChange={(e) => this.handleChange(e)} >
+                                    <option value="HTTPS">HTTPS</option>
+                                    <option value="HTTP">HTTP</option>
+                                </Form.Control>
                             </Form.Group>
 
                             <Form.Group controlId="ip" className="col-md-2">
@@ -209,7 +214,12 @@ export default class CreateStation extends React.Component<IProps, IState> {
                         <div className="row">
                             <Form.Group controlId="protocol_4mod" className="col-md-2">
                                 <Form.Label>Protocollo Modello 4</Form.Label>
-                                <Form.Control name="protocol_4mod" value={String(this.state.station.protocol_4mod)} onChange={(e) => this.handleChange(e)} />
+                                <Form.Control as="select" name="protocol_4mod"
+                                              defaultValue={String(this.state.station.protocol_4mod)}
+                                              onChange={(e) => this.handleChange(e)} >
+                                    <option value="HTTPS">HTTPS</option>
+                                    <option value="HTTP">HTTP</option>
+                                </Form.Control>
                             </Form.Group>
 
                             <Form.Group controlId="ip_4mod" className="col-md-2">
@@ -231,7 +241,12 @@ export default class CreateStation extends React.Component<IProps, IState> {
                         <div className="row">
                             <Form.Group controlId="redirect_protocol" className="col-md-2">
                                 <Form.Label>Protocollo Redirect</Form.Label>
-                                <Form.Control name="redirect_protocol" value={String(this.state.station.redirect_protocol)} onChange={(e) => this.handleChange(e)} />
+                                <Form.Control as="select" name="redirect_protocol"
+                                              defaultValue={String(this.state.station.redirect_protocol)}
+                                              onChange={(e) => this.handleChange(e)} >
+                                    <option value="HTTPS">HTTPS</option>
+                                    <option value="HTTP">HTTP</option>
+                                </Form.Control>
                             </Form.Group>
 
                             <Form.Group controlId="redirect_ip" className="col-md-2">

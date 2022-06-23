@@ -427,9 +427,12 @@ export default class EditChannel extends React.Component<IProps, IState> {
                                                     <div className="row">
                                                         <Form.Group controlId="protocol" className="col-md-2">
                                                             <Form.Label>Protocollo</Form.Label>
-                                                            <Form.Control name="protocol" placeholder=""
-                                                                          value={this.state.channel.protocol}
-                                                                          onChange={(e) => this.handleChange(e)} />
+                                                            <Form.Control as="select" name="protocol"
+                                                                          defaultValue={String(this.state.channel.protocol)}
+                                                                          onChange={(e) => this.handleChange(e)}>
+                                                                <option value="HTTPS">HTTPS</option>
+                                                                <option value="HTTP">HTTP</option>
+                                                            </Form.Control>
                                                         </Form.Group>
 
                                                         <Form.Group controlId="ip" className="col-md-2">
@@ -456,9 +459,12 @@ export default class EditChannel extends React.Component<IProps, IState> {
                                                     <div className="row">
                                                         <Form.Group controlId="redirect_protocol" className="col-md-2">
                                                             <Form.Label>Protocollo Redirect</Form.Label>
-                                                            <Form.Control name="redirect_protocol" placeholder=""
-                                                                          value={this.state.channel.redirect_protocol}
-                                                                          onChange={(e) => this.handleChange(e)} />
+                                                            <Form.Control as="select" name="redirect_protocol"
+                                                                          defaultValue={String(this.state.channel.redirect_protocol)}
+                                                                          onChange={(e) => this.handleChange(e)}>
+                                                                <option value="HTTPS">HTTPS</option>
+                                                                <option value="HTTP">HTTP</option>
+                                                            </Form.Control>
                                                         </Form.Group>
 
                                                         <Form.Group controlId="redirect_ip" className="col-md-2">
