@@ -99,7 +99,11 @@ export default class EditStation extends React.Component<IProps, IState> {
         // eslint-disable-next-line functional/no-let
         let station: StationDetails = this.state.station;
         const key = event.target.name as string;
-        const value = event.target.type === "checkbox" ? event.target.checked : event.target.value;
+        // eslint-disable-next-line functional/no-let
+        let value = event.target.type === "checkbox" ? event.target.checked : event.target.value;
+        if (value === 'null'){
+            value = null;
+        }
         station = {...station, [key]: value};
         this.setState({station});
     }
@@ -263,6 +267,7 @@ export default class EditStation extends React.Component<IProps, IState> {
                                                     <Form.Control as="select" name="protocol_4mod"
                                                                   defaultValue={String(this.state.station.protocol_4mod)}
                                                                   onChange={(e) => this.handleChange(e)} >
+                                                        <option value="null">-</option>
                                                         <option value="HTTPS">HTTPS</option>
                                                         <option value="HTTP">HTTP</option>
                                                     </Form.Control>
@@ -296,6 +301,7 @@ export default class EditStation extends React.Component<IProps, IState> {
                                                     <Form.Control as="select" name="redirect_protocol"
                                                                   defaultValue={String(this.state.station.redirect_protocol)}
                                                                   onChange={(e) => this.handleChange(e)} >
+                                                        <option value="null">-</option>
                                                         <option value="HTTPS">HTTPS</option>
                                                         <option value="HTTP">HTTP</option>
                                                     </Form.Control>

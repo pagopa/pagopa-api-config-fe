@@ -72,7 +72,11 @@ export default class CreateChannel extends React.Component<IProps, IState> {
         // eslint-disable-next-line functional/no-let
         let channel: ChannelDetails = this.state.channel;
         const key = event.target.name as string;
-        const value = event.target.type === "checkbox" ? event.target.checked : event.target.value;
+        // eslint-disable-next-line functional/no-let
+        let value = event.target.type === "checkbox" ? event.target.checked : event.target.value;
+        if (value === 'null'){
+            value = null;
+        }
         channel = {...channel, [key]: value};
         this.setState({channel});
     }
@@ -205,6 +209,7 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                                 <Form.Control as="select" name="redirect_protocol"
                                               defaultValue={String(this.state.channel.redirect_protocol)}
                                               onChange={(e) => this.handleChange(e)}>
+                                    <option value="null">-</option>
                                     <option value="HTTPS">HTTPS</option>
                                     <option value="HTTP">HTTP</option>
                                 </Form.Control>
