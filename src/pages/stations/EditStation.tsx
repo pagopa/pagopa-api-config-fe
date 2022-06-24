@@ -261,6 +261,7 @@ export default class EditStation extends React.Component<IProps, IState> {
                                                         menuPortalTarget={document.body}
                                                         styles={{menuPortal: base => ({...base, zIndex: 9999})}}
                                                         name="broker_code"
+                                                        value={{label: this.state.station.broker_code, value: this.state.station.broker_code}}
                                                         onChange={(e) => this.handleBrokerChange(e)}
                                                     />
                                                 </Form.Group>
@@ -295,7 +296,7 @@ export default class EditStation extends React.Component<IProps, IState> {
                                                 <Form.Group controlId="ip" className="col-md-2">
                                                     <Form.Label>IP</Form.Label>
                                                     <Form.Control name="ip"
-                                                                  pattern="^([0-9]{1,3}\.){3}[0-9]{1,3}$"
+
                                                                   value={this.state.station.ip}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
@@ -337,7 +338,7 @@ export default class EditStation extends React.Component<IProps, IState> {
                                                 <Form.Group controlId="ip_4mod" className="col-md-2">
                                                     <Form.Label>IP Modello 4</Form.Label>
                                                     <Form.Control name="ip_4mod"
-                                                                  pattern="^([0-9]{1,3}\.){3}[0-9]{1,3}$"
+
                                                                   value={this.state.station.ip_4mod}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
@@ -372,7 +373,7 @@ export default class EditStation extends React.Component<IProps, IState> {
                                                 <Form.Group controlId="redirect_ip" className="col-md-2">
                                                     <Form.Label>IP Redirect</Form.Label>
                                                     <Form.Control name="redirect_ip"
-                                                                  pattern="^([0-9]{1,3}\.){3}[0-9]{1,3}$"
+
                                                                   value={this.state.station.redirect_ip}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>

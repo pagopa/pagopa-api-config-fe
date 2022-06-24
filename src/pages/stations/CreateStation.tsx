@@ -254,7 +254,7 @@ export default class CreateStation extends React.Component<IProps, IState> {
 
                             <Form.Group controlId="ip" className="col-md-2">
                                 <Form.Label>IP</Form.Label>
-                                <Form.Control name="ip" pattern="^([0-9]{1,3}\.){3}[0-9]{1,3}$"
+                                <Form.Control name="ip"
                                               onChange={(e) => this.handleChange(e)}/>
                             </Form.Group>
 
@@ -291,7 +291,7 @@ export default class CreateStation extends React.Component<IProps, IState> {
 
                             <Form.Group controlId="ip_4mod" className="col-md-2">
                                 <Form.Label>IP Modello 4</Form.Label>
-                                <Form.Control name="ip_4mod" pattern="^([0-9]{1,3}\.){3}[0-9]{1,3}$"
+                                <Form.Control name="ip_4mod"
                                               onChange={(e) => this.handleChange(e)}/>
                             </Form.Group>
 
@@ -320,7 +320,7 @@ export default class CreateStation extends React.Component<IProps, IState> {
 
                             <Form.Group controlId="redirect_ip" className="col-md-2">
                                 <Form.Label>IP Redirect</Form.Label>
-                                <Form.Control name="redirect_ip" pattern="^([0-9]{1,3}\.){3}[0-9]{1,3}$"
+                                <Form.Control name="redirect_ip"
                                               onChange={(e) => this.handleChange(e)}/>
                             </Form.Group>
 

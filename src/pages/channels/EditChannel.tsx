@@ -3,6 +3,8 @@ import {Alert, Breadcrumb, Button, Card, Form, OverlayTrigger, Table, Tooltip} f
 import {FaInfoCircle, FaPlus, FaSpinner, FaTrash} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
+import AsyncSelect from "react-select/async";
+import debounce from "lodash.debounce";
 import {apiClient} from "../../util/apiClient";
 import {loginRequest} from "../../authConfig";
 import {ChannelDetails, Payment_modelEnum} from "../../../generated/api/ChannelDetails";
@@ -97,6 +99,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
         this.saveChannel = this.saveChannel.bind(this);
         this.discard = this.discard.bind(this);
         this.newPaymentType = this.newPaymentType.bind(this);
+        this.debouncedBrokerPspOptions = this.debouncedBrokerPspOptions.bind(this);
     }
 
     updateBackup(section: string, data: ChannelDetails | any) {
@@ -215,6 +218,13 @@ export default class EditChannel extends React.Component<IProps, IState> {
         this.setState({channel});
     }
 
+    handleBrokerPspChange(event: any) {
+        const channel: ChannelDetails = this.state.channel;
+        // eslint-disable-next-line functional/immutable-data
+        channel.broker_psp_code = event.value;
+        this.setState({channel});
+    }
+
     handlePaymentType(paymentType: string) {
         this.setState({paymentType});
     }
@@ -328,6 +338,47 @@ export default class EditChannel extends React.Component<IProps, IState> {
             });
     }
 
+    debouncedBrokerPspOptions = debounce((inputValue, callback) => {
+        this.promiseBrokerPspOptions(inputValue, callback);
+    }, 500);
+
+    promiseBrokerPspOptions(inputValue: string, callback: any) {
+        const limit = inputValue.length === 0 ? 10 : 99999;
+        const code = inputValue.length === 0 ? "" : inputValue;
+
+        this.context.instance.acquireTokenSilent({
+            ...loginRequest,
+            account: this.context.accounts[0]
+        })
+            .then((response: any) => {
+                apiClient.getBrokersPsp({
+                    Authorization: `Bearer ${response.idToken}`,
+                    ApiKey: "",
+                    page: 0,
+                    limit,
+                    code
+                }).then((resp: any) => {
+                    if (resp.right.status === 200) {
+                        const items: Array<any> = [];
+                        resp.right.value.brokers_psp.map((broker_psp: any) => {
+                            // eslint-disable-next-line functional/immutable-data
+                            items.push({
+                                value: broker_psp.broker_psp_code,
+                                label: broker_psp.broker_psp_code,
+                            });
+                        });
+                        callback(items);
+                    } else {
+                        callback([]);
+                    }
+                }).catch(() => {
+                    toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                    callback([]);
+                });
+            });
+    }
+
+
     render(): React.ReactNode {
         const isError = this.state.isError;
         const isLoading = this.state.isLoading;
@@ -414,9 +465,16 @@ export default class EditChannel extends React.Component<IProps, IState> {
                                                 <Form.Group controlId="broker_psp_code" className="col-md-3">
                                                     <Form.Label>Codice Intermediario PSP <span
                                                         style={{color: "red"}}>*</span></Form.Label>
-                                                    <Form.Control name="broker_psp_code" placeholder=""
-                                                                  value={this.state.channel.broker_psp_code}
-                                                                  onChange={(e) => this.handleChange(e)}/>
+                                                    <AsyncSelect
+                                                        cacheOptions defaultOptions
+                                                        loadOptions={this.debouncedBrokerPspOptions}
+                                                        placeholder="Cerca codice"
+                                                        menuPortalTarget={document.body}
+                                                        styles={{menuPortal: base => ({...base, zIndex: 9999})}}
+                                                        name="broker_code"
+                                                        value={{label: this.state.channel.broker_psp_code, value: this.state.channel.broker_psp_code}}
+                                                        onChange={(e) => this.handleBrokerPspChange(e)}
+                                                    />
                                                 </Form.Group>
                                                 <Form.Group controlId="password" className="col-md-3">
                                                     <Form.Label>Password</Form.Label>
@@ -447,7 +505,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
                                                 <Form.Group controlId="ip" className="col-md-2">
                                                     <Form.Label>IP</Form.Label>
                                                     <Form.Control name="ip" placeholder=""
-                                                                  pattern="^([0-9]{1,3}\.){3}[0-9]{1,3}$"
+
                                                                   value={this.state.channel.ip}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
@@ -481,7 +539,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
                                                 <Form.Group controlId="redirect_ip" className="col-md-2">
                                                     <Form.Label>IP Redirect</Form.Label>
                                                     <Form.Control name="redirect_ip" placeholder=""
-                                                                  pattern="^([0-9]{1,3}\.){3}[0-9]{1,3}$"
+
                                                                   value={this.state.channel.redirect_ip}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
