@@ -269,7 +269,6 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
         // "as any" is necessary because it seems to be a bug: https://github.com/Microsoft/TypeScript/issues/13948
         this.setState({[section]: Object.assign({}, this.state.backup[section])} as any);
         this.setState({address: Object.assign({}, this.state.backup.address)} as any);
-        // this.setState({address: {...this.state.backup.address, location: ""}});
     }
 
     createEncoding(): void {

@@ -263,12 +263,13 @@ export default class CheckIca extends React.Component<IProps, IState> {
 
     /**
      * Evaluate if Iban is related to one of the BARCODE_128_AIM encodings
+     * BARCODE_128_AIM encoding is 12 digits
      * @param ciCode: creditor institution code
      * @param iban: Iban to evaluate
      * @param encodings: Encoding list of Creditor Institution
      */
     evaluateBarcode128aim(ciCode: string, iban: XMLData, encodings: Array<Encoding>) {
-        const postalCode = iban.value.substring(16);
+        const postalCode = iban.value.substring(15);
         // eslint-disable-next-line functional/no-let
         let found = false;
         for (const encoding of encodings) {
