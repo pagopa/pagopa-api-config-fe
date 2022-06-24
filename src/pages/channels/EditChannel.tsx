@@ -206,7 +206,11 @@ export default class EditChannel extends React.Component<IProps, IState> {
         // eslint-disable-next-line functional/no-let
         let channel: ChannelDetails = this.state.channel;
         const key = event.target.name as string;
-        const value = event.target.type === "checkbox" ? event.target.checked : event.target.value;
+        // eslint-disable-next-line functional/no-let
+        let value = event.target.type === "checkbox" ? event.target.checked : event.target.value;
+        if (value === 'null'){
+            value = null;
+        }
         channel = {...channel, [key]: value};
         this.setState({channel});
     }
@@ -429,13 +433,14 @@ export default class EditChannel extends React.Component<IProps, IState> {
                                             </div>
                                             <div className="row">
                                                 <Form.Group controlId="protocol" className="col-md-2">
-                                                    <Form.Label>Protocollo <span
-                                                        style={{color: "red"}}>*</span></Form.Label>
-                                                    <Form.Control as="select" name="protocol"
-                                                                          onChange={(e) => this.handleChange(e)}
-                                                                          value={String(this.state.channel.protocol)}>
-                                                                <option value="HTTP">HTTP</option>
+                                                            <Form.Label>Protocollo <span
+                                                                style={{color: "red"}}>*</span></Form.Label>
+                                                            <Form.Control as="select" name="protocol"
+                                                                          defaultValue={String(this.state.channel.protocol)}
+                                                                          onChange={(e) => this.handleChange(e)}>
+                                                                <option value="null">-</option>
                                                                 <option value="HTTPS">HTTPS</option>
+                                                                <option value="HTTP">HTTP</option>
                                                             </Form.Control>
                                                 </Form.Group>
 
@@ -465,10 +470,11 @@ export default class EditChannel extends React.Component<IProps, IState> {
                                                 <Form.Group controlId="redirect_protocol" className="col-md-2">
                                                     <Form.Label>Protocollo Redirect</Form.Label>
                                                             <Form.Control as="select" name="redirect_protocol"
-                                                                          onChange={(e) => this.handleChange(e)}
-                                                                          value={String(this.state.channel.redirect_protocol)}>
-                                                                <option value="HTTP">HTTP</option>
+                                                                          defaultValue={String(this.state.channel.redirect_protocol)}
+                                                                          onChange={(e) => this.handleChange(e)}>
+                                                                <option value="null">-</option>
                                                                 <option value="HTTPS">HTTPS</option>
+                                                                <option value="HTTP">HTTP</option>
                                                             </Form.Control>
                                                 </Form.Group>
 

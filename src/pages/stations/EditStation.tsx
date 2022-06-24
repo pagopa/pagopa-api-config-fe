@@ -103,7 +103,11 @@ export default class EditStation extends React.Component<IProps, IState> {
         // eslint-disable-next-line functional/no-let
         let station: StationDetails = this.state.station;
         const key = event.target.name as string;
-        const value = event.target.type === "checkbox" ? event.target.checked : event.target.value;
+        // eslint-disable-next-line functional/no-let
+        let value = event.target.type === "checkbox" ? event.target.checked : event.target.value;
+        if (value === 'null'){
+            value = null;
+        }
         station = {...station, [key]: value};
         this.setState({station});
     }
@@ -281,10 +285,10 @@ export default class EditStation extends React.Component<IProps, IState> {
                                                     <Form.Label>Protocollo <span
                                                         style={{color: "red"}}>*</span></Form.Label>
                                                     <Form.Control as="select" name="protocol"
-                                                                  onChange={(e) => this.handleChange(e)}
-                                                                  value={String(this.state.station.protocol)}>
-                                                        <option value="HTTP">HTTP</option>
+                                                                  defaultValue={String(this.state.station.protocol)}
+                                                                  onChange={(e) => this.handleChange(e)} >
                                                         <option value="HTTPS">HTTPS</option>
+                                                        <option value="HTTP">HTTP</option>
                                                     </Form.Control>
                                                 </Form.Group>
 
@@ -322,10 +326,11 @@ export default class EditStation extends React.Component<IProps, IState> {
                                                 <Form.Group controlId="protocol_4mod" className="col-md-2">
                                                     <Form.Label>Protocollo Modello 4</Form.Label>
                                                     <Form.Control as="select" name="protocol_4mod"
-                                                                  onChange={(e) => this.handleChange(e)}
-                                                                  value={String(this.state.station.protocol_4mod)}>
-                                                        <option value="HTTP">HTTP</option>
+                                                                  defaultValue={String(this.state.station.protocol_4mod)}
+                                                                  onChange={(e) => this.handleChange(e)} >
+                                                        <option value="null">-</option>
                                                         <option value="HTTPS">HTTPS</option>
+                                                        <option value="HTTP">HTTP</option>
                                                     </Form.Control>
                                                 </Form.Group>
 
@@ -356,10 +361,11 @@ export default class EditStation extends React.Component<IProps, IState> {
                                                 <Form.Group controlId="redirect_protocol" className="col-md-2">
                                                     <Form.Label>Protocollo Redirect</Form.Label>
                                                     <Form.Control as="select" name="redirect_protocol"
-                                                                  onChange={(e) => this.handleChange(e)}
-                                                                  value={String(this.state.station.redirect_protocol)}>
-                                                        <option value="HTTP">HTTP</option>
+                                                                  defaultValue={String(this.state.station.redirect_protocol)}
+                                                                  onChange={(e) => this.handleChange(e)} >
+                                                        <option value="null">-</option>
                                                         <option value="HTTPS">HTTPS</option>
+                                                        <option value="HTTP">HTTP</option>
                                                     </Form.Control>
                                                 </Form.Group>
 
