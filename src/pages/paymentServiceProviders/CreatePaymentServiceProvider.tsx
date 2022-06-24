@@ -121,16 +121,16 @@ export default class CreatePaymentServiceProvider extends React.Component<IProps
                         </div>
                         <div className="row">
                             <Form.Group controlId="code" className="col-md-3">
-                                <Form.Label>Nome</Form.Label>
+                                <Form.Label>Nome <span style={{color: "red"}}>*</span></Form.Label>
                                 <Form.Control name="business_name" placeholder="" onChange={(e) => this.handleChange(e)}/>
                             </Form.Group>
 
                             <Form.Group controlId="code" className="col-md-3">
-                                <Form.Label>Codice</Form.Label>
+                                <Form.Label>Codice <span style={{color: "red"}}>*</span></Form.Label>
                                 <Form.Control name="psp_code" placeholder="" onChange={(e) => this.handleChange(e)}/>
                             </Form.Group>
                             <Form.Group controlId="enabled" className="col-md-3">
-                                <Form.Label>Stato</Form.Label>
+                                <Form.Label>Stato <span style={{color: "red"}}>*</span></Form.Label>
                                 <Form.Control as="select" name="enabled" placeholder="stato"
                                               onChange={(e) => this.handleChange(e)}
                                               defaultValue={this.state.paymentServiceProvider.enabled.toString()}>

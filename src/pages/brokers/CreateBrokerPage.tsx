@@ -117,17 +117,17 @@ export default class CreateBrokerPage extends React.Component<IProps, IState> {
                         </div>
                         <div className="row">
                             <Form.Group controlId="code" className="col-md-3">
-                                <Form.Label>Nome</Form.Label>
+                                <Form.Label>Nome <span style={{color:"red"}}>*</span></Form.Label>
                                 <Form.Control name="description" placeholder=""
                                               onChange={(e) => this.handleChange(e)}/>
                             </Form.Group>
                             <Form.Group controlId="code" className="col-md-3">
-                                <Form.Label>Codice</Form.Label>
+                                <Form.Label>Codice <span style={{color:"red"}}>*</span></Form.Label>
                                 <Form.Control name="broker_code" placeholder=""
                                               onChange={(e) => this.handleChange(e)}/>
                             </Form.Group>
                             <Form.Group controlId="enabled" className="col-md-3">
-                                <Form.Label>Stato</Form.Label>
+                                <Form.Label>Stato <span style={{color:"red"}}>*</span></Form.Label>
                                 <Form.Control as="select" name="enabled" placeholder="stato"
                                               onChange={(e) => this.handleChange(e)}
                                               defaultValue={"false"}>
@@ -136,7 +136,7 @@ export default class CreateBrokerPage extends React.Component<IProps, IState> {
                                 </Form.Control>
                             </Form.Group>
                             <Form.Group controlId="extended_fault_bean" className="col-md-3">
-                                <Form.Label>Fault Bean Esteso</Form.Label>
+                                <Form.Label>Fault Bean Esteso <span style={{color:"red"}}>*</span></Form.Label>
                                 <Form.Control as="select" name="extended_fault_bean" placeholder="fault bean"
                                               onChange={(e) => this.handleChange(e)}
                                               defaultValue={"false"}>

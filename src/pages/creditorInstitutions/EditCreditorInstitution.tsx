@@ -765,7 +765,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
 					<thead>
 					<tr>
 						<th className="">Tipo</th>
-						<th className="">Codice</th>
+						<th className="">Codice <span style={{color:"red"}}>*</span></th>
 						<th/>
 					</tr>
 					</thead>
@@ -844,19 +844,19 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                         <Card.Body>
                                             <div className="row">
                                                 <Form.Group controlId="business_name" className="col-md-3">
-                                                    <Form.Label>Nome</Form.Label>
+                                                    <Form.Label>Nome <span style={{color:"red"}}>*</span></Form.Label>
                                                     <Form.Control name="business_name" placeholder=""
                                                                   value={this.state.creditorInstitution.business_name}
                                                                   onChange={(e) => this.handleChange(e, "creditorInstitution")}/>
                                                 </Form.Group>
                                                 <Form.Group controlId="code" className="col-md-4">
-                                                    <Form.Label>Codice</Form.Label>
+                                                    <Form.Label>Codice <span style={{color:"red"}}>*</span></Form.Label>
                                                     <Form.Control name="creditor_institution_code" placeholder=""
                                                                   value={this.state.creditorInstitution.creditor_institution_code}
                                                                   onChange={(e) => this.handleChange(e, "creditorInstitution")}/>
                                                 </Form.Group>
                                                 <Form.Group controlId="enabled" className="col-md-3">
-                                                    <Form.Label>Stato</Form.Label>
+                                                    <Form.Label>Stato <span style={{color:"red"}}>*</span></Form.Label>
                                                     <Form.Control as="select" name="enabled"
                                                                   onChange={(e) => this.handleChange(e, "creditorInstitution")}
                                                                   value={String(this.state.creditorInstitution.enabled)}
@@ -1026,7 +1026,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                                             <th className="text-center">Abilitata</th>
                                                             <th className="text-center">Application Code</th>
                                                             <th className="text-center">Codice Segregazione</th>
-                                                            <th className="text-center">Aux Digit</th>
+                                                            <th className="text-center">Aux Digit <span style={{color:"red"}}>*</span></th>
                                                             <th className="text-center">Versione</th>
                                                             <th className="text-center">Modello 4</th>
                                                             <th className="text-center">Broadcast</th>
@@ -1051,25 +1051,30 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                                                 </td>
                                                                 <td className="text-center"></td>
                                                                 <td className="text-center">
-																	<Form.Control name="application_code" placeholder=""
+																	<Form.Control type="number" name="application_code" placeholder=""
 																				  value={this.state.stationMgmt.station?.application_code}
 																				  onChange={(e) => this.handleStationChange(e)}
                                                                     />
                                                                 </td>
 																<td className="text-center">
-																	<Form.Control name="segregation_code" placeholder=""
+																	<Form.Control type="number" name="segregation_code" placeholder=""
 																				  value={this.state.stationMgmt.station?.segregation_code}
 																				  onChange={(e) => this.handleStationChange(e)}
 																	/>
 																</td>
 																<td className="text-center">
-																	<Form.Control name="aux_digit" placeholder=""
+																	<Form.Control as="select" name="aux_digit" placeholder=""
 																				  value={this.state.stationMgmt.station?.aux_digit}
-																				  onChange={(e) => this.handleStationChange(e)}
-																	/>
+																				  onChange={(e) => this.handleStationChange(e)}>
+                                                                        <option value="null"></option>
+                                                                        <option value="0">0</option>
+                                                                        <option value="1">1</option>
+                                                                        <option value="2">2</option>
+                                                                        <option value="3">3</option>
+                                                                    </Form.Control>
 																</td>
                                                                 <td className="text-center">
-																	<Form.Control name="version" placeholder=""
+																	<Form.Control type="number" name="version" placeholder=""
 																				  value={this.state.stationMgmt.station?.version}
 																				  onChange={(e) => this.handleStationChange(e)}
 																	/>

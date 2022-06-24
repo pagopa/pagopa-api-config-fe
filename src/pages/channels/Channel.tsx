@@ -74,7 +74,7 @@ export default class Channel extends React.Component<IProps, IState> {
                 flag_io: false,
                 agid: false,
                 description: "",
-            } as ChannelDetails,
+            } as any,
             paymentTypeList: [],
             paymentTypeLegend: {},
             pspList: [],

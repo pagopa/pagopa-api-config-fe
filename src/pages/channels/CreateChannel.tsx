@@ -37,13 +37,13 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                 password: "",
                 protocol: "https",
                 ip: "",
-                port: 0,
+                port: 443,
                 service: "",
                 broker_psp_code: "",
                 proxy_enabled: false,
                 proxy_host: "",
                 proxy_port: 0,
-                thread_number: 0,
+                thread_number: 1,
                 timeout_a: 15,
                 timeout_b: 30,
                 timeout_c: 120,
@@ -140,19 +140,19 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                         </div>
                         <div className="row">
                             <Form.Group controlId="description" className="col-md-4">
-                                <Form.Label>Descrizione</Form.Label>
+                                <Form.Label>Descrizione <span style={{color: "red"}}>*</span></Form.Label>
                                 <Form.Control name="description" placeholder=""
                                               onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
 
                             <Form.Group controlId="channel_code" className="col-md-4">
-                                <Form.Label>Codice</Form.Label>
+                                <Form.Label>Codice <span style={{color: "red"}}>*</span></Form.Label>
                                 <Form.Control name="channel_code" placeholder=""
                                               onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
 
                             <Form.Group controlId="enabled" className="col-md-2">
-                                <Form.Label>Stato</Form.Label>
+                                <Form.Label>Stato <span style={{color: "red"}}>*</span></Form.Label>
                                 <Form.Control as="select" name="enabled" onChange={(e) => this.handleChange(e)}
                                               defaultValue={String(this.state.channel.enabled)}>
                                     <option value="true">Abilitato</option>
@@ -160,7 +160,7 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                                 </Form.Control>
                             </Form.Group>
                             <Form.Group controlId="broker_psp_code" className="col-md-3">
-                                <Form.Label>Codice Intermediario PSP</Form.Label>
+                                <Form.Label>Codice Intermediario PSP <span style={{color: "red"}}>*</span></Form.Label>
                                 <Form.Control name="broker_psp_code" placeholder=""
                                               onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
@@ -172,7 +172,7 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                         </div>
                         <div className="row">
                             <Form.Group controlId="protocol" className="col-md-2">
-                                <Form.Label>Protocollo</Form.Label>
+                                <Form.Label>Protocollo <span style={{color: "red"}}>*</span></Form.Label>
                                 <Form.Control name="protocol" placeholder=""
                                               value={String(this.state.channel.protocol)}
                                               onChange={(e) => this.handleChange(e)} />
@@ -181,12 +181,14 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                             <Form.Group controlId="ip" className="col-md-2">
                                 <Form.Label>IP</Form.Label>
                                 <Form.Control name="ip" placeholder=""
+                                              pattern="^([0-9]{1,3}\.){3}[0-9]{1,3}$"
                                               onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
 
                             <Form.Group controlId="port" className="col-md-2">
-                                <Form.Label>Porta</Form.Label>
-                                <Form.Control name="port" placeholder=""
+                                <Form.Label>Porta <span style={{color: "red"}}>*</span></Form.Label>
+                                <Form.Control type="number" name="port" placeholder=""
+                                              value={String(this.state.channel.port)}
                                               onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
 
@@ -207,6 +209,7 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                             <Form.Group controlId="redirect_ip" className="col-md-2">
                                 <Form.Label>IP Redirect</Form.Label>
                                 <Form.Control name="redirect_ip" placeholder=""
+                                              pattern="^([0-9]{1,3}\.){3}[0-9]{1,3}$"
                                               onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
 
@@ -253,7 +256,7 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                         </div>
                         <div className="row">
                             <Form.Group controlId="payment_model" className="col-md-2">
-                                <Form.Label>Modello Pagamento</Form.Label>
+                                <Form.Label>Modello Pagamento <span style={{color: "red"}}>*</span></Form.Label>
                                 <Form.Control name="payment_model" placeholder=""
                                               onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
@@ -265,28 +268,29 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                             </Form.Group>
 
                             <Form.Group controlId="thread_number" className="col-md-2">
-                                <Form.Label>Numero Thread</Form.Label>
-                                <Form.Control name="thread_number" placeholder=""
+                                <Form.Label>Numero Thread <span style={{color: "red"}}>*</span></Form.Label>
+                                <Form.Control type="number" name="thread_number" placeholder=""
+                                              value={String(this.state.channel.thread_number)}
                                               onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
 
                             <Form.Group controlId="timeout_a" className="col-md-2">
-                                <Form.Label>Timeout A</Form.Label>
-                                <Form.Control name="timeout_a" placeholder=""
+                                <Form.Label>Timeout A <span style={{color: "red"}}>*</span></Form.Label>
+                                <Form.Control type="number" name="timeout_a" placeholder=""
                                               value={String(this.state.channel.timeout_a)}
                                               onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
 
                             <Form.Group controlId="timeout_b" className="col-md-2">
-                                <Form.Label>Timeout B</Form.Label>
-                                <Form.Control name="timeout_b" placeholder=""
+                                <Form.Label>Timeout B <span style={{color: "red"}}>*</span></Form.Label>
+                                <Form.Control type="number" name="timeout_b" placeholder=""
                                               value={String(this.state.channel.timeout_b)}
                                               onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
 
                             <Form.Group controlId="timeout_c" className="col-md-2">
-                                <Form.Label>Timeout C</Form.Label>
-                                <Form.Control name="timeout_c" placeholder=""
+                                <Form.Label>Timeout C <span style={{color: "red"}}>*</span></Form.Label>
+                                <Form.Control type="number" name="timeout_c" placeholder=""
                                               value={String(this.state.channel.timeout_c)}
                                               onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
