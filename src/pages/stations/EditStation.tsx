@@ -229,13 +229,13 @@ export default class EditStation extends React.Component<IProps, IState> {
                                         <Card.Body>
                                             <div className="row">
                                                 <Form.Group controlId="station_code" className="col-md-3">
-                                                    <Form.Label>Codice <span style={{color: "red"}}>*</span></Form.Label>
+                                                    <Form.Label>Codice <span className="text-danger">*</span></Form.Label>
                                                     <Form.Control name="station_code" placeholder=""
                                                                   value={this.state.station.station_code}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
                                                 <Form.Group controlId="enabled" className="col-md-2">
-                                                    <Form.Label>Stato <span style={{color: "red"}}>*</span></Form.Label>
+                                                    <Form.Label>Stato <span className="text-danger">*</span></Form.Label>
                                                     <Form.Control as="select" name="enabled" placeholder="stato"
                                                                   onChange={(e) => this.handleChange(e)}
                                                                   value={String(this.state.station.enabled)}>
@@ -245,7 +245,7 @@ export default class EditStation extends React.Component<IProps, IState> {
                                                 </Form.Group>
 
                                                 <Form.Group controlId="version" className="col-md-1">
-                                                    <Form.Label>Versione <span style={{color: "red"}}>*</span></Form.Label>
+                                                    <Form.Label>Versione <span className="text-danger">*</span></Form.Label>
                                                     <Form.Control type={"number"} name="version"
                                                                   value={this.state.station.version}
                                                                   onChange={(e) => this.handleChange(e)}/>
@@ -253,7 +253,7 @@ export default class EditStation extends React.Component<IProps, IState> {
 
                                                 <Form.Group controlId="broker_code" className="col-md-2">
                                                     <Form.Label>Codice Intermediario <span
-                                                        style={{color: "red"}}>*</span></Form.Label>
+                                                        className="text-danger">*</span></Form.Label>
                                                     <AsyncSelect
                                                         cacheOptions defaultOptions
                                                         loadOptions={this.debouncedBrokerOptions}
@@ -284,7 +284,7 @@ export default class EditStation extends React.Component<IProps, IState> {
                                             <div className="row">
                                                 <Form.Group controlId="protocol" className="col-md-2">
                                                     <Form.Label>Protocollo <span
-                                                        style={{color: "red"}}>*</span></Form.Label>
+                                                        className="text-danger">*</span></Form.Label>
                                                     <Form.Control as="select" name="protocol"
                                                                   defaultValue={String(this.state.station.protocol)}
                                                                   onChange={(e) => this.handleChange(e)} >
@@ -302,7 +302,7 @@ export default class EditStation extends React.Component<IProps, IState> {
                                                 </Form.Group>
 
                                                 <Form.Group controlId="port" className="col-md-2">
-                                                    <Form.Label>Porta <span style={{color: "red"}}>*</span></Form.Label>
+                                                    <Form.Label>Porta <span className="text-danger">*</span></Form.Label>
                                                     <Form.Control type="number" name="port" value={this.state.station.port}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
@@ -454,28 +454,28 @@ export default class EditStation extends React.Component<IProps, IState> {
 
                                                 <Form.Group controlId="thread_number" className="col-md-2">
                                                     <Form.Label>Numero Thread <span
-                                                        style={{color: "red"}}>*</span></Form.Label>
+                                                        className="text-danger">*</span></Form.Label>
                                                     <Form.Control type="number" name="thread_number"
                                                                   value={this.state.station.thread_number}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
 
                                                 <Form.Group controlId="timeout_a" className="col-md-2">
-                                                    <Form.Label>Timeout A <span style={{color: "red"}}>*</span></Form.Label>
+                                                    <Form.Label>Timeout A <span className="text-danger">*</span></Form.Label>
                                                     <Form.Control type="number" name="timeout_a"
                                                                   value={this.state.station.timeout_a}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
 
                                                 <Form.Group controlId="timeout_b" className="col-md-2">
-                                                    <Form.Label>Timeout B <span style={{color: "red"}}>*</span></Form.Label>
+                                                    <Form.Label>Timeout B <span className="text-danger">*</span></Form.Label>
                                                     <Form.Control type="number" name="timeout_b"
                                                                   value={this.state.station.timeout_b}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
 
                                                 <Form.Group controlId="timeout_c" className="col-md-2">
-                                                    <Form.Label>Timeout C <span style={{color: "red"}}>*</span></Form.Label>
+                                                    <Form.Label>Timeout C <span className="text-danger">*</span></Form.Label>
                                                     <Form.Control type="number" name="timeout_c"
                                                                   value={this.state.station.timeout_c}
                                                                   onChange={(e) => this.handleChange(e)}/>
