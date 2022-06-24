@@ -35,7 +35,7 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                 enabled: false,
                 description: "",
                 password: "",
-                protocol: "https",
+                protocol: "HTTPS",
                 ip: "",
                 port: 443,
                 service: "",
@@ -48,7 +48,7 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                 timeout_b: 30,
                 timeout_c: 120,
                 new_fault_code: false,
-                redirect_protocol: "https",
+                redirect_protocol: "HTTPS",
                 payment_model: "",
                 rt_push: false,
                 on_us: false,
@@ -173,9 +173,12 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                         <div className="row">
                             <Form.Group controlId="protocol" className="col-md-2">
                                 <Form.Label>Protocollo <span style={{color: "red"}}>*</span></Form.Label>
-                                <Form.Control name="protocol" placeholder=""
-                                              value={String(this.state.channel.protocol)}
-                                              onChange={(e) => this.handleChange(e)} />
+                                <Form.Control as="select" name="protocol"
+                                              onChange={(e) => this.handleChange(e)}
+                                              defaultValue={String(this.state.channel.protocol)}>
+                                    <option value="HTTPS">HTTPS</option>
+                                    <option value="HTTP">HTTP</option>
+                                </Form.Control>
                             </Form.Group>
 
                             <Form.Group controlId="ip" className="col-md-2">
@@ -201,9 +204,12 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                         <div className="row">
                             <Form.Group controlId="redirect_protocol" className="col-md-2">
                                 <Form.Label>Protocollo Redirect</Form.Label>
-                                <Form.Control name="redirect_protocol" placeholder=""
-                                              value={String(this.state.channel.redirect_protocol)}
-                                              onChange={(e) => this.handleChange(e)} />
+                                <Form.Control as="select" name="redirect_protocol"
+                                              onChange={(e) => this.handleChange(e)}
+                                              defaultValue={String(this.state.channel.redirect_protocol)}>
+                                    <option value="HTTPS">HTTPS</option>
+                                    <option value="HTTP">HTTP</option>
+                                </Form.Control>
                             </Form.Group>
 
                             <Form.Group controlId="redirect_ip" className="col-md-2">
@@ -215,7 +221,7 @@ export default class CreateChannel extends React.Component<IProps, IState> {
 
                             <Form.Group controlId="redirect_port" className="col-md-2">
                                 <Form.Label>Porta Redirect</Form.Label>
-                                <Form.Control name="redirect_port" placeholder=""
+                                <Form.Control name="redirect_port" placeholder="" type="number"
                                               onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
 
@@ -250,7 +256,7 @@ export default class CreateChannel extends React.Component<IProps, IState> {
 
                             <Form.Group controlId="proxy_port" className="col-md-2">
                                 <Form.Label>Porta Proxy</Form.Label>
-                                <Form.Control name="proxy_port" placeholder=""
+                                <Form.Control name="proxy_port" placeholder="" type="number"
                                               onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
                         </div>

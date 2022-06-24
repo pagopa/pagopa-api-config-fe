@@ -55,19 +55,19 @@ export default class EditChannel extends React.Component<IProps, IState> {
                 broker_psp_code: "",
                 password: "",
                 new_password: "",
-                protocol: "",
+                protocol: "HTTPS",
                 ip: "",
                 port: 80,
                 service: "",
                 proxy_enabled: false,
                 proxy_host: "",
                 proxy_port: 80,
-                thread_number: 2,
+                thread_number: 1,
                 timeout_a: 15,
                 timeout_b: 30,
                 timeout_c: 120,
                 new_fault_code: false,
-                redirect_protocol: "",
+                redirect_protocol: "HTTPS",
                 redirect_ip: "",
                 redirect_port: 80,
                 redirect_path: "",
@@ -431,9 +431,12 @@ export default class EditChannel extends React.Component<IProps, IState> {
                                                 <Form.Group controlId="protocol" className="col-md-2">
                                                     <Form.Label>Protocollo <span
                                                         style={{color: "red"}}>*</span></Form.Label>
-                                                    <Form.Control name="protocol" placeholder=""
-                                                                  value={this.state.channel.protocol}
-                                                                  onChange={(e) => this.handleChange(e)}/>
+                                                    <Form.Control as="select" name="protocol"
+                                                                          onChange={(e) => this.handleChange(e)}
+                                                                          value={String(this.state.channel.protocol)}>
+                                                                <option value="HTTP">HTTP</option>
+                                                                <option value="HTTPS">HTTPS</option>
+                                                            </Form.Control>
                                                 </Form.Group>
 
                                                 <Form.Group controlId="ip" className="col-md-2">
@@ -461,9 +464,12 @@ export default class EditChannel extends React.Component<IProps, IState> {
                                             <div className="row">
                                                 <Form.Group controlId="redirect_protocol" className="col-md-2">
                                                     <Form.Label>Protocollo Redirect</Form.Label>
-                                                    <Form.Control name="redirect_protocol" placeholder=""
-                                                                  value={this.state.channel.redirect_protocol}
-                                                                  onChange={(e) => this.handleChange(e)}/>
+                                                            <Form.Control as="select" name="redirect_protocol"
+                                                                          onChange={(e) => this.handleChange(e)}
+                                                                          value={String(this.state.channel.redirect_protocol)}>
+                                                                <option value="HTTP">HTTP</option>
+                                                                <option value="HTTPS">HTTPS</option>
+                                                            </Form.Control>
                                                 </Form.Group>
 
                                                 <Form.Group controlId="redirect_ip" className="col-md-2">
@@ -476,7 +482,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
 
                                                 <Form.Group controlId="redirect_port" className="col-md-2">
                                                     <Form.Label>Porta Redirect</Form.Label>
-                                                    <Form.Control name="redirect_port" placeholder=""
+                                                            <Form.Control name="redirect_port" placeholder="" type="number"
                                                                   value={this.state.channel.redirect_port}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
@@ -515,7 +521,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
 
                                                 <Form.Group controlId="proxy_port" className="col-md-2">
                                                     <Form.Label>Porta Proxy</Form.Label>
-                                                    <Form.Control name="proxy_port" placeholder=""
+                                                            <Form.Control name="proxy_port" placeholder="" type="number"
                                                                   value={this.state.channel.proxy_port}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>

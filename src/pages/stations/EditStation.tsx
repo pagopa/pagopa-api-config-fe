@@ -280,8 +280,12 @@ export default class EditStation extends React.Component<IProps, IState> {
                                                 <Form.Group controlId="protocol" className="col-md-2">
                                                     <Form.Label>Protocollo <span
                                                         style={{color: "red"}}>*</span></Form.Label>
-                                                    <Form.Control name="protocol" value={this.state.station.protocol}
-                                                                  onChange={(e) => this.handleChange(e)}/>
+                                                    <Form.Control as="select" name="protocol"
+                                                                  onChange={(e) => this.handleChange(e)}
+                                                                  value={String(this.state.station.protocol)}>
+                                                        <option value="HTTP">HTTP</option>
+                                                        <option value="HTTPS">HTTPS</option>
+                                                    </Form.Control>
                                                 </Form.Group>
 
                                                 <Form.Group controlId="ip" className="col-md-2">
@@ -317,9 +321,12 @@ export default class EditStation extends React.Component<IProps, IState> {
                                             <div className="row">
                                                 <Form.Group controlId="protocol_4mod" className="col-md-2">
                                                     <Form.Label>Protocollo Modello 4</Form.Label>
-                                                    <Form.Control name="protocol_4mod"
-                                                                  value={this.state.station.protocol_4mod}
-                                                                  onChange={(e) => this.handleChange(e)}/>
+                                                    <Form.Control as="select" name="protocol_4mod"
+                                                                  onChange={(e) => this.handleChange(e)}
+                                                                  value={String(this.state.station.protocol_4mod)}>
+                                                        <option value="HTTP">HTTP</option>
+                                                        <option value="HTTPS">HTTPS</option>
+                                                    </Form.Control>
                                                 </Form.Group>
 
                                                 <Form.Group controlId="ip_4mod" className="col-md-2">
@@ -332,7 +339,7 @@ export default class EditStation extends React.Component<IProps, IState> {
 
                                                 <Form.Group controlId="port_4mod" className="col-md-2">
                                                     <Form.Label>Porta Modello 4</Form.Label>
-                                                    <Form.Control name="port_4mod"
+                                                    <Form.Control name="port_4mod" type="number"
                                                                   value={this.state.station.port_4mod}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
@@ -348,9 +355,12 @@ export default class EditStation extends React.Component<IProps, IState> {
                                             <div className="row">
                                                 <Form.Group controlId="redirect_protocol" className="col-md-2">
                                                     <Form.Label>Protocollo Redirect</Form.Label>
-                                                    <Form.Control name="redirect_protocol"
-                                                                  value={this.state.station.redirect_protocol}
-                                                                  onChange={(e) => this.handleChange(e)}/>
+                                                    <Form.Control as="select" name="redirect_protocol"
+                                                                  onChange={(e) => this.handleChange(e)}
+                                                                  value={String(this.state.station.redirect_protocol)}>
+                                                        <option value="HTTP">HTTP</option>
+                                                        <option value="HTTPS">HTTPS</option>
+                                                    </Form.Control>
                                                 </Form.Group>
 
                                                 <Form.Group controlId="redirect_ip" className="col-md-2">
@@ -363,7 +373,7 @@ export default class EditStation extends React.Component<IProps, IState> {
 
                                                 <Form.Group controlId="redirect_port" className="col-md-2">
                                                     <Form.Label>Porta Redirect</Form.Label>
-                                                    <Form.Control name="redirect_port"
+                                                    <Form.Control name="redirect_port" type="number"
                                                                   value={this.state.station.redirect_port}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
@@ -403,7 +413,7 @@ export default class EditStation extends React.Component<IProps, IState> {
 
                                                 <Form.Group controlId="proxy_port" className="col-md-2">
                                                     <Form.Label>Porta Proxy</Form.Label>
-                                                    <Form.Control name="proxy_port"
+                                                    <Form.Control name="proxy_port" type="number"
                                                                   value={this.state.station.proxy_port}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
