@@ -481,7 +481,7 @@ export default class Pdds extends React.Component<IProps, IState> {
                                                                   onChange={(e) => this.handleInput(e)}/>
 												</td>
 												<td className="text-left">
-													<Form.Control name="ip" placeholder="IP"
+													<Form.Control name="ip" placeholder="IP" type="number"
 																  value={this.state.create.configuration.ip}
 																  onChange={(e) => this.handleInput(e)}/>
 												</td>
