@@ -80,7 +80,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
                 card_chart: false,
                 recovery: false,
                 digital_stamp_brand: false,
-                serv_plugin: "",
+                serv_plugin: null,
                 flag_io: false,
                 agid: false,
                 description: "",
@@ -594,9 +594,14 @@ export default class EditChannel extends React.Component<IProps, IState> {
                                                 <Form.Group controlId="payment_model" className="col-md-2">
                                                     <Form.Label>Modello Pagamento <span
                                                         style={{color: "red"}}>*</span></Form.Label>
-                                                    <Form.Control name="payment_model" placeholder=""
+                                                    <Form.Control as="select" name="payment_model"
                                                                   value={this.state.channel.payment_model}
-                                                                  onChange={(e) => this.handleChange(e)}/>
+                                                                  onChange={(e) => this.handleChange(e)}>
+                                                        <option value={"IMMEDIATE"}>IMMEDIATO</option>
+                                                        <option value={"IMMEDIATE_MULTIBENEFICIARY"}>IMMEDIATO_MULTIBENEFICIARIO</option>
+                                                        <option value={"DEFERRED"}>DIFFERITO</option>
+                                                        <option value={"ACTIVATED_AT_PSP"}>ATTIVATO_PRESSO_PSP</option>
+                                                    </Form.Control>
                                                 </Form.Group>
 
                                                 <Form.Group controlId="serv_plugin" className="col-md-2">
