@@ -496,7 +496,6 @@ export default class EditChannel extends React.Component<IProps, IState> {
                                                             <Form.Control as="select" name="protocol"
                                                                           defaultValue={String(this.state.channel.protocol)}
                                                                           onChange={(e) => this.handleChange(e)}>
-                                                                <option value="null">-</option>
                                                                 <option value="HTTPS">HTTPS</option>
                                                                 <option value="HTTP">HTTP</option>
                                                             </Form.Control>
@@ -530,7 +529,6 @@ export default class EditChannel extends React.Component<IProps, IState> {
                                                             <Form.Control as="select" name="redirect_protocol"
                                                                           defaultValue={String(this.state.channel.redirect_protocol)}
                                                                           onChange={(e) => this.handleChange(e)}>
-                                                                <option value="null">-</option>
                                                                 <option value="HTTPS">HTTPS</option>
                                                                 <option value="HTTP">HTTP</option>
                                                             </Form.Control>

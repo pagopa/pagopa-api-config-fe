@@ -283,7 +283,6 @@ export default class CreateStation extends React.Component<IProps, IState> {
                                 <Form.Control as="select" name="protocol_4mod"
                                               defaultValue={String(this.state.station.protocol_4mod)}
                                               onChange={(e) => this.handleChange(e)} >
-                                    <option value="null">-</option>
                                     <option value="HTTPS">HTTPS</option>
                                     <option value="HTTP">HTTP</option>
                                 </Form.Control>
@@ -312,7 +311,6 @@ export default class CreateStation extends React.Component<IProps, IState> {
                                 <Form.Control as="select" name="redirect_protocol"
                                               defaultValue={String(this.state.station.redirect_protocol)}
                                               onChange={(e) => this.handleChange(e)} >
-                                    <option value="null">-</option>
                                     <option value="HTTPS">HTTPS</option>
                                     <option value="HTTP">HTTP</option>
                                 </Form.Control>
