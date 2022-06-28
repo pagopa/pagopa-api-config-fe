@@ -454,20 +454,20 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                                         <Card.Body>
                                             <div className="row">
                                                 <Form.Group controlId="code" className="col-md-3">
-                                                    <Form.Label>Nome</Form.Label>
+                                                    <Form.Label>Nome <span className="text-danger">*</span></Form.Label>
                                                     <Form.Control name="business_name" placeholder=""
                                                                   value={this.state.paymentServiceProvider.business_name}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
 
                                                 <Form.Group controlId="code" className="col-md-3">
-                                                    <Form.Label>Codice</Form.Label>
+                                                    <Form.Label>Codice <span className="text-danger">*</span></Form.Label>
                                                     <Form.Control name="psp_code" placeholder=""
                                                                   value={this.state.paymentServiceProvider.psp_code}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
                                                 <Form.Group controlId="enabled" className="col-md-3">
-                                                    <Form.Label>Stato</Form.Label>
+                                                    <Form.Label>Stato <span className="text-danger">*</span></Form.Label>
                                                     <Form.Control as="select" name="enabled" placeholder="stato"
                                                                   onChange={(e) => this.handleChange(e)}
                                                                   value={String(this.state.paymentServiceProvider.enabled)}>
@@ -559,9 +559,9 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                                                         <Table hover responsive size="sm">
                                                             <thead>
                                                             <tr>
-                                                                <th className="">Codice</th>
+                                                                <th className="">Codice <span className="text-danger">*</span></th>
                                                                 <th className="text-center">Abilitato</th>
-                                                                <th className="text-center">Tipo Versamento</th>
+                                                                <th className="text-center">Tipo Versamento <span className="text-danger">*</span></th>
                                                                 <th className="text-right"/>
                                                             </tr>
                                                             </thead>

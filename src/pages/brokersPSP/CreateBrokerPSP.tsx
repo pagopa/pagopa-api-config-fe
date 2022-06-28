@@ -117,16 +117,16 @@ export default class CreateBrokerPSP extends React.Component<IProps, IState> {
                         </div>
                         <div className="row">
                             <Form.Group controlId="description" className="col-md-4">
-                                <Form.Label>Descrizione</Form.Label>
+                                <Form.Label>Descrizione <span className="text-danger">*</span></Form.Label>
                                 <Form.Control name="description" placeholder=""
                                               onChange={(e) => this.handleChange(e)}/>
                             </Form.Group>
                             <Form.Group controlId="code" className="col-md-4">
-                                <Form.Label>Codice</Form.Label>
+                                <Form.Label>Codice <span className="text-danger">*</span></Form.Label>
                                 <Form.Control name="broker_psp_code" placeholder="" onChange={(e) => this.handleChange(e)} />
                             </Form.Group>
                             <Form.Group controlId="enabled" className="col-md-2">
-                                <Form.Label>Stato</Form.Label>
+                                <Form.Label>Stato <span className="text-danger">*</span></Form.Label>
                                 <Form.Control as="select" name="enabled" placeholder="stato"
                                               onChange={(e) => this.handleChange(e)}
                                               defaultValue={String(this.state.brokerPSP.enabled)}>
@@ -135,7 +135,7 @@ export default class CreateBrokerPSP extends React.Component<IProps, IState> {
                                 </Form.Control>
                             </Form.Group>
                             <Form.Group controlId="extended_fault_bean" className="col-md-2">
-                                <Form.Label>Faul Bean esteso</Form.Label>
+                                <Form.Label>Faul Bean esteso <span className="text-danger">*</span></Form.Label>
                                 <Form.Control as="select" name="extended_fault_bean" placeholder="stato"
                                               onChange={(e) => this.handleChange(e)}
                                               defaultValue={String(this.state.brokerPSP.extended_fault_bean)}>

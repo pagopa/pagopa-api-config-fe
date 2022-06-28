@@ -164,19 +164,19 @@ export default class EditBrokerPSP extends React.Component<IProps, IState> {
                                         <Card.Body>
                                             <div className="row">
                                                 <Form.Group controlId="code" className="col-md-3">
-                                                    <Form.Label>Codice</Form.Label>
+                                                    <Form.Label>Codice <span className="text-danger">*</span></Form.Label>
                                                     <Form.Control name="broker_psp_code" placeholder=""
                                                                   value={this.state.brokerPSP.broker_psp_code}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
                                                 <Form.Group controlId="code" className="col-md-4">
-                                                    <Form.Label>Descrizione</Form.Label>
+                                                    <Form.Label>Descrizione <span className="text-danger">*</span></Form.Label>
                                                     <Form.Control name="description" placeholder=""
                                                                   value={this.state.brokerPSP.description}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
                                                 <Form.Group controlId="enabled" className="col-md-2">
-                                                    <Form.Label>Stato</Form.Label>
+                                                    <Form.Label>Stato <span className="text-danger">*</span></Form.Label>
                                                     <Form.Control as="select" name="enabled" placeholder="stato"
                                                                   onChange={(e) => this.handleChange(e)}
                                                                   value={String(this.state.brokerPSP.enabled)}>
@@ -185,7 +185,7 @@ export default class EditBrokerPSP extends React.Component<IProps, IState> {
                                                     </Form.Control>
                                                 </Form.Group>
                                                 <Form.Group controlId="extended_fault_bean" className="col-md-2">
-                                                    <Form.Label>Fault Bean esteso</Form.Label>
+                                                    <Form.Label>Fault Bean esteso <span className="text-danger">*</span></Form.Label>
                                                     <Form.Control as="select" name="extended_fault_bean" placeholder="stato"
                                                                   onChange={(e) => this.handleChange(e)}
                                                                   value={String(this.state.brokerPSP.extended_fault_bean)}>

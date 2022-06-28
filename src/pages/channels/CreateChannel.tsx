@@ -2,6 +2,8 @@ import React from "react";
 import {Breadcrumb, Button, Form} from "react-bootstrap";
 import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
+import debounce from "lodash.debounce";
+import AsyncSelect from "react-select/async";
 import {apiClient} from "../../util/apiClient";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import {loginRequest} from "../../authConfig";
@@ -37,7 +39,7 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                 password: "",
                 protocol: "HTTPS",
                 ip: "",
-                port: 0,
+                port: 443,
                 service: "",
                 broker_psp_code: "",
                 proxy_enabled: false,
@@ -49,14 +51,14 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                 timeout_c: 120,
                 new_fault_code: false,
                 redirect_protocol: "HTTPS",
-                payment_model: "",
+                payment_model: "IMMEDIATE",
                 rt_push: false,
                 on_us: false,
                 card_chart: false,
                 recovery: false,
                 digital_stamp_brand: false,
                 flag_io: false,
-                serv_plugin: "",
+                serv_plugin: null,
                 agid: false
             } as unknown as ChannelDetails,
             showModal: false
@@ -66,14 +68,26 @@ export default class CreateChannel extends React.Component<IProps, IState> {
         this.save = this.save.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.hideModal = this.hideModal.bind(this);
+        this.debouncedBrokerPspOptions = this.debouncedBrokerPspOptions.bind(this);
     }
 
     handleChange(event: any) {
         // eslint-disable-next-line functional/no-let
         let channel: ChannelDetails = this.state.channel;
         const key = event.target.name as string;
-        const value = event.target.type === "checkbox" ? event.target.checked : event.target.value;
+        // eslint-disable-next-line functional/no-let
+        let value = event.target.type === "checkbox" ? event.target.checked : event.target.value;
+        if (value === 'null') {
+            value = null;
+        }
         channel = {...channel, [key]: value};
+        this.setState({channel});
+    }
+
+    handleBrokerPspChange(event: any) {
+        const channel: ChannelDetails = this.state.channel;
+        // eslint-disable-next-line functional/immutable-data
+        channel.broker_psp_code = event.value;
         this.setState({channel});
     }
 
@@ -122,6 +136,47 @@ export default class CreateChannel extends React.Component<IProps, IState> {
             });
     }
 
+    debouncedBrokerPspOptions = debounce((inputValue, callback) => {
+        this.promiseBrokerPspOptions(inputValue, callback);
+    }, 500);
+
+    promiseBrokerPspOptions(inputValue: string, callback: any) {
+        const limit = inputValue.length === 0 ? 10 : 99999;
+        const code = inputValue.length === 0 ? "" : inputValue;
+
+        this.context.instance.acquireTokenSilent({
+            ...loginRequest,
+            account: this.context.accounts[0]
+        })
+            .then((response: any) => {
+                apiClient.getBrokersPsp({
+                    Authorization: `Bearer ${response.idToken}`,
+                    ApiKey: "",
+                    page: 0,
+                    limit,
+                    code
+                }).then((resp: any) => {
+                    if (resp.right.status === 200) {
+                        const items: Array<any> = [];
+                        resp.right.value.brokers_psp.map((broker_psp: any) => {
+                            // eslint-disable-next-line functional/immutable-data
+                            items.push({
+                                value: broker_psp.broker_psp_code,
+                                label: broker_psp.broker_psp_code,
+                            });
+                        });
+                        callback(items);
+                    } else {
+                        callback([]);
+                    }
+                }).catch(() => {
+                    toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                    callback([]);
+                });
+            });
+    }
+
+
     render(): React.ReactNode {
         return (
             <div className="container-fluid creditor-institutions">
@@ -140,19 +195,19 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                         </div>
                         <div className="row">
                             <Form.Group controlId="description" className="col-md-4">
-                                <Form.Label>Descrizione</Form.Label>
+                                <Form.Label>Descrizione <span className="text-danger">*</span></Form.Label>
                                 <Form.Control name="description" placeholder=""
-                                              onChange={(e) => this.handleChange(e)} />
+                                              onChange={(e) => this.handleChange(e)}/>
                             </Form.Group>
 
                             <Form.Group controlId="channel_code" className="col-md-4">
-                                <Form.Label>Codice</Form.Label>
+                                <Form.Label>Codice <span className="text-danger">*</span></Form.Label>
                                 <Form.Control name="channel_code" placeholder=""
-                                              onChange={(e) => this.handleChange(e)} />
+                                              onChange={(e) => this.handleChange(e)}/>
                             </Form.Group>
 
                             <Form.Group controlId="enabled" className="col-md-2">
-                                <Form.Label>Stato</Form.Label>
+                                <Form.Label>Stato <span className="text-danger">*</span></Form.Label>
                                 <Form.Control as="select" name="enabled" onChange={(e) => this.handleChange(e)}
                                               defaultValue={String(this.state.channel.enabled)}>
                                     <option value="true">Abilitato</option>
@@ -160,78 +215,89 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                                 </Form.Control>
                             </Form.Group>
                             <Form.Group controlId="broker_psp_code" className="col-md-3">
-                                <Form.Label>Codice Intermediario PSP</Form.Label>
-                                <Form.Control name="broker_psp_code" placeholder=""
-                                              onChange={(e) => this.handleChange(e)} />
+                                <Form.Label>Codice Intermediario PSP <span className="text-danger">*</span></Form.Label>
+                                <AsyncSelect
+                                    cacheOptions defaultOptions
+                                    loadOptions={this.debouncedBrokerPspOptions}
+                                    placeholder="Cerca codice"
+                                    menuPortalTarget={document.body}
+                                    styles={{menuPortal: base => ({...base, zIndex: 9999})}}
+                                    name="broker_code"
+                                    onChange={(e) => this.handleBrokerPspChange(e)}
+                                />
                             </Form.Group>
                             <Form.Group controlId="password" className="col-md-3">
                                 <Form.Label>Password</Form.Label>
                                 <Form.Control name="password" placeholder=""
-                                              onChange={(e) => this.handleChange(e)} />
+                                              onChange={(e) => this.handleChange(e)}/>
                             </Form.Group>
                         </div>
                         <div className="row">
                             <Form.Group controlId="protocol" className="col-md-2">
-                                <Form.Label>Protocollo</Form.Label>
+                                <Form.Label>Protocollo <span
+                                    className="text-danger">*</span></Form.Label>
                                 <Form.Control as="select" name="protocol"
-                                              onChange={(e) => this.handleChange(e)}
-                                              defaultValue={String(this.state.channel.protocol)}>
-                                    <option value="HTTP">HTTP</option>
+                                              defaultValue={String(this.state.channel.protocol)}
+                                              onChange={(e) => this.handleChange(e)}>
                                     <option value="HTTPS">HTTPS</option>
+                                    <option value="HTTP">HTTP</option>
                                 </Form.Control>
                             </Form.Group>
 
                             <Form.Group controlId="ip" className="col-md-2">
                                 <Form.Label>IP</Form.Label>
                                 <Form.Control name="ip" placeholder=""
-                                              onChange={(e) => this.handleChange(e)} />
+
+                                              onChange={(e) => this.handleChange(e)}/>
                             </Form.Group>
 
                             <Form.Group controlId="port" className="col-md-2">
-                                <Form.Label>Porta</Form.Label>
-                                <Form.Control name="port" placeholder="" type="number"
-                                              onChange={(e) => this.handleChange(e)} />
+                                <Form.Label>Porta <span className="text-danger">*</span></Form.Label>
+                                <Form.Control type="number" name="port" placeholder=""
+                                              value={String(this.state.channel.port)}
+                                              onChange={(e) => this.handleChange(e)}/>
                             </Form.Group>
 
                             <Form.Group controlId="service" className="col-md-3">
                                 <Form.Label>Servizio</Form.Label>
                                 <Form.Control name="service" placeholder=""
-                                              onChange={(e) => this.handleChange(e)} />
+                                              onChange={(e) => this.handleChange(e)}/>
                             </Form.Group>
                         </div>
                         <div className="row">
                             <Form.Group controlId="redirect_protocol" className="col-md-2">
                                 <Form.Label>Protocollo Redirect</Form.Label>
                                 <Form.Control as="select" name="redirect_protocol"
-                                              onChange={(e) => this.handleChange(e)}
-                                              defaultValue={String(this.state.channel.redirect_protocol)}>
-                                    <option value="HTTP">HTTP</option>
+                                              defaultValue={String(this.state.channel.redirect_protocol)}
+                                              onChange={(e) => this.handleChange(e)}>
                                     <option value="HTTPS">HTTPS</option>
+                                    <option value="HTTP">HTTP</option>
                                 </Form.Control>
                             </Form.Group>
 
                             <Form.Group controlId="redirect_ip" className="col-md-2">
                                 <Form.Label>IP Redirect</Form.Label>
                                 <Form.Control name="redirect_ip" placeholder=""
-                                              onChange={(e) => this.handleChange(e)} />
+
+                                              onChange={(e) => this.handleChange(e)}/>
                             </Form.Group>
 
                             <Form.Group controlId="redirect_port" className="col-md-2">
                                 <Form.Label>Porta Redirect</Form.Label>
                                 <Form.Control name="redirect_port" placeholder="" type="number"
-                                              onChange={(e) => this.handleChange(e)} />
+                                              onChange={(e) => this.handleChange(e)}/>
                             </Form.Group>
 
                             <Form.Group controlId="redirect_path" className="col-md-3">
                                 <Form.Label>Servizio Redirect</Form.Label>
                                 <Form.Control name="redirect_path" placeholder=""
-                                              onChange={(e) => this.handleChange(e)} />
+                                              onChange={(e) => this.handleChange(e)}/>
                             </Form.Group>
 
                             <Form.Group controlId="redirect_query_string" className="col-md-3">
                                 <Form.Label>Parametri Redirect</Form.Label>
                                 <Form.Control name="redirect_query_string" placeholder=""
-                                              onChange={(e) => this.handleChange(e)} />
+                                              onChange={(e) => this.handleChange(e)}/>
                             </Form.Group>
                         </div>
                         <div className="row">
@@ -248,132 +314,137 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                             <Form.Group controlId="proxy_host" className="col-md-2">
                                 <Form.Label>Indirizzo Proxy</Form.Label>
                                 <Form.Control name="proxy_host" placeholder=""
-                                              onChange={(e) => this.handleChange(e)} />
+                                              onChange={(e) => this.handleChange(e)}/>
                             </Form.Group>
 
                             <Form.Group controlId="proxy_port" className="col-md-2">
                                 <Form.Label>Porta Proxy</Form.Label>
                                 <Form.Control name="proxy_port" placeholder="" type="number"
-                                              onChange={(e) => this.handleChange(e)} />
+                                              onChange={(e) => this.handleChange(e)}/>
                             </Form.Group>
                         </div>
                         <div className="row">
                             <Form.Group controlId="payment_model" className="col-md-2">
-                                <Form.Label>Modello Pagamento</Form.Label>
-                                <Form.Control name="payment_model" placeholder=""
-                                              onChange={(e) => this.handleChange(e)} />
+                                <Form.Label>Modello Pagamento <span className="text-danger">*</span></Form.Label>
+                                <Form.Control as="select" name="payment_model"
+                                              onChange={(e) => this.handleChange(e)}>
+                                    <option value={"IMMEDIATE"}>IMMEDIATO</option>
+                                    <option value={"IMMEDIATE_MULTIBENEFICIARY"}>IMMEDIATO_MULTIBENEFICIARIO</option>
+                                    <option value={"DEFERRED"}>DIFFERITO</option>
+                                    <option value={"ACTIVATED_AT_PSP"}>ATTIVATO_PRESSO_PSP</option>
+                                </Form.Control>
                             </Form.Group>
 
                             <Form.Group controlId="serv_plugin" className="col-md-2">
                                 <Form.Label>Plugin WFESP</Form.Label>
                                 <Form.Control name="serv_plugin" placeholder=""
-                                              onChange={(e) => this.handleChange(e)} />
+                                              onChange={(e) => this.handleChange(e)}/>
                             </Form.Group>
 
                             <Form.Group controlId="thread_number" className="col-md-2">
-                                <Form.Label>Numero Thread</Form.Label>
-                                <Form.Control name="thread_number" placeholder="" type="number"
+                                <Form.Label>Numero Thread <span className="text-danger">*</span></Form.Label>
+                                <Form.Control type="number" name="thread_number" placeholder=""
                                               value={String(this.state.channel.thread_number)}
-                                              onChange={(e) => this.handleChange(e)} />
+                                              onChange={(e) => this.handleChange(e)}/>
                             </Form.Group>
 
                             <Form.Group controlId="timeout_a" className="col-md-2">
-                                <Form.Label>Timeout A</Form.Label>
-                                <Form.Control name="timeout_a" placeholder="" type="number"
+                                <Form.Label>Timeout A <span className="text-danger">*</span></Form.Label>
+                                <Form.Control type="number" name="timeout_a" placeholder=""
                                               value={String(this.state.channel.timeout_a)}
-                                              onChange={(e) => this.handleChange(e)} />
+                                              onChange={(e) => this.handleChange(e)}/>
                             </Form.Group>
 
                             <Form.Group controlId="timeout_b" className="col-md-2">
-                                <Form.Label>Timeout B</Form.Label>
-                                <Form.Control name="timeout_b" placeholder="" type="number"
+                                <Form.Label>Timeout B <span className="text-danger">*</span></Form.Label>
+                                <Form.Control type="number" name="timeout_b" placeholder=""
                                               value={String(this.state.channel.timeout_b)}
-                                              onChange={(e) => this.handleChange(e)} />
+                                              onChange={(e) => this.handleChange(e)}/>
                             </Form.Group>
 
                             <Form.Group controlId="timeout_c" className="col-md-2">
-                                <Form.Label>Timeout C</Form.Label>
-                                <Form.Control name="timeout_c" placeholder="" type="number"
+                                <Form.Label>Timeout C <span className="text-danger">*</span></Form.Label>
+                                <Form.Control type="number" name="timeout_c" placeholder=""
                                               value={String(this.state.channel.timeout_c)}
-                                              onChange={(e) => this.handleChange(e)} />
+                                              onChange={(e) => this.handleChange(e)}/>
                             </Form.Group>
                         </div>
                         <div className="row">
                             <Form.Group controlId="flag_io" className="col-md-2 custom-control-box">
                                 <Form.Check
-                                        custom
-                                        name="flag_io"
-                                        defaultChecked={this.state.channel.flag_io === true}
-                                        type={'checkbox'}
-                                        id={'flag_io'}
-                                        value={'true'}
-                                        label={'PSP Notify Payment'}
-                                        onChange={(e) => this.handleChange(e)}
+                                    custom
+                                    name="flag_io"
+                                    defaultChecked={this.state.channel.flag_io === true}
+                                    type={'checkbox'}
+                                    id={'flag_io'}
+                                    value={'true'}
+                                    label={'PSP Notify Payment'}
+                                    onChange={(e) => this.handleChange(e)}
                                 />
                             </Form.Group>
 
                             <Form.Group controlId="rt_push" className="col-md-2 custom-control-box">
                                 <Form.Check
-                                        custom
-                                        defaultChecked={this.state.channel.rt_push === true}
-                                        type={'checkbox'}
-                                        id={'rt_push'}
-                                        label={'Push Ricevuta Telematica'}
-                                        name="rt_push"
-                                        value={'true'}
-                                        onChange={(e) => this.handleChange(e)}
+                                    custom
+                                    defaultChecked={this.state.channel.rt_push === true}
+                                    type={'checkbox'}
+                                    id={'rt_push'}
+                                    label={'Push Ricevuta Telematica'}
+                                    name="rt_push"
+                                    value={'true'}
+                                    onChange={(e) => this.handleChange(e)}
                                 />
                             </Form.Group>
 
                             <Form.Group controlId="on_us" className="col-md-2 custom-control-box">
                                 <Form.Check
-                                        custom
-                                        defaultChecked={this.state.channel.on_us === true}
-                                        type={'checkbox'}
-                                        id={'on_us'}
-                                        label={'On Us'}
-                                        name="on_us"
-                                        value={'true'}
-                                        onChange={(e) => this.handleChange(e)}
+                                    custom
+                                    defaultChecked={this.state.channel.on_us === true}
+                                    type={'checkbox'}
+                                    id={'on_us'}
+                                    label={'On Us'}
+                                    name="on_us"
+                                    value={'true'}
+                                    onChange={(e) => this.handleChange(e)}
                                 />
                             </Form.Group>
 
                             <Form.Group controlId="card_chart" className="col-md-2 custom-control-box">
                                 <Form.Check
-                                        custom
-                                        defaultChecked={this.state.channel.card_chart === true}
-                                        type={'checkbox'}
-                                        id={'card_chart'}
-                                        label={'Carrello RPT'}
-                                        name="card_chart"
-                                        value={'true'}
-                                        onChange={(e) => this.handleChange(e)}
+                                    custom
+                                    defaultChecked={this.state.channel.card_chart === true}
+                                    type={'checkbox'}
+                                    id={'card_chart'}
+                                    label={'Carrello RPT'}
+                                    name="card_chart"
+                                    value={'true'}
+                                    onChange={(e) => this.handleChange(e)}
                                 />
                             </Form.Group>
 
                             <Form.Group controlId="recovery" className="col-md-2 custom-control-box">
                                 <Form.Check
-                                        custom
-                                        defaultChecked={this.state.channel.recovery === true}
-                                        type={'checkbox'}
-                                        id={'recovery'}
-                                        label={'Processo di Recovery Pull'}
-                                        name="recovery"
-                                        value={'true'}
-                                        onChange={(e) => this.handleChange(e)}
+                                    custom
+                                    defaultChecked={this.state.channel.recovery === true}
+                                    type={'checkbox'}
+                                    id={'recovery'}
+                                    label={'Processo di Recovery Pull'}
+                                    name="recovery"
+                                    value={'true'}
+                                    onChange={(e) => this.handleChange(e)}
                                 />
                             </Form.Group>
 
                             <Form.Group controlId="digital_stamp_brand" className="col-md-2 custom-control-box">
                                 <Form.Check
-                                        custom
-                                        defaultChecked={this.state.channel.digital_stamp_brand === true}
-                                        type={'checkbox'}
-                                        id={'digital_stamp_brand'}
-                                        label={'Marca Bollo Digitale'}
-                                        name="digital_stamp_brand"
-                                        value={'true'}
-                                        onChange={(e) => this.handleChange(e)}
+                                    custom
+                                    defaultChecked={this.state.channel.digital_stamp_brand === true}
+                                    type={'checkbox'}
+                                    id={'digital_stamp_brand'}
+                                    label={'Marca Bollo Digitale'}
+                                    name="digital_stamp_brand"
+                                    value={'true'}
+                                    onChange={(e) => this.handleChange(e)}
                                 />
                             </Form.Group>
                         </div>

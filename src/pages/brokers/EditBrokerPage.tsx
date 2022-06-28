@@ -159,19 +159,19 @@ export default class EditBrokersPage extends React.Component<IProps, IState> {
                                         <Card.Body>
                                             <div className="row">
                                                 <Form.Group controlId="code" className="col-md-3">
-                                                    <Form.Label>Codice</Form.Label>
+                                                    <Form.Label>Codice<span className="text-danger">*</span></Form.Label>
                                                     <Form.Control name="broker_code" placeholder=""
                                                                   value={this.state.brokerDetails.broker_code}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
                                                 <Form.Group controlId="description" className="col-md-3">
-                                                    <Form.Label>Descrizione</Form.Label>
+                                                    <Form.Label>Descrizione<span className="text-danger">*</span></Form.Label>
                                                     <Form.Control name="description" placeholder=""
                                                                   value={this.state.brokerDetails.description}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
                                                 <Form.Group controlId="enabled" className="col-md-3">
-                                                    <Form.Label>Stato</Form.Label>
+                                                    <Form.Label>Stato<span className="text-danger">*</span></Form.Label>
                                                     <Form.Control as="select" name="enabled" placeholder="stato"
                                                                   onChange={(e) => this.handleChange(e)}
                                                                   value={String(this.state.brokerDetails.enabled)}>
@@ -180,7 +180,7 @@ export default class EditBrokersPage extends React.Component<IProps, IState> {
                                                     </Form.Control>
                                                 </Form.Group>
                                                 <Form.Group controlId="extended_fault_bean" className="col-md-3">
-                                                    <Form.Label>Fault Bean Esteso</Form.Label>
+                                                    <Form.Label>Fault Bean Esteso<span className="text-danger">*</span></Form.Label>
                                                     <Form.Control as="select" name="extended_fault_bean" placeholder="fault bean"
                                                                   onChange={(e) => this.handleChange(e)}
                                                                   value={this.state.brokerDetails.extended_fault_bean.toString()}>
