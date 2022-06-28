@@ -764,7 +764,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
 					<thead>
 					<tr>
 						<th className="">Tipo</th>
-						<th className="">Codice <span style={{color:"red"}}>*</span></th>
+						<th className="">Codice<span className="text-danger">*</span></th>
 						<th/>
 					</tr>
 					</thead>
@@ -843,19 +843,19 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                         <Card.Body>
                                             <div className="row">
                                                 <Form.Group controlId="business_name" className="col-md-3">
-                                                    <Form.Label>Nome <span style={{color:"red"}}>*</span></Form.Label>
+                                                    <Form.Label>Nome<span className="text-danger">*</span></Form.Label>
                                                     <Form.Control name="business_name" placeholder=""
                                                                   value={this.state.creditorInstitution.business_name}
                                                                   onChange={(e) => this.handleChange(e, "creditorInstitution")}/>
                                                 </Form.Group>
                                                 <Form.Group controlId="code" className="col-md-4">
-                                                    <Form.Label>Codice <span style={{color:"red"}}>*</span></Form.Label>
+                                                    <Form.Label>Codice<span className="text-danger">*</span></Form.Label>
                                                     <Form.Control name="creditor_institution_code" placeholder=""
                                                                   value={this.state.creditorInstitution.creditor_institution_code}
                                                                   onChange={(e) => this.handleChange(e, "creditorInstitution")}/>
                                                 </Form.Group>
                                                 <Form.Group controlId="enabled" className="col-md-3">
-                                                    <Form.Label>Stato <span style={{color:"red"}}>*</span></Form.Label>
+                                                    <Form.Label>Stato<span className="text-danger">*</span></Form.Label>
                                                     <Form.Control as="select" name="enabled"
                                                                   onChange={(e) => this.handleChange(e, "creditorInstitution")}
                                                                   value={String(this.state.creditorInstitution.enabled)}
@@ -1025,7 +1025,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                                             <th className="text-center">Abilitata</th>
                                                             <th className="text-center">Application Code</th>
                                                             <th className="text-center">Codice Segregazione</th>
-                                                            <th className="text-center">Aux Digit <span style={{color:"red"}}>*</span></th>
+                                                            <th className="text-center">Aux Digit<span className="text-danger">*</span></th>
                                                             <th className="text-center">Versione</th>
                                                             <th className="text-center">Modello 4</th>
                                                             <th className="text-center">Broadcast</th>

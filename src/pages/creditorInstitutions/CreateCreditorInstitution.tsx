@@ -132,17 +132,17 @@ export default class CreateCreditorInstitution extends React.Component<IProps, I
                         </div>
                         <div className="row">
                             <Form.Group controlId="code" className="col-md-3">
-                                <Form.Label>Nome <span style={{color:"red"}}>*</span></Form.Label>
+                                <Form.Label>Nome<span className="text-danger">*</span></Form.Label>
                                 <Form.Control name="business_name" placeholder=""
                                               onChange={(e) => this.handleChange(e, "creditorInstitution")}/>
                             </Form.Group>
                             <Form.Group controlId="code" className="col-md-3">
-                                <Form.Label>Codice <span style={{color:"red"}}>*</span></Form.Label>
+                                <Form.Label>Codice<span className="text-danger">*</span></Form.Label>
                                 <Form.Control name="creditor_institution_code" placeholder=""
                                               onChange={(e) => this.handleChange(e, "creditorInstitution")}/>
                             </Form.Group>
                             <Form.Group controlId="enabled" className="col-md-3">
-                                <Form.Label>Stato <span style={{color:"red"}}>*</span></Form.Label>
+                                <Form.Label>Stato<span className="text-danger">*</span></Form.Label>
                                 <Form.Control as="select" name="enabled" placeholder="stato"
                                               onChange={(e) => this.handleChange(e, "creditorInstitution")}
                                               defaultValue={this.state.creditorInstitution.enabled.toString()}>
