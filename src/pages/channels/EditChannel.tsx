@@ -100,6 +100,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
         this.discard = this.discard.bind(this);
         this.newPaymentType = this.newPaymentType.bind(this);
         this.debouncedBrokerPspOptions = this.debouncedBrokerPspOptions.bind(this);
+        this.promiseWfespOptions = this.promiseWfespOptions.bind(this);
     }
 
     updateBackup(section: string, data: ChannelDetails | any) {
@@ -222,6 +223,18 @@ export default class EditChannel extends React.Component<IProps, IState> {
         const channel: ChannelDetails = this.state.channel;
         // eslint-disable-next-line functional/immutable-data
         channel.broker_psp_code = event.value;
+        this.setState({channel});
+    }
+
+    handleWfespChange(event: any) {
+        const channel: ChannelDetails = this.state.channel;
+        // eslint-disable-next-line functional/no-let
+        let value = event.value;
+        if (value === 'null') {
+            value = null;
+        }
+        // eslint-disable-next-line functional/immutable-data
+        channel.serv_plugin = value;
         this.setState({channel});
     }
 
@@ -365,6 +378,43 @@ export default class EditChannel extends React.Component<IProps, IState> {
                             items.push({
                                 value: broker_psp.broker_psp_code,
                                 label: broker_psp.broker_psp_code,
+                            });
+                        });
+                        callback(items);
+                    } else {
+                        callback([]);
+                    }
+                }).catch(() => {
+                    toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                    callback([]);
+                });
+            });
+    }
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    promiseWfespOptions(inputValue: string, callback: any) {
+        this.context.instance.acquireTokenSilent({
+            ...loginRequest,
+            account: this.context.accounts[0]
+        })
+            .then((response: any) => {
+                apiClient.getWfespPlugins({
+                    Authorization: `Bearer ${response.idToken}`,
+                    ApiKey: "",
+                }).then((resp: any) => {
+                    if (resp.right.status === 200) {
+                        const items: Array<any> = [];
+                        // eslint-disable-next-line functional/immutable-data
+                        items.push({
+                            value: 'null',
+                            label: '-',
+                        });
+                        resp.right.value.wfesp_plugin_confs.map((plugin: any) => {
+                            // eslint-disable-next-line functional/immutable-data
+                            items.push({
+                                value: plugin.id_serv_plugin,
+                                label: plugin.id_serv_plugin,
                             });
                         });
                         callback(items);
@@ -604,9 +654,17 @@ export default class EditChannel extends React.Component<IProps, IState> {
 
                                                 <Form.Group controlId="serv_plugin" className="col-md-2">
                                                     <Form.Label>Plugin WFESP</Form.Label>
-                                                    <Form.Control name="serv_plugin" placeholder=""
-                                                                  value={this.state.channel.serv_plugin}
-                                                                  onChange={(e) => this.handleChange(e)}/>
+                                                    <AsyncSelect
+                                                        cacheOptions defaultOptions
+                                                        loadOptions={this.promiseWfespOptions}
+                                                        placeholder={"-"}
+                                                        menuPortalTarget={document.body}
+                                                        styles={{menuPortal: base => ({...base, zIndex: 9999})}}
+                                                        name="serv_plugin"
+                                                        value={{label: this.state.channel.serv_plugin, value: this.state.channel.serv_plugin}}
+                                                        isSearchable={false}
+                                                        onChange={(e) => this.handleWfespChange(e)}
+                                                    />
                                                 </Form.Group>
 
                                                 <Form.Group controlId="thread_number" className="col-md-2">
