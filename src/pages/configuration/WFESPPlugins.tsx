@@ -172,6 +172,10 @@ export default class WFESPPlugins extends React.Component<IProps, IState> {
         }
     }
 
+    toastError(message: string) {
+        toast.error(() => <div className={"toast-width"}>{message}</div>, {theme: "colored"});
+    }
+
     edit(configuration: WfespPluginConf) {
         this.context.instance.acquireTokenSilent({
             ...loginRequest,
@@ -189,7 +193,7 @@ export default class WFESPPlugins extends React.Component<IProps, IState> {
                             toast.info("Salvataggio avvenuto con successo");
                         } else {
                             this.discard("edit", configuration);
-                            toast.error(res.right.value.detail, {theme: "colored"});
+                            this.toastError(res.right.value.detail);
                         }
                     })
                     .catch(() => {
@@ -227,7 +231,7 @@ export default class WFESPPlugins extends React.Component<IProps, IState> {
                             });
                             this.handleFilterCallback(this.state.filters);
                         } else {
-                            toast.error(res.right.value.detail, {theme: "colored"});
+                            this.toastError(res.right.value.detail);
                         }
                     })
                     .catch(() => {
@@ -288,7 +292,7 @@ export default class WFESPPlugins extends React.Component<IProps, IState> {
                                 toast.info("Rimozione avvenuta con successo");
                                 this.removeConfiguration(configuration);
                             } else {
-                                toast.error(res.right.value.title, {theme: "colored"});
+                                this.toastError(res.right.value.detail);
                             }
                         })
                         .catch(() => {

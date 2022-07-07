@@ -176,7 +176,7 @@ export default class PaymentServiceProviders extends React.Component<IProps, ISt
                                 toast.info("Rimozione avvenuta con successo");
                                 this.removePaymentServiceProvider();
                             } else {
-                                toast.error(res.right.value.title, {theme: "colored"});
+                                this.toastError(res.right.value.detail);
                             }
                         })
                         .catch(() => {
@@ -187,6 +187,9 @@ export default class PaymentServiceProviders extends React.Component<IProps, ISt
         this.setState({showDeleteModal: false});
     };
 
+    toastError(message: string) {
+        toast.error(() => <div className={"toast-width"}>{message}</div>, {theme: "colored"});
+    }
 
     handleFilterCallback = (filters: any) => {
         this.setState({filters});

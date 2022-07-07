@@ -45,6 +45,10 @@ export default class CreateBrokerPSP extends React.Component<IProps, IState> {
         this.hideModal = this.hideModal.bind(this);
     }
 
+    toastError(message: string) {
+        toast.error(() => <div className={"toast-width"}>{message}</div>, {theme: "colored"});
+    }
+
     handleChange(event: any) {
         // eslint-disable-next-line functional/no-let
         let brokerPSP: BrokerPspDetails = this.state.brokerPSP;
@@ -88,7 +92,7 @@ export default class CreateBrokerPSP extends React.Component<IProps, IState> {
                             setTimeout(this.goBack.bind(this), 2000);
                         } else {
                             const message = ("detail" in response.right.value) ? response.right.value.detail : "Operazione non avvenuta a causa di un errore";
-                            toast.error(message, {theme: "colored"});
+                            this.toastError(message);
                         }
                     } else {
                         toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});

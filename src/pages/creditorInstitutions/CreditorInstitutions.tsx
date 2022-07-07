@@ -97,6 +97,10 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
         this.searchIban = this.searchIban.bind(this);
     }
 
+    toastError(message: string) {
+        toast.error(() => <div className={"toast-width"}>{message}</div>, {theme: "colored"});
+    }
+
     getPage(page: number) {
         this.setState({isLoading: true});
 
@@ -116,14 +120,16 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
                     ordering: this.state.order.ing
                 })
                     .then((response: any) => {
+                        if (response.right.status === 200) {
+                            this.setState({
+                                creditor_institutions: response.right.value.creditor_institutions,
+                                page_info: response.right.value.page_info
+                            });
+                        }
 
-                        this.setState({
-                            creditor_institutions: response.right.value.creditor_institutions,
-                            page_info: response.right.value.page_info
-                        });
                     })
                     .catch(() => {
-                        toast.error("Problema nel recuperare gli enti creditori", {theme: "colored"});
+                        this.toastError("Problema nel recuperare gli enti creditori");
                     })
                     .finally(() => {
                         this.setState({isLoading: false});
@@ -194,11 +200,11 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
                                 toast.info("Rimozione avvenuta con successo");
                                 this.removeCreditorInstitution();
                             } else {
-                                toast.error(res.right.value.title, {theme: "colored"});
+                                this.toastError(res.right.value.detail);
                             }
                         })
                         .catch(() => {
-                            toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                            this.toastError("Operazione non avvenuta a causa di un errore");
                         });
                 });
         }
@@ -249,7 +255,7 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
                         }
                     })
                     .catch(() => {
-                        toast.error("Problema nel recuperare gli enti creditori", {theme: "colored"});
+                        this.toastError("Problema nel recuperare gli enti creditori");
                     })
                     .finally(() => {
                         toast.dismiss(loading);

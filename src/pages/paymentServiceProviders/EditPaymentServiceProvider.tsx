@@ -218,7 +218,7 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                             toast.info("Relazione con canale salvata con successo");
                         } else {
                             const message = "detail" in response.right.value ? response.right.value.detail : "Operazione non avvenuta a causa di un errore";
-                            toast.error(message, {theme: "colored"});
+                            this.toastError(message);
                         }
                     })
                     .catch(() => {
@@ -226,6 +226,10 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                     })
                     .finally(this.discardChannel);
             });
+    }
+
+    toastError(message: string) {
+        toast.error(() => <div className={"toast-width"}>{message}</div>, {theme: "colored"});
     }
 
     handleChannelEdit(item: PspChannelCode) {
@@ -271,7 +275,7 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                                 toast.info("Relazione con canale aggiornata con successo");
                             } else {
                                 const message = "detail" in resp.right.value ? resp.right.value.detail : "Operazione non avvenuta a causa di un errore";
-                                toast.error(message, {theme: "colored"});
+                                this.toastError(message);
                             }
                         })
                         .catch(() => {
@@ -300,10 +304,10 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                                 toast.info("Rimozione avvenuta con successo");
                                 this.getChannels(this.state.code);
                             } else if (res.right.status === 409) {
-                                toast.error(res.right.value.detail, {theme: "colored"});
+                                this.toastError(res.right.value.detail);
 
                             } else {
-                                toast.error(res.right.value.title, {theme: "colored"});
+                                this.toastError(res.right.value.title);
                             }
                         })
                         .catch(() => {
@@ -339,7 +343,7 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                         this.updateBackup("paymentServiceProvider", response.right.value);
                     } else {
                         const message = ("detail" in response.right.value) ? response.right.value.detail : "Operazione non avvenuta a causa di un errore";
-                        toast.error(message, {theme: "colored"});
+                        this.toastError(message);
                     }
                 }).catch(() => {
                     toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});

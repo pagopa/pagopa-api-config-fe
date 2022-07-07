@@ -41,6 +41,10 @@ export default class CreateBrokerPage extends React.Component<IProps, IState> {
         this.hideModal = this.hideModal.bind(this);
     }
 
+    toastError(message: string) {
+        toast.error(() => <div className={"toast-width"}>{message}</div>, {theme: "colored"});
+    }
+
     handleChange(event: any) {
         // eslint-disable-next-line functional/no-let
         let brokerDetails: BrokerDetails = this.state.brokerDetails;
@@ -86,7 +90,7 @@ export default class CreateBrokerPage extends React.Component<IProps, IState> {
                             toast.error("Codice Broker già presente", {theme: "colored"});
                         } else {
                             const message = ("detail" in response.right.value) ? response.right.value.detail : "Operazione non avvenuta a causa di un errore";
-                            toast.error(message, {theme: "colored"});
+                            this.toastError(message);
                         }
                     } else {
                         toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});

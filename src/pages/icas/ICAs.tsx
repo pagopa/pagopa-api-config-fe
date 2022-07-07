@@ -144,7 +144,7 @@ export default class Icas extends React.Component<IProps, IState> {
                 }
                 else {
                     if (err.response.data.detail) {
-                        toast.error(`Problema nell'upload del file. ${String(err.response.data.detail)}`, {theme: "colored"});
+                        this.toastError(`Problema nell'upload del file. ${String(err.response.data.detail)}`);
                     }
                     else {
                         toast.error("Problema nell'upload del file.", {theme: "colored"});
@@ -152,6 +152,10 @@ export default class Icas extends React.Component<IProps, IState> {
                 }
             });
         });
+    }
+
+    toastError(message: string) {
+        toast.error(() => <div className={"toast-width"}>{message}</div>, {theme: "colored"});
     }
 
     handlePageChange(requestedPage: number) {
@@ -233,7 +237,7 @@ export default class Icas extends React.Component<IProps, IState> {
                                     toast.error("Non è possibile cancellare un file ICA in corso di validità.", {theme: "colored"});
                                 }
                                 else {
-                                    toast.error(res.right.value.details, {theme: "colored"});
+                                    this.toastError(res.right.value.detail);
                                 }
                             })
                             .catch(() => {
