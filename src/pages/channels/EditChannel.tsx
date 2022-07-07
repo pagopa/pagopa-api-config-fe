@@ -103,6 +103,10 @@ export default class EditChannel extends React.Component<IProps, IState> {
         this.promiseWfespOptions = this.promiseWfespOptions.bind(this);
     }
 
+    toastError(message: string) {
+        toast.error(() => <div className={"toast-width"}>{message}</div>, {theme: "colored"});
+    }
+
     updateBackup(section: string, data: ChannelDetails | any) {
         // eslint-disable-next-line functional/no-let
         let backup = {...this.state.backup};
@@ -261,7 +265,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
                         this.updateBackup("channel", response.right.value);
                     } else {
                         const message = "detail" in response.right.value ? response.right.value.detail : "Operazione non avvenuta a causa di un errore";
-                        toast.error(message, {theme: "colored"});
+                        this.toastError(message);
                     }
                 }).catch(() => {
                     toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
@@ -297,7 +301,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
                                 toast.info("Rimozione avvenuta con successo");
                                 this.removePaymentType(this.state.paymentTypeToDelete);
                             } else {
-                                toast.error(res.right.value.title, {theme: "colored"});
+                                this.toastError(res.right.value.detail);
                             }
                         })
                         .catch(() => {

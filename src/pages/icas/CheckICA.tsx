@@ -556,7 +556,7 @@ export default class CheckIca extends React.Component<IProps, IState> {
                         toast.info("Salvataggio avvenuto con successo.");
                     } else {
                         const message = ("detail" in response.right.value) ? response.right.value.detail : "Operazione non avvenuta a causa di un errore";
-                        toast.error(message, {theme: "colored"});
+                        this.toastError(message);
                     }
                 }).catch(() => {
                     toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
@@ -569,6 +569,10 @@ export default class CheckIca extends React.Component<IProps, IState> {
                     toast.dismiss(creating);
                 }
             );
+    }
+
+    toastError(message: string) {
+        toast.error(() => <div className={"toast-width"}>{message}</div>, {theme: "colored"});
     }
 
     /**

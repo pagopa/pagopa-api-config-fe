@@ -139,12 +139,16 @@ export default class EditStation extends React.Component<IProps, IState> {
                         this.updateBackup("station", response.right.value);
                     } else {
                         const message = ("detail" in response.right.value) ? response.right.value.detail : "Operazione non avvenuta a causa di un errore";
-                        toast.error(message, {theme: "colored"});
+                        this.toastError(message);
                     }
                 }).catch(() => {
                     toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
                 });
             });
+    }
+
+    toastError(message: string) {
+        toast.error(() => <div className={"toast-width"}>{message}</div>, {theme: "colored"});
     }
 
     discard(section: string) {

@@ -39,6 +39,10 @@ export default class BrokerPage extends React.Component<IProps, IState> {
         this.callGetBroker(code);
     }
 
+    toastError(message: string) {
+        toast.error(() => <div className={"toast-width"}>{message}</div>, {theme: "colored"});
+    }
+
     callGetBroker(code: string) {
         this.context.instance.acquireTokenSilent({
             ...loginRequest,
@@ -61,7 +65,7 @@ export default class BrokerPage extends React.Component<IProps, IState> {
                                     });
                                 } else {
                                     const body = response.right.value as ProblemJson;
-                                    toast.error(body.title, {theme: "colored"});
+                                    this.toastError(String(body.detail));
                                 }
                                 break;
                             case "Left":

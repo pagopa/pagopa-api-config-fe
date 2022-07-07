@@ -163,7 +163,7 @@ export default class Stations extends React.Component<IProps, IState> {
                                 toast.info("Rimozione avvenuta con successo");
                                 this.removeStation();
                             } else {
-                                toast.error(res.right.value.title, {theme: "colored"});
+                                this.toastError(res.right.value.detail);
                             }
                         })
                         .catch(() => {
@@ -172,8 +172,11 @@ export default class Stations extends React.Component<IProps, IState> {
                 });
         }
         this.setState({showDeleteModal: false});
-
     };
+
+    toastError(message: string) {
+        toast.error(() => <div className={"toast-width"}>{message}</div>, {theme: "colored"});
+    }
 
     handleFilterCallback = (filters: any) => {
         this.setState({filters});

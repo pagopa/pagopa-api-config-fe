@@ -240,6 +240,10 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
         this.setState({creditorInstitution});
     }
 
+    toastError(message: string) {
+        toast.error(() => <div className={"toast-width"}>{message}</div>, {theme: "colored"});
+    }
+
     saveCreditorInstitution() {
         this.context.instance.acquireTokenSilent({
             ...loginRequest,
@@ -257,7 +261,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                         this.manageState(response.right.value);
                     } else {
                         const message = ("detail" in response.right.value) ? response.right.value.detail : "Operazione non avvenuta a causa di un errore";
-                        toast.error(message, {theme: "colored"});
+                        this.toastError(message);
                     }
                 }).catch(() => {
                     toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
@@ -301,7 +305,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                         this.discardEncoding();
                     } else {
                         const message = ("detail" in response.right.value) ? response.right.value.detail : "Operazione non avvenuta a causa di un errore";
-                        toast.error(message, {theme: "colored"});
+                        this.toastError(message);
                     }
                 }).catch(() => {
                     toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
@@ -356,10 +360,10 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                             toast.info("Rimozione avvenuta con successo");
                             this.getEncodings(this.state.code);
                         } else if (res.right.status === 409) {
-                            toast.error(res.right.value.detail, {theme: "colored"});
+                            this.toastError(res.right.value.detail);
 
                         } else {
-                            toast.error(res.right.value.title, {theme: "colored"});
+                            this.toastError(res.right.value.title);
                         }
                     })
                     .catch(() => {
@@ -440,7 +444,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                         this.discardStation();
                     } else {
                         const message = ("detail" in response.right.value) ? response.right.value.detail : "Operazione non avvenuta a causa di un errore";
-                        toast.error(message, {theme: "colored"});
+                        this.toastError(message);
                     }
                 }).catch(() => {
                     toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});

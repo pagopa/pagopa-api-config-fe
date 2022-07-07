@@ -76,6 +76,10 @@ export default class Cdis extends React.Component<IProps, IState> {
         this.upload = this.upload.bind(this);
     }
 
+    toastError(message: string) {
+        toast.error(() => <div className={"toast-width"}>{message}</div>, {theme: "colored"});
+    }
+
     getPage(page: number) {
         this.setState({isLoading: true});
 
@@ -229,7 +233,7 @@ export default class Cdis extends React.Component<IProps, IState> {
                                 toast.info("Rimozione avvenuta con successo");
                                 this.removeCdi();
                             } else {
-                                toast.error(res.right.value.title, {theme: "colored"});
+                                this.toastError(res.right.value.detail);
                             }
                         })
                         .catch(() => {

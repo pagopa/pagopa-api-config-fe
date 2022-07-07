@@ -86,6 +86,11 @@ export default class BrokersPSP extends React.Component<IProps, IState> {
         this.create = this.create.bind(this);
     }
 
+    toastError(message: string) {
+        toast.error(() => <div className={"toast-width"}>{message}</div>, {theme: "colored"});
+    }
+
+
     getPage(page: number) {
         this.setState({isLoading: true});
 
@@ -173,7 +178,7 @@ export default class BrokersPSP extends React.Component<IProps, IState> {
                                 toast.info("Rimozione avvenuta con successo");
                                 this.removeCreditorInstitution();
                             } else {
-                                toast.error(res.right.value.title, {theme: "colored"});
+                                this.toastError(res.right.value.detail);
                             }
                         })
                         .catch(() => {

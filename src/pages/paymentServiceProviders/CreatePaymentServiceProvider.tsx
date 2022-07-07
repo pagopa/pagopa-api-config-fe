@@ -92,7 +92,7 @@ export default class CreatePaymentServiceProvider extends React.Component<IProps
                             setTimeout(this.goBack.bind(this), 2000);
                         } else {
                             const message = ("detail" in response.right.value) ? response.right.value.detail : "Operazione non avvenuta a causa di un errore";
-                            toast.error(message, {theme: "colored"});
+                            this.toastError(message);
                         }
                     } else {
                         toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
@@ -101,6 +101,10 @@ export default class CreatePaymentServiceProvider extends React.Component<IProps
                     toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
                 });
             });
+    }
+
+    toastError(message: string) {
+        toast.error(() => <div className={"toast-width"}>{message}</div>, {theme: "colored"});
     }
 
     render(): React.ReactNode {
