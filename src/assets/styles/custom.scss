@@ -165,7 +165,7 @@ pre {
 .sidebar-sticky {
   position: relative;
   top: 0;
-  height: calc(100vh - 48px);
+  height: calc(100vh - 100px);
   padding-top: .5rem;
   overflow-x: hidden;
   overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
@@ -348,4 +348,11 @@ pre {
 
 .toast-width {
   width: 240px;
+}
+
+.info-box{
+  color: #999999;
+  margin: 16px;
+  position: absolute;
+  bottom: 0px;
 }
