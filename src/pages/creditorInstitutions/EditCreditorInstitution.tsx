@@ -781,7 +781,6 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
 								<Form.Control as="select" placeholder="Tipo codifica" name="code_type"
 											  value={this.state.encodingMgmt.encode?.code_type}
 											  onChange={(e) => this.handleEncodingChange(e)}>
-									<option value="BARCODE_GS1_128">BARCODE_GS1_128 - Deprecato</option>
 									<option value="BARCODE_128_AIM">BARCODE_128_AIM</option>
 									<option value="QR_CODE">QR_CODE</option>
 								</Form.Control>
