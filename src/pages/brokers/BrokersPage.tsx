@@ -264,12 +264,12 @@ export default class Brokers extends React.Component<IProps, IState> {
                                                 <thead>
                                                 <tr>
                                                     <th className="fixed-td-width">
-                                                        <Ordering currentOrderBy={this.state.order.by} currentOrdering={this.state.order.ing} orderBy={"CODE"} ordering={"DESC"} handleOrder={this.handleOrder} />
-                                                        Codice
-                                                    </th>
-                                                    <th className="fixed-td-width">
                                                         <Ordering currentOrderBy={this.state.order.by} currentOrdering={this.state.order.ing} orderBy={"NAME"} ordering={"DESC"} handleOrder={this.handleOrder} />
                                                         Descrizione
+                                                    </th>
+                                                    <th className="fixed-td-width">
+                                                        <Ordering currentOrderBy={this.state.order.by} currentOrdering={this.state.order.ing} orderBy={"CODE"} ordering={"DESC"} handleOrder={this.handleOrder} />
+                                                        Codice
                                                     </th>
                                                     <th className="text-center">Abilitato</th>
                                                     <th/>

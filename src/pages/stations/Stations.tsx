@@ -203,8 +203,8 @@ export default class Stations extends React.Component<IProps, IState> {
         this.state.stations.map((station: any, index: number) => {
             const code = (
                 <tr key={index}>
-                    <td>{station.station_code}</td>
                     <td>{station.broker_description}</td>
+                    <td>{station.station_code}</td>
                     <td className="text-center">
                         {station.enabled && <FaCheck className="text-success"/>}
                         {!station.enabled && <FaTimes className="text-danger"/>}
@@ -258,13 +258,13 @@ export default class Stations extends React.Component<IProps, IState> {
                                     <Table hover responsive size="sm">
                                         <thead>
                                         <tr>
+                                            <th className="fixed-td-width">Descrizione Intermediario EC</th>
                                             <th className="fixed-td-width">
                                                 <Ordering currentOrderBy={this.state.order.by}
                                                           currentOrdering={this.state.order.ing} orderBy={"CODE"}
                                                           ordering={"DESC"} handleOrder={this.handleOrder}/>
                                                 Codice
                                             </th>
-                                            <th className="fixed-td-width">Descrizione Intermediario EC</th>
                                             <th className="text-center">Abilitato</th>
                                             <th className="text-center">Versione</th>
                                             <th/>
