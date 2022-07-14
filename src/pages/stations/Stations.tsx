@@ -36,7 +36,7 @@ interface IState {
 
 export default class Stations extends React.Component<IProps, IState> {
     static contextType = MsalContext;
-    private filter: {[item: string]: any};
+    private filter: { [item: string]: any };
 
     service = "/stations";
 
@@ -96,17 +96,17 @@ export default class Stations extends React.Component<IProps, IState> {
                     code: this.state.filters.code,
                     ordering: this.state.order.ing
                 }).then((response: any) => {
-                        this.setState({
-                            stations: response.right.value.stations,
-                            page_info: response.right.value.page_info
-                        });
+                    this.setState({
+                        stations: response.right.value.stations,
+                        page_info: response.right.value.page_info
+                    });
                 })
-                .catch(() => {
-                    toast.error("Problema nel recuperare le stazioni", {theme: "colored"});
-                })
-                .finally(() => {
-                    this.setState({isLoading: false});
-                });
+                    .catch(() => {
+                        toast.error("Problema nel recuperare le stazioni", {theme: "colored"});
+                    })
+                    .finally(() => {
+                        this.setState({isLoading: false});
+                    });
             });
 
     }
@@ -124,7 +124,7 @@ export default class Stations extends React.Component<IProps, IState> {
     }
 
     handleDetails(code: string) {
-        this.props.history.push( this.service + "/" + code);
+        this.props.history.push(this.service + "/" + code);
     }
 
     handleEdit(code: string) {
@@ -204,11 +204,12 @@ export default class Stations extends React.Component<IProps, IState> {
             const code = (
                 <tr key={index}>
                     <td>{station.station_code}</td>
-                    <td>{station.version}</td>
+                    <td>{station.broker_description}</td>
                     <td className="text-center">
                         {station.enabled && <FaCheck className="text-success"/>}
                         {!station.enabled && <FaTimes className="text-danger"/>}
                     </td>
+                    <td className="text-center">{station.version}</td>
                     <td className="text-right">
                         {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
                         <OverlayTrigger placement="top"
@@ -220,7 +221,8 @@ export default class Stations extends React.Component<IProps, IState> {
                         <OverlayTrigger placement="top"
                                         overlay={<Tooltip id={`tooltip-edit-${index}`}>Modifica</Tooltip>}>
                             {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
-                            <FaEdit role="button" className="mr-3" onClick={() => this.handleEdit(station.station_code)}/>
+                            <FaEdit role="button" className="mr-3"
+                                    onClick={() => this.handleEdit(station.station_code)}/>
                         </OverlayTrigger>
                         {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
                         <OverlayTrigger placement="top"
@@ -257,11 +259,14 @@ export default class Stations extends React.Component<IProps, IState> {
                                         <thead>
                                         <tr>
                                             <th className="fixed-td-width">
-                                                <Ordering currentOrderBy={this.state.order.by} currentOrdering={this.state.order.ing} orderBy={"CODE"} ordering={"DESC"} handleOrder={this.handleOrder} />
+                                                <Ordering currentOrderBy={this.state.order.by}
+                                                          currentOrdering={this.state.order.ing} orderBy={"CODE"}
+                                                          ordering={"DESC"} handleOrder={this.handleOrder}/>
                                                 Codice
                                             </th>
-                                            <th className="fixed-td-width">Versione</th>
+                                            <th className="fixed-td-width">Descrizione Intermediario EC</th>
                                             <th className="text-center">Abilitato</th>
+                                            <th className="text-center">Versione</th>
                                             <th/>
                                         </tr>
                                         </thead>
