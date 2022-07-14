@@ -205,8 +205,8 @@ export default class Channels extends React.Component<IProps, IState> {
         this.state.channels.map((channel: any, index: number) => {
             const code = (
                 <tr key={index}>
-                    <td>{channel.channel_code}</td>
                     <td>{channel.broker_description}</td>
+                    <td>{channel.channel_code}</td>
                     <td className="text-center">
                         {channel.enabled && <FaCheck className="text-success"/>}
                         {!channel.enabled && <FaTimes className="text-danger"/>}
@@ -260,13 +260,13 @@ export default class Channels extends React.Component<IProps, IState> {
                                         <thead>
                                         <tr>
                                             <th className="fixed-td-width">
+                                                Descrizione Intermediario PSP
+                                            </th>
+                                            <th className="fixed-td-width">
                                                 <Ordering currentOrderBy={this.state.order.by}
                                                           currentOrdering={this.state.order.ing} orderBy={"CODE"}
                                                           ordering={"DESC"} handleOrder={this.handleOrder}/>
                                                 Codice
-                                            </th>
-                                            <th className="fixed-td-width">
-                                                Descrizione Intermediario PSP
                                             </th>
                                             <th className="text-center">Abilitato</th>
                                             <th/>

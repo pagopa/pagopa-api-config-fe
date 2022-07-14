@@ -219,8 +219,8 @@ export default class BrokersPSP extends React.Component<IProps, IState> {
         this.state.brokers_psp.map((broker: any, index: number) => {
             const code = (
                 <tr key={index}>
-                    <td>{broker.broker_psp_code}</td>
                     <td>{broker.description}</td>
+                    <td>{broker.broker_psp_code}</td>
                     <td className="text-center">
                         {broker.enabled && <FaCheck className="text-success"/>}
                         {!broker.enabled && <FaTimes className="text-danger"/>}
@@ -274,12 +274,12 @@ export default class BrokersPSP extends React.Component<IProps, IState> {
                                         <thead>
                                         <tr>
                                             <th className="fixed-td-width">
-                                                <Ordering currentOrderBy={this.state.order.by} currentOrdering={this.state.order.ing} orderBy={"CODE"} ordering={"DESC"} handleOrder={this.handleOrder} />
-                                                Codice
-                                            </th>
-                                            <th className="fixed-td-width">
                                                 <Ordering currentOrderBy={this.state.order.by} currentOrdering={this.state.order.ing} orderBy={"NAME"} ordering={"DESC"} handleOrder={this.handleOrder} />
                                                 Descrizione
+                                            </th>
+                                            <th className="fixed-td-width">
+                                                <Ordering currentOrderBy={this.state.order.by} currentOrdering={this.state.order.ing} orderBy={"CODE"} ordering={"DESC"} handleOrder={this.handleOrder} />
+                                                Codice
                                             </th>
                                             <th className="text-center">Abilitato</th>
                                             <th/>
