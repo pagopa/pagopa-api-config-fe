@@ -266,7 +266,7 @@ export default class Channels extends React.Component<IProps, IState> {
                                                 Codice
                                             </th>
                                             <th className="fixed-td-width">
-                                                Descrizione Intermediario
+                                                Descrizione Intermediario PSP
                                             </th>
                                             <th className="text-center">Abilitato</th>
                                             <th/>
