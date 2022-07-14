@@ -78,6 +78,10 @@ export default class BrokersPSP extends React.Component<IProps, IState> {
             code: {
                 visible: true,
                 placeholder: "Codice"
+            },
+            name:{
+                visible: true,
+                placeholder: "Descrizione"
             }
         };
 
