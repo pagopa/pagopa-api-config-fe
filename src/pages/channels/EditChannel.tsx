@@ -83,7 +83,6 @@ export default class EditChannel extends React.Component<IProps, IState> {
                 serv_plugin: null,
                 flag_io: false,
                 agid: false,
-                description: "",
             } as any,
             paymentTypeList: [],
             paymentTypeLegend: {},
@@ -492,14 +491,6 @@ export default class EditChannel extends React.Component<IProps, IState> {
                                         </Card.Header>
                                         <Card.Body>
                                             <div className="row">
-                                                <Form.Group controlId="description" className="col-md-4">
-                                                    <Form.Label>Descrizione <span
-                                                        className="text-danger">*</span></Form.Label>
-                                                    <Form.Control name="description" placeholder=""
-                                                                  value={this.state.channel.description}
-                                                                  onChange={(e) => this.handleChange(e)}/>
-                                                </Form.Group>
-
                                                 <Form.Group controlId="channel_code" className="col-md-4">
                                                     <Form.Label>Codice <span className="text-danger">*</span></Form.Label>
                                                     <Form.Control name="channel_code" placeholder=""

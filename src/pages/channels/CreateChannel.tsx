@@ -35,7 +35,6 @@ export default class CreateChannel extends React.Component<IProps, IState> {
             channel: {
                 channel_code: "",
                 enabled: false,
-                description: "",
                 password: "",
                 protocol: "HTTPS",
                 ip: "",
@@ -249,12 +248,6 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                             </div>
                         </div>
                         <div className="row">
-                            <Form.Group controlId="description" className="col-md-4">
-                                <Form.Label>Descrizione <span className="text-danger">*</span></Form.Label>
-                                <Form.Control name="description" placeholder=""
-                                              onChange={(e) => this.handleChange(e)}/>
-                            </Form.Group>
-
                             <Form.Group controlId="channel_code" className="col-md-4">
                                 <Form.Label>Codice <span className="text-danger">*</span></Form.Label>
                                 <Form.Control name="channel_code" placeholder=""

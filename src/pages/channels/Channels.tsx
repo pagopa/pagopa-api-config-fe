@@ -36,7 +36,7 @@ interface IState {
 
 export default class Channels extends React.Component<IProps, IState> {
     static contextType = MsalContext;
-    private filter: {[item: string]: any};
+    private filter: { [item: string]: any };
 
     service = "/channels";
 
@@ -105,12 +105,12 @@ export default class Channels extends React.Component<IProps, IState> {
                         page_info: response.right.value.page_info
                     });
                 })
-                .catch(() => {
-                    toast.error("Problema nel recuperare i canali", {theme: "colored"});
-                })
-                .finally(() => {
-                    this.setState({isLoading: false});
-                });
+                    .catch(() => {
+                        toast.error("Problema nel recuperare i canali", {theme: "colored"});
+                    })
+                    .finally(() => {
+                        this.setState({isLoading: false});
+                    });
             });
     }
 
@@ -138,7 +138,7 @@ export default class Channels extends React.Component<IProps, IState> {
     }
 
     handleDetails(code: string) {
-        this.props.history.push( this.service + "/" + code);
+        this.props.history.push(this.service + "/" + code);
     }
 
     handleEdit(code: string) {
@@ -206,7 +206,7 @@ export default class Channels extends React.Component<IProps, IState> {
             const code = (
                 <tr key={index}>
                     <td>{channel.channel_code}</td>
-                    <td>{channel.description}</td>
+                    <td>{channel.broker_description}</td>
                     <td className="text-center">
                         {channel.enabled && <FaCheck className="text-success"/>}
                         {!channel.enabled && <FaTimes className="text-danger"/>}
@@ -222,7 +222,8 @@ export default class Channels extends React.Component<IProps, IState> {
                         <OverlayTrigger placement="top"
                                         overlay={<Tooltip id={`tooltip-edit-${index}`}>Modifica</Tooltip>}>
                             {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
-                            <FaEdit role="button" className="mr-3" onClick={() => this.handleEdit(channel.channel_code)}/>
+                            <FaEdit role="button" className="mr-3"
+                                    onClick={() => this.handleEdit(channel.channel_code)}/>
                         </OverlayTrigger>
                         {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
                         <OverlayTrigger placement="top"
@@ -248,7 +249,7 @@ export default class Channels extends React.Component<IProps, IState> {
                     <div className="col-md-12">
                         <div className="row">
                             <div className="col-md-8">
-                                <Filters configuration={this.filter} onFilter={this.handleFilterCallback} />
+                                <Filters configuration={this.filter} onFilter={this.handleFilterCallback}/>
                             </div>
                         </div>
                         {isLoading && (<FaSpinner className="spinner"/>)}
@@ -259,11 +260,13 @@ export default class Channels extends React.Component<IProps, IState> {
                                         <thead>
                                         <tr>
                                             <th className="fixed-td-width">
-                                                <Ordering currentOrderBy={this.state.order.by} currentOrdering={this.state.order.ing} orderBy={"CODE"} ordering={"DESC"} handleOrder={this.handleOrder} />
+                                                <Ordering currentOrderBy={this.state.order.by}
+                                                          currentOrdering={this.state.order.ing} orderBy={"CODE"}
+                                                          ordering={"DESC"} handleOrder={this.handleOrder}/>
                                                 Codice
                                             </th>
                                             <th className="fixed-td-width">
-                                                Descrizione
+                                                Descrizione Intermediario PSP
                                             </th>
                                             <th className="text-center">Abilitato</th>
                                             <th/>

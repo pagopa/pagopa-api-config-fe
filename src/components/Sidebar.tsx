@@ -2,6 +2,13 @@ import React from "react";
 import {Link} from "react-router-dom";
 import {FaCompress, FaExpand, FaHome} from "react-icons/fa";
 import {Accordion} from "react-bootstrap";
+import {toast} from "react-toastify";
+import {MsalContext} from "@azure/msal-react";
+import {loginRequest} from "../authConfig";
+import {apiClient} from "../util/apiClient";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import packageJson from "../../package.json";
 import SidebarItems from "./SidebarItems";
 
 interface IProps {
@@ -20,9 +27,12 @@ interface IState {
         configuration: boolean;
         batchoperation: boolean;
     };
+    be_version: string;
 }
 
 export default class Sidebar extends React.Component<IProps, IState> {
+    static contextType = MsalContext;
+
     constructor(props: IProps) {
         super(props);
 
@@ -32,11 +42,17 @@ export default class Sidebar extends React.Component<IProps, IState> {
                 psp: false,
                 configuration: false,
                 batchoperation: false
-            }
+            },
+            be_version: ''
         };
+
+        this.getInfo = this.getInfo.bind(this);
+
     }
 
     componentDidMount(): void {
+        this.getInfo();
+
         // workaround for react according gap
         SidebarItems.forEach(item => {
             if (this.props.history.location.pathname.split("/")[1] === item.route.substring(1)) {
@@ -80,6 +96,27 @@ export default class Sidebar extends React.Component<IProps, IState> {
         });
     }
 
+    getInfo() {
+        this.context.instance.acquireTokenSilent({
+            ...loginRequest,
+            account: this.context.accounts[0]
+        })
+            .then((response: any) => {
+                apiClient.healthCheck({
+                    Authorization: `Bearer ${response.idToken}`,
+                    ApiKey: "",
+                }).then((response: any) => {
+                    this.setState({
+                        be_version: response.right.value.version,
+                    });
+                })
+                    .catch(() => {
+                        toast.error("Problema nel recuperare le info del server", {theme: "colored"});
+                    });
+            });
+    }
+
+
     render(): React.ReactNode {
         const location = this.props.history.location;
 
@@ -88,10 +125,9 @@ export default class Sidebar extends React.Component<IProps, IState> {
         function getClass(item: any) {
             if (item.route.includes("icas")) {
                 return getPath(location.pathname).substring(1) === item.route.substring(1) ? "active" : "";
-            }
-            else {
+            } else {
                 return getPath(location.pathname).split("/")[1] === item.route.substring(1) &&
-                    getPath(location.pathname).includes(getPath(item.route)) ? "active" : "";
+                getPath(location.pathname).includes(getPath(item.route)) ? "active" : "";
             }
         }
 
@@ -113,17 +149,17 @@ export default class Sidebar extends React.Component<IProps, IState> {
 
         return (
             <>
-            <Link to={"/"} key={"home"} className={`list-group-item-action `}>
-                <div className="ml-1">
-                    <FaHome></FaHome> <span className="ml-1">Home</span>
-                </div>
-            </Link>
-            <Accordion onSelect={(activeIndex) => this.handleAccordion(activeIndex)}>
+                <Link to={"/"} key={"home"} className={`list-group-item-action `}>
+                    <div className="ml-1">
+                        <FaHome></FaHome> <span className="ml-1">Home</span>
+                    </div>
+                </Link>
+                <Accordion onSelect={(activeIndex) => this.handleAccordion(activeIndex)}>
                 <span>
                     <Accordion.Toggle as="div" eventKey="0">
                         <span className="navbar-heading" onClick={() => this.setDomainState("ec")}>
-                            <FaExpand className={`ml-2 mr-2 ${getCompressionClass("ec", true)}`} />
-                            <FaCompress className={`ml-2 mr-2 ${getCompressionClass("ec", false)}`} />
+                            <FaExpand className={`ml-2 mr-2 ${getCompressionClass("ec", true)}`}/>
+                            <FaCompress className={`ml-2 mr-2 ${getCompressionClass("ec", false)}`}/>
                             Dominio EC
                         </span>
                     </Accordion.Toggle>
@@ -135,11 +171,11 @@ export default class Sidebar extends React.Component<IProps, IState> {
                         </div>
                     </Accordion.Collapse>
                 </span>
-                <span>
+                    <span>
                     <Accordion.Toggle as="div" eventKey="1">
                         <span className="navbar-heading" onClick={() => this.setDomainState("psp")}>
-                            <FaExpand className={`ml-2 mr-2 ${getCompressionClass("psp", true)}`} />
-                            <FaCompress className={`ml-2 mr-2 ${getCompressionClass("psp", false)}`} />
+                            <FaExpand className={`ml-2 mr-2 ${getCompressionClass("psp", true)}`}/>
+                            <FaCompress className={`ml-2 mr-2 ${getCompressionClass("psp", false)}`}/>
                             Dominio PSP
                         </span>
                     </Accordion.Toggle>
@@ -151,11 +187,11 @@ export default class Sidebar extends React.Component<IProps, IState> {
                         </div>
                     </Accordion.Collapse>
                 </span>
-                <span>
+                    <span>
                     <Accordion.Toggle as="div" eventKey="2">
                         <span className="navbar-heading" onClick={() => this.setDomainState("configuration")}>
-                            <FaExpand className={`ml-2 mr-2 ${getCompressionClass("configuration", true)}`} />
-                            <FaCompress className={`ml-2 mr-2 ${getCompressionClass("configuration", false)}`} />
+                            <FaExpand className={`ml-2 mr-2 ${getCompressionClass("configuration", true)}`}/>
+                            <FaCompress className={`ml-2 mr-2 ${getCompressionClass("configuration", false)}`}/>
                             Configuration
                         </span>
                     </Accordion.Toggle>
@@ -167,11 +203,11 @@ export default class Sidebar extends React.Component<IProps, IState> {
                         </div>
                     </Accordion.Collapse>
                 </span>
-                <span>
+                    <span>
                     <Accordion.Toggle as="div" eventKey="3">
                         <span className="navbar-heading" onClick={() => this.setDomainState("batchoperation")}>
-                            <FaExpand className={`ml-2 mr-2 ${getCompressionClass("batchoperation", true)}`} />
-                            <FaCompress className={`ml-2 mr-2 ${getCompressionClass("batchoperation", false)}`} />
+                            <FaExpand className={`ml-2 mr-2 ${getCompressionClass("batchoperation", true)}`}/>
+                            <FaCompress className={`ml-2 mr-2 ${getCompressionClass("batchoperation", false)}`}/>
                             Operazioni Massive
                         </span>
                     </Accordion.Toggle>
@@ -183,7 +219,12 @@ export default class Sidebar extends React.Component<IProps, IState> {
                         </div>
                     </Accordion.Collapse>
                 </span>
-            </Accordion>
+                </Accordion>
+                <div className={"info-box"}>
+                    <div>versione FE {packageJson.version} </div>
+                    <div>versione BE {this.state.be_version}</div>
+                    Made with ❤️ by PagoPA S.p.A.
+                </div>
             </>
         );
     }
