@@ -209,8 +209,8 @@ export default class Brokers extends React.Component<IProps, IState> {
         this.state.brokers.map((broker: any, index: number) => {
             const code = (
                 <tr key={index}>
-                    <td>{broker.broker_code}</td>
                     <td>{broker.description}</td>
+                    <td>{broker.broker_code}</td>
                     <td className="text-center">
                         {broker.enabled && <FaCheck className="text-success"/>}
                         {!broker.enabled && <FaTimes className="text-danger"/>}
