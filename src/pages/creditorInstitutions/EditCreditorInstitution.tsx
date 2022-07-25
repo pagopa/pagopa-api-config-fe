@@ -514,7 +514,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                         resp.right.value.stations.map((station: any) => {
                             // eslint-disable-next-line functional/immutable-data
                             items.push({
-                                value: station.station_code,
+                                value: {code: station.station_code, version: station.version},
                                 label: station.station_code,
                             });
                         });
@@ -533,7 +533,14 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
     handleStationChange(event: any) {
         const key = "value" in event ? "station_code" : event.target.name as string;
         const value = "value" in event ? event.value : event.target.value;
-        const station = {...this.state.stationMgmt.station, [key]: value};
+        // eslint-disable-next-line functional/no-let
+        let station;
+        if (key === 'station_code'){
+            station = {...this.state.stationMgmt.station, ['station_code']: value.code, ['version']: value.version};
+        }
+        else {
+            station = {...this.state.stationMgmt.station, [key]: value};
+        }
         const stationMgmt = {...this.state.stationMgmt, station};
         this.setState({stationMgmt});
     }
@@ -1076,10 +1083,9 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                                                     </Form.Control>
 																</td>
                                                                 <td className="text-center">
-																	<Form.Control type="number" name="version" placeholder=""
-																				  value={this.state.stationMgmt.station?.version}
-																				  onChange={(e) => this.handleStationChange(e)}
-																	/>
+                                                                    <Form.Control name="version" placeholder="" type="number"
+                                                                                  value={this.state.stationMgmt.station?.version}
+                                                                                  readOnly />
                                                                 </td>
                                                                 <td className="text-center">
 																	<Form.Control as="select" placeholder="Stato" name="mod4"
