@@ -136,7 +136,8 @@ export default class CounterpartTables extends React.Component<IProps, IState> {
                 }
             };
             axios.post(baseUrl + basePath + "/counterparttables", data, config).then(() => {
-                toast.info("File Tabella delle Controparti caricato con successo");
+                toast.info("File Tabella delle Controparti caricato con successo.");
+                toast.success("Aggiornamento del campo 'PAGAMENTO_PRESSO_PSP' dell'Ente Creditore effettuato con successo.");
                 this.getPage(0);
             }).catch((err) => {
                 if (err.response.status === 409) {
