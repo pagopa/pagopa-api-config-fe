@@ -245,7 +245,36 @@ export default class EditChannel extends React.Component<IProps, IState> {
         this.setState({paymentType});
     }
 
+    isNotValidPort(port: number) {
+        return port ? port < 1 || port > 65535 : port;
+    }
+
+    isNotValidTimeout(no: number) {
+        return no < 0;
+    }
+
+    isNotValidThread(no: number) {
+        return no < 1;
+    }
+
     saveChannel() {
+        if (this.isNotValidPort(this.state.channel.port) || this.isNotValidPort(this.state.channel.proxy_port as number)
+                || this.isNotValidPort(this.state.channel.redirect_port as number)) {
+            this.toastError("La porta deve avere un valore compreso tra 1 e 65535.");
+            return;
+        }
+
+        if (this.isNotValidThread(this.state.channel.thread_number)) {
+            this.toastError("Il numero di thread deve essere un valore maggiore di 0.");
+            return;
+        }
+
+        if (this.isNotValidTimeout(this.state.channel.timeout_a)
+                || this.isNotValidTimeout(this.state.channel.timeout_b) || this.isNotValidTimeout(this.state.channel.timeout_c)) {
+            this.toastError("I timeout devono avere un valore maggiore o uguale a 0.");
+            return;
+        }
+
         this.context.instance.acquireTokenSilent({
             ...loginRequest,
             account: this.context.accounts[0]
@@ -556,7 +585,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
 
                                                 <Form.Group controlId="port" className="col-md-2">
                                                     <Form.Label>Porta <span className="text-danger">*</span></Form.Label>
-                                                    <Form.Control name="port" placeholder=""
+                                                    <Form.Control name="port" type="number" placeholder="" min={1} max={65535}
                                                                   value={this.state.channel.port}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
@@ -590,7 +619,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
                                                 <Form.Group controlId="redirect_port" className="col-md-2">
                                                     <Form.Label>Porta Redirect</Form.Label>
                                                             <Form.Control name="redirect_port" placeholder="" type="number"
-                                                                  value={this.state.channel.redirect_port}
+                                                                  value={this.state.channel.redirect_port} min={1} max={65535}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
 
@@ -629,7 +658,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
                                                 <Form.Group controlId="proxy_port" className="col-md-2">
                                                     <Form.Label>Porta Proxy</Form.Label>
                                                             <Form.Control name="proxy_port" placeholder="" type="number"
-                                                                  value={this.state.channel.proxy_port}
+                                                                  value={this.state.channel.proxy_port} min={1} max={65535}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
                                             </div>
@@ -665,28 +694,28 @@ export default class EditChannel extends React.Component<IProps, IState> {
                                                 <Form.Group controlId="thread_number" className="col-md-2">
                                                     <Form.Label>Numero Thread <span
                                                         className="text-danger">*</span></Form.Label>
-                                                    <Form.Control type="number" name="thread_number" placeholder=""
+                                                    <Form.Control type="number" name="thread_number" placeholder="" min={1}
                                                                   value={this.state.channel.thread_number}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
 
                                                 <Form.Group controlId="timeout_a" className="col-md-2">
                                                     <Form.Label>Timeout A <span className="text-danger">*</span></Form.Label>
-                                                    <Form.Control type="number" name="timeout_a" placeholder=""
+                                                    <Form.Control type="number" name="timeout_a" placeholder="" min={0}
                                                                   value={this.state.channel.timeout_a}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
 
                                                 <Form.Group controlId="timeout_b" className="col-md-2">
                                                     <Form.Label>Timeout B <span className="text-danger">*</span></Form.Label>
-                                                    <Form.Control type="number" name="timeout_b" placeholder=""
+                                                    <Form.Control type="number" name="timeout_b" placeholder="" min={0}
                                                                   value={this.state.channel.timeout_b}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
 
                                                 <Form.Group controlId="timeout_c" className="col-md-2">
                                                     <Form.Label>Timeout C <span className="text-danger">*</span></Form.Label>
-                                                    <Form.Control type="number" name="timeout_c" placeholder=""
+                                                    <Form.Control type="number" name="timeout_c" placeholder="" min={0}
                                                                   value={this.state.channel.timeout_c}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>

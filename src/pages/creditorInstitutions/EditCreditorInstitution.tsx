@@ -426,7 +426,16 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
         this.setState({stationMgmt});
     }
 
+    isNotValidNumber(no: number) {
+        return no ? no < 0 : no;
+    }
+
     saveStation(): void {
+        if (this.isNotValidNumber(this.state.stationMgmt.station.segregation_code) || this.isNotValidNumber(this.state.stationMgmt.station.application_code)) {
+            this.toastError("Segregation code e Application code devono assumere valore maggiore o uguale a 0.");
+            return;
+        }
+
         this.context.instance.acquireTokenSilent({
             ...loginRequest,
             account: this.context.accounts[0]
