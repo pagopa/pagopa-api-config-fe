@@ -45,7 +45,7 @@ export default class CreateStation extends React.Component<IProps, IState> {
                 timeout_a: 15,
                 timeout_b: 30,
                 timeout_c: 120,
-                version: 0,
+                version: 1,
                 flag_online: false,
                 ip_4mod: false,
                 new_password: "",
@@ -218,7 +218,7 @@ export default class CreateStation extends React.Component<IProps, IState> {
 
                             <Form.Group controlId="version" className="col-md-2">
                                 <Form.Label>Versione <span className="text-danger">*</span></Form.Label>
-                                <Form.Control type={"number"} name="version" onChange={(e) => this.handleChange(e)}/>
+                                <Form.Control type={"number"} name="version" min={1} max={2} onChange={(e) => this.handleChange(e)}/>
                             </Form.Group>
 
                             <Form.Group controlId="broker_code" className="col-md-3">
@@ -264,7 +264,7 @@ export default class CreateStation extends React.Component<IProps, IState> {
 
                             <Form.Group controlId="port" className="col-md-2">
                                 <Form.Label>Porta <span className="text-danger">*</span></Form.Label>
-                                <Form.Control type="number" name="port" value={String(this.state.station.port)}
+                                <Form.Control type="number" name="port" min={1} max={65535} value={String(this.state.station.port)}
                                               onChange={(e) => this.handleChange(e)}/>
                             </Form.Group>
 
@@ -300,7 +300,7 @@ export default class CreateStation extends React.Component<IProps, IState> {
 
                             <Form.Group controlId="port_4mod" className="col-md-2">
                                 <Form.Label>Porta Modello 4</Form.Label>
-                                <Form.Control name="port_4mod" onChange={(e) => this.handleChange(e)}/>
+                                <Form.Control name="port_4mod" type="number" min={1} max={65535} onChange={(e) => this.handleChange(e)}/>
                             </Form.Group>
 
                             <Form.Group controlId="service_4mod" className="col-md-3">
@@ -328,7 +328,7 @@ export default class CreateStation extends React.Component<IProps, IState> {
 
                             <Form.Group controlId="redirect_port" className="col-md-2">
                                 <Form.Label>Porta Redirect</Form.Label>
-                                <Form.Control name="redirect_port" onChange={(e) => this.handleChange(e)}/>
+                                <Form.Control name="redirect_port" type="number" min={1} max={65535} onChange={(e) => this.handleChange(e)}/>
                             </Form.Group>
 
                             <Form.Group controlId="redirect_path" className="col-md-3">
@@ -360,7 +360,7 @@ export default class CreateStation extends React.Component<IProps, IState> {
 
                             <Form.Group controlId="proxy_port" className="col-md-2">
                                 <Form.Label>Porta Proxy</Form.Label>
-                                <Form.Control name="proxy_port" onChange={(e) => this.handleChange(e)}/>
+                                <Form.Control name="proxy_port" type="number" min={1} max={65535} onChange={(e) => this.handleChange(e)}/>
                             </Form.Group>
 
                             <Form.Group controlId="proxy_username" className="col-md-3">
@@ -388,28 +388,28 @@ export default class CreateStation extends React.Component<IProps, IState> {
 
                             <Form.Group controlId="thread_number" className="col-md-2">
                                 <Form.Label>Numero Thread <span className="text-danger">*</span></Form.Label>
-                                <Form.Control type="number" name="thread_number"
+                                <Form.Control type="number" name="thread_number" min={1}
                                               value={String(this.state.station.thread_number)}
                                               onChange={(e) => this.handleChange(e)}/>
                             </Form.Group>
 
                             <Form.Group controlId="timeout_a" className="col-md-2">
                                 <Form.Label>Timeout A <span className="text-danger">*</span></Form.Label>
-                                <Form.Control type="number" name="timeout_a"
+                                <Form.Control type="number" name="timeout_a" min={0}
                                               value={String(this.state.station.timeout_a)}
                                               onChange={(e) => this.handleChange(e)}/>
                             </Form.Group>
 
                             <Form.Group controlId="timeout_b" className="col-md-2">
                                 <Form.Label>Timeout B <span className="text-danger">*</span></Form.Label>
-                                <Form.Control type="number" name="timeout_b"
+                                <Form.Control type="number" name="timeout_b" min={0}
                                               value={String(this.state.station.timeout_b)}
                                               onChange={(e) => this.handleChange(e)}/>
                             </Form.Group>
 
                             <Form.Group controlId="timeout_c" className="col-md-2">
                                 <Form.Label>Timeout C <span className="text-danger">*</span></Form.Label>
-                                <Form.Control type="number" name="timeout_c"
+                                <Form.Control type="number" name="timeout_c" min={0}
                                               value={String(this.state.station.timeout_c)}
                                               onChange={(e) => this.handleChange(e)}/>
                             </Form.Group>

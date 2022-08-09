@@ -655,25 +655,30 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                 {!item.enabled && <FaTimes className="text-danger"/>}
                             </td>
                             <td className="text-center">
-                                <Form.Control name="application_code" placeholder="" type="number"
+                                <Form.Control name="application_code" placeholder="" type="number" min={0}
                                               value={this.state.stationMgmt.station?.application_code}
                                               onChange={(e) => this.handleStationChange(e)}
                                 />
                             </td>
                             <td className="text-center">
-                                <Form.Control name="segregation_code" placeholder="" type="number"
+                                <Form.Control name="segregation_code" placeholder="" type="number" min={0}
                                               value={this.state.stationMgmt.station?.segregation_code}
                                               onChange={(e) => this.handleStationChange(e)}
                                 />
                             </td>
                             <td className="text-center">
-                                <Form.Control name="aux_digit" placeholder="" type="number"
+                                <Form.Control as="select" name="aux_digit" placeholder=""
                                               value={this.state.stationMgmt.station?.aux_digit}
-                                              onChange={(e) => this.handleStationChange(e)}
-                                />
+                                              onChange={(e) => this.handleStationChange(e)}>
+                                    <option value="null"></option>
+                                    <option value="0">0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                </Form.Control>
                             </td>
                             <td className="text-center">
-                                <Form.Control name="version" placeholder="" type="number"
+                                <Form.Control name="version" placeholder="" type="number" min={1} max={2}
                                               value={this.state.stationMgmt.station?.version}
                                               onChange={(e) => this.handleStationChange(e)}
                                 />
@@ -1060,13 +1065,13 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                                                 </td>
                                                                 <td className="text-center"></td>
                                                                 <td className="text-center">
-																	<Form.Control type="number" name="application_code" placeholder=""
+																	<Form.Control type="number" name="application_code" placeholder="" min={0}
 																				  value={this.state.stationMgmt.station?.application_code}
 																				  onChange={(e) => this.handleStationChange(e)}
                                                                     />
                                                                 </td>
 																<td className="text-center">
-																	<Form.Control type="number" name="segregation_code" placeholder=""
+																	<Form.Control type="number" name="segregation_code" placeholder="" min={0}
 																				  value={this.state.stationMgmt.station?.segregation_code}
 																				  onChange={(e) => this.handleStationChange(e)}
 																	/>
@@ -1083,7 +1088,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                                                     </Form.Control>
 																</td>
                                                                 <td className="text-center">
-                                                                    <Form.Control name="version" placeholder="" type="number"
+                                                                    <Form.Control name="version" placeholder="" type="number" min={1} max={2}
                                                                                   value={this.state.stationMgmt.station?.version}
                                                                                   readOnly />
                                                                 </td>
