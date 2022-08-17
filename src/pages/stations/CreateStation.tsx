@@ -47,6 +47,7 @@ export default class CreateStation extends React.Component<IProps, IState> {
                 timeout_c: 120,
                 version: 0,
                 flag_online: false,
+                invio_rt_istantaneo: false,
                 ip_4mod: false,
                 new_password: "",
                 port_4mod: 0,
@@ -381,6 +382,16 @@ export default class CreateStation extends React.Component<IProps, IState> {
                                 <Form.Control as="select" name="flag_online" placeholder="stato"
                                               onChange={(e) => this.handleChange(e)}
                                               defaultValue={String(this.state.station.flag_online)}>
+                                    <option value="true">Abilitato</option>
+                                    <option value="false">Non Abilitato</option>
+                                </Form.Control>
+                            </Form.Group>
+
+                            <Form.Group controlId="invio_rt_istantaneo" className="col-md-2">
+                                <Form.Label>Invio RT Istantaneo</Form.Label>
+                                <Form.Control as="select" name="invio_rt_istantaneo" placeholder="stato"
+                                              onChange={(e) => this.handleChange(e)}
+                                              defaultValue={String(this.state.station.invio_rt_istantaneo)}>
                                     <option value="true">Abilitato</option>
                                     <option value="false">Non Abilitato</option>
                                 </Form.Control>

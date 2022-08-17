@@ -454,6 +454,16 @@ export default class EditStation extends React.Component<IProps, IState> {
                                                     </Form.Control>
                                                 </Form.Group>
 
+                                                <Form.Group controlId="invio_rt_istantaneo" className="col-md-2">
+                                                    <Form.Label>Invio RT Istantaneo</Form.Label>
+                                                    <Form.Control as="select" name="invio_rt_istantaneo" placeholder="stato"
+                                                                  onChange={(e) => this.handleChange(e)}
+                                                                  value={String(this.state.station.invio_rt_istantaneo)}>
+                                                        <option value="true">Abilitato</option>
+                                                        <option value="false">Non Abilitato</option>
+                                                    </Form.Control>
+                                                </Form.Group>
+
                                                 <Form.Group controlId="thread_number" className="col-md-2">
                                                     <Form.Label>Numero Thread <span
                                                         className="text-danger">*</span></Form.Label>

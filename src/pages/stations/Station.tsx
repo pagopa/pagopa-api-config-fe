@@ -192,7 +192,6 @@ export default class Station extends React.Component<IProps, IState> {
         });
     }
 
-
     render(): React.ReactNode {
         const isError = this.state.isError;
         const isLoading = this.state.isLoading;
@@ -229,7 +228,7 @@ export default class Station extends React.Component<IProps, IState> {
                                     </div>
                                     <div className="row">
                                         <Form.Group controlId="enabled" className="col-md-2">
-                                            <Form.Label>Stato</Form.Label>
+                                            <Form.Label>Stato {String(this.state.station.invio_rt_istantaneo)}</Form.Label>
                                             <Form.Control as="select" placeholder="stato" readOnly>
                                                 {this.state.station.enabled && <option>Abilitato</option>}
                                                 {!this.state.station.enabled && <option>Non Abilitato</option>}
@@ -376,6 +375,14 @@ export default class Station extends React.Component<IProps, IState> {
                                             <Form.Control as="select" placeholder="stato" readOnly>
                                                 {this.state.station.flag_online && <option>Abilitato</option>}
                                                 {!this.state.station.flag_online && <option>Non Abilitato</option>}
+                                            </Form.Control>
+                                        </Form.Group>
+
+                                        <Form.Group controlId="invio_rt_istananeo" className="col-md-2">
+                                            <Form.Label>Invio RT Istantaneo</Form.Label>
+                                            <Form.Control as="select" placeholder="stato" readOnly>
+                                                {this.state.station.invio_rt_istantaneo && <option>Abilitato</option>}
+                                                {!this.state.station.invio_rt_istantaneo && <option>Non Abilitato</option>}
                                             </Form.Control>
                                         </Form.Group>
 
