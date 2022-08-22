@@ -179,6 +179,12 @@ export default class Pdds extends React.Component<IProps, IState> {
     }
 
     edit(configuration: Pdd) {
+        const port = configuration.port as number;
+        if (port < 1 || port > 65535) {
+            this.toastError("La porta deve avere un valore compreso tra 1 e 65535.");
+            return;
+        }
+
         this.context.instance.acquireTokenSilent({
             ...loginRequest,
             account: this.context.accounts[0]
@@ -213,6 +219,11 @@ export default class Pdds extends React.Component<IProps, IState> {
     }
 
     save() {
+        if (this.state.create.configuration.port < 1 || this.state.create.configuration.port > 65535) {
+            this.toastError("La porta deve avere un valore compreso tra 1 e 65535.");
+            return;
+        }
+
         this.context.instance.acquireTokenSilent({
             ...loginRequest,
             account: this.context.accounts[0]
@@ -485,12 +496,12 @@ export default class Pdds extends React.Component<IProps, IState> {
                                                                   onChange={(e) => this.handleInput(e)}/>
 												</td>
 												<td className="text-left">
-													<Form.Control name="ip" placeholder="IP" type="number"
+													<Form.Control name="ip" placeholder="IP"
 																  value={this.state.create.configuration.ip}
 																  onChange={(e) => this.handleInput(e)}/>
 												</td>
 												<td className="text-left">
-													<Form.Control name="port" placeholder="Porta"
+													<Form.Control name="port" placeholder="Porta" type="number" min={1} max={65535}
 																  value={this.state.create.configuration.port}
 																  onChange={(e) => this.handleInput(e)}/>
 												</td>
