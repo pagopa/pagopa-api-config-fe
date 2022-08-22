@@ -21,6 +21,7 @@ interface IState {
     backup: any;
     stationName: string;
     code: string;
+
     station: StationDetails;
     edit: boolean;
 }
@@ -119,8 +120,36 @@ export default class EditStation extends React.Component<IProps, IState> {
         this.setState({station});
     }
 
+    isNotValidPort(port: number) {
+        return port ? port < 1 || port > 65535 : port;
+    }
+
+    isNotValidTimeout(no: number) {
+        return no < 0;
+    }
+
+    isNotValidThread(no: number) {
+        return no < 1;
+    }
 
     saveStation() {
+        if (this.isNotValidPort(this.state.station.port) || this.isNotValidPort(this.state.station.port_4mod as number)
+                || this.isNotValidPort(this.state.station.proxy_port as number)
+                || this.isNotValidPort(this.state.station.redirect_port as number)) {
+            this.toastError("La porta deve avere un valore compreso tra 1 e 65535.");
+            return;
+        }
+        if (this.isNotValidThread(this.state.station.thread_number)){
+            this.toastError("Il numero di thread deve essere un valore maggiore di 0.");
+            return;
+        }
+
+        if (this.isNotValidTimeout(this.state.station.timeout_a)
+                || this.isNotValidTimeout(this.state.station.timeout_b) || this.isNotValidTimeout(this.state.station.timeout_c)) {
+            this.toastError("I timeout devono avere un valore maggiore o uguale a 0.");
+            return;
+        }
+
         this.context.instance.acquireTokenSilent({
             ...loginRequest,
             account: this.context.accounts[0]
@@ -250,7 +279,7 @@ export default class EditStation extends React.Component<IProps, IState> {
 
                                                 <Form.Group controlId="version" className="col-md-1">
                                                     <Form.Label>Versione <span className="text-danger">*</span></Form.Label>
-                                                    <Form.Control type={"number"} name="version"
+                                                    <Form.Control type={"number"} name="version" min={1} max={2}
                                                                   value={this.state.station.version}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
@@ -307,7 +336,8 @@ export default class EditStation extends React.Component<IProps, IState> {
 
                                                 <Form.Group controlId="port" className="col-md-2">
                                                     <Form.Label>Porta <span className="text-danger">*</span></Form.Label>
-                                                    <Form.Control type="number" name="port" value={this.state.station.port}
+                                                    <Form.Control type="number" name="port" min={1} max={65535}
+                                                                  value={this.state.station.port}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
 
@@ -348,7 +378,7 @@ export default class EditStation extends React.Component<IProps, IState> {
 
                                                 <Form.Group controlId="port_4mod" className="col-md-2">
                                                     <Form.Label>Porta Modello 4</Form.Label>
-                                                    <Form.Control name="port_4mod" type="number"
+                                                    <Form.Control name="port_4mod" type="number" min={1} max={65535}
                                                                   value={this.state.station.port_4mod}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
@@ -382,7 +412,7 @@ export default class EditStation extends React.Component<IProps, IState> {
 
                                                 <Form.Group controlId="redirect_port" className="col-md-2">
                                                     <Form.Label>Porta Redirect</Form.Label>
-                                                    <Form.Control name="redirect_port" type="number"
+                                                    <Form.Control name="redirect_port" type="number" min={1} max={65535}
                                                                   value={this.state.station.redirect_port}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
@@ -422,7 +452,7 @@ export default class EditStation extends React.Component<IProps, IState> {
 
                                                 <Form.Group controlId="proxy_port" className="col-md-2">
                                                     <Form.Label>Porta Proxy</Form.Label>
-                                                    <Form.Control name="proxy_port" type="number"
+                                                    <Form.Control name="proxy_port" type="number" min={1} max={65535}
                                                                   value={this.state.station.proxy_port}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
@@ -467,28 +497,28 @@ export default class EditStation extends React.Component<IProps, IState> {
                                                 <Form.Group controlId="thread_number" className="col-md-2">
                                                     <Form.Label>Numero Thread <span
                                                         className="text-danger">*</span></Form.Label>
-                                                    <Form.Control type="number" name="thread_number"
+                                                    <Form.Control type="number" name="thread_number" min={1}
                                                                   value={this.state.station.thread_number}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
 
                                                 <Form.Group controlId="timeout_a" className="col-md-2">
                                                     <Form.Label>Timeout A <span className="text-danger">*</span></Form.Label>
-                                                    <Form.Control type="number" name="timeout_a"
+                                                    <Form.Control type="number" name="timeout_a" min={0}
                                                                   value={this.state.station.timeout_a}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
 
                                                 <Form.Group controlId="timeout_b" className="col-md-2">
                                                     <Form.Label>Timeout B <span className="text-danger">*</span></Form.Label>
-                                                    <Form.Control type="number" name="timeout_b"
+                                                    <Form.Control type="number" name="timeout_b" min={0}
                                                                   value={this.state.station.timeout_b}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
 
                                                 <Form.Group controlId="timeout_c" className="col-md-2">
                                                     <Form.Label>Timeout C <span className="text-danger">*</span></Form.Label>
-                                                    <Form.Control type="number" name="timeout_c"
+                                                    <Form.Control type="number" name="timeout_c" min={0}
                                                                   value={this.state.station.timeout_c}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
