@@ -192,7 +192,6 @@ export default class Station extends React.Component<IProps, IState> {
         });
     }
 
-
     render(): React.ReactNode {
         const isError = this.state.isError;
         const isLoading = this.state.isLoading;
@@ -224,12 +223,14 @@ export default class Station extends React.Component<IProps, IState> {
                                             <h2>{this.state.station.station_code || "-"}</h2>
                                         </div>
                                         <div className="col-md-2 text-right">
-                                            <button className={"btn btn-primary"} onClick={() => this.handleEdit()} >Edit</button>
+                                            <button className={"btn btn-primary"}
+                                                    onClick={() => this.handleEdit()}>Edit
+                                            </button>
                                         </div>
                                     </div>
                                     <div className="row">
                                         <Form.Group controlId="enabled" className="col-md-2">
-                                            <Form.Label>Stato</Form.Label>
+                                            <Form.Label>Stato {String(this.state.station.invio_rt_istantaneo)}</Form.Label>
                                             <Form.Control as="select" placeholder="stato" readOnly>
                                                 {this.state.station.enabled && <option>Abilitato</option>}
                                                 {!this.state.station.enabled && <option>Non Abilitato</option>}
@@ -243,7 +244,8 @@ export default class Station extends React.Component<IProps, IState> {
 
                                         <Form.Group controlId="broker_code" className="col-md-3">
                                             <Form.Label>Codice Intermediario</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.broker_code} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.station.broker_code}
+                                                          readOnly/>
                                         </Form.Group>
 
                                         <Form.Group controlId="password" className="col-md-2">
@@ -253,7 +255,8 @@ export default class Station extends React.Component<IProps, IState> {
 
                                         <Form.Group controlId="new_password" className="col-md-2">
                                             <Form.Label>Nuova Password</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.new_password} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.station.new_password}
+                                                          readOnly/>
                                         </Form.Group>
                                     </div>
 
@@ -279,7 +282,8 @@ export default class Station extends React.Component<IProps, IState> {
                                         </Form.Group>
                                         <Form.Group controlId="pof_service" className="col-md-3">
                                             <Form.Label>Servizio POF</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.pof_service} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.station.pof_service}
+                                                          readOnly/>
                                         </Form.Group>
                                     </div>
 
@@ -297,12 +301,14 @@ export default class Station extends React.Component<IProps, IState> {
 
                                         <Form.Group controlId="port_4mod" className="col-md-2">
                                             <Form.Label>Porta Modello 4</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.port_4mod} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.station.port_4mod}
+                                                          readOnly/>
                                         </Form.Group>
 
                                         <Form.Group controlId="service_4mod" className="col-md-3">
                                             <Form.Label>Servizio Modello 4</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.service_4mod} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.station.service_4mod}
+                                                          readOnly/>
                                         </Form.Group>
                                     </div>
 
@@ -315,7 +321,8 @@ export default class Station extends React.Component<IProps, IState> {
 
                                         <Form.Group controlId="redirect_ip" className="col-md-2">
                                             <Form.Label>IP Redirect</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.redirect_ip} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.station.redirect_ip}
+                                                          readOnly/>
                                         </Form.Group>
 
                                         <Form.Group controlId="redirect_port" className="col-md-2">
@@ -332,7 +339,8 @@ export default class Station extends React.Component<IProps, IState> {
 
                                         <Form.Group controlId="redirect_query_string" className="col-md-3">
                                             <Form.Label>Parametri Redirect</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.redirect_query_string}
+                                            <Form.Control placeholder="-"
+                                                          value={this.state.station.redirect_query_string}
                                                           readOnly/>
                                         </Form.Group>
                                     </div>
@@ -348,12 +356,14 @@ export default class Station extends React.Component<IProps, IState> {
 
                                         <Form.Group controlId="proxy_host" className="col-md-2">
                                             <Form.Label>Indirizzo Proxy</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.proxy_host} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.station.proxy_host}
+                                                          readOnly/>
                                         </Form.Group>
 
                                         <Form.Group controlId="proxy_port" className="col-md-2">
                                             <Form.Label>Porta Proxy</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.proxy_port} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.station.proxy_port}
+                                                          readOnly/>
                                         </Form.Group>
 
                                         <Form.Group controlId="proxy_username" className="col-md-3">
@@ -379,6 +389,15 @@ export default class Station extends React.Component<IProps, IState> {
                                             </Form.Control>
                                         </Form.Group>
 
+                                        <Form.Group controlId="invio_rt_istananeo" className="col-md-2">
+                                            <Form.Label>Invio RT Istantaneo</Form.Label>
+                                            <Form.Control as="select" placeholder="stato" readOnly>
+                                                {this.state.station.invio_rt_istantaneo && <option>Abilitato</option>}
+                                                {!this.state.station.invio_rt_istantaneo &&
+                                                    <option>Non Abilitato</option>}
+                                            </Form.Control>
+                                        </Form.Group>
+
                                         <Form.Group controlId="thread_number" className="col-md-2">
                                             <Form.Label>Numero Thread</Form.Label>
                                             <Form.Control placeholder="-" value={this.state.station.thread_number}
@@ -387,70 +406,26 @@ export default class Station extends React.Component<IProps, IState> {
 
                                         <Form.Group controlId="timeout_a" className="col-md-2">
                                             <Form.Label>Timeout A</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.timeout_a} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.station.timeout_a}
+                                                          readOnly/>
                                         </Form.Group>
 
                                         <Form.Group controlId="timeout_b" className="col-md-2">
                                             <Form.Label>Timeout B</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.timeout_b} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.station.timeout_b}
+                                                          readOnly/>
                                         </Form.Group>
 
                                         <Form.Group controlId="timeout_c" className="col-md-2">
                                             <Form.Label>Timeout C</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.timeout_c} readOnly/>
+                                            <Form.Control placeholder="-" value={this.state.station.timeout_c}
+                                                          readOnly/>
                                         </Form.Group>
 
                                     </div>
 
                                     <div className="row mt-3">
-                                        <div className="col-md-12">
-                                            <Card>
-                                                <Card.Header>
-                                                    <div className={"d-flex justify-content-between align-items-center"}>
-                                                        <h5>Enti Creditori</h5>
-                                                        {Object.keys(ciList).length > 0 &&
-                                                            <OverlayTrigger placement="top"
-                                                                            overlay={<Tooltip
-                                                                                    id="csv-download">Scarica</Tooltip>}>
-                                                                <FaCloudDownloadAlt role="button" className="mr-3"
-                                                                                    onClick={() => this.downloadCsv()}/>
-                                                            </OverlayTrigger>
-                                                        }
-                                                    </div>
-                                                </Card.Header>
-                                                <Card.Body>
-                                                    {Object.keys(ciList).length === 0 && (
-                                                        <Alert className={'col-md-12'} variant={"warning"}><FaInfoCircle
-                                                            className="mr-1"/>EC non presenti</Alert>
-                                                    )}
-                                                    {Object.keys(ciList).length > 0 &&
-													<Table hover responsive size="sm">
-														<thead>
-														<tr>
-															<th className="">Ente creditore</th>
-															<th className="">Codice</th>
-															<th className="text-center">Abilitato</th>
-															<th className="text-center">Aux Digit</th>
-                                                            <th className="text-center">Application Code</th>
-                                                            <th className="text-center">Segregation Code</th>
-															<th className="text-center">Modello 4</th>
-															<th className="text-center">Broadcast</th>
-															<th className="text-center"></th>
-														</tr>
-														</thead>
-														<tbody>
-                                                        {ciList}
-														</tbody>
-													</Table>
-                                                    }
-                                                    {
-                                                        Object.keys(ciList).length > 0 && this.state.ci.page_info &&
-                                                        <Paginator pageInfo={this.state.ci.page_info}
-                                                                   onPageChanged={this.handlePageChange}/>
-                                                    }
-                                                </Card.Body>
-                                            </Card>
-                                        </div>
+                                        {this.getCIElement(ciList)}
                                     </div>
 
                                 </>
@@ -460,5 +435,56 @@ export default class Station extends React.Component<IProps, IState> {
                 </div>
             </div>
         );
+    }
+
+    getCIElement(ciList: any) {
+        return <div className="col-md-12">
+            <Card>
+                <Card.Header>
+                    <div className={"d-flex justify-content-between align-items-center"}>
+                        <h5>Enti Creditori</h5>
+                        {Object.keys(ciList).length > 0 &&
+                            <OverlayTrigger placement="top"
+                                            overlay={<Tooltip
+                                                id="csv-download">Scarica</Tooltip>}>
+                                <FaCloudDownloadAlt role="button" className="mr-3"
+                                                    onClick={() => this.downloadCsv()}/>
+                            </OverlayTrigger>
+                        }
+                    </div>
+                </Card.Header>
+                <Card.Body>
+                    {Object.keys(ciList).length === 0 && (
+                        <Alert className={'col-md-12'} variant={"warning"}><FaInfoCircle
+                            className="mr-1"/>EC non presenti</Alert>
+                    )}
+                    {Object.keys(ciList).length > 0 &&
+                        <Table hover responsive size="sm">
+                            <thead>
+                            <tr>
+                                <th className="">Ente creditore</th>
+                                <th className="">Codice</th>
+                                <th className="text-center">Abilitato</th>
+                                <th className="text-center">Aux Digit</th>
+                                <th className="text-center">Application Code</th>
+                                <th className="text-center">Segregation Code</th>
+                                <th className="text-center">Modello 4</th>
+                                <th className="text-center">Broadcast</th>
+                                <th className="text-center"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {ciList}
+                            </tbody>
+                        </Table>
+                    }
+                    {
+                        Object.keys(ciList).length > 0 && this.state.ci.page_info &&
+                        <Paginator pageInfo={this.state.ci.page_info}
+                                   onPageChanged={this.handlePageChange}/>
+                    }
+                </Card.Body>
+            </Card>
+        </div>;
     }
 }
