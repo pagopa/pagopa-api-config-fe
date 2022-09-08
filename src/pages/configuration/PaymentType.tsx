@@ -307,6 +307,9 @@ export default class PaymentTypePage extends React.Component<IProps, IState> {
         const configuration = this.state.create.configuration;
         // eslint-disable-next-line functional/immutable-data
         configuration[event.target.name] = event.target.value;
+        // eslint-disable-next-line functional/immutable-data
+        configuration.payment_type = configuration.payment_type.toUpperCase();
+
         this.setState({
             create: {
                 enabled: true,
