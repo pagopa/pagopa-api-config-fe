@@ -3,6 +3,9 @@ import {Alert, Breadcrumb, Button, Card, Form, OverlayTrigger, Table, Tooltip} f
 import {FaCheck, FaEdit, FaInfoCircle, FaPlus, FaSpinner, FaTimes, FaTrash} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
+import AsyncSelect from "react-select/async";
+import debounce from "lodash.debounce";
+import Select from "react-select";
 import {apiClient} from "../../util/apiClient";
 import {loginRequest} from "../../authConfig";
 import {PaymentServiceProviderDetails} from "../../../generated/api/PaymentServiceProviderDetails";
@@ -27,6 +30,7 @@ interface IState {
     edit: boolean;
     channelSection: any;
     channelCode: string;
+    optionPaymentTypes: [];
     paymentTypes: [];
     paymentTypeLegend: any;
 }
@@ -58,6 +62,7 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                 item: PspChannelCode
             },
             channelCode: "",
+            optionPaymentTypes: [],
             paymentTypes: [],
             paymentTypeLegend: {},
         };
@@ -70,6 +75,8 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
         this.newChannel = this.newChannel.bind(this);
         this.saveChannel = this.saveChannel.bind(this);
         this.discardChannel = this.discardChannel.bind(this);
+        this.debouncedChannelOptions = this.debouncedChannelOptions.bind(this);
+        this.getPaymentTypesOptions = this.getPaymentTypesOptions.bind(this);
         this.savePaymentServiceProvider = this.savePaymentServiceProvider.bind(this);
         this.discard = this.discard.bind(this);
     }
@@ -176,12 +183,13 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
         this.setState({paymentServiceProvider});
     }
 
-    handleChannel(channelCode: string) {
-        this.setState({channelCode});
+    handleChannel(event: any) {
+        this.setState({channelCode: event.value.channel_code});
+        // this.getPaymentTypesOptions(event.value.channel_code);
     }
 
-    handlePaymentTypes(paymentTypesString: string) {
-        const paymentTypes = paymentTypesString.toUpperCase().replace(/  +/g, ' ').split(" ") as [];
+    handlePaymentTypes(paymentTypesString: any) {
+        const paymentTypes = paymentTypesString.map((elem: any) => elem.value);
         this.setState({paymentTypes});
     }
 
@@ -356,6 +364,73 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
         this.setState({[section]: Object.assign({}, this.state.backup[section])} as any);
     }
 
+    debouncedChannelOptions = debounce((inputValue, callback) => {
+        this.promiseChannelOptions(inputValue, callback);
+    }, 500);
+
+
+    promiseChannelOptions(inputValue: string, callback: any) {
+        const limit = inputValue.length === 0 ? 10 : 99999;
+        const code = inputValue.length === 0 ? "" : inputValue;
+
+        this.context.instance.acquireTokenSilent({
+            ...loginRequest,
+            account: this.context.accounts[0]
+        })
+            .then((response: any) => {
+                apiClient.getChannels({
+                    Authorization: `Bearer ${response.idToken}`,
+                    ApiKey: "",
+                    page: 0,
+                    limit,
+                    code
+                }).then((resp: any) => {
+                    if (resp.right.status === 200) {
+                        const items: Array<any> = [];
+                        resp.right.value.channels.map((channel: any) => {
+                            // eslint-disable-next-line functional/immutable-data
+                            items.push({
+                                value: {channel_code: channel.channel_code, version: channel.version},
+                                label: channel.channel_code,
+                            });
+                        });
+                        callback(items);
+                    } else {
+                        callback([]);
+                    }
+                }).catch(() => {
+                    toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                    callback([]);
+                });
+            });
+    }
+
+
+    getPaymentTypesOptions(channel_code: string) {
+        this.context.instance.acquireTokenSilent({
+            ...loginRequest,
+            account: this.context.accounts[0]
+        })
+            .then((response: any) => {
+                apiClient.getChannelPaymentTypes({
+                    Authorization: `Bearer ${response.idToken}`,
+                    ApiKey: "",
+                    channelcode: channel_code
+                }).then((resp: any) => {
+                    if (resp.right.status === 200) {
+                        const options: any = resp.right.value.payment_types.map((item: string) => (
+                            {value: item, label: item}
+                        ));
+                        this.setState({optionPaymentTypes: options});
+                    }
+
+                }).catch(() => {
+                    toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                });
+            });
+    }
+
+
     render(): React.ReactNode {
         const isError = this.state.isError;
         const isLoading = this.state.isLoading;
@@ -376,9 +451,15 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                         }
                         {
                             this.state.channelSection.edit && this.state.channelSection.item === item &&
-                            <Form.Control name="payment_types" placeholder="Tipi versamento"
-                                          value={this.state.paymentTypes.join(" ")}
-                                          onChange={(e) => this.handlePaymentTypes(e.target.value)}/>
+                            <Select name="payment_types"
+                                    isMulti={true}
+                                    isSearchable={false}
+                                    value={this.state.paymentTypes.map(elem => ({value: elem, label: elem}))}
+                                    options={this.state.optionPaymentTypes}
+                                    onChange={(e) => this.handlePaymentTypes(e)}
+                                    onMenuOpen={() => this.getPaymentTypesOptions(item.channel_code)}
+                                    menuPortalTarget={document.body}
+                            />
                         }
                     </td>
                     <td className="text-right">
@@ -563,9 +644,11 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                                                         <Table hover responsive size="sm">
                                                             <thead>
                                                             <tr>
-                                                                <th className="">Codice <span className="text-danger">*</span></th>
+                                                                <th className="">Codice <span
+                                                                    className="text-danger">*</span></th>
                                                                 <th className="text-center">Abilitato</th>
-                                                                <th className="text-center">Tipo Versamento <span className="text-danger">*</span></th>
+                                                                <th className="text-center">Tipo Versamento <span
+                                                                    className="text-danger">*</span></th>
                                                                 <th className="text-right"/>
                                                             </tr>
                                                             </thead>
@@ -575,16 +658,33 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                                                                 this.state.channelSection.new &&
                                                                 <tr>
                                                                     <td>
-                                                                        <Form.Control name="channel_code"
-                                                                                      placeholder="Codice Canale"
-                                                                                      onChange={(e) => this.handleChannel(e.target.value)}/>
+                                                                        <AsyncSelect
+                                                                            cacheOptions defaultOptions
+                                                                            loadOptions={this.debouncedChannelOptions}
+                                                                            placeholder="Cerca codice canale"
+                                                                            menuPortalTarget={document.body}
+                                                                            styles={{
+                                                                                menuPortal: base => ({
+                                                                                    ...base,
+                                                                                    zIndex: 9999
+                                                                                })
+                                                                            }}
+                                                                            name="channel_code"
+                                                                            onChange={(e) => this.handleChannel(e)}
+                                                                        />
                                                                     </td>
                                                                     <td/>
                                                                     <td>
-                                                                        <Form.Control name="payment_types"
-                                                                                      placeholder="Tipi versamento"
-                                                                                      value={this.state.paymentTypes.join(" ")}
-                                                                                      onChange={(e) => this.handlePaymentTypes(e.target.value)}/>
+                                                                        <Select name="payment_types"
+                                                                                isMulti={true}
+                                                                                isDisabled={!this.state.channelCode}
+                                                                                isSearchable={false}
+                                                                                value={this.state.paymentTypes.map(elem => ({value: elem, label: elem}))}
+                                                                                options={this.state.optionPaymentTypes}
+                                                                                onChange={(e) => this.handlePaymentTypes(e)}
+                                                                                onMenuOpen={() => this.getPaymentTypesOptions(this.state.channelCode)}
+                                                                                menuPortalTarget={document.body}
+                                                                        />
                                                                     </td>
                                                                     <td/>
                                                                 </tr>
