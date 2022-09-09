@@ -30,7 +30,7 @@ interface IState {
     edit: boolean;
     channelSection: any;
     channelCode: string;
-    optionPaymentTypes: [];
+    optionPaymentTypes: any;
     paymentTypes: [];
     paymentTypeLegend: any;
 }
@@ -62,7 +62,7 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                 item: PspChannelCode
             },
             channelCode: "",
-            optionPaymentTypes: [],
+            optionPaymentTypes: {},
             paymentTypes: [],
             paymentTypeLegend: {},
         };
@@ -184,8 +184,7 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
     }
 
     handleChannel(event: any) {
-        this.setState({channelCode: event.value.channel_code});
-        // this.getPaymentTypesOptions(event.value.channel_code);
+        this.setState({channelCode: event.value.channel_code, paymentTypes: []});
     }
 
     handlePaymentTypes(paymentTypesString: any) {
@@ -407,6 +406,9 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
 
 
     getPaymentTypesOptions(channel_code: string) {
+        if (this.state.optionPaymentTypes[channel_code]) {
+            return;
+        }
         this.context.instance.acquireTokenSilent({
             ...loginRequest,
             account: this.context.accounts[0]
@@ -421,7 +423,11 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                         const options: any = resp.right.value.payment_types.map((item: string) => (
                             {value: item, label: item}
                         ));
-                        this.setState({optionPaymentTypes: options});
+
+                        const optionsMap: any = {};
+                        // eslint-disable-next-line functional/immutable-data
+                        optionsMap[channel_code] = options;
+                        this.setState({optionPaymentTypes: optionsMap});
                     }
 
                 }).catch(() => {
@@ -455,7 +461,7 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                                     isMulti={true}
                                     isSearchable={false}
                                     value={this.state.paymentTypes.map(elem => ({value: elem, label: elem}))}
-                                    options={this.state.optionPaymentTypes}
+                                    options={this.state.optionPaymentTypes[item.channel_code]}
                                     onChange={(e) => this.handlePaymentTypes(e)}
                                     onMenuOpen={() => this.getPaymentTypesOptions(item.channel_code)}
                                     menuPortalTarget={document.body}
@@ -679,8 +685,11 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                                                                                 isMulti={true}
                                                                                 isDisabled={!this.state.channelCode}
                                                                                 isSearchable={false}
-                                                                                value={this.state.paymentTypes.map(elem => ({value: elem, label: elem}))}
-                                                                                options={this.state.optionPaymentTypes}
+                                                                                value={this.state.paymentTypes.map(elem => ({
+                                                                                    value: elem,
+                                                                                    label: elem
+                                                                                }))}
+                                                                                options={this.state.optionPaymentTypes[this.state.channelCode]}
                                                                                 onChange={(e) => this.handlePaymentTypes(e)}
                                                                                 onMenuOpen={() => this.getPaymentTypesOptions(this.state.channelCode)}
                                                                                 menuPortalTarget={document.body}
