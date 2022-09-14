@@ -444,7 +444,21 @@ export default class CheckIca extends React.Component<IProps, IState> {
     }
 
     /**
-     * Check if validity date is correct (> now)
+     * Check if date is formatted properly
+     */
+    dateIsValid(dateStr: string): boolean {
+        const regex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/;
+
+        if (dateStr.match(regex) === null) {
+            return false;
+        }
+
+        const timestamp = new Date(dateStr).getTime();
+        return !Number.isNaN(timestamp);
+    }
+
+    /**
+     * Check if validity date is correct (formatted properly and > now)
      */
     checkValidityDate(): void {
         const validityDate = this.state.validityDate;
@@ -453,6 +467,10 @@ export default class CheckIca extends React.Component<IProps, IState> {
         let valid = "valid";
         // eslint-disable-next-line functional/no-let
         let action = "";
+        if (!this.dateIsValid(validityDate.value)) {
+            action = "La data di inizio validità non è formattata correttamente (yyyy-MM-ddTHH:mm:ss)";
+            valid = "not valid";
+        }
         if (new Date(validityDate.value).getTime() <= now) {
             action = "La data di inizio validità deve essere superiore alla data corrente";
             valid = "not valid";
