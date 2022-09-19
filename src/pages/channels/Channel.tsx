@@ -346,6 +346,12 @@ export default class Channel extends React.Component<IProps, IState> {
                                             </button>
                                         </div>
                                     </div>
+                                    <Card>
+                                        <Card.Header>
+                                           <h4>Anagrafica</h4>
+                                        </Card.Header>
+                                        <Card.Body>
+
                                     <div className="row">
                                         <Form.Group controlId="code" className="col-md-3">
                                             <Form.Label>Codice</Form.Label>
@@ -376,27 +382,32 @@ export default class Channel extends React.Component<IProps, IState> {
                                         </Form.Group>
                                     </div>
 
+                                            <div className={"divider"}></div>
+                                            <h4>Servizio</h4>
                                     <div className="row">
                                         <Form.Group controlId="protocol" className="col-md-2">
                                             <Form.Label>Protocollo</Form.Label>
                                             <Form.Control placeholder="-" value={this.state.channel.protocol} readOnly/>
                                         </Form.Group>
 
-                                        <Form.Group controlId="ip" className="col-md-2">
+                                        <Form.Group controlId="ip" className="col-md-6">
                                             <Form.Label>IP</Form.Label>
                                             <Form.Control placeholder="-" value={this.state.channel.ip} readOnly/>
                                         </Form.Group>
-
+                                            </div>
+                                            <div className="row">
                                         <Form.Group controlId="port" className="col-md-2">
                                             <Form.Label>Porta</Form.Label>
                                             <Form.Control placeholder="-" value={this.state.channel.port} readOnly/>
                                         </Form.Group>
 
-                                        <Form.Group controlId="service" className="col-md-3">
+                                                <Form.Group controlId="service" className="col-md-6">
                                             <Form.Label>Servizio</Form.Label>
                                             <Form.Control placeholder="-" value={this.state.channel.service} readOnly/>
                                         </Form.Group>
                                     </div>
+                                     <div className={"divider"}></div>
+                                            <h4>Redirect</h4>
                                     <div className="row">
                                         <Form.Group controlId="redirect_protocol" className="col-md-2">
                                             <Form.Label>Protocollo Redirect</Form.Label>
@@ -404,10 +415,13 @@ export default class Channel extends React.Component<IProps, IState> {
                                                           readOnly/>
                                         </Form.Group>
 
-                                        <Form.Group controlId="redirect_ip" className="col-md-2">
+                                        <Form.Group controlId="redirect_ip" className="col-md-6">
                                             <Form.Label>IP Redirect</Form.Label>
                                             <Form.Control placeholder="-" value={this.state.channel.redirect_ip} readOnly/>
                                         </Form.Group>
+                                            </div>
+                                            <div className={"row"}>
+
 
                                         <Form.Group controlId="redirect_port" className="col-md-2">
                                             <Form.Label>Porta Redirect</Form.Label>
@@ -415,18 +429,21 @@ export default class Channel extends React.Component<IProps, IState> {
                                                           readOnly/>
                                         </Form.Group>
 
-                                        <Form.Group controlId="redirect_path" className="col-md-3">
+                                        <Form.Group controlId="redirect_path" className="col-md-6">
                                             <Form.Label>Servizio Redirect</Form.Label>
                                             <Form.Control placeholder="-" value={this.state.channel.redirect_path}
                                                           readOnly/>
                                         </Form.Group>
 
-                                        <Form.Group controlId="redirect_query_string" className="col-md-3">
+                                        <Form.Group controlId="redirect_query_string" className="col-md-4">
                                             <Form.Label>Parametri Redirect</Form.Label>
                                             <Form.Control placeholder="-" value={this.state.channel.redirect_query_string}
                                                           readOnly/>
                                         </Form.Group>
                                     </div>
+
+                                            <div className={"divider"}></div>
+                                            <h4>Proxy</h4>
                                     <div className="row">
                                         <Form.Group controlId="proxy_enabled" className="col-md-2">
                                             <Form.Label>Proxy</Form.Label>
@@ -446,6 +463,9 @@ export default class Channel extends React.Component<IProps, IState> {
                                             <Form.Control placeholder="-" value={this.state.channel.proxy_port} readOnly/>
                                         </Form.Group>
                                     </div>
+
+                                            <div className={"divider"}></div>
+                                            <h4>Altre Informazioni</h4>
                                     <div className="row">
                                         <Form.Group controlId="payment_model" className="col-md-2">
                                             <Form.Label>Modello Pagamento</Form.Label>
@@ -547,6 +567,8 @@ export default class Channel extends React.Component<IProps, IState> {
                                             />
                                         </Form.Group>
                                     </div>
+                                        </Card.Body>
+                                    </Card>
 
                                     <div className="row mt-3">
                                         <div className="col-md-12">
