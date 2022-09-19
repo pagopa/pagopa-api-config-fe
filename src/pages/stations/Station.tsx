@@ -181,8 +181,7 @@ export default class Station extends React.Component<IProps, IState> {
                         anchor.download = this.state.station.station_code + '-enti_creditori.csv';
                         anchor.click();
                         window.URL.revokeObjectURL(objectUrl);
-                    }
-                    else {
+                    } else {
                         toast.warn("Problemi nella generazione del file CSV richiesto.", {theme: "colored"});
                     }
                 })
@@ -228,202 +227,233 @@ export default class Station extends React.Component<IProps, IState> {
                                             </button>
                                         </div>
                                     </div>
-                                    <div className="row">
-                                        <Form.Group controlId="enabled" className="col-md-2">
-                                            <Form.Label>Stato {String(this.state.station.invio_rt_istantaneo)}</Form.Label>
-                                            <Form.Control as="select" placeholder="stato" readOnly>
-                                                {this.state.station.enabled && <option>Abilitato</option>}
-                                                {!this.state.station.enabled && <option>Non Abilitato</option>}
-                                            </Form.Control>
-                                        </Form.Group>
+                                    <Card>
+                                        <Card.Header>
+                                           <h4>Anagrafica</h4>
+                                        </Card.Header>
+                                        <Card.Body>
 
-                                        <Form.Group controlId="version" className="col-md-2">
-                                            <Form.Label>Versione</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.version} readOnly/>
-                                        </Form.Group>
+                                            <div className="row">
+                                                <Form.Group controlId="enabled" className="col-md-2">
+                                                    <Form.Label>Stato {String(this.state.station.invio_rt_istantaneo)}</Form.Label>
+                                                    <Form.Control as="select" placeholder="stato" readOnly>
+                                                        {this.state.station.enabled && <option>Abilitato</option>}
+                                                        {!this.state.station.enabled && <option>Non Abilitato</option>}
+                                                    </Form.Control>
+                                                </Form.Group>
 
-                                        <Form.Group controlId="broker_code" className="col-md-3">
-                                            <Form.Label>Codice Intermediario</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.broker_code}
-                                                          readOnly/>
-                                        </Form.Group>
+                                                <Form.Group controlId="version" className="col-md-2">
+                                                    <Form.Label>Versione</Form.Label>
+                                                    <Form.Control placeholder="-" value={this.state.station.version}
+                                                                  readOnly/>
+                                                </Form.Group>
 
-                                        <Form.Group controlId="password" className="col-md-2">
-                                            <Form.Label>Password</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.password} readOnly/>
-                                        </Form.Group>
+                                                <Form.Group controlId="broker_code" className="col-md-3">
+                                                    <Form.Label>Codice Intermediario</Form.Label>
+                                                    <Form.Control placeholder="-" value={this.state.station.broker_code}
+                                                                  readOnly/>
+                                                </Form.Group>
 
-                                        <Form.Group controlId="new_password" className="col-md-2">
-                                            <Form.Label>Nuova Password</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.new_password}
-                                                          readOnly/>
-                                        </Form.Group>
-                                    </div>
+                                                <Form.Group controlId="password" className="col-md-2">
+                                                    <Form.Label>Password</Form.Label>
+                                                    <Form.Control placeholder="-" value={this.state.station.password}
+                                                                  readOnly/>
+                                                </Form.Group>
 
-                                    <div className="row">
-                                        <Form.Group controlId="protocol" className="col-md-2">
-                                            <Form.Label>Protocollo</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.protocol} readOnly/>
-                                        </Form.Group>
+                                                <Form.Group controlId="new_password" className="col-md-2">
+                                                    <Form.Label>Nuova Password</Form.Label>
+                                                    <Form.Control placeholder="-" value={this.state.station.new_password}
+                                                                  readOnly/>
+                                                </Form.Group>
+                                            </div>
 
-                                        <Form.Group controlId="ip" className="col-md-2">
-                                            <Form.Label>IP</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.ip} readOnly/>
-                                        </Form.Group>
+                                            <div className={"divider"}></div>
+                                            <h4>Servizio</h4>
+                                            <div className="row">
+                                                <Form.Group controlId="protocol" className="col-md-2">
+                                                    <Form.Label>Protocollo</Form.Label>
+                                                    <Form.Control placeholder="-" value={this.state.station.protocol}
+                                                                  readOnly/>
+                                                </Form.Group>
 
-                                        <Form.Group controlId="port" className="col-md-2">
-                                            <Form.Label>Porta</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.port} readOnly/>
-                                        </Form.Group>
+                                                <Form.Group controlId="ip" className="col-md-5">
+                                                    <Form.Label>IP</Form.Label>
+                                                    <Form.Control placeholder="-" value={this.state.station.ip} readOnly/>
+                                                </Form.Group>
+                                            </div>
+                                            <div className="row">
+                                                <Form.Group controlId="port" className="col-md-2">
+                                                    <Form.Label>Porta</Form.Label>
+                                                    <Form.Control placeholder="-" value={this.state.station.port} readOnly/>
+                                                </Form.Group>
 
-                                        <Form.Group controlId="service" className="col-md-3">
-                                            <Form.Label>Servizio</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.service} readOnly/>
-                                        </Form.Group>
-                                        <Form.Group controlId="pof_service" className="col-md-3">
-                                            <Form.Label>Servizio POF</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.pof_service}
-                                                          readOnly/>
-                                        </Form.Group>
-                                    </div>
+                                                <Form.Group controlId="service" className="col-md">
+                                                    <Form.Label>Servizio</Form.Label>
+                                                    <Form.Control placeholder="-" value={this.state.station.service}
+                                                                  readOnly/>
+                                                </Form.Group>
+                                                <Form.Group controlId="pof_service" className="col-md">
+                                                    <Form.Label>Servizio POF</Form.Label>
+                                                    <Form.Control placeholder="-" value={this.state.station.pof_service}
+                                                                  readOnly/>
+                                                </Form.Group>
+                                            </div>
 
-                                    <div className="row">
-                                        <Form.Group controlId="protocol_4mod" className="col-md-2">
-                                            <Form.Label>Protocollo Modello 4</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.protocol_4mod}
-                                                          readOnly/>
-                                        </Form.Group>
+                                            <div className={"divider"}></div>
+                                            <h4>Modello 4</h4>
+                                            <div className={"row"}>
+                                                <Form.Group controlId="protocol_4mod" className={"col-md-2"}>
+                                                    <Form.Label>Protocollo Modello 4</Form.Label>
+                                                    <Form.Control placeholder="-" value={this.state.station.protocol_4mod}
+                                                                  readOnly/>
+                                                </Form.Group>
 
-                                        <Form.Group controlId="ip_4mod" className="col-md-2">
-                                            <Form.Label>IP Modello 4</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.ip_4mod} readOnly/>
-                                        </Form.Group>
+                                                <Form.Group controlId="ip_4mod" className={"col-md-7"}>
+                                                    <Form.Label>IP Modello 4</Form.Label>
+                                                    <Form.Control placeholder="-" value={this.state.station.ip_4mod}
+                                                                  readOnly/>
+                                                </Form.Group>
 
-                                        <Form.Group controlId="port_4mod" className="col-md-2">
-                                            <Form.Label>Porta Modello 4</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.port_4mod}
-                                                          readOnly/>
-                                        </Form.Group>
+                                            </div>
+                                            <div className={"row"}>
+                                                <Form.Group controlId="port_4mod" className={"col-md-2"}>
+                                                    <Form.Label>Porta Modello 4</Form.Label>
+                                                    <Form.Control placeholder="-" value={this.state.station.port_4mod}
+                                                                  readOnly/>
+                                                </Form.Group>
 
-                                        <Form.Group controlId="service_4mod" className="col-md-3">
-                                            <Form.Label>Servizio Modello 4</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.service_4mod}
-                                                          readOnly/>
-                                        </Form.Group>
-                                    </div>
+                                                <Form.Group controlId="service_4mod" className={"col-md-7"}>
+                                                    <Form.Label>Servizio Modello 4</Form.Label>
+                                                    <Form.Control placeholder="-" value={this.state.station.service_4mod}
+                                                                  readOnly/>
+                                                </Form.Group>
+                                            </div>
 
-                                    <div className="row">
-                                        <Form.Group controlId="redirect_protocol" className="col-md-2">
-                                            <Form.Label>Protocollo Redirect</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.redirect_protocol}
-                                                          readOnly/>
-                                        </Form.Group>
+                                            <div className={"divider"}></div>
+                                            <h4>Redirect</h4>
+                                            <div className="row">
+                                                <Form.Group controlId="redirect_protocol" className="col-md-2">
+                                                    <Form.Label>Protocollo Redirect</Form.Label>
+                                                    <Form.Control placeholder="-"
+                                                                  value={this.state.station.redirect_protocol}
+                                                                  readOnly/>
+                                                </Form.Group>
 
-                                        <Form.Group controlId="redirect_ip" className="col-md-2">
-                                            <Form.Label>IP Redirect</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.redirect_ip}
-                                                          readOnly/>
-                                        </Form.Group>
+                                                <Form.Group controlId="redirect_ip" className="col-md-7">
+                                                    <Form.Label>IP Redirect</Form.Label>
+                                                    <Form.Control placeholder="-" value={this.state.station.redirect_ip}
+                                                                  readOnly/>
+                                                </Form.Group>
+                                            </div>
+                                            <div className={"row"}>
 
-                                        <Form.Group controlId="redirect_port" className="col-md-2">
-                                            <Form.Label>Porta Redirect</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.redirect_port}
-                                                          readOnly/>
-                                        </Form.Group>
 
-                                        <Form.Group controlId="redirect_path" className="col-md-3">
-                                            <Form.Label>Servizio Redirect</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.redirect_path}
-                                                          readOnly/>
-                                        </Form.Group>
+                                                <Form.Group controlId="redirect_port" className="col-md-2">
+                                                    <Form.Label>Porta Redirect</Form.Label>
+                                                    <Form.Control placeholder="-" value={this.state.station.redirect_port}
+                                                                  readOnly/>
+                                                </Form.Group>
 
-                                        <Form.Group controlId="redirect_query_string" className="col-md-3">
-                                            <Form.Label>Parametri Redirect</Form.Label>
-                                            <Form.Control placeholder="-"
-                                                          value={this.state.station.redirect_query_string}
-                                                          readOnly/>
-                                        </Form.Group>
-                                    </div>
+                                                <Form.Group controlId="redirect_path" className="col-md">
+                                                    <Form.Label>Servizio Redirect</Form.Label>
+                                                    <Form.Control placeholder="-" value={this.state.station.redirect_path}
+                                                                  readOnly/>
+                                                </Form.Group>
 
-                                    <div className="row">
-                                        <Form.Group controlId="proxy_enabled" className="col-md-2">
-                                            <Form.Label>Proxy</Form.Label>
-                                            <Form.Control as="select" placeholder="stato" readOnly>
-                                                {this.state.station.proxy_enabled && <option>Abilitato</option>}
-                                                {!this.state.station.proxy_enabled && <option>Non Abilitato</option>}
-                                            </Form.Control>
-                                        </Form.Group>
+                                                <Form.Group controlId="redirect_query_string" className="col-md-3">
+                                                    <Form.Label>Parametri Redirect</Form.Label>
+                                                    <Form.Control placeholder="-"
+                                                                  value={this.state.station.redirect_query_string}
+                                                                  readOnly/>
+                                                </Form.Group>
+                                            </div>
 
-                                        <Form.Group controlId="proxy_host" className="col-md-2">
-                                            <Form.Label>Indirizzo Proxy</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.proxy_host}
-                                                          readOnly/>
-                                        </Form.Group>
+                                            <div className={"divider"}></div>
+                                            <h4>Proxy</h4>
+                                            <div className="row">
+                                                <Form.Group controlId="proxy_enabled" className="col-md-2">
+                                                    <Form.Label>Proxy</Form.Label>
+                                                    <Form.Control as="select" placeholder="stato" readOnly>
+                                                        {this.state.station.proxy_enabled && <option>Abilitato</option>}
+                                                        {!this.state.station.proxy_enabled &&
+                                                            <option>Non Abilitato</option>}
+                                                    </Form.Control>
+                                                </Form.Group>
 
-                                        <Form.Group controlId="proxy_port" className="col-md-2">
-                                            <Form.Label>Porta Proxy</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.proxy_port}
-                                                          readOnly/>
-                                        </Form.Group>
+                                                <Form.Group controlId="proxy_host" className="col-md-2">
+                                                    <Form.Label>Indirizzo Proxy</Form.Label>
+                                                    <Form.Control placeholder="-" value={this.state.station.proxy_host}
+                                                                  readOnly/>
+                                                </Form.Group>
 
-                                        <Form.Group controlId="proxy_username" className="col-md-3">
-                                            <Form.Label>Username Proxy</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.proxy_username}
-                                                          readOnly/>
-                                        </Form.Group>
+                                                <Form.Group controlId="proxy_port" className="col-md-2">
+                                                    <Form.Label>Porta Proxy</Form.Label>
+                                                    <Form.Control placeholder="-" value={this.state.station.proxy_port}
+                                                                  readOnly/>
+                                                </Form.Group>
 
-                                        <Form.Group controlId="proxy_password" className="col-md-3">
-                                            <Form.Label>Password Proxy</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.proxy_password}
-                                                          readOnly/>
-                                        </Form.Group>
-                                    </div>
+                                                <Form.Group controlId="proxy_username" className="col-md-3">
+                                                    <Form.Label>Username Proxy</Form.Label>
+                                                    <Form.Control placeholder="-" value={this.state.station.proxy_username}
+                                                                  readOnly/>
+                                                </Form.Group>
 
-                                    <div className="row">
+                                                <Form.Group controlId="proxy_password" className="col-md-3">
+                                                    <Form.Label>Password Proxy</Form.Label>
+                                                    <Form.Control placeholder="-" value={this.state.station.proxy_password}
+                                                                  readOnly/>
+                                                </Form.Group>
+                                            </div>
 
-                                        <Form.Group controlId="flag_online" className="col-md-2">
-                                            <Form.Label>Flag Online</Form.Label>
-                                            <Form.Control as="select" placeholder="stato" readOnly>
-                                                {this.state.station.flag_online && <option>Abilitato</option>}
-                                                {!this.state.station.flag_online && <option>Non Abilitato</option>}
-                                            </Form.Control>
-                                        </Form.Group>
+                                            <div className={"divider"}></div>
+                                            <h4>Altre Informazioni</h4>
+                                            <div className="row">
 
-                                        <Form.Group controlId="invio_rt_istananeo" className="col-md-2">
-                                            <Form.Label>Invio RT Istantaneo</Form.Label>
-                                            <Form.Control as="select" placeholder="stato" readOnly>
-                                                {this.state.station.invio_rt_istantaneo && <option>Abilitato</option>}
-                                                {!this.state.station.invio_rt_istantaneo &&
-                                                    <option>Non Abilitato</option>}
-                                            </Form.Control>
-                                        </Form.Group>
+                                                <Form.Group controlId="flag_online" className="col-md-2">
+                                                    <Form.Label>Flag Online</Form.Label>
+                                                    <Form.Control as="select" placeholder="stato" readOnly>
+                                                        {this.state.station.flag_online && <option>Abilitato</option>}
+                                                        {!this.state.station.flag_online && <option>Non Abilitato</option>}
+                                                    </Form.Control>
+                                                </Form.Group>
 
-                                        <Form.Group controlId="thread_number" className="col-md-2">
-                                            <Form.Label>Numero Thread</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.thread_number}
-                                                          readOnly/>
-                                        </Form.Group>
+                                                <Form.Group controlId="invio_rt_istananeo" className="col-md-2">
+                                                    <Form.Label>Invio RT Istantaneo</Form.Label>
+                                                    <Form.Control as="select" placeholder="stato" readOnly>
+                                                        {this.state.station.invio_rt_istantaneo &&
+                                                            <option>Abilitato</option>}
+                                                        {!this.state.station.invio_rt_istantaneo &&
+                                                            <option>Non Abilitato</option>}
+                                                    </Form.Control>
+                                                </Form.Group>
 
-                                        <Form.Group controlId="timeout_a" className="col-md-2">
-                                            <Form.Label>Timeout A</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.timeout_a}
-                                                          readOnly/>
-                                        </Form.Group>
+                                                <Form.Group controlId="thread_number" className="col-md-2">
+                                                    <Form.Label>Numero Thread</Form.Label>
+                                                    <Form.Control placeholder="-" value={this.state.station.thread_number}
+                                                                  readOnly/>
+                                                </Form.Group>
 
-                                        <Form.Group controlId="timeout_b" className="col-md-2">
-                                            <Form.Label>Timeout B</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.timeout_b}
-                                                          readOnly/>
-                                        </Form.Group>
+                                                <Form.Group controlId="timeout_a" className="col-md-2">
+                                                    <Form.Label>Timeout A</Form.Label>
+                                                    <Form.Control placeholder="-" value={this.state.station.timeout_a}
+                                                                  readOnly/>
+                                                </Form.Group>
 
-                                        <Form.Group controlId="timeout_c" className="col-md-2">
-                                            <Form.Label>Timeout C</Form.Label>
-                                            <Form.Control placeholder="-" value={this.state.station.timeout_c}
-                                                          readOnly/>
-                                        </Form.Group>
+                                                <Form.Group controlId="timeout_b" className="col-md-2">
+                                                    <Form.Label>Timeout B</Form.Label>
+                                                    <Form.Control placeholder="-" value={this.state.station.timeout_b}
+                                                                  readOnly/>
+                                                </Form.Group>
 
-                                    </div>
+                                                <Form.Group controlId="timeout_c" className="col-md-2">
+                                                    <Form.Label>Timeout C</Form.Label>
+                                                    <Form.Control placeholder="-" value={this.state.station.timeout_c}
+                                                                  readOnly/>
+                                                </Form.Group>
 
+                                            </div>
+                                        </Card.Body>
+                                    </Card>
                                     <div className="row mt-3">
                                         {this.getCIElement(ciList)}
                                     </div>
