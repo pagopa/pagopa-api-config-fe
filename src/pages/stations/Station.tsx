@@ -47,7 +47,6 @@ export default class Station extends React.Component<IProps, IState> {
     }
 
     getStationCall(code: string): void {
-        console.log(this.context);
         this.context.instance.acquireTokenSilent({
             ...loginRequest,
             account: this.context.accounts[0]

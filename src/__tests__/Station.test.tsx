@@ -20,7 +20,7 @@ test("rendering Station through navigation on /stations/{id}", () => {
     const match = {params: {code: 1234567_01}};
 
     const wrapper = shallow(<Station history={history} match={match}></Station>,
-        { disableLifecycleMethods: true });
+        {disableLifecycleMethods: true});
 
     wrapper.setState({isLoading: false, isError: false, code: 1234567_01});
 
