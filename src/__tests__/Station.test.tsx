@@ -1,8 +1,7 @@
 import React from "react";
-import { render, screen} from "@testing-library/react";
+import {render, screen} from "@testing-library/react";
 import {createMemoryHistory} from 'history';
-import { Router } from 'react-router-dom';
-import Routes from "../util/routes";
+import Station from "../pages/stations/Station";
 
 /**
  * @jest-environment jsdom
@@ -10,16 +9,17 @@ import Routes from "../util/routes";
 
 test("rendering Station through navigation on /stations/{id}", () => {
 
-  const history = createMemoryHistory();
-  const route = '/stations/1234567_01';
-  history.push(route);
+    const history = createMemoryHistory();
+    const route = '/stations/1234567_01';
+    history.push(route);
+    const match = {params: {code: 1234567_01}};
 
-  render(
-          <Router history={history}>
-            <Routes />
-          </Router>
-  );
+    render(
+        <Station history={history} match={match}>
+        </Station>
+    );
 
-  // verify page content for expected route
-  expect(screen.getAllByText(/Stato/i));
+    // verify page content for expected route
+    expect(screen.getAllByText(/Stazioni/i));
 });
+
