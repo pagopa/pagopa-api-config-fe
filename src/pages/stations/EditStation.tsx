@@ -277,14 +277,14 @@ export default class EditStation extends React.Component<IProps, IState> {
                                                     </Form.Control>
                                                 </Form.Group>
 
-                                                <Form.Group controlId="version" className="col-md-1">
+                                                <Form.Group controlId="version" className="col-md-2">
                                                     <Form.Label>Versione <span className="text-danger">*</span></Form.Label>
                                                     <Form.Control type={"number"} name="version" min={1} max={2}
                                                                   value={this.state.station.version}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
 
-                                                <Form.Group controlId="broker_code" className="col-md-2">
+                                                <Form.Group controlId="broker_code" className="col-md-3">
                                                     <Form.Label>Codice Intermediario <span
                                                         className="text-danger">*</span></Form.Label>
                                                     <AsyncSelect
@@ -314,6 +314,8 @@ export default class EditStation extends React.Component<IProps, IState> {
                                                 </Form.Group>
                                             </div>
 
+                                            <div className={"divider"}></div>
+                                            <h4>Servizio</h4>
                                             <div className="row">
                                                 <Form.Group controlId="protocol" className="col-md-2">
                                                     <Form.Label>Protocollo <span
@@ -326,14 +328,15 @@ export default class EditStation extends React.Component<IProps, IState> {
                                                     </Form.Control>
                                                 </Form.Group>
 
-                                                <Form.Group controlId="ip" className="col-md-2">
+                                                <Form.Group controlId="ip" className="col-md-5">
                                                     <Form.Label>IP</Form.Label>
                                                     <Form.Control name="ip"
 
                                                                   value={this.state.station.ip}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
-
+                                            </div>
+                                            <div className="row">
                                                 <Form.Group controlId="port" className="col-md-2">
                                                     <Form.Label>Porta <span className="text-danger">*</span></Form.Label>
                                                     <Form.Control type="number" name="port" min={1} max={65535}
@@ -341,7 +344,7 @@ export default class EditStation extends React.Component<IProps, IState> {
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
 
-                                                <Form.Group controlId="service" className="col-md-3">
+                                                <Form.Group controlId="service" className="col-md">
                                                     <Form.Label>Servizio</Form.Label>
                                                     <Form.Control name="service"
                                                                   value={this.state.station.service}
@@ -349,7 +352,7 @@ export default class EditStation extends React.Component<IProps, IState> {
                                                 </Form.Group>
 
 
-                                                <Form.Group controlId="pof_service" className="col-md-3">
+                                                <Form.Group controlId="pof_service" className="col-md">
                                                     <Form.Label>Servizio POF</Form.Label>
                                                     <Form.Control name="pof_service"
                                                                   value={this.state.station.pof_service}
@@ -357,8 +360,10 @@ export default class EditStation extends React.Component<IProps, IState> {
                                                 </Form.Group>
                                             </div>
 
-                                            <div className="row">
-                                                <Form.Group controlId="protocol_4mod" className="col-md-2">
+                                            <div className={"divider"}></div>
+                                            <h4>Modello 4</h4>
+                                            <div className={"row"}>
+                                                <Form.Group controlId="protocol_4mod" className={"col-md-2"}>
                                                     <Form.Label>Protocollo Modello 4</Form.Label>
                                                     <Form.Control as="select" name="protocol_4mod"
                                                                   defaultValue={String(this.state.station.protocol_4mod)}
@@ -368,7 +373,7 @@ export default class EditStation extends React.Component<IProps, IState> {
                                                     </Form.Control>
                                                 </Form.Group>
 
-                                                <Form.Group controlId="ip_4mod" className="col-md-2">
+                                                <Form.Group controlId="ip_4mod" className="col-md-7">
                                                     <Form.Label>IP Modello 4</Form.Label>
                                                     <Form.Control name="ip_4mod"
 
@@ -383,7 +388,7 @@ export default class EditStation extends React.Component<IProps, IState> {
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
 
-                                                <Form.Group controlId="service_4mod" className="col-md-3">
+                                                <Form.Group controlId="service_4mod" className="col-md-7">
                                                     <Form.Label>Servizio Modello 4</Form.Label>
                                                     <Form.Control name="service_4mod"
                                                                   value={this.state.station.service_4mod}
@@ -391,6 +396,8 @@ export default class EditStation extends React.Component<IProps, IState> {
                                                 </Form.Group>
                                             </div>
 
+                                            <div className={"divider"}></div>
+                                            <h4>Redirect</h4>
                                             <div className="row">
                                                 <Form.Group controlId="redirect_protocol" className="col-md-2">
                                                     <Form.Label>Protocollo Redirect</Form.Label>
@@ -402,13 +409,16 @@ export default class EditStation extends React.Component<IProps, IState> {
                                                     </Form.Control>
                                                 </Form.Group>
 
-                                                <Form.Group controlId="redirect_ip" className="col-md-2">
+                                                <Form.Group controlId="redirect_ip" className="col-md-7">
                                                     <Form.Label>IP Redirect</Form.Label>
                                                     <Form.Control name="redirect_ip"
 
                                                                   value={this.state.station.redirect_ip}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
+                                            </div>
+                                            <div className={"row"}>
+
 
                                                 <Form.Group controlId="redirect_port" className="col-md-2">
                                                     <Form.Label>Porta Redirect</Form.Label>
@@ -417,7 +427,7 @@ export default class EditStation extends React.Component<IProps, IState> {
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
 
-                                                <Form.Group controlId="redirect_path" className="col-md-3">
+                                                <Form.Group controlId="redirect_path" className="col-md">
                                                     <Form.Label>Servizio Redirect</Form.Label>
                                                     <Form.Control name="redirect_path"
                                                                   value={this.state.station.redirect_path}
@@ -432,6 +442,8 @@ export default class EditStation extends React.Component<IProps, IState> {
                                                 </Form.Group>
                                             </div>
 
+                                            <div className={"divider"}></div>
+                                            <h4>Proxy</h4>
                                             <div className="row">
                                                 <Form.Group controlId="proxy_enabled" className="col-md-2">
                                                     <Form.Label>Proxy</Form.Label>
@@ -472,6 +484,8 @@ export default class EditStation extends React.Component<IProps, IState> {
                                                 </Form.Group>
                                             </div>
 
+                                            <div className={"divider"}></div>
+                                            <h4>Altre Informazioni</h4>
                                             <div className="row">
 
                                                 <Form.Group controlId="flag_online" className="col-md-2">

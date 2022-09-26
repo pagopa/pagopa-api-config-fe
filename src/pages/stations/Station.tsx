@@ -235,7 +235,7 @@ export default class Station extends React.Component<IProps, IState> {
 
                                             <div className="row">
                                                 <Form.Group controlId="enabled" className="col-md-2">
-                                                    <Form.Label>Stato {String(this.state.station.invio_rt_istantaneo)}</Form.Label>
+                                                    <Form.Label>Stato</Form.Label>
                                                     <Form.Control as="select" placeholder="stato" readOnly>
                                                         {this.state.station.enabled && <option>Abilitato</option>}
                                                         {!this.state.station.enabled && <option>Non Abilitato</option>}
