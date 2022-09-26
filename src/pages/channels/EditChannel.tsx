@@ -215,7 +215,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
         const key = event.target.name as string;
         // eslint-disable-next-line functional/no-let
         let value = event.target.type === "checkbox" ? event.target.checked : event.target.value;
-        if (value === 'null'){
+        if (value === 'null') {
             value = null;
         }
         channel = {...channel, [key]: value};
@@ -259,7 +259,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
 
     saveChannel() {
         if (this.isNotValidPort(this.state.channel.port) || this.isNotValidPort(this.state.channel.proxy_port as number)
-                || this.isNotValidPort(this.state.channel.redirect_port as number)) {
+            || this.isNotValidPort(this.state.channel.redirect_port as number)) {
             this.toastError("La porta deve avere un valore compreso tra 1 e 65535.");
             return;
         }
@@ -270,7 +270,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
         }
 
         if (this.isNotValidTimeout(this.state.channel.timeout_a)
-                || this.isNotValidTimeout(this.state.channel.timeout_b) || this.isNotValidTimeout(this.state.channel.timeout_c)) {
+            || this.isNotValidTimeout(this.state.channel.timeout_b) || this.isNotValidTimeout(this.state.channel.timeout_c)) {
             this.toastError("I timeout devono avere un valore maggiore o uguale a 0.");
             return;
         }
@@ -520,7 +520,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
                                         </Card.Header>
                                         <Card.Body>
                                             <div className="row">
-                                                <Form.Group controlId="channel_code" className="col-md-4">
+                                                <Form.Group controlId="channel_code" className="col-md-3">
                                                     <Form.Label>Codice <span className="text-danger">*</span></Form.Label>
                                                     <Form.Control name="channel_code" placeholder=""
                                                                   value={this.state.channel.channel_code}
@@ -546,97 +546,114 @@ export default class EditChannel extends React.Component<IProps, IState> {
                                                         menuPortalTarget={document.body}
                                                         styles={{menuPortal: base => ({...base, zIndex: 9999})}}
                                                         name="broker_code"
-                                                        value={{label: this.state.channel.broker_psp_code, value: this.state.channel.broker_psp_code}}
+                                                        value={{
+                                                            label: this.state.channel.broker_psp_code,
+                                                            value: this.state.channel.broker_psp_code
+                                                        }}
                                                         onChange={(e) => this.handleBrokerPspChange(e)}
                                                     />
                                                 </Form.Group>
-                                                <Form.Group controlId="password" className="col-md-3">
+                                                <Form.Group controlId="password" className="col-md-2">
                                                     <Form.Label>Password</Form.Label>
                                                     <Form.Control name="password" placeholder=""
                                                                   value={this.state.channel.password}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
-                                                <Form.Group controlId="new_password" className="col-md-3">
+                                                <Form.Group controlId="new_password" className="col-md-2">
                                                     <Form.Label>Nuova Password</Form.Label>
                                                     <Form.Control name="new_password" placeholder=""
                                                                   value={this.state.channel.new_password}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
                                             </div>
+
+                                            <div className={"divider"}></div>
+                                            <h4>Servizio</h4>
                                             <div className="row">
                                                 <Form.Group controlId="protocol" className="col-md-2">
-                                                            <Form.Label>Protocollo <span
-                                                                className="text-danger">*</span></Form.Label>
-                                                            <Form.Control as="select" name="protocol"
-                                                                          defaultValue={String(this.state.channel.protocol)}
-                                                                          onChange={(e) => this.handleChange(e)}>
-                                                                <option value="HTTPS">HTTPS</option>
-                                                                <option value="HTTP">HTTP</option>
-                                                            </Form.Control>
+                                                    <Form.Label>Protocollo <span
+                                                        className="text-danger">*</span></Form.Label>
+                                                    <Form.Control as="select" name="protocol"
+                                                                  defaultValue={String(this.state.channel.protocol)}
+                                                                  onChange={(e) => this.handleChange(e)}>
+                                                        <option value="HTTPS">HTTPS</option>
+                                                        <option value="HTTP">HTTP</option>
+                                                    </Form.Control>
                                                 </Form.Group>
 
-                                                <Form.Group controlId="ip" className="col-md-2">
+                                                <Form.Group controlId="ip" className="col-md-6">
                                                     <Form.Label>IP</Form.Label>
                                                     <Form.Control name="ip" placeholder=""
 
                                                                   value={this.state.channel.ip}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
-
+                                            </div>
+                                            <div className="row">
                                                 <Form.Group controlId="port" className="col-md-2">
                                                     <Form.Label>Porta <span className="text-danger">*</span></Form.Label>
-                                                    <Form.Control name="port" type="number" placeholder="" min={1} max={65535}
+                                                    <Form.Control name="port" type="number" placeholder="" min={1}
+                                                                  max={65535}
                                                                   value={this.state.channel.port}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
 
-                                                <Form.Group controlId="service" className="col-md-3">
+                                                <Form.Group controlId="service" className="col-md-6">
                                                     <Form.Label>Servizio</Form.Label>
                                                     <Form.Control name="service" placeholder=""
                                                                   value={this.state.channel.service}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
                                             </div>
+                                            <div className={"divider"}></div>
+                                            <h4>Redirect</h4>
                                             <div className="row">
                                                 <Form.Group controlId="redirect_protocol" className="col-md-2">
                                                     <Form.Label>Protocollo Redirect</Form.Label>
-                                                            <Form.Control as="select" name="redirect_protocol"
-                                                                          defaultValue={String(this.state.channel.redirect_protocol)}
-                                                                          onChange={(e) => this.handleChange(e)}>
-                                                                <option value="HTTPS">HTTPS</option>
-                                                                <option value="HTTP">HTTP</option>
-                                                            </Form.Control>
+                                                    <Form.Control as="select" name="redirect_protocol"
+                                                                  defaultValue={String(this.state.channel.redirect_protocol)}
+                                                                  onChange={(e) => this.handleChange(e)}>
+                                                        <option value="HTTPS">HTTPS</option>
+                                                        <option value="HTTP">HTTP</option>
+                                                    </Form.Control>
                                                 </Form.Group>
 
-                                                <Form.Group controlId="redirect_ip" className="col-md-2">
+                                                <Form.Group controlId="redirect_ip" className="col-md-6">
                                                     <Form.Label>IP Redirect</Form.Label>
                                                     <Form.Control name="redirect_ip" placeholder=""
 
                                                                   value={this.state.channel.redirect_ip}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
+                                            </div>
+                                            <div className={"row"}>
+
 
                                                 <Form.Group controlId="redirect_port" className="col-md-2">
                                                     <Form.Label>Porta Redirect</Form.Label>
-                                                            <Form.Control name="redirect_port" placeholder="" type="number"
-                                                                  value={this.state.channel.redirect_port} min={1} max={65535}
+                                                    <Form.Control name="redirect_port" placeholder="" type="number"
+                                                                  value={this.state.channel.redirect_port} min={1}
+                                                                  max={65535}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
 
-                                                <Form.Group controlId="redirect_path" className="col-md-3">
+                                                <Form.Group controlId="redirect_path" className="col-md-6">
                                                     <Form.Label>Servizio Redirect</Form.Label>
                                                     <Form.Control name="redirect_path" placeholder=""
                                                                   value={this.state.channel.redirect_path}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
 
-                                                <Form.Group controlId="redirect_query_string" className="col-md-3">
+                                                <Form.Group controlId="redirect_query_string" className="col-md-4">
                                                     <Form.Label>Parametri Redirect</Form.Label>
                                                     <Form.Control name="redirect_query_string" placeholder=""
                                                                   value={this.state.channel.redirect_query_string}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
                                             </div>
+
+                                            <div className={"divider"}></div>
+                                            <h4>Proxy</h4>
                                             <div className="row">
                                                 <Form.Group controlId="proxy_enabled" className="col-md-2">
                                                     <Form.Label>Proxy</Form.Label>
@@ -657,11 +674,14 @@ export default class EditChannel extends React.Component<IProps, IState> {
 
                                                 <Form.Group controlId="proxy_port" className="col-md-2">
                                                     <Form.Label>Porta Proxy</Form.Label>
-                                                            <Form.Control name="proxy_port" placeholder="" type="number"
+                                                    <Form.Control name="proxy_port" placeholder="" type="number"
                                                                   value={this.state.channel.proxy_port} min={1} max={65535}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
                                             </div>
+
+                                            <div className={"divider"}></div>
+                                            <h4>Altre Informazioni</h4>
                                             <div className="row">
                                                 <Form.Group controlId="payment_model" className="col-md-2">
                                                     <Form.Label>Modello Pagamento <span
@@ -670,7 +690,9 @@ export default class EditChannel extends React.Component<IProps, IState> {
                                                                   value={this.state.channel.payment_model}
                                                                   onChange={(e) => this.handleChange(e)}>
                                                         <option value={"IMMEDIATE"}>IMMEDIATO</option>
-                                                        <option value={"IMMEDIATE_MULTIBENEFICIARY"}>IMMEDIATO_MULTIBENEFICIARIO</option>
+                                                        <option
+                                                            value={"IMMEDIATE_MULTIBENEFICIARY"}>IMMEDIATO_MULTIBENEFICIARIO
+                                                        </option>
                                                         <option value={"DEFERRED"}>DIFFERITO</option>
                                                         <option value={"ACTIVATED_AT_PSP"}>ATTIVATO_PRESSO_PSP</option>
                                                     </Form.Control>
@@ -685,7 +707,10 @@ export default class EditChannel extends React.Component<IProps, IState> {
                                                         menuPortalTarget={document.body}
                                                         styles={{menuPortal: base => ({...base, zIndex: 9999})}}
                                                         name="serv_plugin"
-                                                        value={{label: this.state.channel.serv_plugin, value: this.state.channel.serv_plugin}}
+                                                        value={{
+                                                            label: this.state.channel.serv_plugin,
+                                                            value: this.state.channel.serv_plugin
+                                                        }}
                                                         isSearchable={false}
                                                         onChange={(e) => this.handleWfespChange(e)}
                                                     />
@@ -700,21 +725,24 @@ export default class EditChannel extends React.Component<IProps, IState> {
                                                 </Form.Group>
 
                                                 <Form.Group controlId="timeout_a" className="col-md-2">
-                                                    <Form.Label>Timeout A <span className="text-danger">*</span></Form.Label>
+                                                    <Form.Label>Timeout A <span
+                                                        className="text-danger">*</span></Form.Label>
                                                     <Form.Control type="number" name="timeout_a" placeholder="" min={0}
                                                                   value={this.state.channel.timeout_a}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
 
                                                 <Form.Group controlId="timeout_b" className="col-md-2">
-                                                    <Form.Label>Timeout B <span className="text-danger">*</span></Form.Label>
+                                                    <Form.Label>Timeout B <span
+                                                        className="text-danger">*</span></Form.Label>
                                                     <Form.Control type="number" name="timeout_b" placeholder="" min={0}
                                                                   value={this.state.channel.timeout_b}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
 
                                                 <Form.Group controlId="timeout_c" className="col-md-2">
-                                                    <Form.Label>Timeout C <span className="text-danger">*</span></Form.Label>
+                                                    <Form.Label>Timeout C <span
+                                                        className="text-danger">*</span></Form.Label>
                                                     <Form.Control type="number" name="timeout_c" placeholder="" min={0}
                                                                   value={this.state.channel.timeout_c}
                                                                   onChange={(e) => this.handleChange(e)}/>
