@@ -27,6 +27,7 @@ import Channel from "../pages/channels/Channel";
 import CreateChannel from "../pages/channels/CreateChannel";
 import EditChannel from "../pages/channels/EditChannel";
 import CDIs from "../pages/cdis/CDIs";
+import CheckCDI from "../pages/cdis/CheckCDI";
 import ConfigurationKeys from "../pages/configuration/ConfigurationKeys";
 import Pdds from "../pages/configuration/Pdds";
 import WFESPPlugins from "../pages/configuration/WFESPPlugins";
@@ -37,6 +38,7 @@ import LandingPage from "../pages/LandingPage";
 import MassiveLoading from "../pages/batchoperations/MassiveLoading";
 import MassiveMigration from "../pages/batchoperations/MassiveMigration";
 import PaymentTypePage from "../pages/configuration/PaymentType";
+
 
 export default class Routes extends React.Component {
 
@@ -97,6 +99,7 @@ export default class Routes extends React.Component {
                                     }}/>
 
                                     <Route path="/cdis" exact component={CDIs} />
+                                    <Route path="/cdis/check" exact component={CheckCDI} />
 
                                     <Route path="/configuration-keys" exact component={ConfigurationKeys}/>
                                     <Route path="/pdds" exact component={Pdds}/>

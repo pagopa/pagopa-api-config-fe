@@ -50,6 +50,11 @@ const SidebarItems = [
         domain: "psp"
     },
     {
+        name: "Verifica Catalogo Dati Informativi",
+        route: "/cdis/check",
+        domain: "psp"
+    },
+    {
         name: "Configuration Keys",
         route: "/configuration-keys",
         domain: "configuration"
