@@ -175,7 +175,6 @@ export default class CheckCdi extends React.Component<IProps, IState> {
                     <tr key={key}>
                         <td className="font-weight-bold">{data.title}</td>
                         <td>{data?.value}</td>
-                        <td></td>
                         <td className="text-center">
                             {data.inProgress && <FaSpinner className="spinner" />}
                             {!data.inProgress && data.valid === "VALID" && <FaCheck className="text-success" />}
@@ -183,7 +182,6 @@ export default class CheckCdi extends React.Component<IProps, IState> {
                             {!data.inProgress && data.valid === "UNDEFINED" && <FaMinus  />}
                         </td>
                         <td>{data?.action}</td>
-                        <td></td>
                         <td className="text-center">
                             {data?.note}
                         </td>
