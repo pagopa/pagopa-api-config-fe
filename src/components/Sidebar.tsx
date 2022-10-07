@@ -123,7 +123,7 @@ export default class Sidebar extends React.Component<IProps, IState> {
         const domains: any = this.state.domains;
 
         function getClass(item: any) {
-            if (item.route.includes("icas")) {
+            if (item.route.includes("icas") || item.route.includes("cdis")) {
                 return getPath(location.pathname).substring(1) === item.route.substring(1) ? "active" : "";
             } else {
                 return getPath(location.pathname).split("/")[1] === item.route.substring(1) &&
