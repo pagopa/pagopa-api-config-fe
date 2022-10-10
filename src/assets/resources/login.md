@@ -7,4 +7,4 @@ Per ulteriori approfondimenti si rimanda a:
 - [\[How-to\] Effettuare il login](https://pagopa.atlassian.net/wiki/spaces/PAG/pages/458392251/How+To+Effettuare+il+Login)
 
 ### Ulteriori informazioni ###
-Per maggiori informazioni rivolgersi a [Fabio Corvetta](mailto:fabio.corvetta@pagopa.it).
+Per maggiori informazioni rivolgersi a [PagoPa Tech](mailto:pagopa-tech@pagopa.it).
