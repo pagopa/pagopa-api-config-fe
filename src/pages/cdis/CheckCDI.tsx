@@ -70,22 +70,9 @@ export default class CheckCdi extends React.Component<IProps, IState> {
             value: "",
             valid: "undefined",
             action: "",
-            operation: {}
+            operation: {},
+            title: ""
         } as unknown as XMLData;
-    }
-
-    /**
-     * Generate default XML data item
-     * @param value
-     */
-    getDefaultXMLData(value: string): XMLData {
-        return {
-            inProgress: true,
-            value,
-            valid: "undefined",
-            action: "",
-            operation: {}
-        } as XMLData;
     }
 
     toastError(message: string) {
@@ -102,7 +89,6 @@ export default class CheckCdi extends React.Component<IProps, IState> {
         const reader = new FileReader();
         const file = event.target.files[0];
         if (file) {
-            this.uploadXML(file);
             reader.readAsText(file);
             // eslint-disable-next-line functional/immutable-data
             reader.onload = () => {
@@ -116,6 +102,7 @@ export default class CheckCdi extends React.Component<IProps, IState> {
                     this.setState({error});
                 } else {
                     this.setState({xml});
+                    this.uploadXML(file);
                 }
             };
         }
@@ -144,10 +131,10 @@ export default class CheckCdi extends React.Component<IProps, IState> {
 
                     const xsd = {
                         inProgress: false,
-                        note: "",
+                        action: "",
                         value: xsdItem[0].value,
                         valid: xsdItem[0].valid,
-                        action: xsdItem[0].action
+                        note: xsdItem[0].note
                     } as XMLData;
                     this.setState({xsd});
 
@@ -181,10 +168,8 @@ export default class CheckCdi extends React.Component<IProps, IState> {
                             {!data.inProgress && data.valid === "NOT_VALID" && <FaTimes className="text-danger" />}
                             {!data.inProgress && data.valid === "UNDEFINED" && <FaMinus  />}
                         </td>
+                        <td>{data?.note}</td>
                         <td>{data?.action}</td>
-                        <td className="text-center">
-                            {data?.note}
-                        </td>
                     </tr>
             );
 
@@ -253,7 +238,7 @@ export default class CheckCdi extends React.Component<IProps, IState> {
                                         {!this.state.xsd.inProgress && this.state.xsd.valid === "UNDEFINED" && <FaMinus  />}
                                     </td>
                                     <td>
-                                        {this.state.xsd.valid === "NOT_VALID" && <span>{this.state.xsd.action}</span>}
+                                        {this.state.xsd.valid === "NOT_VALID" && <span>{this.state.xsd.note}</span>}
                                     </td>
                                 </tr>
 
@@ -266,8 +251,8 @@ export default class CheckCdi extends React.Component<IProps, IState> {
                                     <th className=""></th>
                                     <th className="">Contenuto CDI</th>
                                     <th className="text-center">Valido</th>
+									<th className="">Note</th>
                                     <th className="">Intervento da effettuare</th>
-                                    <th className="text-center">Note</th>
                                 </tr>
                                 </thead>
                                 <tbody>
