@@ -1,5 +1,12 @@
 import React from 'react';
-import {Button, Form, OverlayTrigger, Table, Tooltip} from "react-bootstrap";
+import {
+    Button, ButtonGroup,
+    Dropdown,
+    Form,
+    OverlayTrigger,
+    Table,
+    Tooltip
+} from "react-bootstrap";
 import {FaPlus, FaSpinner, FaTrash, FaCloudDownloadAlt} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
@@ -37,7 +44,7 @@ interface IState {
 
 export default class Icas extends React.Component<IProps, IState> {
     static contextType = MsalContext;
-    private filter: {[item: string]: any};
+    private filter: { [item: string]: any };
 
     constructor(props: IProps) {
         super(props);
@@ -73,6 +80,7 @@ export default class Icas extends React.Component<IProps, IState> {
 
         this.handlePageChange = this.handlePageChange.bind(this);
         this.create = this.create.bind(this);
+        this.forceCreate = this.forceCreate.bind(this);
         this.upload = this.upload.bind(this);
     }
 
@@ -117,10 +125,19 @@ export default class Icas extends React.Component<IProps, IState> {
         }
     }
 
-    upload(event: any) {
+    forceCreate() {
+        const element = document.getElementById("fileForcedUploader");
+        if (element) {
+            element.click();
+        }
+    }
+
+    upload(event: any, forced: boolean) {
         const file = event.target.files[0];
         const data = new FormData();
         data.append("file", file);
+        // eslint-disable-next-line functional/immutable-data
+        event.target.value=null;
 
         const baseUrl = getConfig("APICONFIG_HOST") as string;
         const basePath = getConfig("APICONFIG_BASEPATH") as string;
@@ -135,18 +152,16 @@ export default class Icas extends React.Component<IProps, IState> {
                     Authorization: `Bearer ${response.idToken}`
                 }
             };
-            axios.post(baseUrl + basePath + "/icas", data, config).then(() => {
+            axios.post(baseUrl + basePath + `/icas?force=${forced}`, data, config).then(() => {
                 toast.info("File ICA caricato con successo");
                 this.getPage(0);
             }).catch((err) => {
                 if (err.response.status === 409) {
                     toast.error("Problema di conflitto nell'upload del file", {theme: "colored"});
-                }
-                else {
+                } else {
                     if (err.response.data.detail) {
                         this.toastError(`Problema nell'upload del file. ${String(err.response.data.detail)}`);
-                    }
-                    else {
+                    } else {
                         toast.error("Problema nell'upload del file.", {theme: "colored"});
                     }
                 }
@@ -180,23 +195,22 @@ export default class Icas extends React.Component<IProps, IState> {
             document.body.appendChild(anchor);
             const url = `${String(baseUrl)}${String(basePath)}/icas/${ica.id_ica}?creditorinstitutioncode=${ica.creditor_institution_code}`;
             axios.get(url, config)
-            .then((res: any) => {
-                if (res.data.size > 1) {
-                    const objectUrl = window.URL.createObjectURL(res.data);
-                    // eslint-disable-next-line functional/immutable-data
-                    anchor.href = objectUrl;
-                    // eslint-disable-next-line functional/immutable-data
-                    anchor.download = "ica_" + String(ica.id_ica).replace(" ", "_") + '.xml';
-                    anchor.click();
-                    window.URL.revokeObjectURL(objectUrl);
-                }
-                else {
-                    toast.warn("Problemi nella generazione dell'ICA richiesto.", {theme: "colored"});
-                }
-            })
-            .catch(() => {
-                toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
-            });
+                .then((res: any) => {
+                    if (res.data.size > 1) {
+                        const objectUrl = window.URL.createObjectURL(res.data);
+                        // eslint-disable-next-line functional/immutable-data
+                        anchor.href = objectUrl;
+                        // eslint-disable-next-line functional/immutable-data
+                        anchor.download = "ica_" + String(ica.id_ica).replace(" ", "_") + '.xml';
+                        anchor.click();
+                        window.URL.revokeObjectURL(objectUrl);
+                    } else {
+                        toast.warn("Problemi nella generazione dell'ICA richiesto.", {theme: "colored"});
+                    }
+                })
+                .catch(() => {
+                    toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                });
         });
     }
 
@@ -221,29 +235,27 @@ export default class Icas extends React.Component<IProps, IState> {
                 ...loginRequest,
                 account: this.context.accounts[0]
             })
-                    .then((response: any) => {
-                        apiClient.deleteIca({
-                            Authorization: `Bearer ${response.idToken}`,
-                            ApiKey: "",
-                            idica: this.state.icaToDelete.id_ica,
-                            creditorinstitutioncode: this.state.icaToDelete.creditor_institution_code
+                .then((response: any) => {
+                    apiClient.deleteIca({
+                        Authorization: `Bearer ${response.idToken}`,
+                        ApiKey: "",
+                        idica: this.state.icaToDelete.id_ica,
+                        creditorinstitutioncode: this.state.icaToDelete.creditor_institution_code
+                    })
+                        .then((res: any) => {
+                            if (res.right.status === 200) {
+                                toast.info("Rimozione avvenuta con successo");
+                                this.removeIca();
+                            } else if (res.right.value.status === 409) {
+                                toast.error("Non è possibile cancellare un file ICA in corso di validità.", {theme: "colored"});
+                            } else {
+                                this.toastError(res.right.value.detail);
+                            }
                         })
-                            .then((res: any) => {
-                                if (res.right.status === 200) {
-                                    toast.info("Rimozione avvenuta con successo");
-                                    this.removeIca();
-                                }
-                                else if(res.right.value.status === 409){
-                                    toast.error("Non è possibile cancellare un file ICA in corso di validità.", {theme: "colored"});
-                                }
-                                else {
-                                    this.toastError(res.right.value.detail);
-                                }
-                            })
-                            .catch(() => {
-                                toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
-                            });
-                    });
+                        .catch(() => {
+                            toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                        });
+                });
         }
         this.setState({showDeleteModal: false});
     };
@@ -259,96 +271,107 @@ export default class Icas extends React.Component<IProps, IState> {
         const showDeleteModal = this.state.showDeleteModal;
         const icaList: any = [];
         const icaToDeleteName = String(this.state.icaToDelete.id_ica) + " per EC: " + String(this.state.icaToDelete.business_name) + " (" +
-                String(this.state.icaToDelete.creditor_institution_code) + ")";
+            String(this.state.icaToDelete.creditor_institution_code) + ")";
 
         this.state.icas.map((ica: any, index: number) => {
             const code = (
-                    <tr key={index}>
-                        <td>{ica.id_ica}</td>
-                        <td>{ica.business_name}</td>
-                        <td>{ica.creditor_institution_code}</td>
-                        <td>{ica.publication_date.toLocaleString()}</td>
-                        <td>{ica.validity_date.toLocaleString()}</td>
+                <tr key={index}>
+                    <td>{ica.id_ica}</td>
+                    <td>{ica.business_name}</td>
+                    <td>{ica.creditor_institution_code}</td>
+                    <td>{ica.publication_date.toLocaleString()}</td>
+                    <td>{ica.validity_date.toLocaleString()}</td>
 
-                        <td className="text-right">
-                            {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
-                            <OverlayTrigger placement="top"
-                                            overlay={<Tooltip id={`tooltip-details-${index}`}>Scarica</Tooltip>}>
-                                <FaCloudDownloadAlt role="button" className="mr-3"
-                                       onClick={() => this.handleDetails(ica)}/>
-                            </OverlayTrigger>
-                            {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
-                            <OverlayTrigger placement="top"
-                                            overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
-                                {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
-                                <FaTrash role="button" className="mr-3" onClick={() => this.handleDelete(ica, index)}/>
-                            </OverlayTrigger>
-                        </td>
-                    </tr>
+                    <td className="text-right">
+                        {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
+                        <OverlayTrigger placement="top"
+                                        overlay={<Tooltip id={`tooltip-details-${index}`}>Scarica</Tooltip>}>
+                            <FaCloudDownloadAlt role="button" className="mr-3"
+                                                onClick={() => this.handleDetails(ica)}/>
+                        </OverlayTrigger>
+                        {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
+                        <OverlayTrigger placement="top"
+                                        overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
+                            {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
+                            <FaTrash role="button" className="mr-3" onClick={() => this.handleDelete(ica, index)}/>
+                        </OverlayTrigger>
+                    </td>
+                </tr>
             );
             icaList.push(code);
         });
 
         return (
-                <div className="container-fluid icas">
-                    <div className="row">
-                        <div className="col-md-10 mb-3">
-                            <h2>Informativa Conto Accredito</h2>
-                        </div>
-                        <div className="col-md-2 text-right">
-                            <Button onClick={this.create}>Nuovo <FaPlus/></Button>
-                            <Form.Control id="fileUploader" className="hidden" type="file" accept=".xml" onChange={this.upload} />
-                        </div>
-                        <div className="col-md-12">
-                            <div className="row">
-                                <div className="col-md-8">
-                                    <Filters configuration={this.filter} onFilter={this.handleFilterCallback} />
-                                </div>
-                            </div>
-                            {isLoading && (<FaSpinner className="spinner"/>)}
-                            {
-                                !isLoading && (
-                                        <>
-                                            <Table hover responsive size="sm">
-                                                <thead>
-                                                <tr>
-                                                    <th className="fixed-td-width">
-                                                        Codice ICA
-                                                    </th>
-                                                    <th className="">
-                                                        Ente Creditore
-                                                    </th>
-                                                    <th className="fixed-td-width">
-                                                        Codice Ente Creditore
-                                                    </th>
-                                                    <th className="fixed-td-width">
-                                                        Data pubblicazione
-                                                    </th>
-                                                    <th className="fixed-td-width">
-                                                        Data validità
-                                                    </th>
-                                                    <th className="text-center" />
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                {icaList}
-                                                </tbody>
-                                            </Table>
-
-                                            <Paginator pageInfo={pageInfo} onPageChanged={this.handlePageChange}/>
-                                        </>
-                                )
-                            }
-                        </div>
+            <div className="container-fluid icas">
+                <div className="row">
+                    <div className="col-md-11 mb-3">
+                        <h2>Informativa Conto Accredito</h2>
                     </div>
-                    <ConfirmationModal show={showDeleteModal} handleClose={this.hideDeleteModal}>
-                        <p>Sei sicuro di voler eliminare la seguente informativa?</p>
-                        <ul>
-                            <li>{icaToDeleteName}</li>
-                        </ul>
-                    </ConfirmationModal>
+                    <Dropdown as={ButtonGroup}>
+                        <Button className={"p-2"} onClick={this.create}>Nuovo <FaPlus/></Button>
+                        <Form.Control id="fileUploader" className="hidden" type="file" accept=".xml"
+                                      onChange={event => this.upload(event, false)}/>
+                        <Form.Control id="fileForcedUploader" className="hidden" type="file" accept=".xml"
+                                      onChange={event => this.upload(event, true)}/>
 
+                        <Dropdown.Toggle split id="dropdown-split-basic"/>
+
+                        <Dropdown.Menu>
+                            <Dropdown.Item>
+                                <Button onClick={this.forceCreate}>Caricamento Forzato</Button>
+                            </Dropdown.Item>
+                        </Dropdown.Menu>
+                    </Dropdown>
+                    <div className="col-md-12">
+                        <div className="row">
+                            <div className="col-md-8">
+                                <Filters configuration={this.filter} onFilter={this.handleFilterCallback}/>
+                            </div>
+                        </div>
+                        {isLoading && (<FaSpinner className="spinner"/>)}
+                        {
+                            !isLoading && (
+                                <>
+                                    <Table hover responsive size="sm">
+                                        <thead>
+                                        <tr>
+                                            <th className="fixed-td-width">
+                                                Codice ICA
+                                            </th>
+                                            <th className="">
+                                                Ente Creditore
+                                            </th>
+                                            <th className="fixed-td-width">
+                                                Codice Ente Creditore
+                                            </th>
+                                            <th className="fixed-td-width">
+                                                Data pubblicazione
+                                            </th>
+                                            <th className="fixed-td-width">
+                                                Data validità
+                                            </th>
+                                            <th className="text-center"/>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {icaList}
+                                        </tbody>
+                                    </Table>
+
+                                    <Paginator pageInfo={pageInfo} onPageChanged={this.handlePageChange}/>
+                                </>
+                            )
+                        }
+                    </div>
                 </div>
+                <ConfirmationModal show={showDeleteModal} handleClose={this.hideDeleteModal}>
+                    <p>Sei sicuro di voler eliminare la seguente informativa?</p>
+                    <ul>
+                        <li>{icaToDeleteName}</li>
+                    </ul>
+                </ConfirmationModal>
+
+            </div>
         );
     }
 }

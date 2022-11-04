@@ -75,6 +75,7 @@ $text-color: #17324d;
   align-items: center;
   margin-top: 30px;
 }
+
 .custom-control {
   position: relative;
   z-index: 1;
@@ -84,6 +85,7 @@ $text-color: #17324d;
   -webkit-print-color-adjust: exact;
   color-adjust: exact
 }
+
 .custom-control-input {
   position: absolute;
   left: 0;
@@ -92,6 +94,7 @@ $text-color: #17324d;
   height: 1.25rem;
   //opacity: 0;
 }
+
 .custom-control-label {
   position: relative;
   margin-bottom: 0;
@@ -247,10 +250,12 @@ pre {
     table-layout: fixed;
     width: 100%;
   }
+
   td.key-td-width,
   td.description-td-width {
     overflow: auto;
   }
+
   .buttons-td-width {
     width: 10%;
   }
@@ -260,9 +265,11 @@ pre {
   td:first-child {
     width: 35%;
   }
+
   td:nth-child(2) {
     width: 5%;
   }
+
   td:nth-child(3) {
     width: 60%;
   }
@@ -272,15 +279,19 @@ pre {
   td:first-child {
     width: 12%;
   }
+
   td:nth-child(2) {
     width: 23%;
   }
+
   td:nth-child(3) {
     width: 5%;
   }
+
   td:nth-child(4) {
     width: 30%;
   }
+
   td:nth-child(5) {
     width: 30%;
   }
@@ -318,9 +329,11 @@ pre {
   .fixed-td-width {
     width: 18%;
   }
+
   .fixed-td-width-sm {
     width: 5%;
   }
+
   .hidden {
     display: none;
   }
@@ -330,9 +343,11 @@ pre {
   .fixed-td-width {
     width: 18%;
   }
+
   .fixed-td-width-sm {
     width: 6%;
   }
+
   .hidden {
     display: none;
   }
@@ -354,7 +369,7 @@ pre {
   width: 240px;
 }
 
-.info-box{
+.info-box {
   color: #999999;
   margin: 16px;
   position: absolute;
@@ -363,9 +378,13 @@ pre {
 
 .divider {
   height: 1px;
-  width:100%;
-  display:block; /* for use on default inline elements like span */
+  width: 100%;
+  display: block; /* for use on default inline elements like span */
   margin: 9px 0;
   overflow: hidden;
   background-color: #e5e5e5;
+}
+
+.dropdown {
+  height: fit-content;
 }
