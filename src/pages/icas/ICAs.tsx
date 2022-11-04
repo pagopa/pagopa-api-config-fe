@@ -2,7 +2,7 @@ import React from 'react';
 import {
     Button, ButtonGroup,
     Dropdown,
-    Form,
+    Form, Modal,
     OverlayTrigger,
     Table,
     Tooltip
@@ -40,6 +40,7 @@ interface IState {
     showDeleteModal: boolean;
     icaToDelete: any;
     icaIndex: number;
+    showForcedModal: boolean;
 }
 
 export default class Icas extends React.Component<IProps, IState> {
@@ -65,6 +66,7 @@ export default class Icas extends React.Component<IProps, IState> {
             showDeleteModal: false,
             icaToDelete: {},
             icaIndex: -1,
+            showForcedModal: false
         };
 
         this.filter = {
@@ -82,6 +84,8 @@ export default class Icas extends React.Component<IProps, IState> {
         this.create = this.create.bind(this);
         this.forceCreate = this.forceCreate.bind(this);
         this.upload = this.upload.bind(this);
+        this.openForcedModal = this.openForcedModal.bind(this);
+        this.closeForcedModal = this.closeForcedModal.bind(this);
     }
 
     getPage(page: number) {
@@ -126,6 +130,7 @@ export default class Icas extends React.Component<IProps, IState> {
     }
 
     forceCreate() {
+        this.closeForcedModal();
         const element = document.getElementById("fileForcedUploader");
         if (element) {
             element.click();
@@ -137,7 +142,7 @@ export default class Icas extends React.Component<IProps, IState> {
         const data = new FormData();
         data.append("file", file);
         // eslint-disable-next-line functional/immutable-data
-        event.target.value=null;
+        event.target.value = null;
 
         const baseUrl = getConfig("APICONFIG_HOST") as string;
         const basePath = getConfig("APICONFIG_BASEPATH") as string;
@@ -229,6 +234,14 @@ export default class Icas extends React.Component<IProps, IState> {
         }
     }
 
+    openForcedModal() {
+        this.setState({showForcedModal: true});
+    }
+
+    closeForcedModal() {
+        this.setState({showForcedModal: false});
+    }
+
     hideDeleteModal = (status: string) => {
         if (status === "ok") {
             this.context.instance.acquireTokenSilent({
@@ -318,7 +331,7 @@ export default class Icas extends React.Component<IProps, IState> {
 
                         <Dropdown.Menu>
                             <Dropdown.Item>
-                                <Button onClick={this.forceCreate}>Caricamento Forzato</Button>
+                                <Button onClick={this.openForcedModal}>Caricamento Forzato</Button>
                             </Dropdown.Item>
                         </Dropdown.Menu>
                     </Dropdown>
@@ -371,6 +384,21 @@ export default class Icas extends React.Component<IProps, IState> {
                     </ul>
                 </ConfirmationModal>
 
+                <Modal show={this.state.showForcedModal} onHide={this.closeForcedModal}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Attenzione</Modal.Title>
+                    </Modal.Header>
+                    {/* eslint-disable-next-line react/no-unescaped-entities */}
+                    <Modal.Body>Sei sicuro/a di voler forzare il caricamento dell'ICA ignorando la data validità?</Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={this.closeForcedModal}>
+                            NO
+                        </Button>
+                        <Button variant="primary" onClick={this.forceCreate}>
+                            SI
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
             </div>
         );
     }
