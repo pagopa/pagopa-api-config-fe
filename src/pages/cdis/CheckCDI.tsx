@@ -88,6 +88,8 @@ export default class CheckCdi extends React.Component<IProps, IState> {
 
         const reader = new FileReader();
         const file = event.target.files[0];
+        // eslint-disable-next-line functional/immutable-data
+        event.target.value = null;
         if (file) {
             reader.readAsText(file);
             // eslint-disable-next-line functional/immutable-data
