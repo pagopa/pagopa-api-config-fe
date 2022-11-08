@@ -80,6 +80,8 @@ export default class MassiveLoading extends React.Component<IProps, IState> {
         const file = event.target.files[0];
         const data = new FormData();
         data.append("file", file);
+        // eslint-disable-next-line functional/immutable-data
+        event.target.value = null;
 
         const baseUrl = getConfig("APICONFIG_HOST") as string;
         const basePath = getConfig("APICONFIG_BASEPATH") as string;
