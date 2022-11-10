@@ -300,6 +300,29 @@ export default class Station extends React.Component<IProps, IState> {
                                             </div>
 
                                             <div className={"divider"}></div>
+                                            <p>Configurazione dell&apos;ente creditore aderente alla nuova connettività.</p>
+                                            <h4>Target</h4>
+                                            <div className="row">
+                                                <Form.Group controlId="target_host" className="col-md-5">
+                                                    <Form.Label>Indirizzo</Form.Label>
+                                                    <Form.Control placeholder="-" value={this.state.station.target_host}
+                                                                  readOnly/>
+                                                </Form.Group>
+
+                                                <Form.Group controlId="target_port" className="col-md-2">
+                                                    <Form.Label>Porta</Form.Label>
+                                                    <Form.Control placeholder="-" value={this.state.station.target_port}
+                                                                  readOnly/>
+                                                </Form.Group>
+
+                                                <Form.Group controlId="target_path" className="col-md-5">
+                                                    <Form.Label>Servizio</Form.Label>
+                                                    <Form.Control placeholder="-" value={this.state.station.target_path}
+                                                                  readOnly/>
+                                                </Form.Group>
+                                            </div>
+
+                                            <div className={"divider"}></div>
                                             <h4>Modello 4</h4>
                                             <div className={"row"}>
                                                 <Form.Group controlId="protocol_4mod" className={"col-md-2"}>
