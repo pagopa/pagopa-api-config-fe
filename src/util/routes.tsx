@@ -38,6 +38,7 @@ import LandingPage from "../pages/LandingPage";
 import MassiveLoading from "../pages/batchoperations/MassiveLoading";
 import MassiveMigration from "../pages/batchoperations/MassiveMigration";
 import PaymentTypePage from "../pages/configuration/PaymentType";
+import MassiveIcas from "../pages/batchoperations/MassiveIcas";
 
 
 export default class Routes extends React.Component {
@@ -106,8 +107,10 @@ export default class Routes extends React.Component {
                                     <Route path="/wfesp-plugins" exact component={WFESPPlugins}/>
                                     <Route path="/payment-types" exact component={PaymentTypePage}/>
 
-                                    <Route path="/massive-loading" exact component={MassiveLoading} />
-                                    <Route path="/massive-migration" exact component={MassiveMigration} />
+                                    <Route path="/massive/loading" exact component={MassiveLoading} />
+                                    <Route path="/massive/migration" exact component={MassiveMigration} />
+
+                                    <Route path="/massive/icas" exact component={MassiveIcas} />
 
                                     <Route component={NotFound}/>
                                 </Switch>
