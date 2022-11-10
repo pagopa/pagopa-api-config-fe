@@ -62,7 +62,10 @@ export default class CreateStation extends React.Component<IProps, IState> {
                 redirect_port: 0,
                 redirect_protocol: "HTTPS",
                 redirect_query_string: "",
-                service_4mod: ""
+                service_4mod: "",
+                target_host: "",
+                target_port: 443,
+                target_path: ""
             } as unknown as StationDetails,
             showModal: false
         };
@@ -329,6 +332,28 @@ export default class CreateStation extends React.Component<IProps, IState> {
                                                       onChange={(e) => this.handleChange(e)}/>
                                     </Form.Group>
                                 </div>
+
+                                <div className={"divider"}></div>
+                                <h4>Target</h4>
+                                <p>Configurazione dell&apos;ente creditore aderente alla nuova connettività.</p>
+                                <div className="row">
+                                    <Form.Group controlId="target_host" className="col-md-5">
+                                        <Form.Label>Indirizzo</Form.Label>
+                                        <Form.Control name="target_host" onChange={(e) => this.handleChange(e)}/>
+                                    </Form.Group>
+
+                                    <Form.Group controlId="target_port" className="col-md-2">
+                                        <Form.Label>Porta</Form.Label>
+                                        <Form.Control name="proxy_port" type="number" min={1} max={65535}
+                                                      onChange={(e) => this.handleChange(e)}/>
+                                    </Form.Group>
+
+                                    <Form.Group controlId="target_path" className="col-md-5">
+                                        <Form.Label>Servizio</Form.Label>
+                                        <Form.Control name="target_path" onChange={(e) => this.handleChange(e)}/>
+                                    </Form.Group>
+                                </div>
+
                                 <div className={"divider"}></div>
                                 <h4>Modello 4</h4>
                                 <div className="row">
@@ -382,7 +407,6 @@ export default class CreateStation extends React.Component<IProps, IState> {
                                     </Form.Group>
                                 </div>
                                 <div className={"row"}>
-
 
                                     <Form.Group controlId="redirect_port" className="col-md-2">
                                         <Form.Label>Porta Redirect</Form.Label>

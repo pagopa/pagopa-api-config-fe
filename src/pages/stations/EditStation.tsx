@@ -361,6 +361,31 @@ export default class EditStation extends React.Component<IProps, IState> {
                                             </div>
 
                                             <div className={"divider"}></div>
+                                            <h4>Target</h4>
+                                            <p>Configurazione dell&apos;ente creditore aderente alla nuova connettività.</p>
+                                            <div className="row">
+                                                <Form.Group controlId="target_host" className="col-md-5">
+                                                    <Form.Label>Indirizzo</Form.Label>
+                                                    <Form.Control name="target_host"
+                                                                  value={this.state.station.target_host}
+                                                                  onChange={(e) => this.handleChange(e)}/>
+                                                </Form.Group>
+
+                                                <Form.Group controlId="target_port" className="col-md-2">
+                                                    <Form.Label>Porta</Form.Label>
+                                                    <Form.Control name="target_port" type="number" min={1} max={65535}
+                                                                  value={this.state.station.target_port}
+                                                                  onChange={(e) => this.handleChange(e)}/>
+                                                </Form.Group>
+                                                <Form.Group controlId="target_path" className="col-md-5">
+                                                    <Form.Label>Servizio</Form.Label>
+                                                    <Form.Control name="target_path"
+                                                                  value={this.state.station.target_path}
+                                                                  onChange={(e) => this.handleChange(e)}/>
+                                                </Form.Group>
+                                            </div>
+
+                                            <div className={"divider"}></div>
                                             <h4>Modello 4</h4>
                                             <div className={"row"}>
                                                 <Form.Group controlId="protocol_4mod" className={"col-md-2"}>
@@ -418,7 +443,6 @@ export default class EditStation extends React.Component<IProps, IState> {
                                                 </Form.Group>
                                             </div>
                                             <div className={"row"}>
-
 
                                                 <Form.Group controlId="redirect_port" className="col-md-2">
                                                     <Form.Label>Porta Redirect</Form.Label>
