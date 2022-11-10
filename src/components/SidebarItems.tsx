@@ -20,7 +20,7 @@ const SidebarItems = [
         domain: "ec"
     },
     {
-        name: "Verifica Informativa Conto Accredito",
+        name: "Verifica ICA",
         route: "/icas/check",
         domain: "ec"
     },
@@ -75,12 +75,17 @@ const SidebarItems = [
     },
     {
         name: "Caricamenti Massivi",
-        route: "/massive-loading",
+        route: "/massive/loading",
         domain: "batchoperation"
     },
     {
         name: "Migrazioni Massive",
-        route: "/massive-migration",
+        route: "/massive/migration",
+        domain: "batchoperation"
+    },
+    {
+        name: "Operazioni Massive ICA",
+        route: "/massive/icas",
         domain: "batchoperation"
     },
 ];
