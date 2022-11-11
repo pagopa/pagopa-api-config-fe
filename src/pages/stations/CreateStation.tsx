@@ -4,6 +4,7 @@ import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
 import AsyncSelect from "react-select/async";
 import debounce from "lodash.debounce";
+import {FaInfoCircle} from "react-icons/fa";
 import {apiClient} from "../../util/apiClient";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import {loginRequest} from "../../authConfig";
@@ -336,6 +337,9 @@ export default class CreateStation extends React.Component<IProps, IState> {
                                 <div className={"divider"}></div>
                                 <h4>Target</h4>
                                 <p>Configurazione dell&apos;ente creditore aderente alla nuova connettività.</p>
+                                <p className="alert alert-info">
+                                    <FaInfoCircle /> Impostare la password a <span className="badge badge-light">PLACEHOLDER</span> e disabilitare il proxy.
+                                </p>
                                 <div className="row">
                                     <Form.Group controlId="target_host" className="col-md-5">
                                         <Form.Label>Indirizzo</Form.Label>

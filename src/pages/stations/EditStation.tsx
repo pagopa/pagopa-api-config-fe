@@ -1,6 +1,6 @@
 import React from "react";
 import {Alert, Breadcrumb, Button, Card, Form} from "react-bootstrap";
-import {FaSpinner} from "react-icons/fa";
+import {FaInfoCircle, FaSpinner} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
 import debounce from "lodash.debounce";
@@ -363,6 +363,9 @@ export default class EditStation extends React.Component<IProps, IState> {
                                             <div className={"divider"}></div>
                                             <h4>Target</h4>
                                             <p>Configurazione dell&apos;ente creditore aderente alla nuova connettività.</p>
+                                            <p className="alert alert-info">
+                                                <FaInfoCircle /> Impostare la password a <span className="badge badge-light">PLACEHOLDER</span> e disabilitare il proxy.
+                                            </p>
                                             <div className="row">
                                                 <Form.Group controlId="target_host" className="col-md-5">
                                                     <Form.Label>Indirizzo</Form.Label>
