@@ -4,11 +4,11 @@ import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
 import debounce from "lodash.debounce";
 import AsyncSelect from "react-select/async";
+import {FaInfoCircle} from "react-icons/fa";
 import {apiClient} from "../../util/apiClient";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import {loginRequest} from "../../authConfig";
 import {ChannelDetails} from "../../../generated/api/ChannelDetails";
-import {FaInfoCircle} from "react-icons/fa";
 
 interface IProps {
     match: {
