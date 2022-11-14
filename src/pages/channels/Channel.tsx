@@ -54,6 +54,9 @@ export default class Channel extends React.Component<IProps, IState> {
                 proxy_enabled: false,
                 proxy_host: "",
                 proxy_port: 80,
+                target_host: "",
+                target_port: 443,
+                target_path: "",
                 thread_number: 2,
                 timeout_a: 15,
                 timeout_b: 30,
@@ -410,6 +413,30 @@ export default class Channel extends React.Component<IProps, IState> {
                                                                   readOnly/>
                                                 </Form.Group>
                                             </div>
+
+                                            <div className={"divider"}></div>
+                                            <h4>Target</h4>
+                                            <p>Configurazione dell&apos;ente creditore aderente alla nuova connettività.</p>
+                                            <div className="row">
+                                                <Form.Group controlId="target_host" className="col-md-5">
+                                                    <Form.Label>Indirizzo</Form.Label>
+                                                    <Form.Control placeholder="-" value={this.state.channel.target_host}
+                                                                  readOnly/>
+                                                </Form.Group>
+
+                                                <Form.Group controlId="target_port" className="col-md-2">
+                                                    <Form.Label>Porta</Form.Label>
+                                                    <Form.Control placeholder="-" value={this.state.channel.target_port}
+                                                                  readOnly/>
+                                                </Form.Group>
+
+                                                <Form.Group controlId="target_path" className="col-md-5">
+                                                    <Form.Label>Servizio</Form.Label>
+                                                    <Form.Control placeholder="-" value={this.state.channel.target_path}
+                                                                  readOnly/>
+                                                </Form.Group>
+                                            </div>
+
                                             <div className={"divider"}></div>
                                             <h4>Redirect</h4>
                                             <div className="row">
