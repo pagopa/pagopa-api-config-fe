@@ -64,6 +64,9 @@ export default class EditChannel extends React.Component<IProps, IState> {
                 proxy_enabled: false,
                 proxy_host: "",
                 proxy_port: 80,
+                target_host: "",
+                target_port: 443,
+                target_path: "",
                 thread_number: 1,
                 timeout_a: 15,
                 timeout_b: 30,
@@ -605,6 +608,35 @@ export default class EditChannel extends React.Component<IProps, IState> {
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
                                             </div>
+
+                                            <div className={"divider"}></div>
+                                            <h4>Target</h4>
+                                            <p>Configurazione dell&apos;ente creditore aderente alla nuova connettività.</p>
+                                            <p className="alert alert-info">
+                                                <FaInfoCircle /> Impostare la password a <span className="badge badge-light">PLACEHOLDER</span> e disabilitare il proxy.
+                                            </p>
+                                            <div className="row">
+                                                <Form.Group controlId="target_host" className="col-md-5">
+                                                    <Form.Label>Indirizzo</Form.Label>
+                                                    <Form.Control name="target_host"
+                                                                  value={this.state.channel.target_host}
+                                                                  onChange={(e) => this.handleChange(e)}/>
+                                                </Form.Group>
+
+                                                <Form.Group controlId="target_port" className="col-md-2">
+                                                    <Form.Label>Porta</Form.Label>
+                                                    <Form.Control name="target_port" type="number" min={1} max={65535}
+                                                                  value={this.state.channel.target_port}
+                                                                  onChange={(e) => this.handleChange(e)}/>
+                                                </Form.Group>
+                                                <Form.Group controlId="target_path" className="col-md-5">
+                                                    <Form.Label>Servizio</Form.Label>
+                                                    <Form.Control name="target_path"
+                                                                  value={this.state.channel.target_path}
+                                                                  onChange={(e) => this.handleChange(e)}/>
+                                                </Form.Group>
+                                            </div>
+
                                             <div className={"divider"}></div>
                                             <h4>Redirect</h4>
                                             <div className="row">
