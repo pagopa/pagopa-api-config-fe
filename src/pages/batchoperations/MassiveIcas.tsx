@@ -176,9 +176,13 @@ export default class MassiveIcas extends React.Component<IProps, IState> {
                     Authorization: `Bearer ${response.idToken}`
                 }
             };
-            axios.post(baseUrl + basePath + "/icas/check/massive", data, config).then((response:any) => {
-                this.setState({archive: response.data});
-            });
+            axios.post(baseUrl + basePath + "/icas/check/massive", data, config)
+                    .then((response:any) => {
+                        this.setState({archive: response.data});
+                    })
+                    .catch(() => {
+                        toast.error("Errore nell'elaborazione del file.", {theme: "colored"});
+                    });
         });
     }
 

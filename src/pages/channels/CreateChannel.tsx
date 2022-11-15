@@ -368,7 +368,7 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                                 <h4>Target</h4>
                                 <p>Configurazione dell&apos;ente creditore aderente alla nuova connettività.</p>
                                 <p className="alert alert-info">
-                                    <FaInfoCircle /> Impostare la password a <span className="badge badge-light">PLACEHOLDER</span>; disabilitare il proxy se ambiente <span className="font-italic">OnCloud</span> e, viceversa, impostarlo per ambiente <span className="font-italic">OnPrem</span>.
+                                    <FaInfoCircle /> Impostare la password a <span className="badge badge-light">PLACEHOLDER</span>, disabilitare il proxy se ambiente <span className="font-italic">OnCloud</span> e, viceversa, impostarlo per ambiente <span className="font-italic">OnPrem</span>.
                                 </p>
                                 <div className="row">
                                     <Form.Group controlId="target_host" className="col-md-5">
