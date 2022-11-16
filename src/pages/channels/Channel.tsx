@@ -416,7 +416,7 @@ export default class Channel extends React.Component<IProps, IState> {
 
                                             <div className={"divider"}></div>
                                             <h4>Target</h4>
-                                            <p>Configurazione dell&apos;ente creditore aderente alla nuova connettività.</p>
+                                            <p>Configurazione del psp aderente alla nuova connettività.</p>
                                             <div className="row">
                                                 <Form.Group controlId="target_host" className="col-md-5">
                                                     <Form.Label>Indirizzo</Form.Label>

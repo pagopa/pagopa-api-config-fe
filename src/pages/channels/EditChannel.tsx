@@ -611,7 +611,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
 
                                             <div className={"divider"}></div>
                                             <h4>Target</h4>
-                                            <p>Configurazione dell&apos;ente creditore aderente alla nuova connettività.</p>
+                                            <p>Configurazione del psp aderente alla nuova connettività.</p>
                                             <p className="alert alert-info">
                                                 <FaInfoCircle /> Impostare la password a <span className="badge badge-light">PLACEHOLDER</span> e disabilitare il proxy.
                                             </p>
