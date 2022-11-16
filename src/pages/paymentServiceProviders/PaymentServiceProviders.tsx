@@ -205,7 +205,7 @@ export default class PaymentServiceProviders extends React.Component<IProps, ISt
         const pspToDeleteName = this.state.paymentServiceProviderToDelete.business_name;
         const pspToDeleteCode = this.state.paymentServiceProviderToDelete.psp_code;
 
-        this.state.payment_service_providers.map((psp: any, index: number) => {
+        this.state.payment_service_providers?.map((psp: any, index: number) => {
             const code = (
                 <tr key={index}>
                     <td>{psp.business_name}</td>
