@@ -147,7 +147,7 @@ export default class MassiveIcas extends React.Component<IProps, IState> {
      * Handle file uploaded
      * @param event
      */
-    handleFile(event: any) {
+    handleFile(event: any, type: string) {
         this.initState();
 
         // const reader = new FileReader();
@@ -155,11 +155,46 @@ export default class MassiveIcas extends React.Component<IProps, IState> {
         // eslint-disable-next-line functional/immutable-data
         event.target.value = null;
         if (file) {
-            this.uploadFile(file);
+            if (type === "create") {
+                this.uploadCreateFile(file);
+            }
+            else {
+                this.uploadVerifyFile(file);
+            }
         }
     }
 
-    uploadFile(file: any) {
+    uploadCreateFile(file: any) {
+        const data = new FormData();
+        data.append("file", file);
+
+        const baseUrl = getConfig("APICONFIG_HOST") as string;
+        const basePath = getConfig("APICONFIG_BASEPATH") as string;
+
+        this.context.instance.acquireTokenSilent({
+            ...loginRequest,
+            account: this.context.accounts[0]
+        }).then((response: any) => {
+            const config = {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    Authorization: `Bearer ${response.idToken}`
+                }
+            };
+            axios.post(baseUrl + basePath + "/icas/massive", data, config)
+                    .then((response:any) => {
+                        if (response.status == 201) {
+                            toast.success("Caricamento effettuato con successo.", {theme: "colored"});
+                        }
+                    })
+                    .catch((err) => {
+                        const message = (err.response.data) ? ": " + err.response.data.detail : ".";
+                        toast.error("Errore nell'elaborazione del file" + message, {theme: "colored"});
+                    });
+        });
+    }
+
+    uploadVerifyFile(file: any) {
         const data = new FormData();
         data.append("file", file);
 
@@ -206,8 +241,8 @@ export default class MassiveIcas extends React.Component<IProps, IState> {
         }
     }
 
-    create() {
-        const element = document.getElementById("fileUploader");
+    create(elementId: string) {
+        const element = document.getElementById(elementId);
         if (element) {
             element.click();
         }
@@ -278,16 +313,28 @@ export default class MassiveIcas extends React.Component<IProps, IState> {
 
                 <div className="row">
                     <div className={"col-md-12"}>
-                        <p>In questa sezione è possibile effettuare la verifica massiva di più file XML contenenti le Informative Conto Accredito.</p>
+                        <p>In questa sezione è possibile effettuare la verifica o il caricamento massivo di più file XML contenenti le Informative Conto Accredito.</p>
                         <p>Il file <span className="font-italic">deve</span> essere uno zip la cui dimensione non deve superare i 5mb.</p>
                     </div>
+                </div>
+                <div className="row">
                     <div className={"col-md-3"}>
                         <span className="font-weight-bold">Verifica massiva</span>
                     </div>
                     <div className={"col-md-4"}>
-                        <Button onClick={this.create}>Carica <FaPlus/></Button>
+                        <Button onClick={() => this.create('verifyUploader')}>Carica <FaPlus/></Button>
                         {/* eslint-disable-next-line functional/immutable-data */}
-                        <Form.Control id="fileUploader" className="hidden" type="file" accept=".zip" onChange={this.handleFile} onClick={(e: any) => (e.target.value = null)} />
+                        <Form.Control id="verifyUploader" className="hidden" type="file" accept=".zip" onChange={(e) => this.handleFile(e, "verify")} onClick={(e: any) => (e.target.value = null)} />
+                    </div>
+                </div>
+                <div className="row mt-3">
+                    <div className={"col-md-3"}>
+                        <span className="font-weight-bold">Caricamento massivo</span>
+                    </div>
+                    <div className={"col-md-4"}>
+                        <Button onClick={() => this.create('createUploader')}>Carica <FaPlus/></Button>
+                        {/* eslint-disable-next-line functional/immutable-data */}
+                        <Form.Control id="createUploader" className="hidden" type="file" accept=".zip" onChange={(e) => this.handleFile(e, "create")} onClick={(e: any) => (e.target.value = null)} />
                     </div>
                 </div>
 
