@@ -183,12 +183,12 @@ export default class MassiveIcas extends React.Component<IProps, IState> {
             };
             axios.post(baseUrl + basePath + "/icas/massive", data, config)
                     .then((response:any) => {
-                        if (response.status == 201) {
+                        if (response.status === 201) {
                             toast.success("Caricamento effettuato con successo.", {theme: "colored"});
                         }
                     })
                     .catch((err) => {
-                        const message = (err.response.data) ? ": " + err.response.data.detail : ".";
+                        const message = (err.response.data) ? ": " + String(err.response.data.detail) : ".";
                         toast.error("Errore nell'elaborazione del file" + message, {theme: "colored"});
                     });
         });
