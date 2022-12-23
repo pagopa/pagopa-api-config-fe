@@ -1,14 +1,16 @@
 import React from 'react';
 import {Button, OverlayTrigger, Table, Tooltip} from "react-bootstrap";
-import {FaCheck, FaEdit, FaEye, FaPlus, FaSpinner, FaTimes, FaTrash} from "react-icons/fa";
+import {FaCheck, FaEdit, FaEye, FaFileDownload, FaPlus, FaSpinner, FaTimes, FaTrash} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
+import axios, {AxiosRequestConfig} from "axios";
 import {apiClient} from "../../util/apiClient";
 import Paginator from "../../components/Paginator";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import {loginRequest} from "../../authConfig";
 import Filters from "../../components/Filters";
 import Ordering from "../../components/Ordering";
+import {getConfig} from "../../util/config";
 
 interface IProps {
     history: {
@@ -39,7 +41,6 @@ export default class Channels extends React.Component<IProps, IState> {
     private filter: { [item: string]: any };
 
     service = "/channels";
-
     constructor(props: IProps) {
         super(props);
 
@@ -78,6 +79,7 @@ export default class Channels extends React.Component<IProps, IState> {
         this.handlePageChange = this.handlePageChange.bind(this);
         this.handleOrder = this.handleOrder.bind(this);
         this.create = this.create.bind(this);
+        this.download = this.download.bind(this);
     }
 
     toastError(message: string) {
@@ -121,6 +123,43 @@ export default class Channels extends React.Component<IProps, IState> {
     create() {
         this.props.history.push(this.service + "/create");
         return false;
+    }
+
+    download() {
+        const baseUrl = getConfig("APICONFIG_HOST") as string;
+        const basePath = getConfig("APICONFIG_BASEPATH") as string;
+
+        this.context.instance.acquireTokenSilent({
+            ...loginRequest,
+            account: this.context.accounts[0]
+        }).then((response: any) => {
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${response.idToken}`
+                },
+                responseType: 'blob'
+            } as AxiosRequestConfig;
+            const anchor = document.createElement("a");
+            document.body.appendChild(anchor);
+            const url = `${String(baseUrl)}${String(basePath)}${this.service}/csv`;
+            axios.get(url, config)
+                    .then((res: any) => {
+                        if (res.data.size > 1) {
+                            const objectUrl = window.URL.createObjectURL(res.data);
+                            // eslint-disable-next-line functional/immutable-data
+                            anchor.href = objectUrl;
+                            // eslint-disable-next-line functional/immutable-data
+                            anchor.download = `${this.service.substring(1)}.csv`;
+                            anchor.click();
+                            window.URL.revokeObjectURL(objectUrl);
+                        } else {
+                            toast.warn("Problemi nella generazione del CSV richiesto.", {theme: "colored"});
+                        }
+                    })
+                    .catch(() => {
+                        toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                    });
+        });
     }
 
     handlePageChange(requestedPage: number) {
@@ -240,11 +279,18 @@ export default class Channels extends React.Component<IProps, IState> {
         return (
             <div className="container-fluid creditor-institutions">
                 <div className="row">
-                    <div className="col-md-10 mb-3">
+                    <div className="col-md-9 mb-3">
                         <h2>Canali</h2>
                     </div>
-                    <div className="col-md-2 text-right">
-                        <Button onClick={this.create}>Nuovo <FaPlus/></Button>
+                    <div className="col-md-3 text-right">
+                        <OverlayTrigger placement="bottom"
+                                        overlay={<Tooltip id={`tooltip-download`}>Esporta tabella</Tooltip>}>
+                            <Button className="mr-1" onClick={this.download}>Export <FaFileDownload/></Button>
+                        </OverlayTrigger>
+                        <OverlayTrigger placement="bottom"
+                                        overlay={<Tooltip id={`tooltip-new`}>Crea nuovo canale</Tooltip>}>
+                            <Button onClick={this.create}>Nuovo <FaPlus/></Button>
+                        </OverlayTrigger>
                     </div>
                     <div className="col-md-12">
                         <div className="row">
