@@ -3,6 +3,7 @@ import {Button, OverlayTrigger, Table, Tooltip} from "react-bootstrap";
 import {FaCheck, FaEdit, FaEye, FaFileDownload, FaPlus, FaSpinner, FaTimes, FaTrash} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
+import axios, {AxiosRequestConfig} from "axios";
 import {apiClient} from "../../util/apiClient";
 import Paginator from "../../components/Paginator";
 import ConfirmationModal from "../../components/ConfirmationModal";
@@ -10,7 +11,6 @@ import {loginRequest} from "../../authConfig";
 import Filters from "../../components/Filters";
 import Ordering from "../../components/Ordering";
 import {getConfig} from "../../util/config";
-import axios, {AxiosRequestConfig} from "axios";
 
 interface IProps {
     history: {
