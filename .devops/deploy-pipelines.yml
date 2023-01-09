@@ -187,7 +187,9 @@ stages:
               azureSubscription: $(AZURE_SUBSCRIPTION)
               scriptType: 'bash'
               scriptLocation: 'inlineScript'
-              inlineScript: 'az storage blob delete-batch -s $(BLOB_CONTAINER_NAME) --account-name $(STORAGE_ACCOUNT_NAME) --account-key $(STORAGE_ACCOUNT_KEY) --if-unmodified-since $(date -d `"15 min ago`" ''+%Y-%m-%dT%H:%MZ'')'
+#              inlineScript: 'az storage blob delete-batch -s $(BLOB_CONTAINER_NAME) --account-name $(STORAGE_ACCOUNT_NAME) --account-key $(STORAGE_ACCOUNT_KEY) --if-unmodified-since $(date -d \"15 min ago\" ''+%Y-%m-%dT%H:%MZ'')'
+              inlineScript: |
+                az storage blob delete-batch -s $(BLOB_CONTAINER_NAME) --account-name $(STORAGE_ACCOUNT_NAME) --account-key $(STORAGE_ACCOUNT_KEY) --if-unmodified-since $(date -d \"2 min ago\" ''+%Y-%m-%dT%H:%MZ'')
 
       - job: 'purge_cdn'
         steps:
