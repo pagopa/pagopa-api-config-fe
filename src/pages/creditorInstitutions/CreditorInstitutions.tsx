@@ -44,6 +44,7 @@ interface IState {
     creditorInstitutionIndex: number;
     order: any;
     iban: any;
+    encoding: any;
 }
 
 export default class CreditorInstitutions extends React.Component<IProps, IState> {
@@ -77,6 +78,11 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
                 search: "",
                 showModal: false,
                 ciList: []
+            },
+            encoding: {
+                search: "",
+                showModal: false,
+                ciList: []
             }
         };
 
@@ -95,6 +101,7 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
         this.handleOrder = this.handleOrder.bind(this);
         this.createCreditorInstitution = this.createCreditorInstitution.bind(this);
         this.searchIban = this.searchIban.bind(this);
+        this.searchEncoding = this.searchEncoding.bind(this);
     }
 
     toastError(message: string) {
@@ -225,6 +232,15 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
         this.setState({iban});
     }
 
+    findByEncoding(codeToSearch: string) {
+        const encoding = {
+            search: codeToSearch,
+            showModal: false,
+            ciList: []
+        };
+        this.setState({encoding});
+    }
+
     searchIban() {
         const loading = toast.info("Ricerca in corso degli EC aventi l'IBAN specificato.");
         if (this.state.iban.search.length > 0) {
@@ -268,6 +284,49 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
         }
     }
 
+    searchEncoding() {
+        const loading = toast.info("Ricerca in corso degli EC aventi Codice Postale specificato.");
+        if (this.state.encoding.search.length > 0) {
+            this.context.instance.acquireTokenSilent({
+                ...loginRequest,
+                account: this.context.accounts[0]
+            })
+                    .then((response: any) => {
+                        apiClient.getCreditorInstitutionByPostalEncoding({
+                            Authorization: `Bearer ${response.idToken}`,
+                            ApiKey: "",
+                            encodingcode: this.state.encoding.search
+                        })
+                                .then((response: any) => {
+                                    if (response.right.status === 200) {
+                                        const ciList = response.right.value.creditor_institutions;
+                                        if (ciList.length === 0) {
+                                            toast.info("Nessun EC trovato con Il codice postale specificato.");
+                                        }
+                                        else {
+                                            const encoding = {
+                                                search: this.state.encoding.search,
+                                                showModal: true,
+                                                ciList
+                                            };
+                                            this.setState({encoding});
+                                        }
+                                    }
+                                })
+                                .catch(() => {
+                                    this.toastError("Problema nel recuperare gli enti creditori");
+                                })
+                                .finally(() => {
+                                    toast.dismiss(loading);
+                                    this.setState({isLoading: false});
+                                });
+                    });
+        }
+        else {
+            toast.warn("Nessun Codice Postale specificato.");
+        }
+    }
+
     hideIbanModal = (status: string) => {
         if (status === "ko") {
             const iban = {
@@ -276,6 +335,17 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
                 ciList: []
             };
             this.setState({iban});
+        }
+    };
+
+    hideEncodingModal = (status: string) => {
+        if (status === "ko") {
+            const encoding = {
+                search: "",
+                showModal: false,
+                ciList: []
+            };
+            this.setState({encoding});
         }
     };
 
@@ -350,11 +420,29 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
                                 </div>
                             </div>
                         </div>
+                        <div className="row">
+                            <div className="col-md-8"></div>
+                            <div className="col-md-4">
+                            <div className="row">
+                                <div className="d-flex align-items-center">
+                                    <FaSearch />
+                                </div>
+                                <div className="col-md-9">
+                                    <Form.Control name="filter_name" placeholder="Cerca per Codice Postale"
+                                                  value={this.state.encoding.search}
+                                                  onChange={event => this.findByEncoding(event.target.value)} />
+                                </div>
+                                <div className="col-md-2">
+                                    <Button className="btn btn-primary" onClick={this.searchEncoding} >Cerca</Button>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
 
                         {isLoading && (<FaSpinner className="spinner"/>)}
                         {
                             !isLoading && (
-                                <>
+                                <div className={"my-4"}>
                                     <Table hover responsive size="sm">
                                         <thead>
                                         <tr>
@@ -376,7 +464,7 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
                                     </Table>
 
                                     <Paginator pageInfo={pageInfo} onPageChanged={this.handlePageChange}/>
-                                </>
+                                </div>
                             )
                         }
                     </div>
@@ -390,6 +478,10 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
 
                 <CITableModal show={this.state.iban.showModal} handleClose={this.hideIbanModal}
                               iban={this.state.iban.search} creditorInstitutions={this.state.iban.ciList}
+                              history={this.props.history}
+                />
+                <CITableModal show={this.state.encoding.showModal} handleClose={this.hideEncodingModal}
+                              iban={this.state.encoding.search} creditorInstitutions={this.state.encoding.ciList}
                               history={this.props.history}
                 />
 
