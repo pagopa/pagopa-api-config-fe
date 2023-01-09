@@ -1,6 +1,6 @@
 import React from "react";
 import {Modal, Button, Table, Tooltip, OverlayTrigger} from 'react-bootstrap';
-import {FaAdversal, FaEye} from "react-icons/fa";
+import {FaEye} from "react-icons/fa";
 import {FiAlertTriangle} from "react-icons/all";
 
 interface IProps {
