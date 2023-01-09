@@ -176,6 +176,16 @@ stages:
   - stage: purge_cdn
     condition: not(failed('deploy_staging'))
     jobs:
+      - job: 'remove_old_files'
+        steps:
+          - task: AzureCLI@2
+            displayName: 'Clean blob container'
+            inputs:
+              azureSubscription: $(AZURE_SUBSCRIPTION)
+              scriptType: 'pscore'
+              scriptLocation: 'inlineScript'
+              inlineScript: 'az storage blob delete-batch -s "\$web" --account-name $(STORAGE_ACCOUNT_NAME) --if-unmodified-since $(date -d `"1 days ago`" ''+%Y-%m-%dT%H:%MZ'')'
+
       - job: 'purge_cdn'
         steps:
           - task: AzureCLI@1
