@@ -19,6 +19,7 @@ import {loginRequest} from "../../authConfig";
 import Filters from "../../components/Filters";
 import Ordering from "../../components/Ordering";
 import CITableModal from "../../components/CITableModal";
+import CIEncodingModal from '../../components/CIEncodingModal';
 
 interface IProps {
     history: {
@@ -480,9 +481,9 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
                               iban={this.state.iban.search} creditorInstitutions={this.state.iban.ciList}
                               history={this.props.history}
                 />
-                <CITableModal show={this.state.encoding.showModal} handleClose={this.hideEncodingModal}
-                              iban={this.state.encoding.search} creditorInstitutions={this.state.encoding.ciList}
-                              history={this.props.history}
+                <CIEncodingModal show={this.state.encoding.showModal} handleClose={this.hideEncodingModal}
+                                 encoding={this.state.encoding.search} creditorInstitutions={this.state.encoding.ciList}
+                                 history={this.props.history}
                 />
 
             </div>
