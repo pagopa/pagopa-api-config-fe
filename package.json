@@ -17,7 +17,7 @@
     "test": "jest --coverage --ci --testResultsProcessor jest-sonar-reporter",
     "test:local": "jest --coverage --ci",
     "generate:api": "rm -f swagger.json && wget https://raw.githubusercontent.com/pagopa/pagopa-api-config/main/openapi/swagger.json && sed -i 's/\\\\/\\\\\\\\/g' swagger.json && python3 ./convert.py && gen-api-models --api-spec swagger.json --no-strict --out-dir generated/api --request-types --response-decoders --client",
-    "macosx:generate:api": "rm -f swagger.json && wget https://raw.githubusercontent.com/pagopa/pagopa-api-config/main/openapi/swagger.json && sed -i '' 's/\\\\/\\\\\\\\/g' swagger.json && python3 ./convert.py && gen-api-models --api-spec swagger.json --no-strict --out-dir generated/api --request-types --response-decoders --client",
+    "macosx:generate:api": "sed -i '' 's/\\\\/\\\\\\\\/g' swagger.json && python3 ./convert.py && gen-api-models --api-spec swagger.json --no-strict --out-dir generated/api --request-types --response-decoders --client",
     "generate": "npm-run-all generate:*",
     "prettify": "prettier --write \"./**/*.{ts,tsx}\""
   },
