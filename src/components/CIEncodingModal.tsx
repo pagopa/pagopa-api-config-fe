@@ -1,7 +1,6 @@
 import React from "react";
 import {Modal, Button, Table, Tooltip, OverlayTrigger} from 'react-bootstrap';
 import {FaEye} from "react-icons/fa";
-import {FiAlertTriangle} from "react-icons/all";
 
 interface IProps {
     show: boolean;
@@ -41,7 +40,7 @@ export default class CITableModal extends React.Component<IProps, IState> {
                         <span>
                         {
                                 (this.props.creditorInstitutions.length > 1) &&
-                                <div className={"text-danger"}><FiAlertTriangle></FiAlertTriangle> Attenzione! Più Enti Creditori hanno lo stesso codice postale</div>
+                                <div className={"text-danger"}>Attenzione! Più Enti Creditori hanno lo stesso codice postale</div>
                         }
                     </span>
                         <Table hover responsive size="sm">
