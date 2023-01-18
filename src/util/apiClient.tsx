@@ -19,9 +19,12 @@ const fetchWithTimeout = toFetch(
 );
 const fetchApi: typeof fetchWithTimeout = (fetch as any) as typeof fetchWithTimeout;
 
+const apiConfigHost = window.localStorage.getItem("ALT") === null ? getConfig("APICONFIG_HOST") : getConfig("APICONFIG_HOST_ALT");
+const apiConfigBasePath = window.localStorage.getItem("ALT") === null ? getConfig("APICONFIG_BASEPATH") : getConfig("APICONFIG_BASEPATH_ALT");
+
 export const apiClient = createClient({
-    baseUrl: getConfig("APICONFIG_HOST") as string,
-    basePath: getConfig("APICONFIG_BASEPATH") as string,
+    baseUrl: apiConfigHost as string,
+    basePath: apiConfigBasePath as string,
     fetchApi
 });
 
