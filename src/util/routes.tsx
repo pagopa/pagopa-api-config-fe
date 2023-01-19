@@ -14,6 +14,7 @@ import Stations from "../pages/stations/Stations";
 import Station from "../pages/stations/Station";
 import CreateStation from "../pages/stations/CreateStation";
 import EditStation from "../pages/stations/EditStation";
+import CloneStation from "../pages/stations/CloneStation";
 import PaymentServiceProviders from "../pages/paymentServiceProviders/PaymentServiceProviders";
 import PaymentServiceProvider from "../pages/paymentServiceProviders/PaymentServiceProvider";
 import CreatePaymentServiceProvider from "../pages/paymentServiceProviders/CreatePaymentServiceProvider";
@@ -70,7 +71,14 @@ export default class Routes extends React.Component {
                                     <Route path="/stations/create" component={CreateStation} />
                                     <Route path="/stations/:code" render={props => {
                                         const edit: boolean = new URLSearchParams(props.location.search).get("edit") !== null;
-                                        return edit ? <EditStation {...props} /> : <Station {...props} />;
+                                        const clone: boolean = new URLSearchParams(props.location.search).get("clone") !== null;
+                                        if(edit){
+                                            return <EditStation {...props}/>;
+                                        }
+                                        else if(clone){
+                                            return <CloneStation {...props}/>;
+                                        }
+                                        else return <Station {...props} />;
                                     }}/>
 
                                     <Route path="/icas" exact component={Icas} />

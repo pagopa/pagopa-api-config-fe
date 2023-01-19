@@ -1,6 +1,6 @@
 import React from 'react';
 import {Button, OverlayTrigger, Table, Tooltip} from "react-bootstrap";
-import {FaCheck, FaEdit, FaEye, FaFileDownload, FaPlus, FaSpinner, FaTimes, FaTrash} from "react-icons/fa";
+import {FaClone, FaCheck, FaEdit, FaEye, FaFileDownload, FaPlus, FaSpinner, FaTimes, FaTrash} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
 import axios, {AxiosRequestConfig} from "axios";
@@ -167,6 +167,10 @@ export default class Stations extends React.Component<IProps, IState> {
         this.props.history.push(this.service + "/" + code);
     }
 
+    handleClone(code: string) {
+        this.props.history.push(this.service + "/" + code + "?clone");
+    }
+
     handleEdit(code: string) {
         this.props.history.push(this.service + "/" + code + "?edit");
     }
@@ -256,6 +260,13 @@ export default class Stations extends React.Component<IProps, IState> {
                                         overlay={<Tooltip id={`tooltip-details-${index}`}>Visualizza</Tooltip>}>
                             <FaEye role="button" className="mr-3"
                                    onClick={() => this.handleDetails(station.station_code)}/>
+                        </OverlayTrigger>
+                        {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
+                        <OverlayTrigger placement="top"
+                                        overlay={<Tooltip id={`tooltip-clone-${index}`}>Clona</Tooltip>}>
+                            {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
+                            <FaClone role="button" className="mr-3"
+                                    onClick={() => this.handleClone(station.station_code)}/>
                         </OverlayTrigger>
                         {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
                         <OverlayTrigger placement="top"
