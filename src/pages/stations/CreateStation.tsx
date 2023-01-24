@@ -10,6 +10,8 @@ import ConfirmationModal from "../../components/ConfirmationModal";
 import {loginRequest} from "../../authConfig";
 import {StationDetails} from "../../../generated/api/StationDetails";
 import StationView from "./StationView";
+import {getStation} from "./Services";
+import {stat} from "fs";
 
 interface IProps {
     match: {
@@ -84,12 +86,20 @@ export default class CreateStation extends React.Component<IProps, IState> {
     componentDidMount(): void {
         const code = new URLSearchParams(this.props.location.search).get("clone") as string;
         if (code) {
-            //this.getStation(ciToClone);
+            // this.getStation(ciToClone);
             this.setState({code});
             console.log("AGGIORNO CODE", code);
-            // call getStation
-            // reset stationId
+            getStation(this.context, code).then((station) => {
+                console.log("IN CREATE", station);
+                // station.station_code = "";
+                this.setState({station});
+            }).catch((error) => {
+                console.log("ERROR IN CREATE", error);
+            }).finally(() => this.setState({isLoading: false}));
             // update station state -> force to reload station view
+        }
+        else {
+            this.setState({isLoading: false});
         }
         // const code: string = this.props.match.params.code as string;
         // this.setState({code, isError: false});
@@ -244,7 +254,7 @@ export default class CreateStation extends React.Component<IProps, IState> {
 
     render(): React.ReactNode {
         return (
-            <StationView code={this.state.code} />
+            <StationView station={this.state.station} />
         );
     }
 }

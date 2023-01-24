@@ -1,17 +1,11 @@
 import React from "react";
-import {Alert, Breadcrumb, Button, Card, Form} from "react-bootstrap";
-import {toast} from "react-toastify";
+import {Alert, Breadcrumb, Card, Form} from "react-bootstrap";
 import {MsalContext} from "@azure/msal-react";
-import AsyncSelect from "react-select/async";
-import debounce from "lodash.debounce";
-import {FaInfoCircle, FaSpinner} from "react-icons/fa";
-import {apiClient} from "../../util/apiClient";
-import ConfirmationModal from "../../components/ConfirmationModal";
-import {loginRequest} from "../../authConfig";
+import {FaSpinner} from "react-icons/fa";
 import {StationDetails} from "../../../generated/api/StationDetails";
 
 interface IProps {
-    code: string;
+    station: StationDetails;
 }
 
 interface IState {
@@ -31,43 +25,35 @@ export default class StationView extends React.Component<IProps, IState> {
 
         this.state = {
             isError: false,
-            isLoading: true,
+            // TODO set true
+            isLoading: false,
             stationName: "-",
             station: {} as StationDetails,
         };
+
+        this.handleChange = this.handleChange.bind(this);
     }
 
     componentDidUpdate(oldProps: IProps) {
-        if (this.props.code !== oldProps.code && this.props.code.length > 0) {
-            this.getStation(this.props.code);
+        if (this.props.station !== oldProps.station) {
+            this.setState({stationName: this.props.station.station_code});
         }
     }
 
-    getStation(code: string): void {
-        this.context.instance.acquireTokenSilent({
-            ...loginRequest,
-            account: this.context.accounts[0]
-        })
-                .then((response: any) => {
-                    apiClient.getStation({
-                        Authorization: `Bearer ${response.idToken}`,
-                        ApiKey: "",
-                        stationcode: code
-                    }).then((response: any) => {
-                        if (response.right.status === 200) {
-                            this.setState({station: response.right.value});
-                            this.setState({stationName: response.right.value.station_code});
-                            // TODO
-                            // this.updateBackup("station", response.right.value);
-                        } else {
-                            this.setState({isError: true});
-                        }
-                    })
-                            .catch(() => {
-                                this.setState({isError: true});
-                            })
-                            .finally(() => this.setState({isLoading: false}));
-                });
+    handleChange(event: any) {
+        // console.log("EVENTOO", this.props.station, event);
+        console.log("EVENTOO", event, event.target.name, event.target.value);
+        // // eslint-disable-next-line functional/no-let
+        // let station: StationDetails = this.state.station;
+        // const key = event.target.name as string;
+        // eslint-disable-next-line functional/no-let
+        // let value = event.target.type === "checkbox" ? event.target.checked : event.target.value;
+        // if (value === 'null') {
+        //     value = null;
+        // }
+        // this.props.station[key] = value;
+        // station = {...station, [key]: value};
+        // this.setState({station});
     }
 
     render(): React.ReactNode {
@@ -103,14 +89,14 @@ export default class StationView extends React.Component<IProps, IState> {
                                                     <Card.Header>
                                                         <h5>Anagrafica</h5>
                                                     </Card.Header>
-                                                    {/*<Card.Body>*/}
-                                                    {/*    <div className="row">*/}
-                                                    {/*        <Form.Group controlId="station_code" className="col-md-3">*/}
-                                                    {/*            <Form.Label>Codice <span className="text-danger">*</span></Form.Label>*/}
-                                                    {/*            <Form.Control name="station_code" placeholder=""*/}
-                                                    {/*                          value={this.state.station.station_code}*/}
-                                                    {/*                          onChange={(e) => this.handleChange(e)}/>*/}
-                                                    {/*        </Form.Group>*/}
+                                                    <Card.Body>
+                                                        <div className="row">
+                                                            <Form.Group controlId="station_code" className="col-md-3">
+                                                                <Form.Label>Codice <span className="text-danger">*</span></Form.Label>
+                                                                <Form.Control name="station_code" placeholder=""
+                                                                              value={this.props.station.station_code}
+                                                                              onChange={(e) => this.handleChange(e)}/>
+                                                            </Form.Group>
                                                     {/*        <Form.Group controlId="enabled" className="col-md-2">*/}
                                                     {/*            <Form.Label>Stato <span className="text-danger">*</span></Form.Label>*/}
                                                     {/*            <Form.Control as="select" name="enabled" placeholder="stato"*/}
@@ -121,12 +107,12 @@ export default class StationView extends React.Component<IProps, IState> {
                                                     {/*            </Form.Control>*/}
                                                     {/*        </Form.Group>*/}
 
-                                                    {/*        <Form.Group controlId="version" className="col-md-2">*/}
-                                                    {/*            <Form.Label>Versione <span className="text-danger">*</span></Form.Label>*/}
-                                                    {/*            <Form.Control type={"number"} name="version" min={1} max={2}*/}
-                                                    {/*                          value={this.state.station.version}*/}
-                                                    {/*                          onChange={(e) => this.handleChange(e)}/>*/}
-                                                    {/*        </Form.Group>*/}
+                                                            <Form.Group controlId="version" className="col-md-2">
+                                                                <Form.Label>Versione <span className="text-danger">*</span></Form.Label>
+                                                                <Form.Control type={"number"} name="version" min={1} max={2}
+                                                                              value={this.props.station.version}
+                                                                              onChange={(e) => this.handleChange(e)}/>
+                                                            </Form.Group>
 
                                                     {/*        <Form.Group controlId="broker_code" className="col-md-3">*/}
                                                     {/*            <Form.Label>Codice Intermediario <span*/}
@@ -156,7 +142,7 @@ export default class StationView extends React.Component<IProps, IState> {
                                                     {/*                          value={this.state.station.new_password}*/}
                                                     {/*                          onChange={(e) => this.handleChange(e)}/>*/}
                                                     {/*        </Form.Group>*/}
-                                                    {/*    </div>*/}
+                                                        </div>
 
                                                     {/*    <div className={"divider"}></div>*/}
                                                     {/*    <h4>Servizio</h4>*/}
@@ -408,10 +394,10 @@ export default class StationView extends React.Component<IProps, IState> {
                                                     {/*                          onChange={(e) => this.handleChange(e)}/>*/}
                                                     {/*        </Form.Group>*/}
 
-                                                    {/*    </div>*/}
+                                                        {/*</div>*/}
 
 
-                                                    {/*</Card.Body>*/}
+                                                    </Card.Body>
                                                     {/*<Card.Footer>*/}
                                                     {/*    <div className="row">*/}
                                                     {/*        <div className="col-md-12">*/}
