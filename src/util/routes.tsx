@@ -71,14 +71,7 @@ export default class Routes extends React.Component {
                                     <Route path="/stations/create" component={CreateStation} />
                                     <Route path="/stations/:code" render={props => {
                                         const edit: boolean = new URLSearchParams(props.location.search).get("edit") !== null;
-                                        const clone: boolean = new URLSearchParams(props.location.search).get("clone") !== null;
-                                        if(edit){
-                                            return <EditStation {...props}/>;
-                                        }
-                                        else if(clone){
-                                            return <CloneStation {...props}/>;
-                                        }
-                                        else return <Station {...props} />;
+                                        return edit ? <EditStation {...props} /> : <Station {...props} />;
                                     }}/>
 
                                     <Route path="/icas" exact component={Icas} />

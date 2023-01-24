@@ -168,7 +168,7 @@ export default class Stations extends React.Component<IProps, IState> {
     }
 
     handleClone(code: string) {
-        this.props.history.push(this.service + "/" + code + "?clone");
+        this.props.history.push(this.service + "/create?clone=" + code);
     }
 
     handleEdit(code: string) {
@@ -263,17 +263,17 @@ export default class Stations extends React.Component<IProps, IState> {
                         </OverlayTrigger>
                         {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
                         <OverlayTrigger placement="top"
-                                        overlay={<Tooltip id={`tooltip-clone-${index}`}>Clona</Tooltip>}>
-                            {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
-                            <FaClone role="button" className="mr-3"
-                                    onClick={() => this.handleClone(station.station_code)}/>
-                        </OverlayTrigger>
-                        {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
-                        <OverlayTrigger placement="top"
                                         overlay={<Tooltip id={`tooltip-edit-${index}`}>Modifica</Tooltip>}>
                             {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
                             <FaEdit role="button" className="mr-3"
                                     onClick={() => this.handleEdit(station.station_code)}/>
+                        </OverlayTrigger>
+                        {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
+                        <OverlayTrigger placement="top"
+                                        overlay={<Tooltip id={`tooltip-clone-${index}`}>Clona</Tooltip>}>
+                            {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
+                            <FaClone role="button" className="mr-3"
+                                     onClick={() => this.handleClone(station.station_code)}/>
                         </OverlayTrigger>
                         {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
                         <OverlayTrigger placement="top"

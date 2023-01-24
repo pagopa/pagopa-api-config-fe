@@ -9,6 +9,7 @@ import {apiClient} from "../../util/apiClient";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import {loginRequest} from "../../authConfig";
 import {StationDetails} from "../../../generated/api/StationDetails";
+import StationView from "./StationView";
 
 interface IProps {
     match: {
@@ -20,6 +21,7 @@ interface IProps {
 }
 
 interface IState {
+    code: string;
     station: StationDetails;
     showModal: boolean;
 }
@@ -33,6 +35,7 @@ export default class CreateStation extends React.Component<IProps, IState> {
         super(props);
 
         this.state = {
+            code: "",
             station: {
                 broker_code: "",
                 enabled: false,
@@ -78,6 +81,21 @@ export default class CreateStation extends React.Component<IProps, IState> {
         this.debouncedBrokerOptions = this.debouncedBrokerOptions.bind(this);
     }
 
+    componentDidMount(): void {
+        const code = new URLSearchParams(this.props.location.search).get("clone") as string;
+        if (code) {
+            //this.getStation(ciToClone);
+            this.setState({code});
+            console.log("AGGIORNO CODE", code);
+            // call getStation
+            // reset stationId
+            // update station state -> force to reload station view
+        }
+        // const code: string = this.props.match.params.code as string;
+        // this.setState({code, isError: false});
+        // this.getStation(code);
+    }
+
     handleChange(event: any) {
         // eslint-disable-next-line functional/no-let
         let station: StationDetails = this.state.station;
@@ -97,7 +115,6 @@ export default class CreateStation extends React.Component<IProps, IState> {
         station.broker_code = event.value;
         this.setState({station});
     }
-
 
     discard(): void {
         this.setState({showModal: true});
@@ -227,313 +244,7 @@ export default class CreateStation extends React.Component<IProps, IState> {
 
     render(): React.ReactNode {
         return (
-            <div className="container-fluid creditor-institutions">
-                <div className="row">
-                    <div className="col-md-12 mb-5">
-                        <Breadcrumb>
-                            <Breadcrumb.Item href={this.service}>Stazioni</Breadcrumb.Item>
-                            <Breadcrumb.Item active>Crea Stazione</Breadcrumb.Item>
-                        </Breadcrumb>
-                    </div>
-                    <div className="col-md-12">
-                        <div className="row">
-                            <div className="col-md-12">
-                                <h2>Nuova Stazione</h2>
-                            </div>
-                        </div>
-                        <Card>
-                            <Card.Header>
-                                <h4>Anagrafica</h4>
-                            </Card.Header>
-                            <Card.Body>
-
-                                <div className="row">
-                                    <Form.Group controlId="station_code" className="col-md-4">
-                                        <Form.Label>Codice <span className="text-danger">*</span></Form.Label>
-                                        <Form.Control name="station_code" placeholder=""
-                                                      onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-                                    <Form.Group controlId="enabled" className="col-md-2">
-                                        <Form.Label>Stato <span className="text-danger">*</span></Form.Label>
-                                        <Form.Control as="select" name="enabled" placeholder="stato"
-                                                      onChange={(e) => this.handleChange(e)}
-                                                      defaultValue={String(this.state.station.enabled)}>
-                                            <option value="true">Abilitato</option>
-                                            <option value="false">Non Abilitato</option>
-                                        </Form.Control>
-                                    </Form.Group>
-
-                                    <Form.Group controlId="version" className="col-md-2">
-                                        <Form.Label>Versione <span className="text-danger">*</span></Form.Label>
-                                        <Form.Control type={"number"} name="version" min={1} max={2}
-                                                      onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-
-                                    <Form.Group controlId="broker_code" className="col-md-3">
-                                        <Form.Label>Codice Intermediario <span
-                                            className="text-danger">*</span></Form.Label>
-                                        <AsyncSelect
-                                            cacheOptions defaultOptions
-                                            loadOptions={this.debouncedBrokerOptions}
-                                            placeholder="Cerca codice"
-                                            menuPortalTarget={document.body}
-                                            styles={{menuPortal: base => ({...base, zIndex: 9999})}}
-                                            name="broker_code"
-                                            onChange={(e) => this.handleBrokerChange(e)}
-                                        />
-                                    </Form.Group>
-
-                                    <Form.Group controlId="password" className="col-md-2">
-                                        <Form.Label>Password</Form.Label>
-                                        <Form.Control name="password" onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-
-                                    <Form.Group controlId="new_password" className="col-md-2">
-                                        <Form.Label>Nuova Password</Form.Label>
-                                        <Form.Control name="new_password" onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-                                </div>
-
-                                <div className={"divider"}></div>
-                                <h4>Servizio</h4>
-                                <div className="row">
-                                    <Form.Group controlId="protocol" className="col-md-2">
-                                        <Form.Label>Protocollo <span className="text-danger">*</span></Form.Label>
-                                        <Form.Control as="select" name="protocol"
-                                                      defaultValue={String(this.state.station.protocol)}
-                                                      onChange={(e) => this.handleChange(e)}>
-                                            <option value="HTTPS">HTTPS</option>
-                                            <option value="HTTP">HTTP</option>
-                                        </Form.Control>
-                                    </Form.Group>
-
-                                    <Form.Group controlId="ip" className="col-md-5">
-                                        <Form.Label>IP</Form.Label>
-                                        <Form.Control name="ip"
-                                                      onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-                                </div>
-                                <div className="row">
-                                    <Form.Group controlId="port" className="col-md-2">
-                                        <Form.Label>Porta <span className="text-danger">*</span></Form.Label>
-                                        <Form.Control type="number" name="port" min={1} max={65535}
-                                                      value={String(this.state.station.port)}
-                                                      onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-
-                                    <Form.Group controlId="service" className="col-md">
-                                        <Form.Label>Servizio</Form.Label>
-                                        <Form.Control name="service" onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-
-                                    <Form.Group controlId="pof_service" className="col-md">
-                                        <Form.Label>Servizio POF</Form.Label>
-                                        <Form.Control name="pof_service"
-                                                      value={this.state.station.pof_service}
-                                                      onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-                                </div>
-
-                                <div className={"divider"}></div>
-                                <h4>Target</h4>
-                                <p>Configurazione dell&apos;ente creditore aderente alla nuova connettività.</p>
-                                <p className="alert alert-info">
-                                    <FaInfoCircle /> Impostare la password a <span className="badge badge-light">PLACEHOLDER</span>, disabilitare il proxy se ambiente <span className="font-italic">OnCloud</span> e, viceversa, impostarlo per ambiente <span className="font-italic">OnPrem</span>.
-                                </p>
-                                <div className="row">
-                                    <Form.Group controlId="target_host" className="col-md-5">
-                                        <Form.Label>Indirizzo</Form.Label>
-                                        <Form.Control name="target_host" onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-
-                                    <Form.Group controlId="target_port" className="col-md-2">
-                                        <Form.Label>Porta</Form.Label>
-                                        <Form.Control name="proxy_port" type="number" min={1} max={65535}
-                                                      onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-
-                                    <Form.Group controlId="target_path" className="col-md-5">
-                                        <Form.Label>Servizio</Form.Label>
-                                        <Form.Control name="target_path" onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-                                </div>
-
-                                <div className={"divider"}></div>
-                                <h4>Modello 4</h4>
-                                <div className="row">
-                                    <Form.Group controlId="protocol_4mod" className="col-md-2">
-                                        <Form.Label>Protocollo Modello 4</Form.Label>
-                                        <Form.Control as="select" name="protocol_4mod"
-                                                      defaultValue={String(this.state.station.protocol_4mod)}
-                                                      onChange={(e) => this.handleChange(e)}>
-                                            <option value="HTTPS">HTTPS</option>
-                                            <option value="HTTP">HTTP</option>
-                                        </Form.Control>
-                                    </Form.Group>
-
-                                    <Form.Group controlId="ip_4mod" className="col-md-7">
-                                        <Form.Label>IP Modello 4</Form.Label>
-                                        <Form.Control name="ip_4mod"
-                                                      onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-
-                                </div>
-                                <div className={"row"}>
-                                    <Form.Group controlId="port_4mod" className={"col-md-2"}>
-                                        <Form.Label>Porta Modello 4</Form.Label>
-                                        <Form.Control name="port_4mod" type="number" min={1} max={65535}
-                                                      onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-
-                                    <Form.Group controlId="service_4mod" className="col-md-7">
-                                        <Form.Label>Servizio Modello 4</Form.Label>
-                                        <Form.Control name="service_4mod" onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-                                </div>
-
-                                <div className={"divider"}></div>
-                                <h4>Redirect</h4>
-                                <div className="row">
-                                    <Form.Group controlId="redirect_protocol" className="col-md-2">
-                                        <Form.Label>Protocollo Redirect</Form.Label>
-                                        <Form.Control as="select" name="redirect_protocol"
-                                                      defaultValue={String(this.state.station.redirect_protocol)}
-                                                      onChange={(e) => this.handleChange(e)}>
-                                            <option value="HTTPS">HTTPS</option>
-                                            <option value="HTTP">HTTP</option>
-                                        </Form.Control>
-                                    </Form.Group>
-
-                                    <Form.Group controlId="redirect_ip" className="col-md-7">
-                                        <Form.Label>IP Redirect</Form.Label>
-                                        <Form.Control name="redirect_ip"
-                                                      onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-                                </div>
-                                <div className={"row"}>
-
-                                    <Form.Group controlId="redirect_port" className="col-md-2">
-                                        <Form.Label>Porta Redirect</Form.Label>
-                                        <Form.Control name="redirect_port" type="number" min={1} max={65535}
-                                                      onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-
-                                    <Form.Group controlId="redirect_path" className="col-md">
-                                        <Form.Label>Servizio Redirect</Form.Label>
-                                        <Form.Control name="redirect_path" onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-
-                                    <Form.Group controlId="redirect_query_string" className="col-md-3">
-                                        <Form.Label>Parametri Redirect</Form.Label>
-                                        <Form.Control name="redirect_query_string"
-                                                      onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-                                </div>
-
-                                <div className={"divider"}></div>
-                                <h4>Proxy</h4>
-                                <div className="row">
-                                    <Form.Group controlId="proxy_enabled" className="col-md-2">
-                                        <Form.Label>Proxy</Form.Label>
-                                        <Form.Control as="select" name="proxy_enabled" placeholder="stato"
-                                                      onChange={(e) => this.handleChange(e)}
-                                                      defaultValue={String(this.state.station.proxy_enabled)}>
-                                            <option value="true">Abilitato</option>
-                                            <option value="false">Non Abilitato</option>
-                                        </Form.Control>
-                                    </Form.Group>
-
-                                    <Form.Group controlId="proxy_host" className="col-md-2">
-                                        <Form.Label>Indirizzo Proxy</Form.Label>
-                                        <Form.Control name="proxy_host" onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-
-                                    <Form.Group controlId="proxy_port" className="col-md-2">
-                                        <Form.Label>Porta Proxy</Form.Label>
-                                        <Form.Control name="proxy_port" type="number" min={1} max={65535}
-                                                      onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-
-                                    <Form.Group controlId="proxy_username" className="col-md-3">
-                                        <Form.Label>Username Proxy</Form.Label>
-                                        <Form.Control name="proxy_username" onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-
-                                    <Form.Group controlId="proxy_password" className="col-md-3">
-                                        <Form.Label>Password Proxy</Form.Label>
-                                        <Form.Control name="proxy_password" onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-                                </div>
-
-                                <div className={"divider"}></div>
-                                <h4>Altre Informazioni</h4>
-                                <div className="row">
-
-                                    <Form.Group controlId="flag_online" className="col-md-2">
-                                        <Form.Label>Flag Online</Form.Label>
-                                        <Form.Control as="select" name="flag_online" placeholder="stato"
-                                                      onChange={(e) => this.handleChange(e)}
-                                                      defaultValue={String(this.state.station.flag_online)}>
-                                            <option value="true">Abilitato</option>
-                                            <option value="false">Non Abilitato</option>
-                                        </Form.Control>
-                                    </Form.Group>
-
-                                    <Form.Group controlId="invio_rt_istantaneo" className="col-md-2">
-                                        <Form.Label>Invio RT Istantaneo</Form.Label>
-                                        <Form.Control as="select" name="invio_rt_istantaneo" placeholder="stato"
-                                                      onChange={(e) => this.handleChange(e)}
-                                                      defaultValue={String(this.state.station.invio_rt_istantaneo)}>
-                                            <option value="true">Abilitato</option>
-                                            <option value="false">Non Abilitato</option>
-                                        </Form.Control>
-                                    </Form.Group>
-
-                                    <Form.Group controlId="thread_number" className="col-md-2">
-                                        <Form.Label>Numero Thread <span className="text-danger">*</span></Form.Label>
-                                        <Form.Control type="number" name="thread_number" min={1}
-                                                      value={String(this.state.station.thread_number)}
-                                                      onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-
-                                    <Form.Group controlId="timeout_a" className="col-md-2">
-                                        <Form.Label>Timeout A <span className="text-danger">*</span></Form.Label>
-                                        <Form.Control type="number" name="timeout_a" min={0}
-                                                      value={String(this.state.station.timeout_a)}
-                                                      onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-
-                                    <Form.Group controlId="timeout_b" className="col-md-2">
-                                        <Form.Label>Timeout B <span className="text-danger">*</span></Form.Label>
-                                        <Form.Control type="number" name="timeout_b" min={0}
-                                                      value={String(this.state.station.timeout_b)}
-                                                      onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-
-                                    <Form.Group controlId="timeout_c" className="col-md-2">
-                                        <Form.Label>Timeout C <span className="text-danger">*</span></Form.Label>
-                                        <Form.Control type="number" name="timeout_c" min={0}
-                                                      value={String(this.state.station.timeout_c)}
-                                                      onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-
-                                </div>
-                            </Card.Body>
-                        </Card>
-                        <div className="row justify-content-end">
-                            <div className="col-md-3 text-right">
-                                <Button onClick={this.save}>Salva</Button>
-                                <Button variant="secondary" className="ml-3" onClick={this.discard}>Annulla</Button>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-                <ConfirmationModal show={this.state.showModal} handleClose={this.hideModal}>
-                    <p>Sei sicuro di voler annullare le modifiche?</p>
-                </ConfirmationModal>
-            </div>
+            <StationView code={this.state.code} />
         );
     }
 }
