@@ -1,17 +1,17 @@
 import React from "react";
-import {Breadcrumb, Button, Card, Form} from "react-bootstrap";
+// import {Breadcrumb, Button, Card, Form} from "react-bootstrap";
 import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
-import AsyncSelect from "react-select/async";
+// import AsyncSelect from "react-select/async";
 import debounce from "lodash.debounce";
-import {FaInfoCircle} from "react-icons/fa";
+// import {FaInfoCircle} from "react-icons/fa";
 import {apiClient} from "../../util/apiClient";
-import ConfirmationModal from "../../components/ConfirmationModal";
+// import ConfirmationModal from "../../components/ConfirmationModal";
 import {loginRequest} from "../../authConfig";
 import {StationDetails} from "../../../generated/api/StationDetails";
 import StationView from "./StationView";
 import {getStation} from "./Services";
-import {stat} from "fs";
+
 
 interface IProps {
     match: {
@@ -20,10 +20,13 @@ interface IProps {
     history: {
         push(url: string): void;
     };
+
+    location?: any;
 }
 
 interface IState {
     code: string;
+    isLoading: boolean;
     station: StationDetails;
     showModal: boolean;
 }
@@ -32,12 +35,12 @@ export default class CreateStation extends React.Component<IProps, IState> {
     static contextType = MsalContext;
 
     service = "/stations";
-
     constructor(props: IProps) {
         super(props);
 
         this.state = {
             code: "",
+            isLoading: false,
             station: {
                 broker_code: "",
                 enabled: false,
@@ -81,29 +84,28 @@ export default class CreateStation extends React.Component<IProps, IState> {
         this.handleChange = this.handleChange.bind(this);
         this.hideModal = this.hideModal.bind(this);
         this.debouncedBrokerOptions = this.debouncedBrokerOptions.bind(this);
+        this.setStation = this.setStation.bind(this);
+    }
+
+    setStation(station: StationDetails): void {
+        this.setState({ station });
     }
 
     componentDidMount(): void {
         const code = new URLSearchParams(this.props.location.search).get("clone") as string;
         if (code) {
-            // this.getStation(ciToClone);
-            this.setState({code});
-            console.log("AGGIORNO CODE", code);
-            getStation(this.context, code).then((station) => {
-                console.log("IN CREATE", station);
-                // station.station_code = "";
-                this.setState({station});
+            this.setState({code, isLoading: true});
+
+            getStation(this.context, code).then((data: any) => {
+                const station = {...data, station_code: ""} as StationDetails;
+                this.setStation(station);
             }).catch((error) => {
-                console.log("ERROR IN CREATE", error);
+                console.log("TODO ERROR IN CREATE", error);
             }).finally(() => this.setState({isLoading: false}));
-            // update station state -> force to reload station view
         }
         else {
             this.setState({isLoading: false});
         }
-        // const code: string = this.props.match.params.code as string;
-        // this.setState({code, isError: false});
-        // this.getStation(code);
     }
 
     handleChange(event: any) {
@@ -251,10 +253,9 @@ export default class CreateStation extends React.Component<IProps, IState> {
             });
     }
 
-
     render(): React.ReactNode {
         return (
-            <StationView station={this.state.station} />
+            <StationView station={this.state.station} setStation={this.setStation} isLoading={this.state.isLoading} />
         );
     }
 }

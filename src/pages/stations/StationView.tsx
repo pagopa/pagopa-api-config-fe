@@ -6,13 +6,14 @@ import {StationDetails} from "../../../generated/api/StationDetails";
 
 interface IProps {
     station: StationDetails;
+
+    setStation: (station: StationDetails) => void;
+    isLoading: boolean;
 }
 
 interface IState {
     isError: boolean;
-    isLoading: boolean;
-    stationName: string;
-    station: StationDetails;
+
 }
 
 export default class StationView extends React.Component<IProps, IState> {
@@ -25,40 +26,27 @@ export default class StationView extends React.Component<IProps, IState> {
 
         this.state = {
             isError: false,
-            // TODO set true
-            isLoading: false,
-            stationName: "-",
-            station: {} as StationDetails,
         };
 
         this.handleChange = this.handleChange.bind(this);
     }
 
-    componentDidUpdate(oldProps: IProps) {
-        if (this.props.station !== oldProps.station) {
-            this.setState({stationName: this.props.station.station_code});
-        }
-    }
 
     handleChange(event: any) {
-        // console.log("EVENTOO", this.props.station, event);
-        console.log("EVENTOO", event, event.target.name, event.target.value);
-        // // eslint-disable-next-line functional/no-let
-        // let station: StationDetails = this.state.station;
-        // const key = event.target.name as string;
         // eslint-disable-next-line functional/no-let
-        // let value = event.target.type === "checkbox" ? event.target.checked : event.target.value;
-        // if (value === 'null') {
-        //     value = null;
-        // }
-        // this.props.station[key] = value;
-        // station = {...station, [key]: value};
-        // this.setState({station});
+        const key = event.target.name as string;
+        // eslint-disable-next-line functional/no-let
+        let value = event.target.type === "checkbox" ? event.target.checked : event.target.value;
+        if (value === 'null') {
+            value = null;
+        }
+        const station = {...this.props.station, [key]: value};
+        this.props.setStation(station);
     }
 
     render(): React.ReactNode {
         const isError = this.state.isError;
-        const isLoading = this.state.isLoading;
+        const isLoading = this.props.isLoading;
 
         return (
                 <div className="container-fluid creditor-institutions">
@@ -66,7 +54,7 @@ export default class StationView extends React.Component<IProps, IState> {
                         <div className="col-md-12 mb-5">
                             <Breadcrumb>
                                 <Breadcrumb.Item href={this.service}>Stazioni</Breadcrumb.Item>
-                                <Breadcrumb.Item active>{this.state.stationName || "-"}</Breadcrumb.Item>
+                                <Breadcrumb.Item active>{this.props.station.station_code || "-"}</Breadcrumb.Item>
                             </Breadcrumb>
                         </div>
                         <div className="col-md-12">
@@ -81,7 +69,7 @@ export default class StationView extends React.Component<IProps, IState> {
                                             <>
                                                 <div className="row">
                                                     <div className="col-md-12">
-                                                        <h2>{this.state.stationName || "-"}</h2>
+                                                        <h2>{this.props.station.station_code || "-"}</h2>
                                                     </div>
                                                 </div>
 
