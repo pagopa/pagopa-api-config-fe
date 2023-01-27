@@ -3,7 +3,7 @@ import React from "react";
 import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
 // import AsyncSelect from "react-select/async";
-import debounce from "lodash.debounce";
+//import debounce from "lodash.debounce";
 // import {FaInfoCircle} from "react-icons/fa";
 import {apiClient} from "../../util/apiClient";
 // import ConfirmationModal from "../../components/ConfirmationModal";
@@ -81,9 +81,7 @@ export default class CreateStation extends React.Component<IProps, IState> {
 
         this.discard = this.discard.bind(this);
         this.save = this.save.bind(this);
-        this.handleChange = this.handleChange.bind(this);
         this.hideModal = this.hideModal.bind(this);
-        this.debouncedBrokerOptions = this.debouncedBrokerOptions.bind(this);
         this.setStation = this.setStation.bind(this);
     }
 
@@ -94,38 +92,18 @@ export default class CreateStation extends React.Component<IProps, IState> {
     componentDidMount(): void {
         const code = new URLSearchParams(this.props.location.search).get("clone") as string;
         if (code) {
-            this.setState({code, isLoading: true});
-
+            this.setState({code: code, isLoading: true});
             getStation(this.context, code).then((data: any) => {
                 const station = {...data, station_code: ""} as StationDetails;
                 this.setStation(station);
             }).catch((error) => {
                 console.log("TODO ERROR IN CREATE", error);
-            }).finally(() => this.setState({isLoading: false}));
+            }).finally(() => this.setState({ isLoading: false }));
+            console.log(this.state);
         }
         else {
-            this.setState({isLoading: false});
+            this.setState({ isLoading: false });
         }
-    }
-
-    handleChange(event: any) {
-        // eslint-disable-next-line functional/no-let
-        let station: StationDetails = this.state.station;
-        const key = event.target.name as string;
-        // eslint-disable-next-line functional/no-let
-        let value = event.target.type === "checkbox" ? event.target.checked : event.target.value;
-        if (value === 'null') {
-            value = null;
-        }
-        station = {...station, [key]: value};
-        this.setState({station});
-    }
-
-    handleBrokerChange(event: any) {
-        const station: StationDetails = this.state.station;
-        // eslint-disable-next-line functional/immutable-data
-        station.broker_code = event.value;
-        this.setState({station});
     }
 
     discard(): void {
@@ -213,49 +191,15 @@ export default class CreateStation extends React.Component<IProps, IState> {
         toast.error(() => <div className={"toast-width"}>{message}</div>, {theme: "colored"});
     }
 
-    debouncedBrokerOptions = debounce((inputValue, callback) => {
-        this.promiseBrokerOptions(inputValue, callback);
-    }, 500);
-
-    promiseBrokerOptions(inputValue: string, callback: any) {
-        const limit = inputValue.length === 0 ? 10 : 99999;
-        const code = inputValue.length === 0 ? "" : inputValue;
-
-        this.context.instance.acquireTokenSilent({
-            ...loginRequest,
-            account: this.context.accounts[0]
-        })
-            .then((response: any) => {
-                apiClient.getBrokers({
-                    Authorization: `Bearer ${response.idToken}`,
-                    ApiKey: "",
-                    page: 0,
-                    limit,
-                    code
-                }).then((resp: any) => {
-                    if (resp.right.status === 200) {
-                        const items: Array<any> = [];
-                        resp.right.value.brokers.map((broker: any) => {
-                            // eslint-disable-next-line functional/immutable-data
-                            items.push({
-                                value: broker.broker_code,
-                                label: broker.broker_code,
-                            });
-                        });
-                        callback(items);
-                    } else {
-                        callback([]);
-                    }
-                }).catch(() => {
-                    toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
-                    callback([]);
-                });
-            });
-    }
-
     render(): React.ReactNode {
         return (
-            <StationView station={this.state.station} setStation={this.setStation} isLoading={this.state.isLoading} />
+            <StationView station={this.state.station} 
+            setStation={this.setStation} 
+            isLoading={this.state.isLoading} 
+            discard={this.discard} 
+            saveStation={this.save}
+            showModal={this.state.showModal}
+            hideModal={this.hideModal}/>
         );
     }
 }
