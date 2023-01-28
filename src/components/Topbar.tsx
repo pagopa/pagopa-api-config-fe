@@ -1,7 +1,7 @@
 import React from "react";
+import {FaDharmachakra} from "react-icons/fa";
 import {SignOutButton} from "./SignOutButton";
 import {SignInButton} from "./SignInButton";
-
 
 interface IProps {
     isAuthenticated: boolean;
@@ -20,6 +20,7 @@ export default class Topbar extends React.Component<IProps, IState> {
             <nav className="navbar navbar-light sticky-top bg-white flex-md-nowrap p-0 shadow">
                 <a className="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="#">
                     <img src={require('../assets/images/logo-pagopa.png')} title="logo"/>
+                    {localStorage.getItem("ALT") != null && <FaDharmachakra className="ml-2" />}
                 </a>
 
                 <div className={"m-2"}>

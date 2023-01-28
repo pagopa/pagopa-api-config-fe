@@ -4,6 +4,9 @@ export interface IConfig {
   APICONFIG_HOST: string;
   APICONFIG_BASEPATH: string;
 
+  APICONFIG_HOST_ALT: string;
+  APICONFIG_BASEPATH_ALT: string;
+
   APICONFIG_CLIENT_ID: string;
   APICONFIG_REDIRECT_URI: string;
   APICONFIG_TENANT: string;
