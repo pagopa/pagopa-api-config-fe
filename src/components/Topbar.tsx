@@ -1,7 +1,7 @@
 import React from "react";
+import {FaDharmachakra} from "react-icons/fa";
 import {SignOutButton} from "./SignOutButton";
 import {SignInButton} from "./SignInButton";
-import {FaDharmachakra} from "react-icons/fa";
 
 interface IProps {
     isAuthenticated: boolean;
