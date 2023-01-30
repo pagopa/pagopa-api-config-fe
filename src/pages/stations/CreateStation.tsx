@@ -29,6 +29,7 @@ interface IState {
     isLoading: boolean;
     station: StationDetails;
     showModal: boolean;
+    isError: boolean;
 }
 
 export default class CreateStation extends React.Component<IProps, IState> {
@@ -41,6 +42,7 @@ export default class CreateStation extends React.Component<IProps, IState> {
         this.state = {
             code: "",
             isLoading: false,
+            isError: false,
             station: {
                 broker_code: "",
                 enabled: false,
@@ -96,13 +98,15 @@ export default class CreateStation extends React.Component<IProps, IState> {
             getStation(this.context, code).then((data: any) => {
                 const station = {...data, station_code: ""} as StationDetails;
                 this.setStation(station);
+                this.setState({isError: false});      
             }).catch((error) => {
                 console.log("TODO ERROR IN CREATE", error);
+                this.setState({isError: true});
             }).finally(() => this.setState({ isLoading: false }));
-            console.log(this.state);
         }
         else {
             this.setState({ isLoading: false });
+            this.setState({isError: false});
         }
     }
 

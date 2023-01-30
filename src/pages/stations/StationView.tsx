@@ -15,7 +15,7 @@ interface IProps {
     station: StationDetails;
     setStation: (station: StationDetails) => void;
     saveStation: () => void;
-    discard: (section: string) => void;
+    discard: () => void;
     hideModal: (status: string) => void;
     isLoading: boolean;
     showModal: boolean;
@@ -448,7 +448,7 @@ export default class StationView extends React.Component<IProps, IState> {
                                                             <div className="col-md-12">
                                                                 <Button className="ml-2 float-md-right" variant="secondary"
                                                                         onClick={() => {
-                                                                            this.props.discard("station");
+                                                                            this.props.discard();
                                                                         }}>Annulla</Button>
                                                                 <Button className="float-md-right" onClick={() => {
                                                                     this.props.saveStation();
