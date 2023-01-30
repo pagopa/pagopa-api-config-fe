@@ -257,7 +257,9 @@ export default class MassiveIcas extends React.Component<IProps, IState> {
                 <tr key={key}>
                     <td className="font-weight-bold">{data.fileName}</td>
                     <td className="text-center">
-                        { data.checkItems.filter((c: any) => c.valid !== "VALID").length > 0 ? <FaTimes className="text-danger" /> : <FaCheck className="text-success" />}
+                        { data.checkItems.filter((c: any) => c.valid !== "VALID").length > 0 ? <FaTimes className="text-danger" /> :
+                                data.checkItems.filter((c: any) => c.action === "ADD_ENCODING" || c.action === "ADD_QRCODE").length > 0 ? <FaExclamationTriangle className="text-warning" /> :
+                                <FaCheck className="text-success" />}
                     </td>
                     <td className="text-right">
                         <OverlayTrigger placement="top"
