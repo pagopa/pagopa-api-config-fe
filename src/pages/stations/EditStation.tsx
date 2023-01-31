@@ -94,6 +94,14 @@ export default class EditStation extends React.Component<IProps, IState> {
         this.setState({showModal: false});
     }
 
+    discard() {
+        this.setState({showModal: true});
+    }
+
+    goBack(): void {
+        this.props.history.push(this.service);
+    }
+
     saveStation() {
         if (this.isNotValidPort(this.state.station.port) || this.isNotValidPort(this.state.station.port_4mod as number)
                 || this.isNotValidPort(this.state.station.proxy_port as number)
@@ -127,6 +135,7 @@ export default class EditStation extends React.Component<IProps, IState> {
                         toast.info("Modifica avvenuta con successo.");
                         this.setStation(response.right.value);
                         this.setState({stationName: response.right.value.station_code});
+                        setTimeout(this.goBack.bind(this), 2000);
                     } else {
                         const message = ("detail" in response.right.value) ? response.right.value.detail : "Operazione non avvenuta a causa di un errore";
                         this.toastError(message);
@@ -139,10 +148,6 @@ export default class EditStation extends React.Component<IProps, IState> {
 
     toastError(message: string) {
         toast.error(() => <div className={"toast-width"}>{message}</div>, {theme: "colored"});
-    }
-
-    discard() {
-        this.setState({showModal: true});
     }
     
     render(): React.ReactNode {
