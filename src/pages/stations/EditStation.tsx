@@ -51,14 +51,16 @@ export default class EditStation extends React.Component<IProps, IState> {
         };
 
         this.saveStation = this.saveStation.bind(this);
-        this.discard = this.discard.bind(this);
         this.setStation = this.setStation.bind(this);
-        this.hideModal = this.hideModal.bind(this);
-
+        this.setModal = this.setModal.bind(this);
     }
 
     setStation(station: StationDetails): void {
         this.setState({ station });
+    }
+
+    setModal(modal: boolean): void{
+        this.setState({showModal: modal})
     }
 
     componentDidMount(): void {
@@ -85,17 +87,6 @@ export default class EditStation extends React.Component<IProps, IState> {
 
     isNotValidThread(no: number) {
         return no < 1;
-    }
-
-    hideModal(status: string): void {
-        if (status === "ok") {
-            this.props.history.push(this.service);
-        }
-        this.setState({showModal: false});
-    }
-
-    discard() {
-        this.setState({showModal: true});
     }
 
     goBack(): void {
@@ -155,11 +146,10 @@ export default class EditStation extends React.Component<IProps, IState> {
             <StationView station={this.state.station} 
             setStation={this.setStation} 
             isLoading={this.state.isLoading} 
-            discard={this.discard} 
             saveStation={this.saveStation}
+            setShowModal={this.setModal}
             showModal={this.state.showModal}
-            hideModal={this.hideModal}/>
+            history={this.props.history}/>
         );
     }
-
 }

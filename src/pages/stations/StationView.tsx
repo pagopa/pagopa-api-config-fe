@@ -15,10 +15,10 @@ interface IProps {
     station: StationDetails;
     setStation: (station: StationDetails) => void;
     saveStation: () => void;
-    discard: () => void;
-    hideModal: (status: string) => void;
-    isLoading: boolean;
+    setShowModal: (showModal: boolean) => void;
     showModal: boolean;
+    isLoading: boolean;
+    history: any;
 }
 
 interface IState {
@@ -40,6 +40,19 @@ export default class StationView extends React.Component<IProps, IState> {
 
         this.handleChange = this.handleChange.bind(this);
         this.debouncedBrokerOptions = this.debouncedBrokerOptions.bind(this);
+        this.discard = this.discard.bind(this);
+        this.hideModal = this.hideModal.bind(this);
+    }
+
+    hideModal(status: string): void {
+        if (status === "ok") {
+            this.props.history.push(this.service);
+        }
+        this.props.setShowModal(false);
+    }
+
+    discard() {
+        this.props.setShowModal(true);
     }
 
     debouncedBrokerOptions = debounce((inputValue, callback) => {
@@ -448,7 +461,7 @@ export default class StationView extends React.Component<IProps, IState> {
                                                             <div className="col-md-12">
                                                                 <Button className="ml-2 float-md-right" variant="secondary"
                                                                         onClick={() => {
-                                                                            this.props.discard();
+                                                                            this.discard();
                                                                         }}>Annulla</Button>
                                                                 <Button className="float-md-right" onClick={() => {
                                                                     this.props.saveStation();
@@ -462,7 +475,7 @@ export default class StationView extends React.Component<IProps, IState> {
                         }
                         </div>
                     </div>
-                    <ConfirmationModal show={this.props.showModal} handleClose={this.props.hideModal}>
+                    <ConfirmationModal show={this.props.showModal} handleClose={this.hideModal}>
                         <p>Sei sicuro di voler annullare le modifiche?</p>
                     </ConfirmationModal>
                 </div>
