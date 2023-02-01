@@ -77,49 +77,11 @@ export default class EditStation extends React.Component<IProps, IState> {
         }).finally(() => this.setState({ isLoading: false }));
     }
 
-    isNotValidPort(port: number) {
-        return port ? port < 1 || port > 65535 : port;
-    }
-
-    isNotValidTimeout(no: number) {
-        return no < 0;
-    }
-
-    isNotValidThread(no: number) {
-        return no < 1;
-    }
-
-    isNotValidPrimitiveVersion(no: number) {
-        return no < 1 || no > 2;
-    }
-
     goBack(): void {
         this.props.history.push(this.service);
     }
 
     saveStation() {
-        if (this.isNotValidPort(this.state.station.port) || this.isNotValidPort(this.state.station.port_4mod as number)
-                || this.isNotValidPort(this.state.station.proxy_port as number)
-                || this.isNotValidPort(this.state.station.redirect_port as number)) {
-            this.toastError("La porta deve avere un valore compreso tra 1 e 65535.");
-            return;
-        }
-        if (this.isNotValidThread(this.state.station.thread_number)){
-            this.toastError("Il numero di thread deve essere un valore maggiore di 0.");
-            return;
-        }
-
-        if (this.isNotValidTimeout(this.state.station.timeout_a)
-                || this.isNotValidTimeout(this.state.station.timeout_b) || this.isNotValidTimeout(this.state.station.timeout_c)) {
-            this.toastError("I timeout devono avere un valore maggiore o uguale a 0.");
-            return;
-        }
-
-        if (this.isNotValidPrimitiveVersion(this.state.station.primitive_version)) {
-            this.toastError("La versione delle primitive deve essere una tra le seguenti: 1 o 2");
-            return;
-        }
-
         this.context.instance.acquireTokenSilent({
             ...loginRequest,
             account: this.context.accounts[0]

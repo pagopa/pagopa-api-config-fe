@@ -42,6 +42,7 @@ export default class StationView extends React.Component<IProps, IState> {
         this.debouncedBrokerOptions = this.debouncedBrokerOptions.bind(this);
         this.discard = this.discard.bind(this);
         this.hideModal = this.hideModal.bind(this);
+        this.validData = this.validData.bind(this);
     }
 
     hideModal(status: string): void {
@@ -93,6 +94,51 @@ export default class StationView extends React.Component<IProps, IState> {
                     callback([]);
                 });
             });
+    }
+
+    isNotValidPort(port: number) {
+        return port ? port < 1 || port > 65535 : port;
+    }
+
+    isNotValidTimeout(no: number) {
+        return no < 0;
+    }
+
+    isNotValidThread(no: number) {
+        return no < 1;
+    }
+
+    isNotValidPrimitiveVersion(no: number) {
+        return no < 1 || no > 2;
+    }
+
+    toastError(message: string) {
+        toast.error(() => <div className={"toast-width"}>{message}</div>, {theme: "colored"});
+    }
+
+    validData() {
+        if (this.isNotValidPort(this.props.station.port) || this.isNotValidPort(this.props.station.port_4mod as number)
+            || this.isNotValidPort(this.props.station.proxy_port as number)
+            || this.isNotValidPort(this.props.station.redirect_port as number)) {
+            this.toastError("La porta deve avere un valore compreso tra 1 e 65535.");
+            return false;
+        }
+        if (this.isNotValidThread(this.props.station.thread_number)) {
+            this.toastError("Il numero di thread deve essere un valore maggiore di 0.");
+            return false;
+        }
+
+        if (this.isNotValidTimeout(this.props.station.timeout_a)
+            || this.isNotValidTimeout(this.props.station.timeout_b) || this.isNotValidTimeout(this.props.station.timeout_c)) {
+            this.toastError("I timeout devono avere un valore maggiore o uguale a 0.");
+            return false;
+        }
+
+        if (this.isNotValidPrimitiveVersion(this.props.station.primitive_version)) {
+            this.toastError("La versione delle primitive deve essere una tra le seguenti: 1 o 2");
+            return;
+        }
+        return true;
     }
 
     handleChange(event: any) {
@@ -471,7 +517,7 @@ export default class StationView extends React.Component<IProps, IState> {
                                                                         onClick={() => {
                                                                             this.discard();
                                                                         }}>Annulla</Button>
-                                                                <Button className="float-md-right" onClick={() => {
+                                                                <Button className="float-md-right" onClick={() => { this.validData() &&
                                                                     this.props.saveStation();
                                                                 }}>Salva</Button>
                                                             </div>

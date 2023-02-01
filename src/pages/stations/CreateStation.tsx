@@ -134,35 +134,7 @@ export default class CreateStation extends React.Component<IProps, IState> {
         return no < 1 || no > 2;
     }
 
-    validData() {
-        if (this.isNotValidPort(this.state.station.port) || this.isNotValidPort(this.state.station.port_4mod as number)
-            || this.isNotValidPort(this.state.station.proxy_port as number)
-            || this.isNotValidPort(this.state.station.redirect_port as number)) {
-            this.toastError("La porta deve avere un valore compreso tra 1 e 65535.");
-            return false;
-        }
-        if (this.isNotValidThread(this.state.station.thread_number)) {
-            this.toastError("Il numero di thread deve essere un valore maggiore di 0.");
-            return false;
-        }
-
-        if (this.isNotValidTimeout(this.state.station.timeout_a)
-            || this.isNotValidTimeout(this.state.station.timeout_b) || this.isNotValidTimeout(this.state.station.timeout_c)) {
-            this.toastError("I timeout devono avere un valore maggiore o uguale a 0.");
-            return false;
-        }
-
-        if (this.isNotValidPrimitiveVersion(this.state.station.primitive_version)) {
-            this.toastError("La versione delle primitive deve essere una tra le seguenti: 1 o 2");
-            return;
-        }
-        return true;
-    }
-
     save() {
-        if (!this.validData()) {
-            return;
-        }
 
         this.context.instance.acquireTokenSilent({
             ...loginRequest,
