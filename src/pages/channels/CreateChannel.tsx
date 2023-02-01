@@ -304,7 +304,7 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                             <Card.Body>
                                 <div className="row">
 
-                                    <Form.Group controlId="channel_code" className="col-md-3">
+                                    <Form.Group controlId="channel_code" className="col-md-4">
                                         <Form.Label>Codice <span className="text-danger">*</span></Form.Label>
                                         <Form.Control name="channel_code" placeholder=""
                                                       onChange={(e) => this.handleChange(e)}/>
@@ -318,7 +318,15 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                                             <option value="false">Non Abilitato</option>
                                         </Form.Control>
                                     </Form.Group>
-                                    <Form.Group controlId="broker_psp_code" className="col-md-3">
+                                    <Form.Group controlId="primitive_version" className="col-md-2">
+                                        <Form.Label>Versione primitive <span className="text-danger">*</span></Form.Label>
+                                        <Form.Control type={"number"} name="version" min={1} max={2}
+                                                      value={this.state.channel.primitive_version}
+                                                      onChange={(e) => this.handleChange(e)}/>
+                                    </Form.Group>
+                                </div>
+                                <div className="row">
+                                    <Form.Group controlId="broker_psp_code" className="col-md-4">
                                         <Form.Label>Codice Intermediario PSP <span
                                             className="text-danger">*</span></Form.Label>
                                         <AsyncSelect
@@ -331,7 +339,7 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                                             onChange={(e) => this.handleBrokerPspChange(e)}
                                         />
                                     </Form.Group>
-                                    <Form.Group controlId="password" className="col-md-2">
+                                    <Form.Group controlId="password" className="col-md-4">
                                         <Form.Label>Password</Form.Label>
                                         <Form.Control name="password" placeholder=""
                                                       onChange={(e) => this.handleChange(e)}/>
@@ -522,14 +530,6 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                                         <Form.Label>Timeout C <span className="text-danger">*</span></Form.Label>
                                         <Form.Control type="number" name="timeout_c" placeholder="" min={0}
                                                       value={String(this.state.channel.timeout_c)}
-                                                      onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-                                </div>                                
-                                <div className="row">
-                                    <Form.Group controlId="primitive_version" className="col-md-2">
-                                        <Form.Label>Versione primitive <span className="text-danger">*</span></Form.Label>
-                                        <Form.Control type="number" name="primitive_version" min={1} max={2}
-                                                      value={this.state.channel.primitive_version}
                                                       onChange={(e) => this.handleChange(e)}/>
                                     </Form.Group>
                                 </div>

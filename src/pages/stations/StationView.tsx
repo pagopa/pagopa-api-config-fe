@@ -172,6 +172,15 @@ export default class StationView extends React.Component<IProps, IState> {
                                                                             onChange={(e) => this.handleChange(e)}/>
                                                             </Form.Group>
 
+                                                            <Form.Group controlId="primitive_version" className="col-md-2">
+                                                                <Form.Label>Versione primitive <span className="text-danger">*</span></Form.Label>
+                                                                <Form.Control type="number" name="primitive_version" min={1} max={2}
+                                                                              value={this.props.station.primitive_version}
+                                                                              onChange={(e) => this.handleChange(e)}/>
+                                                            </Form.Group>
+                                                        </div>
+                                                        <div className="row">
+
                                                             <Form.Group controlId="broker_code" className="col-md-3">
                                                                 <Form.Label>Codice Intermediario <span
                                                                         className="text-danger">*</span></Form.Label>
@@ -187,14 +196,14 @@ export default class StationView extends React.Component<IProps, IState> {
                                                                 />
                                                             </Form.Group>
 
-                                                            <Form.Group controlId="password" className="col-md-2">
+                                                            <Form.Group controlId="password" className="col-md-4">
                                                                 <Form.Label>Password</Form.Label>
                                                                 <Form.Control name="password"
                                                                               value={this.props.station.password}
                                                                               onChange={(e) => this.handleChange(e)}/>
                                                             </Form.Group>
 
-                                                            <Form.Group controlId="new_password" className="col-md-2">
+                                                            <Form.Group controlId="new_password" className="col-md-4">
                                                                 <Form.Label>Nuova Password</Form.Label>
                                                                 <Form.Control name="new_password"
                                                                               value={this.props.station.new_password}
@@ -452,15 +461,6 @@ export default class StationView extends React.Component<IProps, IState> {
                                                                               onChange={(e) => this.handleChange(e)}/>
                                                             </Form.Group>
 
-                                                        </div>
-                                            
-                                                        <div className="row">
-                                                            <Form.Group controlId="primitive_version" className="col-md-2">
-                                                                <Form.Label>Versione primitive</Form.Label>
-                                                                <Form.Control type="number" name="primitive_version" min={1} max={2}
-                                                                              value={this.props.station.primitive_version}
-                                                                              onChange={(e) => this.handleChange(e)}/>
-                                                            </Form.Group>
                                                         </div>
 
                                                     </Card.Body>

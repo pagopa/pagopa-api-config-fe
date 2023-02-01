@@ -234,7 +234,7 @@ export default class Station extends React.Component<IProps, IState> {
                                         <Card.Body>
 
                                             <div className="row">
-                                                <Form.Group controlId="enabled" className="col-md-2">
+                                                <Form.Group controlId="enabled" className="col-md-4">
                                                     <Form.Label>Stato</Form.Label>
                                                     <Form.Control as="select" placeholder="stato" readOnly>
                                                         {this.state.station.enabled && <option>Abilitato</option>}
@@ -248,19 +248,28 @@ export default class Station extends React.Component<IProps, IState> {
                                                                   readOnly/>
                                                 </Form.Group>
 
-                                                <Form.Group controlId="broker_code" className="col-md-3">
+                                                <Form.Group controlId="primitive_version" className="col-md-2">
+                                                    <Form.Label>Versione primitive</Form.Label>
+                                                    <Form.Control value={this.state.station.primitive_version}
+                                                                  readOnly/>
+                                                </Form.Group>
+                                            </div>
+
+                                            <div className="row">
+
+                                                <Form.Group controlId="broker_code" className="col-md-4">
                                                     <Form.Label>Codice Intermediario</Form.Label>
                                                     <Form.Control placeholder="-" value={this.state.station.broker_code}
                                                                   readOnly/>
                                                 </Form.Group>
 
-                                                <Form.Group controlId="password" className="col-md-2">
+                                                <Form.Group controlId="password" className="col-md-4">
                                                     <Form.Label>Password</Form.Label>
                                                     <Form.Control placeholder="-" value={this.state.station.password}
                                                                   readOnly/>
                                                 </Form.Group>
 
-                                                <Form.Group controlId="new_password" className="col-md-2">
+                                                <Form.Group controlId="new_password" className="col-md-4">
                                                     <Form.Label>Nuova Password</Form.Label>
                                                     <Form.Control placeholder="-" value={this.state.station.new_password}
                                                                   readOnly/>
@@ -474,14 +483,7 @@ export default class Station extends React.Component<IProps, IState> {
                                                                   readOnly/>
                                                 </Form.Group>
                                             </div>
-                                            
-                                            <div className="row">
-                                                <Form.Group controlId="primitive_version" className="col-md-2">
-                                                    <Form.Label>Versione primitive</Form.Label>
-                                                    <Form.Control value={this.state.station.primitive_version}
-                                                                  readOnly/>
-                                                </Form.Group>
-                                            </div>
+
                                         </Card.Body>
                                     </Card>
                                     <div className="row mt-3">

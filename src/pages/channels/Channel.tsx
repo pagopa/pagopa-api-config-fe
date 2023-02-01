@@ -357,7 +357,7 @@ export default class Channel extends React.Component<IProps, IState> {
                                         <Card.Body>
 
                                             <div className="row">
-                                                <Form.Group controlId="code" className="col-md-3">
+                                                <Form.Group controlId="code" className="col-md-4">
                                                     <Form.Label>Codice</Form.Label>
                                                     <Form.Control type="code" placeholder="-"
                                                                   value={this.state.channel.channel_code} readOnly/>
@@ -371,17 +371,25 @@ export default class Channel extends React.Component<IProps, IState> {
                                                     </Form.Control>
                                                 </Form.Group>
 
-                                                <Form.Group controlId="broker_psp_code" className="col-md-3">
+                                                <Form.Group controlId="primitive_version" className="col-md-2">
+                                                    <Form.Label>Versione primitive</Form.Label>
+                                                    <Form.Control value={this.state.channel.primitive_version}
+                                                                  readOnly/>
+                                                </Form.Group>
+                                            </div>
+                                            <div className="row">
+
+                                                <Form.Group controlId="broker_psp_code" className="col-md-4">
                                                     <Form.Label>Codice Intermediario PSP</Form.Label>
                                                     <Form.Control placeholder="-" value={this.state.channel.broker_psp_code}
                                                                   readOnly/>
                                                 </Form.Group>
-                                                <Form.Group controlId="password" className="col-md-2">
+                                                <Form.Group controlId="password" className="col-md-4">
                                                     <Form.Label>Password</Form.Label>
                                                     <Form.Control placeholder="" value={this.state.channel.password}
                                                                   readOnly/>
                                                 </Form.Group>
-                                                <Form.Group controlId="new_password" className="col-md-2">
+                                                <Form.Group controlId="new_password" className="col-md-4">
                                                     <Form.Label>Nuova Password</Form.Label>
                                                     <Form.Control placeholder="" value={this.state.channel.new_password}
                                                                   readOnly/>
@@ -541,14 +549,6 @@ export default class Channel extends React.Component<IProps, IState> {
                                                                   readOnly/>
                                                 </Form.Group>
 
-                                            </div>
-
-                                            <div className="row">
-                                                <Form.Group controlId="primitive_version" className="col-md-2">
-                                                    <Form.Label>Versione primitive</Form.Label>
-                                                    <Form.Control value={this.state.channel.primitive_version}
-                                                                  readOnly/>
-                                                </Form.Group>
                                             </div>
 
                                             <div className="row">
