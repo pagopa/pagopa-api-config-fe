@@ -473,7 +473,14 @@ export default class Station extends React.Component<IProps, IState> {
                                                     <Form.Control placeholder="-" value={this.state.station.timeout_c}
                                                                   readOnly/>
                                                 </Form.Group>
-
+                                            </div>
+                                            
+                                            <div className="row">
+                                                <Form.Group controlId="primitive_version" className="col-md-2">
+                                                    <Form.Label>Versione primitive</Form.Label>
+                                                    <Form.Control value={this.state.station.primitive_version}
+                                                                  readOnly/>
+                                                </Form.Group>
                                             </div>
                                         </Card.Body>
                                     </Card>

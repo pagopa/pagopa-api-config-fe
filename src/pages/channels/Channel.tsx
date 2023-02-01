@@ -61,6 +61,7 @@ export default class Channel extends React.Component<IProps, IState> {
                 timeout_a: 15,
                 timeout_b: 30,
                 timeout_c: 120,
+                primitive_version: 1,
                 new_fault_code: false,
                 redirect_protocol: "",
                 redirect_ip: "",
@@ -541,6 +542,15 @@ export default class Channel extends React.Component<IProps, IState> {
                                                 </Form.Group>
 
                                             </div>
+
+                                            <div className="row">
+                                                <Form.Group controlId="primitive_version" className="col-md-2">
+                                                    <Form.Label>Versione primitive</Form.Label>
+                                                    <Form.Control value={this.state.channel.primitive_version}
+                                                                  readOnly/>
+                                                </Form.Group>
+                                            </div>
+
                                             <div className="row">
                                                 <Form.Group controlId="flag_io" className="col-md-2 custom-control-box">
                                                     <Form.Check

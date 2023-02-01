@@ -76,7 +76,8 @@ export default class CreateStation extends React.Component<IProps, IState> {
                 service_4mod: "",
                 target_host: "",
                 target_port: 443,
-                target_path: ""
+                target_path: "",
+                primitive_version: 1
             } as unknown as StationDetails,
             showModal: false
         };
@@ -129,6 +130,10 @@ export default class CreateStation extends React.Component<IProps, IState> {
         return no < 1;
     }
 
+    isNotValidPrimitiveVersion(no: number) {
+        return no < 1 || no > 2;
+    }
+
     validData() {
         if (this.isNotValidPort(this.state.station.port) || this.isNotValidPort(this.state.station.port_4mod as number)
             || this.isNotValidPort(this.state.station.proxy_port as number)
@@ -145,6 +150,11 @@ export default class CreateStation extends React.Component<IProps, IState> {
             || this.isNotValidTimeout(this.state.station.timeout_b) || this.isNotValidTimeout(this.state.station.timeout_c)) {
             this.toastError("I timeout devono avere un valore maggiore o uguale a 0.");
             return false;
+        }
+
+        if (this.isNotValidPrimitiveVersion(this.state.station.primitive_version)) {
+            this.toastError("La versione delle primitive deve essere una tra le seguenti: 1 o 2");
+            return;
         }
         return true;
     }

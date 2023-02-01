@@ -52,6 +52,7 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                 timeout_a: 15,
                 timeout_b: 30,
                 timeout_c: 120,
+                primitive_version: 1,
                 new_fault_code: false,
                 redirect_protocol: "HTTPS",
                 payment_model: "IMMEDIATE",
@@ -138,6 +139,10 @@ export default class CreateChannel extends React.Component<IProps, IState> {
         return no < 1;
     }
 
+    isNotValidPrimitiveVersion(no: number) {
+        return no < 1 || no > 2;
+    }
+
     validData() {
         if (this.isNotValidPort(this.state.channel.port) || this.isNotValidPort(this.state.channel.proxy_port as number)
             || this.isNotValidPort(this.state.channel.redirect_port as number)) {
@@ -154,6 +159,11 @@ export default class CreateChannel extends React.Component<IProps, IState> {
             || this.isNotValidTimeout(this.state.channel.timeout_b) || this.isNotValidTimeout(this.state.channel.timeout_c)) {
             this.toastError("I timeout devono avere un valore maggiore o uguale a 0.");
             return false;
+        }
+
+        if (this.isNotValidPrimitiveVersion(this.state.channel.primitive_version)) {
+            this.toastError("La versione delle primitive deve essere una tra le seguenti: 1 o 2");
+            return;
         }
         return true;
     }
@@ -512,6 +522,14 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                                         <Form.Label>Timeout C <span className="text-danger">*</span></Form.Label>
                                         <Form.Control type="number" name="timeout_c" placeholder="" min={0}
                                                       value={String(this.state.channel.timeout_c)}
+                                                      onChange={(e) => this.handleChange(e)}/>
+                                    </Form.Group>
+                                </div>                                
+                                <div className="row">
+                                    <Form.Group controlId="primitive_version" className="col-md-2">
+                                        <Form.Label>Versione primitive <span className="text-danger">*</span></Form.Label>
+                                        <Form.Control type="number" name="primitive_version" min={1} max={2}
+                                                      value={this.state.channel.primitive_version}
                                                       onChange={(e) => this.handleChange(e)}/>
                                     </Form.Group>
                                 </div>

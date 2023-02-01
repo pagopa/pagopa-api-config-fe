@@ -89,6 +89,10 @@ export default class EditStation extends React.Component<IProps, IState> {
         return no < 1;
     }
 
+    isNotValidPrimitiveVersion(no: number) {
+        return no < 1 || no > 2;
+    }
+
     goBack(): void {
         this.props.history.push(this.service);
     }
@@ -108,6 +112,11 @@ export default class EditStation extends React.Component<IProps, IState> {
         if (this.isNotValidTimeout(this.state.station.timeout_a)
                 || this.isNotValidTimeout(this.state.station.timeout_b) || this.isNotValidTimeout(this.state.station.timeout_c)) {
             this.toastError("I timeout devono avere un valore maggiore o uguale a 0.");
+            return;
+        }
+
+        if (this.isNotValidPrimitiveVersion(this.state.station.primitive_version)) {
+            this.toastError("La versione delle primitive deve essere una tra le seguenti: 1 o 2");
             return;
         }
 

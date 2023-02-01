@@ -453,7 +453,15 @@ export default class StationView extends React.Component<IProps, IState> {
                                                             </Form.Group>
 
                                                         </div>
-
+                                            
+                                                        <div className="row">
+                                                            <Form.Group controlId="primitive_version" className="col-md-2">
+                                                                <Form.Label>Versione primitive</Form.Label>
+                                                                <Form.Control type="number" name="primitive_version" min={1} max={2}
+                                                                              value={this.props.station.primitive_version}
+                                                                              onChange={(e) => this.handleChange(e)}/>
+                                                            </Form.Group>
+                                                        </div>
 
                                                     </Card.Body>
                                                     <Card.Footer>
