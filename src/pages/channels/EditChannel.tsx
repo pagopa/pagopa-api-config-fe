@@ -71,6 +71,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
                 timeout_a: 15,
                 timeout_b: 30,
                 timeout_c: 120,
+                primitive_version: 1,
                 new_fault_code: false,
                 redirect_protocol: "HTTPS",
                 redirect_ip: "",
@@ -260,6 +261,10 @@ export default class EditChannel extends React.Component<IProps, IState> {
         return no < 1;
     }
 
+    isNotValidPrimitiveVersion(no: number) {
+        return no < 1 || no > 2;
+    }
+
     saveChannel() {
         if (this.isNotValidPort(this.state.channel.port) || this.isNotValidPort(this.state.channel.proxy_port as number)
             || this.isNotValidPort(this.state.channel.redirect_port as number)) {
@@ -275,6 +280,11 @@ export default class EditChannel extends React.Component<IProps, IState> {
         if (this.isNotValidTimeout(this.state.channel.timeout_a)
             || this.isNotValidTimeout(this.state.channel.timeout_b) || this.isNotValidTimeout(this.state.channel.timeout_c)) {
             this.toastError("I timeout devono avere un valore maggiore o uguale a 0.");
+            return;
+        }
+
+        if (this.isNotValidPrimitiveVersion(this.state.channel.primitive_version)) {
+            this.toastError("La versione delle primitive deve essere una tra le seguenti: 1 o 2");
             return;
         }
 
@@ -523,7 +533,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
                                         </Card.Header>
                                         <Card.Body>
                                             <div className="row">
-                                                <Form.Group controlId="channel_code" className="col-md-3">
+                                                <Form.Group controlId="channel_code" className="col-md-4">
                                                     <Form.Label>Codice <span className="text-danger">*</span></Form.Label>
                                                     <Form.Control name="channel_code" placeholder=""
                                                                   value={this.state.channel.channel_code}
@@ -539,7 +549,15 @@ export default class EditChannel extends React.Component<IProps, IState> {
                                                         <option value="false">Non Abilitato</option>
                                                     </Form.Control>
                                                 </Form.Group>
-                                                <Form.Group controlId="broker_psp_code" className="col-md-3">
+                                                <Form.Group controlId="primitive_version" className="col-md-2">
+                                                    <Form.Label>Versione primitive <span className="text-danger">*</span></Form.Label>
+                                                    <Form.Control type={"number"} name="version" min={1} max={2}
+                                                                value={this.state.channel.primitive_version}
+                                                                onChange={(e) => this.handleChange(e)}/>
+                                                </Form.Group>
+                                            </div>
+                                            <div className="row">
+                                                <Form.Group controlId="broker_psp_code" className="col-md-4">
                                                     <Form.Label>Codice Intermediario PSP <span
                                                         className="text-danger">*</span></Form.Label>
                                                     <AsyncSelect
@@ -556,13 +574,13 @@ export default class EditChannel extends React.Component<IProps, IState> {
                                                         onChange={(e) => this.handleBrokerPspChange(e)}
                                                     />
                                                 </Form.Group>
-                                                <Form.Group controlId="password" className="col-md-2">
+                                                <Form.Group controlId="password" className="col-md-4">
                                                     <Form.Label>Password</Form.Label>
                                                     <Form.Control name="password" placeholder=""
                                                                   value={this.state.channel.password}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
-                                                <Form.Group controlId="new_password" className="col-md-2">
+                                                <Form.Group controlId="new_password" className="col-md-4">
                                                     <Form.Label>Nuova Password</Form.Label>
                                                     <Form.Control name="new_password" placeholder=""
                                                                   value={this.state.channel.new_password}
