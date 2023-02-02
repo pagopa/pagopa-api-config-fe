@@ -1,8 +1,7 @@
 import {loginRequest} from "../../authConfig";
 import {apiClient} from "../../util/apiClient";
 
-export const getStation = (context: any, code: string) => {
-    return new Promise((resolve, reject) => {
+export const getStation = (context: any, code: string) => new Promise((resolve, reject) => {
         context.instance.acquireTokenSilent({
             ...loginRequest,
             account: context.accounts[0]
@@ -22,4 +21,3 @@ export const getStation = (context: any, code: string) => {
             }).catch(reject);
         });
     });
-};

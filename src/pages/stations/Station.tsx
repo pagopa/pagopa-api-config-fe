@@ -57,14 +57,13 @@ export default class Station extends React.Component<IProps, IState> {
 
     componentDidMount(): void {
         const code: string = this.props.match.params.code as string;
-        this.setState({code: code, isLoading: true});
+        this.setState({code, isLoading: true});
         getStation(this.context, code).then((data: any) => {
             const station = {...data, station_code: code} as StationDetails;
             this.setStation(station);
             this.getStationCI(code, 0);
             this.setState({isError: false});      
-        }).catch((error) => {
-            console.log("TODO ERROR IN CREATE", error);
+        }).catch(() => {
             this.setState({isError: true});
         }).finally(() => this.setState({ isLoading: false }));
     }
@@ -232,13 +231,16 @@ export default class Station extends React.Component<IProps, IState> {
 
     render(): React.ReactNode {
         return (
-            <StationView station={this.state.station} 
-            setStation={this.setStation} 
-            isLoading={this.state.isLoading}
-            isError={this.state.isError}
-            history={this.props.history}
-            readOnly={true}
-            getCiList={this.getCIElement}/>
+            <StationView
+                    station={this.state.station}
+                    setStation={this.setStation}
+                    isLoading={this.state.isLoading}
+                    isError={this.state.isError}
+                    history={this.props.history}
+                    readOnly={true}
+                    getCiList={this.getCIElement}
+                    showModal={false}
+            />
         );
     }
 }

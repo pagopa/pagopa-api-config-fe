@@ -1,4 +1,4 @@
-import React from "react";
+import React, {ReactNode} from "react";
 import {Alert, Breadcrumb, Button, Card, Form} from "react-bootstrap";
 import {MsalContext} from "@azure/msal-react";
 import {FaInfoCircle, FaSpinner} from "react-icons/fa";
@@ -21,7 +21,7 @@ interface IProps {
     isError: boolean;
     history: any;
     readOnly: boolean;
-    getCiList?: () => void;
+    getCiList?: () => ReactNode;
 }
 
 export default class StationView extends React.Component<IProps> {
@@ -558,9 +558,9 @@ export default class StationView extends React.Component<IProps> {
 
                                                     </Card.Body>
                                                     {
-                                                        this.props.readOnly &&
+                                                        this.props.readOnly && this.props.getCiList &&
                                                         <div className="row mt-3">
-                                                            {this.props.getCiList && this.props.getCiList()}
+                                                            { this.props.getCiList() }
                                                         </div>
                                                     }
                                                     {(!this.props.readOnly &&
