@@ -293,20 +293,20 @@ export default class Stations extends React.Component<IProps, IState> {
                     <div className="col-md-9 mb-3">
                         <h2>Stazioni</h2>
                     </div>
-                    <div className="col-md-3 text-right">
-                        <OverlayTrigger placement="bottom"
-                                        overlay={<Tooltip id={`tooltip-download`}>Esporta tabella</Tooltip>}>
-                            <Button className="mr-1" onClick={this.download}>Export <FaFileDownload/></Button>
-                        </OverlayTrigger>
-                        <OverlayTrigger placement="bottom"
-                                        overlay={<Tooltip id={`tooltip-new`}>Crea nuova stazione</Tooltip>}>
-                            <Button onClick={this.create}>Nuovo <FaPlus/></Button>
-                        </OverlayTrigger>
-                    </div>
                     <div className="col-md-12">
                         <div className="row">
-                            <div className="col-md-8">
+                            <div className="col-md-9">
                                 <Filters configuration={this.filter} onFilter={this.handleFilterCallback}/>
+                            </div>
+                            <div className="col-md-3 text-right">
+                                <OverlayTrigger placement="bottom"
+                                                overlay={<Tooltip id={`tooltip-download`}>Esporta tabella</Tooltip>}>
+                                    <Button className="mr-1" onClick={this.download}>Export <FaFileDownload/></Button>
+                                </OverlayTrigger>
+                                <OverlayTrigger placement="bottom"
+                                                overlay={<Tooltip id={`tooltip-new`}>Crea nuova stazione</Tooltip>}>
+                                    <Button onClick={this.create}>Nuovo <FaPlus/></Button>
+                                </OverlayTrigger>
                             </div>
                         </div>
                         {isLoading && (<FaSpinner className="spinner"/>)}

@@ -2,41 +2,35 @@ import React from "react";
 import {Alert, Breadcrumb, Button, Card, Form} from "react-bootstrap";
 import {MsalContext} from "@azure/msal-react";
 import {FaInfoCircle, FaSpinner} from "react-icons/fa";
-import {StationDetails} from "../../../generated/api/StationDetails";
 import AsyncSelect from "react-select/async";
 import debounce from "lodash.debounce";
+import {toast} from "react-toastify";
+import {StationDetails} from "../../../generated/api/StationDetails";
 import {loginRequest} from "../../authConfig";
 import {apiClient} from "../../util/apiClient";
-import {toast} from "react-toastify";
 import ConfirmationModal from "../../components/ConfirmationModal";
 
 
 interface IProps {
     station: StationDetails;
     setStation: (station: StationDetails) => void;
-    saveStation: () => void;
+    saveStation?: () => void;
     showModal: boolean;
-    setShowModal: (showModal: boolean) => void;
+    setShowModal?: (showModal: boolean) => void;
     isLoading: boolean;
     isError: boolean;
     history: any;
     readOnly: boolean;
-    getCiList: () => void;
+    getCiList?: () => void;
 }
 
-interface IState {
-}
-
-export default class StationView extends React.Component<IProps, IState> {
+export default class StationView extends React.Component<IProps> {
     static contextType = MsalContext;
 
     service = "/stations";
 
     constructor(props: IProps) {
         super(props);
-
-        this.state = {
-        };
 
         this.handleChange = this.handleChange.bind(this);
         this.debouncedBrokerOptions = this.debouncedBrokerOptions.bind(this);
@@ -49,11 +43,15 @@ export default class StationView extends React.Component<IProps, IState> {
         if (status === "ok") {
             this.props.history.push(this.service);
         }
-        this.props.setShowModal(false);
+        if (this.props.setShowModal) {
+            this.props.setShowModal(false);
+        }
     }
 
     discard() {
-        this.props.setShowModal(true);
+        if (this.props.setShowModal) {
+            this.props.setShowModal(true);
+        }
     }
 
     debouncedBrokerOptions = debounce((inputValue, callback) => {
@@ -559,11 +557,12 @@ export default class StationView extends React.Component<IProps, IState> {
                                                         </div>
 
                                                     </Card.Body>
-                                                    {(this.props.readOnly && 
-                                                        <div className="row mt-3">                            
-                                                            {this.props.getCiList()}
+                                                    {
+                                                        this.props.readOnly &&
+                                                        <div className="row mt-3">
+                                                            {this.props.getCiList && this.props.getCiList()}
                                                         </div>
-                                                    )}
+                                                    }
                                                     {(!this.props.readOnly &&
                                                         <Card.Footer>
                                                             <div className="row">
@@ -572,9 +571,11 @@ export default class StationView extends React.Component<IProps, IState> {
                                                                             onClick={() => {
                                                                                 this.discard();
                                                                             }}>Annulla</Button>
-                                                                    <Button className="float-md-right" onClick={() => { this.validData() &&
-                                                                        this.props.saveStation();
-                                                                    }}>Salva</Button>
+                                                                    {/* eslint-disable-next-line @typescript-eslint/no-unused-expressions */}
+                                                                    <Button className="float-md-right"
+                                                                            onClick={() => this.validData() && this.props.saveStation && this.props.saveStation()}>
+                                                                        Salva
+                                                                    </Button>
                                                                 </div>
                                                             </div>
                                                         </Card.Footer>

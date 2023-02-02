@@ -23,7 +23,6 @@ interface IState {
     backup: any;
     stationName: string;
     code: string;
-
     station: StationDetails;
     edit: boolean;
     showModal: boolean;
@@ -31,9 +30,7 @@ interface IState {
 
 export default class EditStation extends React.Component<IProps, IState> {
     static contextType = MsalContext;
-
     service = "/stations";
-
     constructor(props: IProps) {
         super(props);
 
@@ -60,18 +57,17 @@ export default class EditStation extends React.Component<IProps, IState> {
     }
 
     setModal(modal: boolean): void{
-        this.setState({showModal: modal})
+        this.setState({showModal: modal});
     }
 
     componentDidMount(): void {
         const code: string = this.props.match.params.code as string;
-        this.setState({code: code, isLoading: true});
+        this.setState({code, isLoading: true});
         getStation(this.context, code).then((data: any) => {
             const station = {...data, station_code: code} as StationDetails;
             this.setStation(station);
             this.setState({isError: false});      
-        }).catch((error) => {
-            console.log("TODO ERROR IN CREATE", error);
+        }).catch(() => {
             this.setState({isError: true});
         }).finally(() => this.setState({ isLoading: false }));
     }
@@ -79,7 +75,6 @@ export default class EditStation extends React.Component<IProps, IState> {
     goBack(): void {
         this.props.history.push(this.service);
     }
-
     saveStation() {
         this.context.instance.acquireTokenSilent({
             ...loginRequest,
@@ -114,15 +109,15 @@ export default class EditStation extends React.Component<IProps, IState> {
     render(): React.ReactNode {
         return (
             <StationView station={this.state.station} 
-            setStation={this.setStation} 
-            saveStation={this.saveStation}
-            isLoading={this.state.isLoading} 
-            isError={this.state.isError}
-            showModal={this.state.showModal}
-            setShowModal={this.setModal}
-            history={this.props.history}
-            readOnly={false}
-            getCiList={() => void 0}/>
+                setStation={this.setStation}
+                saveStation={this.saveStation}
+                isLoading={this.state.isLoading}
+                isError={this.state.isError}
+                showModal={this.state.showModal}
+                setShowModal={this.setModal}
+                history={this.props.history}
+                readOnly={false}
+            />
         );
     }
 }

@@ -234,11 +234,8 @@ export default class Station extends React.Component<IProps, IState> {
         return (
             <StationView station={this.state.station} 
             setStation={this.setStation} 
-            saveStation={() => void 0}
-            isLoading={this.state.isLoading} 
+            isLoading={this.state.isLoading}
             isError={this.state.isError}
-            setShowModal={() => void 0}
-            showModal={false}
             history={this.props.history}
             readOnly={true}
             getCiList={this.getCIElement}/>

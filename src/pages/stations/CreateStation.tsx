@@ -92,19 +92,18 @@ export default class CreateStation extends React.Component<IProps, IState> {
     }
 
     setModal(modal: boolean): void{
-        this.setState({showModal: modal})
+        this.setState({showModal: modal});
     }
 
     componentDidMount(): void {
         const code = new URLSearchParams(this.props.location.search).get("clone") as string;
         if (code) {
-            this.setState({code: code, isLoading: true});
+            this.setState({code, isLoading: true});
             getStation(this.context, code).then((data: any) => {
                 const station = {...data, station_code: ""} as StationDetails;
                 this.setStation(station);
                 this.setState({isError: false});      
-            }).catch((error) => {
-                console.log("TODO ERROR IN CREATE", error);
+            }).catch(() => {
                 this.setState({isError: true});
             }).finally(() => this.setState({ isLoading: false }));
         }
@@ -116,22 +115,6 @@ export default class CreateStation extends React.Component<IProps, IState> {
 
     goBack(): void {
         this.props.history.push(this.service);
-    }
-
-    isNotValidPort(port: number) {
-        return port ? port < 1 || port > 65535 : port;
-    }
-
-    isNotValidTimeout(no: number) {
-        return no < 0;
-    }
-
-    isNotValidThread(no: number) {
-        return no < 1;
-    }
-
-    isNotValidPrimitiveVersion(no: number) {
-        return no < 1 || no > 2;
     }
 
     save() {
