@@ -68,7 +68,6 @@ export default class EditStation extends React.Component<IProps, IState> {
         this.setState({code: code, isLoading: true});
         getStation(this.context, code).then((data: any) => {
             const station = {...data, station_code: code} as StationDetails;
-            console.warn(station);
             this.setStation(station);
             this.setState({isError: false});      
         }).catch((error) => {
@@ -116,11 +115,14 @@ export default class EditStation extends React.Component<IProps, IState> {
         return (
             <StationView station={this.state.station} 
             setStation={this.setStation} 
-            isLoading={this.state.isLoading} 
             saveStation={this.saveStation}
-            setShowModal={this.setModal}
+            isLoading={this.state.isLoading} 
+            isError={this.state.isError}
             showModal={this.state.showModal}
-            history={this.props.history}/>
+            setShowModal={this.setModal}
+            history={this.props.history}
+            readOnly={false}
+            getCiList={() => void 0}/>
         );
     }
 }

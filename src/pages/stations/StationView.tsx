@@ -15,15 +15,16 @@ interface IProps {
     station: StationDetails;
     setStation: (station: StationDetails) => void;
     saveStation: () => void;
-    setShowModal: (showModal: boolean) => void;
     showModal: boolean;
+    setShowModal: (showModal: boolean) => void;
     isLoading: boolean;
+    isError: boolean;
     history: any;
+    readOnly: boolean;
+    getCiList: () => void;
 }
 
 interface IState {
-    isError: boolean;
-
 }
 
 export default class StationView extends React.Component<IProps, IState> {
@@ -35,7 +36,6 @@ export default class StationView extends React.Component<IProps, IState> {
         super(props);
 
         this.state = {
-            isError: false,
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -141,6 +141,10 @@ export default class StationView extends React.Component<IProps, IState> {
         return true;
     }
 
+    handleEdit() {
+        this.props.history.push("/stations/" + String(this.props.station.station_code) + "?edit");
+    }
+
     handleChange(event: any) {
         // eslint-disable-next-line functional/no-let
         const key = event.target.name as string;
@@ -161,7 +165,7 @@ export default class StationView extends React.Component<IProps, IState> {
     }
 
     render(): React.ReactNode {
-        const isError = this.state.isError;
+        const isError = this.props.isError;
         const isLoading = this.props.isLoading;
 
         return (
@@ -184,11 +188,16 @@ export default class StationView extends React.Component<IProps, IState> {
                                     !isLoading && (
                                             <>
                                                 <div className="row">
-                                                    <div className="col-md-12">
+                                                    <div className="col-md-10">
                                                         <h2>{this.props.station.station_code || "-"}</h2>
                                                     </div>
+                                                    {(this.props.readOnly && 
+                                                        <div className="col-md-2 text-right">
+                                                            <button className={"btn btn-primary"}
+                                                                onClick={() => this.handleEdit()}>Edit
+                                                            </button>
+                                                        </div>)}
                                                 </div>
-
                                                 <Card>
                                                     <Card.Header>
                                                         <h5>Anagrafica</h5>
@@ -199,13 +208,15 @@ export default class StationView extends React.Component<IProps, IState> {
                                                                 <Form.Label>Codice <span className="text-danger">*</span></Form.Label>
                                                                 <Form.Control name="station_code" placeholder=""
                                                                             value={this.props.station.station_code}
-                                                                            onChange={(e) => this.handleChange(e)}/>
+                                                                            onChange={(e) => this.handleChange(e)}
+                                                                            readOnly={this.props.readOnly}/>
                                                             </Form.Group>
                                                            <Form.Group controlId="enabled" className="col-md-2">
                                                                <Form.Label>Stato <span className="text-danger">*</span></Form.Label>
                                                                <Form.Control as="select" name="enabled" placeholder="stato"
                                                                             onChange={(e) => this.handleChange(e)}
-                                                                            value={String(this.props.station.enabled)}>
+                                                                            value={String(this.props.station.enabled)}
+                                                                            readOnly={this.props.readOnly}>
                                                                    <option value="true">Abilitato</option>
                                                                    <option value="false">Non Abilitato</option>
                                                                </Form.Control>
@@ -215,14 +226,16 @@ export default class StationView extends React.Component<IProps, IState> {
                                                                 <Form.Label>Versione <span className="text-danger">*</span></Form.Label>
                                                                 <Form.Control type={"number"} name="version" min={1} max={2}
                                                                             value={this.props.station.version}
-                                                                            onChange={(e) => this.handleChange(e)}/>
+                                                                            onChange={(e) => this.handleChange(e)}
+                                                                            readOnly={this.props.readOnly}/>
                                                             </Form.Group>
 
                                                             <Form.Group controlId="primitive_version" className="col-md-2">
                                                                 <Form.Label>Versione primitive <span className="text-danger">*</span></Form.Label>
                                                                 <Form.Control type="number" name="primitive_version" min={1} max={2}
                                                                               value={this.props.station.primitive_version}
-                                                                              onChange={(e) => this.handleChange(e)}/>
+                                                                              onChange={(e) => this.handleChange(e)}
+                                                                              readOnly={this.props.readOnly}/>
                                                             </Form.Group>
                                                         </div>
                                                         <div className="row">
@@ -230,7 +243,8 @@ export default class StationView extends React.Component<IProps, IState> {
                                                             <Form.Group controlId="broker_code" className="col-md-3">
                                                                 <Form.Label>Codice Intermediario <span
                                                                         className="text-danger">*</span></Form.Label>
-                                                                <AsyncSelect
+                                                                {(!this.props.readOnly &&
+                                                                    <AsyncSelect 
                                                                         cacheOptions defaultOptions
                                                                         loadOptions={this.debouncedBrokerOptions}
                                                                         placeholder="Cerca codice"
@@ -239,21 +253,30 @@ export default class StationView extends React.Component<IProps, IState> {
                                                                         name="broker_code"
                                                                         value={{label: this.props.station.broker_code, value: this.props.station.broker_code}}
                                                                         onChange={(e) => this.handleBrokerChange(e)}
-                                                                />
+                                                                        isDisabled={this.props.readOnly}
+                                                                    />
+                                                                )}
+                                                                {(this.props.readOnly &&
+                                                                    <Form.Control name="broker_code"
+                                                                                value={this.props.station.broker_code}
+                                                                                readOnly={this.props.readOnly}/>
+                                                                )}
                                                             </Form.Group>
 
                                                             <Form.Group controlId="password" className="col-md-4">
                                                                 <Form.Label>Password</Form.Label>
                                                                 <Form.Control name="password"
                                                                               value={this.props.station.password}
-                                                                              onChange={(e) => this.handleChange(e)}/>
+                                                                              onChange={(e) => this.handleChange(e)}
+                                                                              readOnly={this.props.readOnly}/>
                                                             </Form.Group>
 
                                                             <Form.Group controlId="new_password" className="col-md-4">
                                                                 <Form.Label>Nuova Password</Form.Label>
                                                                 <Form.Control name="new_password"
                                                                               value={this.props.station.new_password}
-                                                                              onChange={(e) => this.handleChange(e)}/>
+                                                                              onChange={(e) => this.handleChange(e)}
+                                                                              readOnly={this.props.readOnly}/>
                                                             </Form.Group>
                                                         </div>
 
@@ -265,7 +288,8 @@ export default class StationView extends React.Component<IProps, IState> {
                                                                         className="text-danger">*</span></Form.Label>
                                                                 <Form.Control as="select" name="protocol"
                                                                               defaultValue={String(this.props.station.protocol)}
-                                                                              onChange={(e) => this.handleChange(e)} >
+                                                                              onChange={(e) => this.handleChange(e)}
+                                                                              readOnly={this.props.readOnly} >
                                                                     <option value="HTTPS">HTTPS</option>
                                                                     <option value="HTTP">HTTP</option>
                                                                 </Form.Control>
@@ -276,7 +300,8 @@ export default class StationView extends React.Component<IProps, IState> {
                                                                 <Form.Control name="ip"
 
                                                                               value={this.props.station.ip}
-                                                                              onChange={(e) => this.handleChange(e)}/>
+                                                                              onChange={(e) => this.handleChange(e)}
+                                                                              readOnly={this.props.readOnly}/>
                                                             </Form.Group>
                                                         </div>
                                                         <div className="row">
@@ -284,14 +309,16 @@ export default class StationView extends React.Component<IProps, IState> {
                                                                 <Form.Label>Porta <span className="text-danger">*</span></Form.Label>
                                                                 <Form.Control type="number" name="port" min={1} max={65535}
                                                                               value={this.props.station.port}
-                                                                              onChange={(e) => this.handleChange(e)}/>
+                                                                              onChange={(e) => this.handleChange(e)}
+                                                                              readOnly={this.props.readOnly}/>
                                                             </Form.Group>
 
                                                             <Form.Group controlId="service" className="col-md">
                                                                 <Form.Label>Servizio</Form.Label>
                                                                 <Form.Control name="service"
                                                                               value={this.props.station.service}
-                                                                              onChange={(e) => this.handleChange(e)}/>
+                                                                              onChange={(e) => this.handleChange(e)}
+                                                                              readOnly={this.props.readOnly}/>
                                                             </Form.Group>
 
 
@@ -299,7 +326,8 @@ export default class StationView extends React.Component<IProps, IState> {
                                                                 <Form.Label>Servizio POF</Form.Label>
                                                                 <Form.Control name="pof_service"
                                                                               value={this.props.station.pof_service}
-                                                                              onChange={(e) => this.handleChange(e)}/>
+                                                                              onChange={(e) => this.handleChange(e)}
+                                                                              readOnly={this.props.readOnly}/>
                                                             </Form.Group>
                                                         </div>
 
@@ -314,20 +342,23 @@ export default class StationView extends React.Component<IProps, IState> {
                                                                 <Form.Label>Indirizzo</Form.Label>
                                                                 <Form.Control name="target_host"
                                                                               value={this.props.station.target_host}
-                                                                              onChange={(e) => this.handleChange(e)}/>
+                                                                              onChange={(e) => this.handleChange(e)}
+                                                                              readOnly={this.props.readOnly}/>
                                                             </Form.Group>
 
                                                             <Form.Group controlId="target_port" className="col-md-2">
                                                                 <Form.Label>Porta</Form.Label>
                                                                 <Form.Control name="target_port" type="number" min={1} max={65535}
                                                                               value={this.props.station.target_port}
-                                                                              onChange={(e) => this.handleChange(e)}/>
+                                                                              onChange={(e) => this.handleChange(e)}
+                                                                              readOnly={this.props.readOnly}/>
                                                             </Form.Group>
                                                             <Form.Group controlId="target_path" className="col-md-5">
                                                                 <Form.Label>Servizio</Form.Label>
                                                                 <Form.Control name="target_path"
                                                                               value={this.props.station.target_path}
-                                                                              onChange={(e) => this.handleChange(e)}/>
+                                                                              onChange={(e) => this.handleChange(e)}
+                                                                              readOnly={this.props.readOnly}/>
                                                             </Form.Group>
                                                         </div>
 
@@ -338,7 +369,8 @@ export default class StationView extends React.Component<IProps, IState> {
                                                                 <Form.Label>Protocollo Modello 4</Form.Label>
                                                                 <Form.Control as="select" name="protocol_4mod"
                                                                               defaultValue={String(this.props.station.protocol_4mod)}
-                                                                              onChange={(e) => this.handleChange(e)} >
+                                                                              onChange={(e) => this.handleChange(e)}
+                                                                              readOnly={this.props.readOnly}>
                                                                     <option value="HTTPS">HTTPS</option>
                                                                     <option value="HTTP">HTTP</option>
                                                                 </Form.Control>
@@ -349,21 +381,24 @@ export default class StationView extends React.Component<IProps, IState> {
                                                                 <Form.Control name="ip_4mod"
 
                                                                               value={this.props.station.ip_4mod}
-                                                                              onChange={(e) => this.handleChange(e)}/>
+                                                                              onChange={(e) => this.handleChange(e)}
+                                                                              readOnly={this.props.readOnly}/>
                                                             </Form.Group>
 
                                                             <Form.Group controlId="port_4mod" className="col-md-2">
                                                                 <Form.Label>Porta Modello 4</Form.Label>
                                                                 <Form.Control name="port_4mod" type="number" min={1} max={65535}
                                                                               value={this.props.station.port_4mod}
-                                                                              onChange={(e) => this.handleChange(e)}/>
+                                                                              onChange={(e) => this.handleChange(e)}
+                                                                              readOnly={this.props.readOnly}/>
                                                             </Form.Group>
 
                                                             <Form.Group controlId="service_4mod" className="col-md-7">
                                                                 <Form.Label>Servizio Modello 4</Form.Label>
                                                                 <Form.Control name="service_4mod"
                                                                               value={this.props.station.service_4mod}
-                                                                              onChange={(e) => this.handleChange(e)}/>
+                                                                              onChange={(e) => this.handleChange(e)}
+                                                                              readOnly={this.props.readOnly}/>
                                                             </Form.Group>
                                                         </div>
 
@@ -374,7 +409,8 @@ export default class StationView extends React.Component<IProps, IState> {
                                                                 <Form.Label>Protocollo Redirect</Form.Label>
                                                                 <Form.Control as="select" name="redirect_protocol"
                                                                               defaultValue={String(this.props.station.redirect_protocol)}
-                                                                              onChange={(e) => this.handleChange(e)} >
+                                                                              onChange={(e) => this.handleChange(e)}
+                                                                              readOnly={this.props.readOnly}>
                                                                     <option value="HTTPS">HTTPS</option>
                                                                     <option value="HTTP">HTTP</option>
                                                                 </Form.Control>
@@ -383,32 +419,34 @@ export default class StationView extends React.Component<IProps, IState> {
                                                             <Form.Group controlId="redirect_ip" className="col-md-7">
                                                                 <Form.Label>IP Redirect</Form.Label>
                                                                 <Form.Control name="redirect_ip"
-
                                                                               value={this.props.station.redirect_ip}
-                                                                              onChange={(e) => this.handleChange(e)}/>
+                                                                              onChange={(e) => this.handleChange(e)}
+                                                                              readOnly={this.props.readOnly}/>
                                                             </Form.Group>
                                                         </div>
                                                         <div className={"row"}>
-
                                                             <Form.Group controlId="redirect_port" className="col-md-2">
                                                                 <Form.Label>Porta Redirect</Form.Label>
                                                                 <Form.Control name="redirect_port" type="number" min={1} max={65535}
                                                                               value={this.props.station.redirect_port}
-                                                                              onChange={(e) => this.handleChange(e)}/>
+                                                                              onChange={(e) => this.handleChange(e)}
+                                                                              readOnly={this.props.readOnly}/>
                                                             </Form.Group>
 
                                                             <Form.Group controlId="redirect_path" className="col-md">
                                                                 <Form.Label>Servizio Redirect</Form.Label>
                                                                 <Form.Control name="redirect_path"
                                                                               value={this.props.station.redirect_path}
-                                                                              onChange={(e) => this.handleChange(e)}/>
+                                                                              onChange={(e) => this.handleChange(e)}
+                                                                              readOnly={this.props.readOnly}/>
                                                             </Form.Group>
 
                                                             <Form.Group controlId="redirect_query_string" className="col-md-3">
                                                                 <Form.Label>Parametri Redirect</Form.Label>
                                                                 <Form.Control name="redirect_query_string"
                                                                               value={this.props.station.redirect_query_string}
-                                                                              onChange={(e) => this.handleChange(e)}/>
+                                                                              onChange={(e) => this.handleChange(e)}
+                                                                              readOnly={this.props.readOnly}/>
                                                             </Form.Group>
                                                         </div>
 
@@ -419,7 +457,8 @@ export default class StationView extends React.Component<IProps, IState> {
                                                                 <Form.Label>Proxy</Form.Label>
                                                                 <Form.Control as="select" name="proxy_enabled" placeholder="stato"
                                                                               onChange={(e) => this.handleChange(e)}
-                                                                              value={String(this.props.station.proxy_enabled)}>
+                                                                              value={String(this.props.station.proxy_enabled)}
+                                                                              readOnly={this.props.readOnly}>
                                                                     <option value="true">Abilitato</option>
                                                                     <option value="false">Non Abilitato</option>
                                                                 </Form.Control>
@@ -429,28 +468,32 @@ export default class StationView extends React.Component<IProps, IState> {
                                                                 <Form.Label>Indirizzo Proxy</Form.Label>
                                                                 <Form.Control name="proxy_host"
                                                                               value={this.props.station.proxy_host}
-                                                                              onChange={(e) => this.handleChange(e)}/>
+                                                                              onChange={(e) => this.handleChange(e)}
+                                                                              readOnly={this.props.readOnly}/>
                                                             </Form.Group>
 
                                                             <Form.Group controlId="proxy_port" className="col-md-2">
                                                                 <Form.Label>Porta Proxy</Form.Label>
                                                                 <Form.Control name="proxy_port" type="number" min={1} max={65535}
                                                                               value={this.props.station.proxy_port}
-                                                                              onChange={(e) => this.handleChange(e)}/>
+                                                                              onChange={(e) => this.handleChange(e)}
+                                                                              readOnly={this.props.readOnly}/>
                                                             </Form.Group>
 
                                                             <Form.Group controlId="proxy_username" className="col-md-3">
                                                                 <Form.Label>Username Proxy</Form.Label>
                                                                 <Form.Control name="proxy_username"
                                                                               value={this.props.station.proxy_username}
-                                                                              onChange={(e) => this.handleChange(e)}/>
+                                                                              onChange={(e) => this.handleChange(e)}
+                                                                              readOnly={this.props.readOnly}/>
                                                             </Form.Group>
 
                                                             <Form.Group controlId="proxy_password" className="col-md-3">
                                                                 <Form.Label>Password Proxy</Form.Label>
                                                                 <Form.Control name="proxy_password"
                                                                               value={this.props.station.proxy_password}
-                                                                              onChange={(e) => this.handleChange(e)}/>
+                                                                              onChange={(e) => this.handleChange(e)}
+                                                                              readOnly={this.props.readOnly}/>
                                                             </Form.Group>
                                                         </div>
 
@@ -462,7 +505,8 @@ export default class StationView extends React.Component<IProps, IState> {
                                                                 <Form.Label>Flag Online</Form.Label>
                                                                 <Form.Control as="select" name="flag_online" placeholder="stato"
                                                                               onChange={(e) => this.handleChange(e)}
-                                                                              value={String(this.props.station.flag_online)}>
+                                                                              value={String(this.props.station.flag_online)}
+                                                                              readOnly={this.props.readOnly}>
                                                                     <option value="true">Abilitato</option>
                                                                     <option value="false">Non Abilitato</option>
                                                                 </Form.Control>
@@ -472,7 +516,8 @@ export default class StationView extends React.Component<IProps, IState> {
                                                                 <Form.Label>Invio RT Istantaneo</Form.Label>
                                                                 <Form.Control as="select" name="invio_rt_istantaneo" placeholder="stato"
                                                                               onChange={(e) => this.handleChange(e)}
-                                                                              value={String(this.props.station.invio_rt_istantaneo)}>
+                                                                              value={String(this.props.station.invio_rt_istantaneo)}
+                                                                              readOnly={this.props.readOnly}>
                                                                     <option value="true">Abilitato</option>
                                                                     <option value="false">Non Abilitato</option>
                                                                 </Form.Control>
@@ -483,46 +528,57 @@ export default class StationView extends React.Component<IProps, IState> {
                                                                         className="text-danger">*</span></Form.Label>
                                                                 <Form.Control type="number" name="thread_number" min={1}
                                                                               value={this.props.station.thread_number}
-                                                                              onChange={(e) => this.handleChange(e)}/>
+                                                                              onChange={(e) => this.handleChange(e)}
+                                                                              readOnly={this.props.readOnly}/>
                                                             </Form.Group>
 
                                                             <Form.Group controlId="timeout_a" className="col-md-2">
                                                                 <Form.Label>Timeout A <span className="text-danger">*</span></Form.Label>
                                                                 <Form.Control type="number" name="timeout_a" min={0}
                                                                               value={this.props.station.timeout_a}
-                                                                              onChange={(e) => this.handleChange(e)}/>
+                                                                              onChange={(e) => this.handleChange(e)}
+                                                                              readOnly={this.props.readOnly}/>
                                                             </Form.Group>
 
                                                             <Form.Group controlId="timeout_b" className="col-md-2">
                                                                 <Form.Label>Timeout B <span className="text-danger">*</span></Form.Label>
                                                                 <Form.Control type="number" name="timeout_b" min={0}
                                                                               value={this.props.station.timeout_b}
-                                                                              onChange={(e) => this.handleChange(e)}/>
+                                                                              onChange={(e) => this.handleChange(e)}
+                                                                              readOnly={this.props.readOnly}/>
                                                             </Form.Group>
 
                                                             <Form.Group controlId="timeout_c" className="col-md-2">
                                                                 <Form.Label>Timeout C <span className="text-danger">*</span></Form.Label>
                                                                 <Form.Control type="number" name="timeout_c" min={0}
                                                                               value={this.props.station.timeout_c}
-                                                                              onChange={(e) => this.handleChange(e)}/>
+                                                                              onChange={(e) => this.handleChange(e)}
+                                                                              readOnly={this.props.readOnly}/>
                                                             </Form.Group>
 
                                                         </div>
 
                                                     </Card.Body>
-                                                    <Card.Footer>
-                                                        <div className="row">
-                                                            <div className="col-md-12">
-                                                                <Button className="ml-2 float-md-right" variant="secondary"
-                                                                        onClick={() => {
-                                                                            this.discard();
-                                                                        }}>Annulla</Button>
-                                                                <Button className="float-md-right" onClick={() => { this.validData() &&
-                                                                    this.props.saveStation();
-                                                                }}>Salva</Button>
-                                                            </div>
+                                                    {(this.props.readOnly && 
+                                                        <div className="row mt-3">                            
+                                                            {this.props.getCiList()}
                                                         </div>
-                                                    </Card.Footer>
+                                                    )}
+                                                    {(!this.props.readOnly &&
+                                                        <Card.Footer>
+                                                            <div className="row">
+                                                                <div className="col-md-12">
+                                                                    <Button className="ml-2 float-md-right" variant="secondary"
+                                                                            onClick={() => {
+                                                                                this.discard();
+                                                                            }}>Annulla</Button>
+                                                                    <Button className="float-md-right" onClick={() => { this.validData() &&
+                                                                        this.props.saveStation();
+                                                                    }}>Salva</Button>
+                                                                </div>
+                                                            </div>
+                                                        </Card.Footer>
+                                                    )}
                                                 </Card>
                                             </>
                                     )
