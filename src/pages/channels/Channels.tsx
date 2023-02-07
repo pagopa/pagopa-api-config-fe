@@ -1,6 +1,6 @@
 import React from 'react';
 import {Button, OverlayTrigger, Table, Tooltip} from "react-bootstrap";
-import {FaCheck, FaEdit, FaEye, FaFileDownload, FaPlus, FaSpinner, FaTimes, FaTrash} from "react-icons/fa";
+import {FaCheck, FaClone, FaEdit, FaEye, FaFileDownload, FaPlus, FaSpinner, FaTimes, FaTrash} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
 import axios, {AxiosRequestConfig} from "axios";
@@ -184,6 +184,10 @@ export default class Channels extends React.Component<IProps, IState> {
         this.props.history.push(this.service + "/" + code + "?edit");
     }
 
+    handleClone(code: string) {
+        this.props.history.push(this.service + "/create?clone=" + code);
+    }
+
     handleDelete(channel: string, index: number) {
         this.setState({showDeleteModal: true});
         this.setState({channelToDelete: channel});
@@ -263,6 +267,13 @@ export default class Channels extends React.Component<IProps, IState> {
                             {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
                             <FaEdit role="button" className="mr-3"
                                     onClick={() => this.handleEdit(channel.channel_code)}/>
+                        </OverlayTrigger>
+                        {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
+                        <OverlayTrigger placement="top"
+                                        overlay={<Tooltip id={`tooltip-clone-${index}`}>Clona</Tooltip>}>
+                            {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
+                            <FaClone role="button" className="mr-3"
+                                    onClick={() => this.handleClone(channel.channel_code)}/>
                         </OverlayTrigger>
                         {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
                         <OverlayTrigger placement="top"

@@ -1,14 +1,13 @@
 import React from "react";
-import {Breadcrumb, Button, Card, Form} from "react-bootstrap";
+
 import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
 import debounce from "lodash.debounce";
-import AsyncSelect from "react-select/async";
-import {FaInfoCircle} from "react-icons/fa";
 import {apiClient} from "../../util/apiClient";
-import ConfirmationModal from "../../components/ConfirmationModal";
 import {loginRequest} from "../../authConfig";
 import {ChannelDetails} from "../../../generated/api/ChannelDetails";
+import ChannelView from "./ChannelView";
+import { getChannel } from "./Services";
 
 interface IProps {
     match: {
@@ -17,11 +16,15 @@ interface IProps {
     history: {
         push(url: string): void;
     };
+    location?: any;
 }
 
 interface IState {
     channel: ChannelDetails;
+    code: string;
     showModal: boolean;
+    isLoading: boolean;
+    isError: boolean;
 }
 
 export default class CreateChannel extends React.Component<IProps, IState> {
@@ -65,7 +68,10 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                 serv_plugin: null,
                 agid: false
             } as unknown as ChannelDetails,
-            showModal: false
+            code: "",
+            showModal: false,
+            isError: false,
+            isLoading: false
         };
 
         this.discard = this.discard.bind(this);
@@ -74,10 +80,38 @@ export default class CreateChannel extends React.Component<IProps, IState> {
         this.hideModal = this.hideModal.bind(this);
         this.debouncedBrokerPspOptions = this.debouncedBrokerPspOptions.bind(this);
         this.promiseWfespOptions = this.promiseWfespOptions.bind(this);
+        this.setChannel = this.setChannel.bind(this);
+        this.setModal = this.setModal.bind(this);
+    }
+
+    setChannel(channel: ChannelDetails): void {
+        this.setState({ channel });
+    }
+
+    setModal(modal: boolean): void{
+        this.setState({showModal: modal});
     }
 
     toastError(message: string) {
         toast.error(() => <div className={"toast-width"}>{message}</div>, {theme: "colored"});
+    }
+
+    componentDidMount(): void {
+        const code = new URLSearchParams(this.props.location.search).get("clone") as string;
+        if (code) {
+            this.setState({code, isLoading: true});
+            getChannel(this.context, code).then((data: any) => {
+                const channel = {...data, channel_code: ""} as ChannelDetails;
+                this.setChannel(channel);
+                this.setState({isError: false});      
+            }).catch(() => {
+                this.setState({isError: true});
+            }).finally(() => this.setState({ isLoading: false }));
+        }
+        else {
+            this.setState({ isLoading: false });
+            this.setState({isError: false});
+        }
     }
 
     handleChange(event: any) {
@@ -283,352 +317,19 @@ export default class CreateChannel extends React.Component<IProps, IState> {
 
     render(): React.ReactNode {
         return (
-            <div className="container-fluid creditor-institutions">
-                <div className="row">
-                    <div className="col-md-12 mb-5">
-                        <Breadcrumb>
-                            <Breadcrumb.Item href={this.service}>Canali</Breadcrumb.Item>
-                            <Breadcrumb.Item active>Crea Canale</Breadcrumb.Item>
-                        </Breadcrumb>
-                    </div>
-                    <div className="col-md-12">
-                        <div className="row">
-                            <div className="col-md-12">
-                                <h2>Nuovo Canale</h2>
-                            </div>
-                        </div>
-                        <Card>
-                            <Card.Header>
-                                <h4>Anagrafica</h4>
-                            </Card.Header>
-                            <Card.Body>
-                                <div className="row">
-
-                                    <Form.Group controlId="channel_code" className="col-md-4">
-                                        <Form.Label>Codice <span className="text-danger">*</span></Form.Label>
-                                        <Form.Control name="channel_code" placeholder=""
-                                                      onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-
-                                    <Form.Group controlId="enabled" className="col-md-2">
-                                        <Form.Label>Stato <span className="text-danger">*</span></Form.Label>
-                                        <Form.Control as="select" name="enabled" onChange={(e) => this.handleChange(e)}
-                                                      defaultValue={String(this.state.channel.enabled)}>
-                                            <option value="true">Abilitato</option>
-                                            <option value="false">Non Abilitato</option>
-                                        </Form.Control>
-                                    </Form.Group>
-                                    <Form.Group controlId="primitive_version" className="col-md-2">
-                                        <Form.Label>Versione primitive <span className="text-danger">*</span></Form.Label>
-                                        <Form.Control type={"number"} name="version" min={1} max={2}
-                                                      value={this.state.channel.primitive_version}
-                                                      onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-                                </div>
-                                <div className="row">
-                                    <Form.Group controlId="broker_psp_code" className="col-md-4">
-                                        <Form.Label>Codice Intermediario PSP <span
-                                            className="text-danger">*</span></Form.Label>
-                                        <AsyncSelect
-                                            cacheOptions defaultOptions
-                                            loadOptions={this.debouncedBrokerPspOptions}
-                                            placeholder="Cerca codice"
-                                            menuPortalTarget={document.body}
-                                            styles={{menuPortal: base => ({...base, zIndex: 9999})}}
-                                            name="broker_code"
-                                            onChange={(e) => this.handleBrokerPspChange(e)}
-                                        />
-                                    </Form.Group>
-                                    <Form.Group controlId="password" className="col-md-4">
-                                        <Form.Label>Password</Form.Label>
-                                        <Form.Control name="password" placeholder=""
-                                                      onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-                                </div>
-
-                                <div className={"divider"}></div>
-                                <h4>Servizio</h4>
-                                <div className="row">
-                                    <Form.Group controlId="protocol" className="col-md-2">
-                                        <Form.Label>Protocollo <span
-                                            className="text-danger">*</span></Form.Label>
-                                        <Form.Control as="select" name="protocol"
-                                                      defaultValue={String(this.state.channel.protocol)}
-                                                      onChange={(e) => this.handleChange(e)}>
-                                            <option value="HTTPS">HTTPS</option>
-                                            <option value="HTTP">HTTP</option>
-                                        </Form.Control>
-                                    </Form.Group>
-
-                                    <Form.Group controlId="ip" className="col-md-6">
-                                        <Form.Label>IP</Form.Label>
-                                        <Form.Control name="ip" placeholder=""
-
-                                                      onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-                                </div>
-                                <div className="row">
-                                    <Form.Group controlId="port" className="col-md-2">
-                                        <Form.Label>Porta <span className="text-danger">*</span></Form.Label>
-                                        <Form.Control type="number" name="port" placeholder="" min={1} max={65535}
-                                                      value={String(this.state.channel.port)}
-                                                      onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-
-                                    <Form.Group controlId="service" className="col-md-6">
-                                        <Form.Label>Servizio</Form.Label>
-                                        <Form.Control name="service" placeholder=""
-                                                      onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-                                </div>
-
-                                <div className={"divider"}></div>
-                                <h4>Target</h4>
-                                <p>Configurazione del psp aderente alla nuova connettività.</p>
-                                <p className="alert alert-info">
-                                    <FaInfoCircle /> Impostare la password a <span className="badge badge-light">PLACEHOLDER</span>, disabilitare il proxy se ambiente <span className="font-italic">OnCloud</span> e, viceversa, impostarlo per ambiente <span className="font-italic">OnPrem</span>.
-                                </p>
-                                <div className="row">
-                                    <Form.Group controlId="target_host" className="col-md-5">
-                                        <Form.Label>Indirizzo</Form.Label>
-                                        <Form.Control name="target_host" onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-
-                                    <Form.Group controlId="target_port" className="col-md-2">
-                                        <Form.Label>Porta</Form.Label>
-                                        <Form.Control name="proxy_port" type="number" min={1} max={65535}
-                                                      onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-
-                                    <Form.Group controlId="target_path" className="col-md-5">
-                                        <Form.Label>Servizio</Form.Label>
-                                        <Form.Control name="target_path" onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-                                </div>
-
-                                <div className={"divider"}></div>
-                                <h4>Redirect</h4>
-                                <div className="row">
-                                    <Form.Group controlId="redirect_protocol" className="col-md-2">
-                                        <Form.Label>Protocollo Redirect</Form.Label>
-                                        <Form.Control as="select" name="redirect_protocol"
-                                                      defaultValue={String(this.state.channel.redirect_protocol)}
-                                                      onChange={(e) => this.handleChange(e)}>
-                                            <option value="HTTPS">HTTPS</option>
-                                            <option value="HTTP">HTTP</option>
-                                        </Form.Control>
-                                    </Form.Group>
-
-                                    <Form.Group controlId="redirect_ip" className="col-md-6">
-                                        <Form.Label>IP Redirect</Form.Label>
-                                        <Form.Control name="redirect_ip" placeholder=""
-
-                                                      onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-                                </div>
-                                <div className={"row"}>
-
-
-                                    <Form.Group controlId="redirect_port" className="col-md-2">
-                                        <Form.Label>Porta Redirect</Form.Label>
-                                        <Form.Control name="redirect_port" placeholder="" type="number" min={1}
-                                                      max={65535}
-                                                      onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-
-                                    <Form.Group controlId="redirect_path" className="col-md-6">
-                                        <Form.Label>Servizio Redirect</Form.Label>
-                                        <Form.Control name="redirect_path" placeholder=""
-                                                      onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-
-                                    <Form.Group controlId="redirect_query_string" className="col-md-4">
-                                        <Form.Label>Parametri Redirect</Form.Label>
-                                        <Form.Control name="redirect_query_string" placeholder=""
-                                                      onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-                                </div>
-
-                                <div className={"divider"}></div>
-                                <h4>Proxy</h4>
-                                <div className="row">
-                                    <Form.Group controlId="proxy_enabled" className="col-md-2">
-                                        <Form.Label>Proxy</Form.Label>
-                                        <Form.Control as="select" onChange={(e) => this.handleChange(e)}
-                                                      name="proxy_enabled"
-                                                      defaultValue={String(this.state.channel.proxy_enabled)}>
-                                            <option value="true">Abilitato</option>
-                                            <option value="false">Non Abilitato</option>
-                                        </Form.Control>
-                                    </Form.Group>
-
-                                    <Form.Group controlId="proxy_host" className="col-md-2">
-                                        <Form.Label>Indirizzo Proxy</Form.Label>
-                                        <Form.Control name="proxy_host" placeholder=""
-                                                      onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-
-                                    <Form.Group controlId="proxy_port" className="col-md-2">
-                                        <Form.Label>Porta Proxy</Form.Label>
-                                        <Form.Control name="proxy_port" placeholder="" type="number" min={1} max={65535}
-                                                      onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-                                </div>
-
-                                <div className={"divider"}></div>
-                                <h4>Altre Informazioni</h4>
-                                <div className="row">
-                                    <Form.Group controlId="payment_model" className="col-md-2">
-                                        <Form.Label>Modello Pagamento <span
-                                            className="text-danger">*</span></Form.Label>
-                                        <Form.Control as="select" name="payment_model"
-                                                      onChange={(e) => this.handleChange(e)}>
-                                            <option value={"IMMEDIATE"}>IMMEDIATO</option>
-                                            <option value={"IMMEDIATE_MULTIBENEFICIARY"}>IMMEDIATO_MULTIBENEFICIARIO
-                                            </option>
-                                            <option value={"DEFERRED"}>DIFFERITO</option>
-                                            <option value={"ACTIVATED_AT_PSP"}>ATTIVATO_PRESSO_PSP</option>
-                                        </Form.Control>
-                                    </Form.Group>
-
-                                    <Form.Group controlId="serv_plugin" className="col-md-2">
-                                        <Form.Label>Plugin WFESP</Form.Label>
-                                        <AsyncSelect
-                                            cacheOptions defaultOptions
-                                            loadOptions={this.promiseWfespOptions}
-                                            placeholder={"-"}
-                                            menuPortalTarget={document.body}
-                                            styles={{menuPortal: base => ({...base, zIndex: 9999})}}
-                                            name="serv_plugin"
-                                            isSearchable={false}
-                                            onChange={(e) => this.handleWfespChange(e)}
-                                        />
-                                    </Form.Group>
-
-                                    <Form.Group controlId="thread_number" className="col-md-2">
-                                        <Form.Label>Numero Thread <span className="text-danger">*</span></Form.Label>
-                                        <Form.Control type="number" name="thread_number" placeholder="" min={1}
-                                                      value={String(this.state.channel.thread_number)}
-                                                      onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-
-                                    <Form.Group controlId="timeout_a" className="col-md-2">
-                                        <Form.Label>Timeout A <span className="text-danger">*</span></Form.Label>
-                                        <Form.Control type="number" name="timeout_a" placeholder="" min={0}
-                                                      value={String(this.state.channel.timeout_a)}
-                                                      onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-
-                                    <Form.Group controlId="timeout_b" className="col-md-2">
-                                        <Form.Label>Timeout B <span className="text-danger">*</span></Form.Label>
-                                        <Form.Control type="number" name="timeout_b" placeholder="" min={0}
-                                                      value={String(this.state.channel.timeout_b)}
-                                                      onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-
-                                    <Form.Group controlId="timeout_c" className="col-md-2">
-                                        <Form.Label>Timeout C <span className="text-danger">*</span></Form.Label>
-                                        <Form.Control type="number" name="timeout_c" placeholder="" min={0}
-                                                      value={String(this.state.channel.timeout_c)}
-                                                      onChange={(e) => this.handleChange(e)}/>
-                                    </Form.Group>
-                                </div>
-                                <div className="row">
-                                    <Form.Group controlId="flag_io" className="col-md-2 custom-control-box">
-                                        <Form.Check
-                                            custom
-                                            name="flag_io"
-                                            defaultChecked={this.state.channel.flag_io === true}
-                                            type={'checkbox'}
-                                            id={'flag_io'}
-                                            value={'true'}
-                                            label={'PSP Notify Payment'}
-                                            onChange={(e) => this.handleChange(e)}
-                                        />
-                                    </Form.Group>
-
-                                    <Form.Group controlId="rt_push" className="col-md-2 custom-control-box">
-                                        <Form.Check
-                                            custom
-                                            defaultChecked={this.state.channel.rt_push === true}
-                                            type={'checkbox'}
-                                            id={'rt_push'}
-                                            label={'Push Ricevuta Telematica'}
-                                            name="rt_push"
-                                            value={'true'}
-                                            onChange={(e) => this.handleChange(e)}
-                                        />
-                                    </Form.Group>
-
-                                    <Form.Group controlId="on_us" className="col-md-2 custom-control-box">
-                                        <Form.Check
-                                            custom
-                                            defaultChecked={this.state.channel.on_us === true}
-                                            type={'checkbox'}
-                                            id={'on_us'}
-                                            label={'On Us'}
-                                            name="on_us"
-                                            value={'true'}
-                                            onChange={(e) => this.handleChange(e)}
-                                        />
-                                    </Form.Group>
-
-                                    <Form.Group controlId="card_chart" className="col-md-2 custom-control-box">
-                                        <Form.Check
-                                            custom
-                                            defaultChecked={this.state.channel.card_chart === true}
-                                            type={'checkbox'}
-                                            id={'card_chart'}
-                                            label={'Carrello RPT'}
-                                            name="card_chart"
-                                            value={'true'}
-                                            onChange={(e) => this.handleChange(e)}
-                                        />
-                                    </Form.Group>
-
-                                    <Form.Group controlId="recovery" className="col-md-2 custom-control-box">
-                                        <Form.Check
-                                            custom
-                                            defaultChecked={this.state.channel.recovery === true}
-                                            type={'checkbox'}
-                                            id={'recovery'}
-                                            label={'Processo di Recovery Pull'}
-                                            name="recovery"
-                                            value={'true'}
-                                            onChange={(e) => this.handleChange(e)}
-                                        />
-                                    </Form.Group>
-
-                                    <Form.Group controlId="digital_stamp_brand" className="col-md-2 custom-control-box">
-                                        <Form.Check
-                                            custom
-                                            defaultChecked={this.state.channel.digital_stamp_brand === true}
-                                            type={'checkbox'}
-                                            id={'digital_stamp_brand'}
-                                            label={'Marca Bollo Digitale'}
-                                            name="digital_stamp_brand"
-                                            value={'true'}
-                                            onChange={(e) => this.handleChange(e)}
-                                        />
-                                    </Form.Group>
-                                </div>
-                            </Card.Body>
-                        </Card>
-
-                        <div className="row justify-content-end m-3">
-                            <div className="col-md-3 text-right">
-                                <Button onClick={this.save}>Salva</Button>
-                                <Button variant="secondary" className="ml-3" onClick={this.discard}>Annulla</Button>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-                <ConfirmationModal show={this.state.showModal} handleClose={this.hideModal}>
-                    <p>Sei sicuro di voler annullare le modifiche?</p>
-                </ConfirmationModal>
-            </div>
+            <ChannelView channel={this.state.channel} 
+                setChannel={this.setChannel}
+                saveChannel={this.save}
+                showModal={this.state.showModal}
+                setShowModal={this.setModal}
+                paymentTypeList={[]}
+                isLoading={this.state.isLoading}
+                isError={this.state.isError}
+                history={this.props.history}
+                readOnly={false}
+                showPaymentTypeList={false}
+                pspList={[]}
+            />
         );
-    }
+    } 
 }
