@@ -36,6 +36,9 @@ export default class CreateChannel extends React.Component<IProps, IState> {
         super(props);
 
         this.state = {
+            isError: false,
+            isLoading: false,
+            code: "",
             channel: {
                 channel_code: "",
                 enabled: false,
@@ -68,18 +71,13 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                 serv_plugin: null,
                 agid: false
             } as unknown as ChannelDetails,
-            code: "",
-            showModal: false,
-            isError: false,
-            isLoading: false
+            showModal: false
         };
 
         this.discard = this.discard.bind(this);
         this.save = this.save.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.hideModal = this.hideModal.bind(this);
-        this.debouncedBrokerPspOptions = this.debouncedBrokerPspOptions.bind(this);
-        this.promiseWfespOptions = this.promiseWfespOptions.bind(this);
         this.setChannel = this.setChannel.bind(this);
         this.setModal = this.setModal.bind(this);
     }
@@ -235,85 +233,6 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                 });
             });
     }
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    promiseWfespOptions(inputValue: string, callback: any) {
-        this.context.instance.acquireTokenSilent({
-            ...loginRequest,
-            account: this.context.accounts[0]
-        })
-            .then((response: any) => {
-                apiClient.getWfespPlugins({
-                    Authorization: `Bearer ${response.idToken}`,
-                    ApiKey: "",
-                }).then((resp: any) => {
-                    if (resp.right.status === 200) {
-                        const items: Array<any> = [];
-                        // eslint-disable-next-line functional/immutable-data
-                        items.push({
-                            value: 'null',
-                            label: '-',
-                        });
-                        resp.right.value.wfesp_plugin_confs.map((plugin: any) => {
-                            // eslint-disable-next-line functional/immutable-data
-                            items.push({
-                                value: plugin.id_serv_plugin,
-                                label: plugin.id_serv_plugin,
-                            });
-                        });
-                        callback(items);
-                    } else {
-                        callback([]);
-                    }
-                }).catch(() => {
-                    toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
-                    callback([]);
-                });
-            });
-    }
-
-
-    debouncedBrokerPspOptions = debounce((inputValue, callback) => {
-        this.promiseBrokerPspOptions(inputValue, callback);
-    }, 500);
-
-    promiseBrokerPspOptions(inputValue: string, callback: any) {
-        const limit = inputValue.length === 0 ? 10 : 99999;
-        const code = inputValue.length === 0 ? "" : inputValue;
-
-        this.context.instance.acquireTokenSilent({
-            ...loginRequest,
-            account: this.context.accounts[0]
-        })
-            .then((response: any) => {
-                apiClient.getBrokersPsp({
-                    Authorization: `Bearer ${response.idToken}`,
-                    ApiKey: "",
-                    page: 0,
-                    limit,
-                    code
-                }).then((resp: any) => {
-                    if (resp.right.status === 200) {
-                        const items: Array<any> = [];
-                        resp.right.value.brokers_psp.map((broker_psp: any) => {
-                            // eslint-disable-next-line functional/immutable-data
-                            items.push({
-                                value: broker_psp.broker_psp_code,
-                                label: broker_psp.broker_psp_code,
-                            });
-                        });
-                        callback(items);
-                    } else {
-                        callback([]);
-                    }
-                }).catch(() => {
-                    toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
-                    callback([]);
-                });
-            });
-    }
-
 
     render(): React.ReactNode {
         return (

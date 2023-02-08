@@ -291,7 +291,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
         this.setState({paymentTypeToDelete: paymentType});
     }
 
-    removePaymentTypeApi = () => {
+    removePaymentTypeApi = (paymentType: string) => {
         this.context.instance.acquireTokenSilent({
             ...loginRequest,
             account: this.context.accounts[0]
@@ -300,7 +300,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
                     Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     channelcode: this.state.code,
-                    paymenttypecode: this.state.paymentTypeToDelete
+                    paymenttypecode: paymentType
                 }).then((res: any) => {
                         if (res.right.status === 200) {
                             toast.info("Rimozione avvenuta con successo");
@@ -316,8 +316,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
 
     removePaymentType(paymentType: string) {
         this.setState({paymentTypeList: this.state.paymentTypeList.filter((p) => p !== paymentType)});
-        console.warn("HELO");
-        this.removePaymentType;
+        this.removePaymentTypeApi(paymentType);
     }
 
     setNewPaymentType() {

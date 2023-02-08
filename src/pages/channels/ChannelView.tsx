@@ -160,7 +160,7 @@ export default class ChannelView extends React.Component<IProps> {
     }
 
     handleEdit() {
-        this.props.history.push("/stations/" + String(this.props.channel.channel_code) + "?edit");
+        this.props.history.push("/channels/" + String(this.props.channel.channel_code) + "?edit");
     }
 
     handleChange(event: any) {
@@ -199,12 +199,14 @@ export default class ChannelView extends React.Component<IProps> {
                                 item === "OBEP" && <span className="badge badge-danger ml-2">DEPRECATO</span>
                             }
                         </td>
-                        <td className={"text-right"}>
-                            <OverlayTrigger placement="top"
-                                            overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
-                                <FaTrash role="button" className="mr-3" onClick={() => this.handlePaymentTypeDelete(item)}/>
-                            </OverlayTrigger>
-                        </td>
+                        {!this.props.readOnly &&
+                            <td className={"text-right"}>
+                                <OverlayTrigger placement="top"
+                                                overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
+                                    <FaTrash role="button" className="mr-3" onClick={() => this.handlePaymentTypeDelete(item)}/>
+                                </OverlayTrigger>
+                            </td>
+                        }
                     </tr>
                 );
                 paymentTypeList.push(row);
@@ -255,11 +257,16 @@ export default class ChannelView extends React.Component<IProps> {
                             !isLoading && (
                                 <>
                                     <div className="row">
-                                        <div className="col-md-12">
+                                        <div className="col-md-10">
                                             <h2>{this.props.channel.channel_code || "-"}</h2>
                                         </div>
+                                        {(this.props.readOnly && 
+                                        <div className="col-md-2 text-right">
+                                            <button className={"btn btn-primary"}
+                                                onClick={() => this.handleEdit()}>Edit
+                                            </button>
+                                        </div>)}
                                     </div>
-
                                     <Card>
                                         <Card.Header>
                                             <h5>Anagrafica</h5>
@@ -279,6 +286,7 @@ export default class ChannelView extends React.Component<IProps> {
                                                     <Form.Label>Stato <span className="text-danger">*</span></Form.Label>
                                                     <Form.Control as="select" name="enabled"
                                                                   onChange={(e) => this.handleChange(e)}
+                                                                  readOnly={this.props.readOnly}
                                                                   value={String(this.props.channel.enabled)}>
                                                         <option value="true">Abilitato</option>
                                                         <option value="false">Non Abilitato</option>
@@ -288,38 +296,48 @@ export default class ChannelView extends React.Component<IProps> {
                                                     <Form.Label>Versione primprops <span className="text-danger">*</span></Form.Label>
                                                     <Form.Control type={"number"} name="version" min={1} max={2}
                                                                 value={this.props.channel.primitive_version}
-                                                                onChange={(e) => this.handleChange(e)}/>
+                                                                onChange={(e) => this.handleChange(e)}
+                                                                readOnly={this.props.readOnly}/>
                                                 </Form.Group>
                                             </div>
                                             <div className="row">
                                                 <Form.Group controlId="broker_psp_code" className="col-md-4">
                                                     <Form.Label>Codice Intermediario PSP <span
                                                         className="text-danger">*</span></Form.Label>
-                                                    <AsyncSelect
-                                                        cacheOptions defaultOptions
-                                                        loadOptions={this.debouncedBrokerPspOptions}
-                                                        placeholder="Cerca codice"
-                                                        menuPortalTarget={document.body}
-                                                        styles={{menuPortal: base => ({...base, zIndex: 9999})}}
-                                                        name="broker_code"
-                                                        value={{
-                                                            label: this.props.channel.broker_psp_code,
-                                                            value: this.props.channel.broker_psp_code
-                                                        }}
-                                                        onChange={(e) => this.handleBrokerPspChange(e)}
+                                                    {(!this.props.readOnly &&
+                                                        <AsyncSelect
+                                                            cacheOptions defaultOptions
+                                                            loadOptions={this.debouncedBrokerPspOptions}
+                                                            placeholder="Cerca codice"
+                                                            menuPortalTarget={document.body}
+                                                            styles={{menuPortal: base => ({...base, zIndex: 9999})}}
+                                                            name="broker_code"
+                                                            value={{
+                                                                label: this.props.channel.broker_psp_code,
+                                                                value: this.props.channel.broker_psp_code
+                                                            }}
+                                                            onChange={(e) => this.handleBrokerPspChange(e)}
                                                     />
+                                                    )}
+                                                    {(this.props.readOnly &&
+                                                        <Form.Control name="broker_psp_code"
+                                                                value={this.props.channel.broker_psp_code}
+                                                                readOnly={this.props.readOnly}/>
+                                                    )}
                                                 </Form.Group>
                                                 <Form.Group controlId="password" className="col-md-4">
                                                     <Form.Label>Password</Form.Label>
                                                     <Form.Control name="password" placeholder=""
                                                                   value={this.props.channel.password}
-                                                                  onChange={(e) => this.handleChange(e)}/>
+                                                                  onChange={(e) => this.handleChange(e)}
+                                                                  readOnly={this.props.readOnly}/>
                                                 </Form.Group>
                                                 <Form.Group controlId="new_password" className="col-md-4">
                                                     <Form.Label>Nuova Password</Form.Label>
                                                     <Form.Control name="new_password" placeholder=""
                                                                   value={this.props.channel.new_password}
-                                                                  onChange={(e) => this.handleChange(e)}/>
+                                                                  onChange={(e) => this.handleChange(e)}
+                                                                  readOnly={this.props.readOnly}/>
                                                 </Form.Group>
                                             </div>
 
@@ -331,7 +349,8 @@ export default class ChannelView extends React.Component<IProps> {
                                                         className="text-danger">*</span></Form.Label>
                                                     <Form.Control as="select" name="protocol"
                                                                   defaultValue={String(this.props.channel.protocol)}
-                                                                  onChange={(e) => this.handleChange(e)}>
+                                                                  onChange={(e) => this.handleChange(e)}
+                                                                  readOnly={this.props.readOnly}>
                                                         <option value="HTTPS">HTTPS</option>
                                                         <option value="HTTP">HTTP</option>
                                                     </Form.Control>
@@ -340,9 +359,9 @@ export default class ChannelView extends React.Component<IProps> {
                                                 <Form.Group controlId="ip" className="col-md-6">
                                                     <Form.Label>IP</Form.Label>
                                                     <Form.Control name="ip" placeholder=""
-
                                                                   value={this.props.channel.ip}
-                                                                  onChange={(e) => this.handleChange(e)}/>
+                                                                  onChange={(e) => this.handleChange(e)}
+                                                                  readOnly={this.props.readOnly}/>
                                                 </Form.Group>
                                             </div>
                                             <div className="row">
@@ -351,14 +370,16 @@ export default class ChannelView extends React.Component<IProps> {
                                                     <Form.Control name="port" type="number" placeholder="" min={1}
                                                                   max={65535}
                                                                   value={this.props.channel.port}
-                                                                  onChange={(e) => this.handleChange(e)}/>
+                                                                  onChange={(e) => this.handleChange(e)}
+                                                                  readOnly={this.props.readOnly}/>
                                                 </Form.Group>
 
                                                 <Form.Group controlId="service" className="col-md-6">
                                                     <Form.Label>Servizio</Form.Label>
                                                     <Form.Control name="service" placeholder=""
                                                                   value={this.props.channel.service}
-                                                                  onChange={(e) => this.handleChange(e)}/>
+                                                                  onChange={(e) => this.handleChange(e)}
+                                                                  readOnly={this.props.readOnly}/>
                                                 </Form.Group>
                                             </div>
 
@@ -373,20 +394,23 @@ export default class ChannelView extends React.Component<IProps> {
                                                     <Form.Label>Indirizzo</Form.Label>
                                                     <Form.Control name="target_host"
                                                                   value={this.props.channel.target_host}
-                                                                  onChange={(e) => this.handleChange(e)}/>
+                                                                  onChange={(e) => this.handleChange(e)}
+                                                                  readOnly={this.props.readOnly}/>
                                                 </Form.Group>
 
                                                 <Form.Group controlId="target_port" className="col-md-2">
                                                     <Form.Label>Porta</Form.Label>
                                                     <Form.Control name="target_port" type="number" min={1} max={65535}
                                                                   value={this.props.channel.target_port}
-                                                                  onChange={(e) => this.handleChange(e)}/>
+                                                                  onChange={(e) => this.handleChange(e)}
+                                                                  readOnly={this.props.readOnly}/>
                                                 </Form.Group>
                                                 <Form.Group controlId="target_path" className="col-md-5">
                                                     <Form.Label>Servizio</Form.Label>
                                                     <Form.Control name="target_path"
                                                                   value={this.props.channel.target_path}
-                                                                  onChange={(e) => this.handleChange(e)}/>
+                                                                  onChange={(e) => this.handleChange(e)}
+                                                                  readOnly={this.props.readOnly}/>
                                                 </Form.Group>
                                             </div>
                                                         
@@ -397,7 +421,8 @@ export default class ChannelView extends React.Component<IProps> {
                                                     <Form.Label>Protocollo Redirect</Form.Label>
                                                     <Form.Control as="select" name="redirect_protocol"
                                                                   defaultValue={String(this.props.channel.redirect_protocol)}
-                                                                  onChange={(e) => this.handleChange(e)}>
+                                                                  onChange={(e) => this.handleChange(e)}
+                                                                  readOnly={this.props.readOnly}>
                                                         <option value="HTTPS">HTTPS</option>
                                                         <option value="HTTP">HTTP</option>
                                                     </Form.Control>
@@ -406,9 +431,9 @@ export default class ChannelView extends React.Component<IProps> {
                                                 <Form.Group controlId="redirect_ip" className="col-md-6">
                                                     <Form.Label>IP Redirect</Form.Label>
                                                     <Form.Control name="redirect_ip" placeholder=""
-
                                                                   value={this.props.channel.redirect_ip}
-                                                                  onChange={(e) => this.handleChange(e)}/>
+                                                                  onChange={(e) => this.handleChange(e)}
+                                                                  readOnly={this.props.readOnly}/>
                                                 </Form.Group>
                                             </div>
                                             <div className={"row"}>
@@ -419,21 +444,24 @@ export default class ChannelView extends React.Component<IProps> {
                                                     <Form.Control name="redirect_port" placeholder="" type="number"
                                                                   value={this.props.channel.redirect_port} min={1}
                                                                   max={65535}
-                                                                  onChange={(e) => this.handleChange(e)}/>
+                                                                  onChange={(e) => this.handleChange(e)}
+                                                                  readOnly={this.props.readOnly}/>
                                                 </Form.Group>
 
                                                 <Form.Group controlId="redirect_path" className="col-md-6">
                                                     <Form.Label>Servizio Redirect</Form.Label>
                                                     <Form.Control name="redirect_path" placeholder=""
                                                                   value={this.props.channel.redirect_path}
-                                                                  onChange={(e) => this.handleChange(e)}/>
+                                                                  onChange={(e) => this.handleChange(e)}
+                                                                  readOnly={this.props.readOnly}/>
                                                 </Form.Group>
 
                                                 <Form.Group controlId="redirect_query_string" className="col-md-4">
                                                     <Form.Label>Parametri Redirect</Form.Label>
                                                     <Form.Control name="redirect_query_string" placeholder=""
                                                                   value={this.props.channel.redirect_query_string}
-                                                                  onChange={(e) => this.handleChange(e)}/>
+                                                                  onChange={(e) => this.handleChange(e)}
+                                                                  readOnly={this.props.readOnly}/>
                                                 </Form.Group>
                                             </div>
 
@@ -444,6 +472,7 @@ export default class ChannelView extends React.Component<IProps> {
                                                     <Form.Label>Proxy</Form.Label>
                                                     <Form.Control as="select" onChange={(e) => this.handleChange(e)}
                                                                   name="proxy_enabled"
+                                                                  readOnly={this.props.readOnly}
                                                                   value={String(this.props.channel.proxy_enabled)}>
                                                         <option value="true">Abilitato</option>
                                                         <option value="false">Non Abilitato</option>
@@ -454,14 +483,16 @@ export default class ChannelView extends React.Component<IProps> {
                                                     <Form.Label>Indirizzo Proxy</Form.Label>
                                                     <Form.Control name="proxy_host" placeholder=""
                                                                   value={this.props.channel.proxy_host}
-                                                                  onChange={(e) => this.handleChange(e)}/>
+                                                                  onChange={(e) => this.handleChange(e)}
+                                                                  readOnly={this.props.readOnly}/>
                                                 </Form.Group>
 
                                                 <Form.Group controlId="proxy_port" className="col-md-2">
                                                     <Form.Label>Porta Proxy</Form.Label>
                                                     <Form.Control name="proxy_port" placeholder="" type="number"
                                                                   value={this.props.channel.proxy_port} min={1} max={65535}
-                                                                  onChange={(e) => this.handleChange(e)}/>
+                                                                  onChange={(e) => this.handleChange(e)}
+                                                                  readOnly={this.props.readOnly}/>
                                                 </Form.Group>
                                             </div>
 
@@ -473,7 +504,8 @@ export default class ChannelView extends React.Component<IProps> {
                                                         className="text-danger">*</span></Form.Label>
                                                     <Form.Control as="select" name="payment_model"
                                                                   value={this.props.channel.payment_model}
-                                                                  onChange={(e) => this.handleChange(e)}>
+                                                                  onChange={(e) => this.handleChange(e)}
+                                                                  readOnly={this.props.readOnly}>
                                                         <option value={"IMMEDIATE"}>IMMEDIATO</option>
                                                         <option
                                                             value={"IMMEDIATE_MULTIBENEFICIARY"}>IMMEDIATO_MULTIBENEFICIARIO
@@ -485,20 +517,27 @@ export default class ChannelView extends React.Component<IProps> {
 
                                                 <Form.Group controlId="serv_plugin" className="col-md-2">
                                                     <Form.Label>Plugin WFESP</Form.Label>
-                                                    <AsyncSelect
-                                                        cacheOptions defaultOptions
-                                                        loadOptions={this.promiseWfespOptions}
-                                                        placeholder={"-"}
-                                                        menuPortalTarget={document.body}
-                                                        styles={{menuPortal: base => ({...base, zIndex: 9999})}}
-                                                        name="serv_plugin"
-                                                        value={{
-                                                            label: this.props.channel.serv_plugin,
-                                                            value: this.props.channel.serv_plugin
-                                                        }}
-                                                        isSearchable={false}
-                                                        onChange={(e) => this.handleWfespChange(e)}
-                                                    />
+                                                    {(!this.props.readOnly &&
+                                                        <AsyncSelect
+                                                            cacheOptions defaultOptions
+                                                            loadOptions={this.promiseWfespOptions}
+                                                            placeholder={"-"}
+                                                            menuPortalTarget={document.body}
+                                                            styles={{menuPortal: base => ({...base, zIndex: 9999})}}
+                                                            name="serv_plugin"
+                                                            value={{
+                                                                label: this.props.channel.serv_plugin,
+                                                                value: this.props.channel.serv_plugin
+                                                            }}
+                                                            isSearchable={false}
+                                                            onChange={(e) => this.handleWfespChange(e)}
+                                                        />
+                                                    )}
+                                                    {(this.props.readOnly && 
+                                                        <Form.Control name="serv_plugin"
+                                                                value={this.props.channel.serv_plugin}
+                                                                readOnly={this.props.readOnly}/>
+                                                    )}
                                                 </Form.Group>
 
                                                 <Form.Group controlId="thread_number" className="col-md-2">
@@ -506,7 +545,8 @@ export default class ChannelView extends React.Component<IProps> {
                                                         className="text-danger">*</span></Form.Label>
                                                     <Form.Control type="number" name="thread_number" placeholder="" min={1}
                                                                   value={this.props.channel.thread_number}
-                                                                  onChange={(e) => this.handleChange(e)}/>
+                                                                  onChange={(e) => this.handleChange(e)}
+                                                                  readOnly={this.props.readOnly}/>
                                                 </Form.Group>
 
                                                 <Form.Group controlId="timeout_a" className="col-md-2">
@@ -514,7 +554,8 @@ export default class ChannelView extends React.Component<IProps> {
                                                         className="text-danger">*</span></Form.Label>
                                                     <Form.Control type="number" name="timeout_a" placeholder="" min={0}
                                                                   value={this.props.channel.timeout_a}
-                                                                  onChange={(e) => this.handleChange(e)}/>
+                                                                  onChange={(e) => this.handleChange(e)}
+                                                                  readOnly={this.props.readOnly}/>
                                                 </Form.Group>
 
                                                 <Form.Group controlId="timeout_b" className="col-md-2">
@@ -522,7 +563,8 @@ export default class ChannelView extends React.Component<IProps> {
                                                         className="text-danger">*</span></Form.Label>
                                                     <Form.Control type="number" name="timeout_b" placeholder="" min={0}
                                                                   value={this.props.channel.timeout_b}
-                                                                  onChange={(e) => this.handleChange(e)}/>
+                                                                  onChange={(e) => this.handleChange(e)}
+                                                                  readOnly={this.props.readOnly}/>
                                                 </Form.Group>
 
                                                 <Form.Group controlId="timeout_c" className="col-md-2">
@@ -530,7 +572,8 @@ export default class ChannelView extends React.Component<IProps> {
                                                         className="text-danger">*</span></Form.Label>
                                                     <Form.Control type="number" name="timeout_c" placeholder="" min={0}
                                                                   value={this.props.channel.timeout_c}
-                                                                  onChange={(e) => this.handleChange(e)}/>
+                                                                  onChange={(e) => this.handleChange(e)}
+                                                                  readOnly={this.props.readOnly}/>
                                                 </Form.Group>
                                             </div>
                                             <div className="row">
@@ -543,6 +586,7 @@ export default class ChannelView extends React.Component<IProps> {
                                                         id={'flag_io'}
                                                         label={'PSP Notify Payment'}
                                                         onChange={(e) => this.handleChange(e)}
+                                                        readOnly={this.props.readOnly}
                                                     />
                                                 </Form.Group>
 
@@ -555,6 +599,7 @@ export default class ChannelView extends React.Component<IProps> {
                                                         label={'Push Ricevuta Telematica'}
                                                         name="rt_push"
                                                         onChange={(e) => this.handleChange(e)}
+                                                        readOnly={this.props.readOnly}
                                                     />
                                                 </Form.Group>
 
@@ -567,6 +612,7 @@ export default class ChannelView extends React.Component<IProps> {
                                                         label={'On Us'}
                                                         name="on_us"
                                                         onChange={(e) => this.handleChange(e)}
+                                                        readOnly={this.props.readOnly}
                                                     />
                                                 </Form.Group>
 
@@ -579,6 +625,7 @@ export default class ChannelView extends React.Component<IProps> {
                                                         label={'Carrello RPT'}
                                                         name="card_chart"
                                                         onChange={(e) => this.handleChange(e)}
+                                                        readOnly={this.props.readOnly}
                                                     />
                                                 </Form.Group>
 
@@ -591,6 +638,7 @@ export default class ChannelView extends React.Component<IProps> {
                                                         label={'Processo di Recovery Pull'}
                                                         name="recovery"
                                                         onChange={(e) => this.handleChange(e)}
+                                                        readOnly={this.props.readOnly}
                                                     />
                                                 </Form.Group>
 
@@ -604,6 +652,7 @@ export default class ChannelView extends React.Component<IProps> {
                                                         label={'Marca Bollo Digitale'}
                                                         name="digital_stamp_brand"
                                                         onChange={(e) => this.handleChange(e)}
+                                                        readOnly={this.props.readOnly}
                                                     />
                                                 </Form.Group>
                                             </div>
