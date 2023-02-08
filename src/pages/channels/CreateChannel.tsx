@@ -1,8 +1,6 @@
 import React from "react";
-
 import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
-import debounce from "lodash.debounce";
 import {apiClient} from "../../util/apiClient";
 import {loginRequest} from "../../authConfig";
 import {ChannelDetails} from "../../../generated/api/ChannelDetails";
@@ -90,10 +88,6 @@ export default class CreateChannel extends React.Component<IProps, IState> {
         this.setState({showModal: modal});
     }
 
-    toastError(message: string) {
-        toast.error(() => <div className={"toast-width"}>{message}</div>, {theme: "colored"});
-    }
-
     componentDidMount(): void {
         const code = new URLSearchParams(this.props.location.search).get("clone") as string;
         if (code) {
@@ -159,52 +153,11 @@ export default class CreateChannel extends React.Component<IProps, IState> {
         this.props.history.push(this.service);
     }
 
-    isNotValidPort(port: number) {
-        return port ? port < 1 || port > 65535 : port;
-    }
-
-    isNotValidTimeout(no: number) {
-        return no < 0;
-    }
-
-    isNotValidThread(no: number) {
-        return no < 1;
-    }
-
-    isNotValidPrimitiveVersion(no: number) {
-        return no < 1 || no > 2;
-    }
-
-    validData() {
-        if (this.isNotValidPort(this.state.channel.port) || this.isNotValidPort(this.state.channel.proxy_port as number)
-            || this.isNotValidPort(this.state.channel.redirect_port as number)) {
-            this.toastError("La porta deve avere un valore compreso tra 1 e 65535.");
-            return false;
-        }
-
-        if (this.isNotValidThread(this.state.channel.thread_number)) {
-            this.toastError("Il numero di thread deve essere un valore maggiore di 0.");
-            return false;
-        }
-
-        if (this.isNotValidTimeout(this.state.channel.timeout_a)
-            || this.isNotValidTimeout(this.state.channel.timeout_b) || this.isNotValidTimeout(this.state.channel.timeout_c)) {
-            this.toastError("I timeout devono avere un valore maggiore o uguale a 0.");
-            return false;
-        }
-
-        if (this.isNotValidPrimitiveVersion(this.state.channel.primitive_version)) {
-            this.toastError("La versione delle primitive deve essere una tra le seguenti: 1 o 2");
-            return;
-        }
-        return true;
+    toastError(message: string) {
+        toast.error(() => <div className={"toast-width"}>{message}</div>, {theme: "colored"});
     }
 
     save(): void {
-        if (!this.validData()) {
-            return;
-        }
-
         this.context.instance.acquireTokenSilent({
             ...loginRequest,
             account: this.context.accounts[0]

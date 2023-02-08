@@ -65,6 +65,51 @@ export default class ChannelView extends React.Component<IProps> {
         }
     }
 
+    toastError(message: string) {
+        toast.error(() => <div className={"toast-width"}>{message}</div>, {theme: "colored"});
+    }
+
+    isNotValidPort(port: number) {
+        return port ? port < 1 || port > 65535 : port;
+    }
+
+    isNotValidTimeout(no: number) {
+        return no < 0;
+    }
+
+    isNotValidThread(no: number) {
+        return no < 1;
+    }
+
+    isNotValidPrimitiveVersion(no: number) {
+        return no < 1 || no > 2;
+    }
+
+    validData() {
+        if (this.isNotValidPort(this.props.channel.port) || this.isNotValidPort(this.props.channel.proxy_port as number)
+            || this.isNotValidPort(this.props.channel.redirect_port as number)) {
+            this.toastError("La porta deve avere un valore compreso tra 1 e 65535.");
+            return false;
+        }
+
+        if (this.isNotValidThread(this.props.channel.thread_number)) {
+            this.toastError("Il numero di thread deve essere un valore maggiore di 0.");
+            return false;
+        }
+
+        if (this.isNotValidTimeout(this.props.channel.timeout_a)
+            || this.isNotValidTimeout(this.props.channel.timeout_b) || this.isNotValidTimeout(this.props.channel.timeout_c)) {
+            this.toastError("I timeout devono avere un valore maggiore o uguale a 0.");
+            return false;
+        }
+
+        if (this.isNotValidPrimitiveVersion(this.props.channel.primitive_version)) {
+            this.toastError("La versione delle primitive deve essere una tra le seguenti: 1 o 2");
+            return;
+        }
+        return true;
+    }
+
     debouncedBrokerPspOptions = debounce((inputValue, callback) => {
         this.promiseBrokerPspOptions(inputValue, callback);
     }, 500);
@@ -666,7 +711,7 @@ export default class ChannelView extends React.Component<IProps> {
                                                                     this.discard();
                                                                 }}>Annulla</Button>
                                                         <Button className="float-md-right" onClick={() => 
-                                                            this.props.saveChannel && this.props.saveChannel()
+                                                            this.validData() && this.props.saveChannel && this.props.saveChannel()
                                                             }>Salva</Button>
                                                     </div>
                                                 </div>
