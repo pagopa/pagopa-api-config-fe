@@ -66,7 +66,7 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                 recovery: false,
                 digital_stamp_brand: false,
                 flag_io: false,
-                serv_plugin: null,
+                serv_plugin: '-',
                 agid: false
             } as unknown as ChannelDetails,
             showModal: false
@@ -112,7 +112,7 @@ export default class CreateChannel extends React.Component<IProps, IState> {
         const key = event.target.name as string;
         // eslint-disable-next-line functional/no-let
         let value = event.target.type === "checkbox" ? event.target.checked : event.target.value;
-        if (value === 'null') {
+        if (value === '-') {
             value = null;
         }
         channel = {...channel, [key]: value};

@@ -166,7 +166,7 @@ export default class ChannelView extends React.Component<IProps> {
                         const items: Array<any> = [];
                         // eslint-disable-next-line functional/immutable-data
                         items.push({
-                            value: 'null',
+                            value: '-',
                             label: '-',
                         });
                         resp.right.value.wfesp_plugin_confs.map((plugin: any) => {
