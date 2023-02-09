@@ -31,7 +31,6 @@ interface IState {
     edit: boolean;
     newPaymentType: boolean;
     paymentType: string;
-    paymentTypeToDelete: string;
     showDeleteModal: boolean;
 
 }
@@ -95,7 +94,6 @@ export default class EditChannel extends React.Component<IProps, IState> {
             edit: false,
             newPaymentType: false,
             paymentType: "",
-            paymentTypeToDelete: "",
             showDeleteModal: false
         };
 
@@ -246,11 +244,6 @@ export default class EditChannel extends React.Component<IProps, IState> {
     discard(section: string) {
         // "as any" is necessary because it seems to be a bug: https://github.com/Microsoft/TypeScript/issues/13948
         this.setState({[section]: Object.assign({}, this.state.backup[section])} as any);
-    }
-
-    handlePaymentTypeDelete(paymentType: string) {
-        this.setState({showDeleteModal: true});
-        this.setState({paymentTypeToDelete: paymentType});
     }
 
     removePaymentTypeApi = (paymentType: string) => {
@@ -415,7 +408,6 @@ export default class EditChannel extends React.Component<IProps, IState> {
                 paymentTypeLegend={this.state.paymentTypeLegend}
                 discardPaymentType={this.discardPaymentType}
                 savePaymentType={this.savePaymentType}
-                paymentTypeToDelete={this.state.paymentTypeToDelete}
                 removePaymentType={this.removePaymentType}
                 pspList={[]}
             />

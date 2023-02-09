@@ -28,7 +28,6 @@ interface IProps {
     paymentTypeLegend?: any;
     discardPaymentType?: () => void;
     savePaymentType?: () => void;
-    paymentTypeToDelete?: string;
     removePaymentType?: (paymentTypeDelete: string) => void;
     downloadCsv?: () => void;
     pspList: [];
@@ -200,7 +199,6 @@ export default class ChannelView extends React.Component<IProps> {
     }
 
     handlePaymentTypeDelete(paymentType: string) {
-        this.setState({paymentTypeToDelete: paymentType});
         this.props.removePaymentType && this.props.removePaymentType(paymentType);
     }
 
