@@ -24,7 +24,7 @@ interface IState {
     code: string;
     channel: ChannelDetails;
     paymentTypeList: [];
-    paymentTypeLegend: Array<any>;
+    paymentTypeLegend: any;
     pspList: [];
     edit: boolean;
 }
@@ -73,13 +73,13 @@ export default class Channel extends React.Component<IProps, IState> {
                 card_chart: false,
                 recovery: false,
                 digital_stamp_brand: false,
-                serv_plugin: "",
+                serv_plugin: "-",
                 flag_io: false,
                 agid: false,
                 description: "",
             } as unknown as ChannelDetails,
             paymentTypeList: [],
-            paymentTypeLegend: [],
+            paymentTypeLegend: {},
             pspList: [],
             edit: false
         };
@@ -89,6 +89,7 @@ export default class Channel extends React.Component<IProps, IState> {
         this.setPaymentTypeLegend = this.setPaymentTypeLegend.bind(this);
         this.setPspList = this.setPspList.bind(this);
         this.handlePspDetails = this.handlePspDetails.bind(this);
+        this.downloadCsv = this.downloadCsv.bind(this);
     }
 
     setChannel(channel: ChannelDetails): void {
@@ -110,7 +111,6 @@ export default class Channel extends React.Component<IProps, IState> {
     handleEdit() {
         this.props.history.push("/channels/" + String(this.props.match.params.code) + "?edit");
     }
-
 
     handlePspDetails(code: string) {
         this.props.history.push(this.pspService + "/" + code);
@@ -153,18 +153,16 @@ export default class Channel extends React.Component<IProps, IState> {
         });
     }
 
-
     componentDidMount(): void {
         const code: string = this.props.match.params.code as string;
         this.setState({code, isLoading: true});
-        console.warn(this.state.channel);
-        Promise.all([getChannel(this.context, code), getPaymentTypeLegend(this.context), 
+        Promise.all([getChannel(this.context, code), getPaymentTypeLegend(this.context),
             getPaymentTypeList(this.context, code), getPspList(this.context, code)])
         .then((result: any) => {
             const channel = {...this.state.channel, ...result[0]} as ChannelDetails;
             this.setChannel(channel);
             this.setPaymentTypeList(result[2].payment_types);
-            const paymentTypeLegend = [] as any;
+            const paymentTypeLegend = {} as any;
             result[1].payment_types.forEach((pt: PaymentType) => {
                 // eslint-disable-next-line functional/immutable-data
                 paymentTypeLegend[pt.payment_type] = pt.description;
@@ -192,6 +190,7 @@ export default class Channel extends React.Component<IProps, IState> {
                 showPaymentTypeList={true}
                 pspList={this.state.pspList}
                 handlePspDetails={this.handlePspDetails}
+                downloadCsv={this.downloadCsv}
             />
         );
     } 

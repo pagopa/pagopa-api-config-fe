@@ -1,6 +1,15 @@
 import {loginRequest} from "../../authConfig";
 import {apiClient} from "../../util/apiClient";
 
+const thenResolve = (response: any, resolve: any, reject: any): void => {
+    if (response.right.status === 200) {
+        resolve(response.right.value);
+    }
+    else {
+        reject();
+    }
+};
+
 export const getChannel = (context: any, code: string) => new Promise((resolve, reject) => {
         context.instance.acquireTokenSilent({
             ...loginRequest,
@@ -11,14 +20,9 @@ export const getChannel = (context: any, code: string) => new Promise((resolve, 
                 Authorization: `Bearer ${response.idToken}`,
                 ApiKey: "",
                 channelcode: code
-            }).then((response: any) => {
-                if (response.right.status === 200) {
-                    resolve(response.right.value);
-                }
-                else {
-                    reject();
-                }
-            }).catch(reject);
+            })
+            .then(r => thenResolve(r, resolve, reject))
+            .catch(reject);
         });
     });
 
@@ -31,14 +35,9 @@ export const getPaymentTypeLegend = (context: any) => new Promise((resolve, reje
             apiClient.getPaymentTypes({
                 Authorization: `Bearer ${response.idToken}`,
                 ApiKey: ""
-            }).then((response: any) => {
-                if (response.right.status === 200) {
-                    resolve(response.right.value);
-                }
-                else {
-                    reject();
-                }
-            }).catch(reject);
+            })
+            .then(r => thenResolve(r, resolve, reject))
+            .catch(reject);
         });
     });
 
@@ -53,13 +52,8 @@ export const getPaymentTypeList = (context: any, code: string) => new Promise((r
                     ApiKey: "",
                     channelcode: code
                 })
-                    .then((response: any) => {
-                        if (response.right.status === 200) {
-                            resolve(response.right.value);
-                        } else {
-                            reject();
-                        }
-                    }).catch(reject)
+                    .then(r => thenResolve(r, resolve, reject))
+                    .catch(reject);
             });
     });
 
@@ -82,8 +76,7 @@ export const getPspList = (context: any, code: string) => new Promise((resolve, 
                         } else {
                             reject();
                         }
-                    }).catch(reject)
+                    }).catch(reject);
             });
     });
 
-    

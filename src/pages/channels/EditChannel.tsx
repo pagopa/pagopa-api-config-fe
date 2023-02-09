@@ -1,7 +1,6 @@
 import React from "react";
 import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
-import debounce from "lodash.debounce";
 import {apiClient} from "../../util/apiClient";
 import {loginRequest} from "../../authConfig";
 import {ChannelDetails, Payment_modelEnum} from "../../../generated/api/ChannelDetails";
@@ -102,8 +101,6 @@ export default class EditChannel extends React.Component<IProps, IState> {
         this.saveChannel = this.saveChannel.bind(this);
         this.discard = this.discard.bind(this);
         this.setNewPaymentType = this.setNewPaymentType.bind(this);
-        this.debouncedBrokerPspOptions = this.debouncedBrokerPspOptions.bind(this);
-        this.promiseWfespOptions = this.promiseWfespOptions.bind(this);
         this.setModal = this.setModal.bind(this);
         this.setChannel = this.setChannel.bind(this);
         this.setPaymentTypeList = this.setPaymentTypeList.bind(this);
@@ -164,7 +161,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
             this.setChannel(channel);
             this.setPaymentTypeList(result[2].payment_types);
             const paymentTypeLegend = [] as any;
-            result[1].payment_types.forEach((pt: PaymentType) => {
+            result[2].payment_types.forEach((pt: PaymentType) => {
                 // eslint-disable-next-line functional/immutable-data
                 paymentTypeLegend[pt.payment_type] = pt.description;
             });
@@ -189,30 +186,16 @@ export default class EditChannel extends React.Component<IProps, IState> {
         this.setState({channel});
     }
 
-    handleBrokerPspChange(event: any) {
-        const channel: ChannelDetails = this.state.channel;
-        // eslint-disable-next-line functional/immutable-data
-        channel.broker_psp_code = event.value;
-        this.setState({channel});
-    }
-
-    handleWfespChange(event: any) {
-        const channel: ChannelDetails = this.state.channel;
-        // eslint-disable-next-line functional/no-let
-        let value = event.value;
-        if (value === 'null') {
-            value = null;
-        }
-        // eslint-disable-next-line functional/immutable-data
-        channel.serv_plugin = value;
-        this.setState({channel});
-    }
-
     handlePaymentType(paymentType: string) {
         this.setState({paymentType});
     }
 
     saveChannel() {
+        const channel = {...this.state.channel} as any;
+        if (channel.serv_plugin === '-') {
+            // eslint-disable-next-line functional/immutable-data
+            channel.serv_plugin = null;
+        }
         this.context.instance.acquireTokenSilent({
             ...loginRequest,
             account: this.context.accounts[0]
@@ -222,13 +205,16 @@ export default class EditChannel extends React.Component<IProps, IState> {
                     Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     channelcode: this.state.code,
-                    body: this.state.channel
+                    body: channel
                 }).then((response: any) => {
                     if (response.right.status === 200) {
                         toast.info("Modifica avvenuta con successo.");
-                        this.setState({channel: response.right.value});
-                        this.setState({channelName: response.right.value.description});
-                        this.updateBackup("channel", response.right.value);
+                        const channel = {...response.right.value};
+                        // eslint-disable-next-line functional/immutable-data
+                        channel.serv_plugin = channel.serv_plugin ? channel.serv_plugin : '-';
+                        this.setState({channel});
+                        this.setState({channelName: channel.description});
+                        this.updateBackup("channel", channel);
                         setTimeout(this.goBack.bind(this), 2000);
                     } else {
                         const message = "detail" in response.right.value ? response.right.value.detail : "Operazione non avvenuta a causa di un errore";
@@ -303,83 +289,6 @@ export default class EditChannel extends React.Component<IProps, IState> {
                     toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
                 }).finally(() => {
                     this.setState({newPaymentType: false});
-                });
-            });
-    }
-
-    debouncedBrokerPspOptions = debounce((inputValue, callback) => {
-        this.promiseBrokerPspOptions(inputValue, callback);
-    }, 500);
-
-    promiseBrokerPspOptions(inputValue: string, callback: any) {
-        const limit = inputValue.length === 0 ? 10 : 99999;
-        const code = inputValue.length === 0 ? "" : inputValue;
-
-        this.context.instance.acquireTokenSilent({
-            ...loginRequest,
-            account: this.context.accounts[0]
-        })
-            .then((response: any) => {
-                apiClient.getBrokersPsp({
-                    Authorization: `Bearer ${response.idToken}`,
-                    ApiKey: "",
-                    page: 0,
-                    limit,
-                    code
-                }).then((resp: any) => {
-                    if (resp.right.status === 200) {
-                        const items: Array<any> = [];
-                        resp.right.value.brokers_psp.map((broker_psp: any) => {
-                            // eslint-disable-next-line functional/immutable-data
-                            items.push({
-                                value: broker_psp.broker_psp_code,
-                                label: broker_psp.broker_psp_code,
-                            });
-                        });
-                        callback(items);
-                    } else {
-                        callback([]);
-                    }
-                }).catch(() => {
-                    toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
-                    callback([]);
-                });
-            });
-    }
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    promiseWfespOptions(inputValue: string, callback: any) {
-        this.context.instance.acquireTokenSilent({
-            ...loginRequest,
-            account: this.context.accounts[0]
-        })
-            .then((response: any) => {
-                apiClient.getWfespPlugins({
-                    Authorization: `Bearer ${response.idToken}`,
-                    ApiKey: "",
-                }).then((resp: any) => {
-                    if (resp.right.status === 200) {
-                        const items: Array<any> = [];
-                        // eslint-disable-next-line functional/immutable-data
-                        items.push({
-                            value: 'null',
-                            label: '-',
-                        });
-                        resp.right.value.wfesp_plugin_confs.map((plugin: any) => {
-                            // eslint-disable-next-line functional/immutable-data
-                            items.push({
-                                value: plugin.id_serv_plugin,
-                                label: plugin.id_serv_plugin,
-                            });
-                        });
-                        callback(items);
-                    } else {
-                        callback([]);
-                    }
-                }).catch(() => {
-                    toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
-                    callback([]);
                 });
             });
     }

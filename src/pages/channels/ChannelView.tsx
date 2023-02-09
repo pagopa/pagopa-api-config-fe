@@ -143,15 +143,13 @@ export default class ChannelView extends React.Component<IProps> {
                     callback([]);
                 }
             }).catch(() => {
-                toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                this.toastError("Operazione non avvenuta a causa di un errore");
                 callback([]);
             });
         });
     }
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    promiseWfespOptions(inputValue: string, callback: any) {
+    promiseWfespOptions(_label: string, callback: any) {
         this.context.instance.acquireTokenSilent({
             ...loginRequest,
             account: this.context.accounts[0]
@@ -189,17 +187,14 @@ export default class ChannelView extends React.Component<IProps> {
     handleWfespChange(event: any) {
         const channel: ChannelDetails = this.props.channel;
         // eslint-disable-next-line functional/no-let
-        let value = event.value;
-        if (value === 'null') {
-            value = null;
-        }
+        const value = event.value;
         // eslint-disable-next-line functional/immutable-data
         channel.serv_plugin = value;
         this.props.setChannel(channel);
     }
 
     handlePaymentTypeDelete(paymentType: string) {
-        this.props.removePaymentType && this.props.removePaymentType(paymentType);
+        this.props.removePaymentType?.(paymentType);
     }
 
     handleEdit() {
@@ -211,7 +206,7 @@ export default class ChannelView extends React.Component<IProps> {
         const key = event.target.name as string;
         // eslint-disable-next-line functional/no-let
         let value = event.target.type === "checkbox" ? event.target.checked : event.target.value;
-        if (value === 'null') {
+        if (value === '-') {
             value = null;
         }
         const channel = {...this.props.channel, [key]: value};
@@ -229,15 +224,21 @@ export default class ChannelView extends React.Component<IProps> {
         const isError = this.props.isError;
         const isLoading = this.props.isLoading;
         const newPaymentType = this.props.newPaymentType;
-        const paymentTypeLegend = this.props.paymentTypeLegend;
+
+        const paymentTypeLegend: any = this.props.paymentTypeLegend && Object.keys(this.props.paymentTypeLegend).map((item: any, index: number) => (
+                <span key={index} className="mr-2 badge badge-secondary">
+                    {item}: {this.props.paymentTypeLegend[item]}
+                    {item === "OBEP" && <span className="badge badge-danger ml-2">DEPRECATO</span>}
+                </span>
+        ));
         const paymentTypeList: any = [];
         if(this.props.showPaymentTypeList){
-            this.props.paymentTypeList.map((item: any, index: number) => {
+            this.props.paymentTypeList.forEach((item: any, index: number) => {
                 const row = (
                     <tr key={index}>
                         <td>{item}</td>
                         <td>
-                            {paymentTypeLegend[item]}
+                            {this.props.paymentTypeLegend[item]}
                             {
                                 item === "OBEP" && <span className="badge badge-danger ml-2">DEPRECATO</span>
                             }
@@ -336,7 +337,7 @@ export default class ChannelView extends React.Component<IProps> {
                                                     </Form.Control>
                                                 </Form.Group>
                                                 <Form.Group controlId="primitive_version" className="col-md-2">
-                                                    <Form.Label>Versione primprops <span className="text-danger">*</span></Form.Label>
+                                                    <Form.Label>Versione primitive <span className="text-danger">*</span></Form.Label>
                                                     <Form.Control type={"number"} name="version" min={1} max={2}
                                                                 value={this.props.channel.primitive_version}
                                                                 onChange={(e) => this.handleChange(e)}
@@ -779,15 +780,11 @@ export default class ChannelView extends React.Component<IProps> {
                                                                 {
                                                                     newPaymentType &&
                                                                     <Button className="ml-2 float-md-right" variant="secondary"
-                                                                            onClick={() => {
-                                                                                this.props.discardPaymentType && this.props.discardPaymentType();
-                                                                            }}>Annulla</Button>
+                                                                            onClick={() => this.props.discardPaymentType?.()}>Annulla</Button>
                                                                 }
                                                                 {
                                                                     newPaymentType &&
-                                                                    <Button className="float-md-right" onClick={() => {
-                                                                        this.props.savePaymentType && this.props.savePaymentType();
-                                                                    }}>Salva</Button>
+                                                                    <Button className="float-md-right" onClick={() => this.props.savePaymentType?.()}>Salva</Button>
                                                                 }
 
                                                             </div>

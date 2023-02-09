@@ -48,7 +48,7 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                 broker_psp_code: "",
                 proxy_enabled: false,
                 proxy_host: "",
-                proxy_port: 0,
+                proxy_port: 80,
                 target_host: "",
                 target_port: 443,
                 target_path: "",
@@ -74,7 +74,7 @@ export default class CreateChannel extends React.Component<IProps, IState> {
 
         this.discard = this.discard.bind(this);
         this.save = this.save.bind(this);
-        this.handleChange = this.handleChange.bind(this);
+        // this.handleChange = this.handleChange.bind(this);
         this.hideModal = this.hideModal.bind(this);
         this.setChannel = this.setChannel.bind(this);
         this.setModal = this.setModal.bind(this);
@@ -106,38 +106,6 @@ export default class CreateChannel extends React.Component<IProps, IState> {
         }
     }
 
-    handleChange(event: any) {
-        // eslint-disable-next-line functional/no-let
-        let channel: ChannelDetails = this.state.channel;
-        const key = event.target.name as string;
-        // eslint-disable-next-line functional/no-let
-        let value = event.target.type === "checkbox" ? event.target.checked : event.target.value;
-        if (value === '-') {
-            value = null;
-        }
-        channel = {...channel, [key]: value};
-        this.setState({channel});
-    }
-
-    handleBrokerPspChange(event: any) {
-        const channel: ChannelDetails = this.state.channel;
-        // eslint-disable-next-line functional/immutable-data
-        channel.broker_psp_code = event.value;
-        this.setState({channel});
-    }
-
-    handleWfespChange(event: any) {
-        const channel: ChannelDetails = this.state.channel;
-        // eslint-disable-next-line functional/no-let
-        let value = event.value;
-        if (value === 'null') {
-            value = null;
-        }
-        // eslint-disable-next-line functional/immutable-data
-        channel.serv_plugin = value;
-        this.setState({channel});
-    }
-
     discard(): void {
         this.setState({showModal: true});
     }
@@ -158,6 +126,9 @@ export default class CreateChannel extends React.Component<IProps, IState> {
     }
 
     save(): void {
+        const channel = {...this.state.channel} as any;
+        // eslint-disable-next-line functional/immutable-data
+        channel.serv_plugin = channel.serv_plugin === '-' ? null : channel.serv_plugin;
         this.context.instance.acquireTokenSilent({
             ...loginRequest,
             account: this.context.accounts[0]
@@ -166,7 +137,7 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                 apiClient.createChannel({
                     Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
-                    body: this.state.channel
+                    body: channel
                 }).then((response: any) => {
                     // eslint-disable-next-line no-prototype-builtins
                     if (response.hasOwnProperty("right")) {
@@ -179,10 +150,11 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                             this.toastError(message);
                         }
                     } else {
-                        toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                        const message = "detail" in response.right.value ? response.right.value.detail : "Operazione non avvenuta a causa di un errore";
+                        this.toastError(message);
                     }
                 }).catch(() => {
-                    toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                    this.toastError("Operazione non avvenuta a causa di un errore");
                 });
             });
     }
