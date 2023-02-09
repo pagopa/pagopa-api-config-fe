@@ -111,7 +111,6 @@ export default class EditChannel extends React.Component<IProps, IState> {
         this.discardPaymentType = this.discardPaymentType.bind(this);
         this.savePaymentType = this.savePaymentType.bind(this); 
         this.removePaymentType = this.removePaymentType.bind(this);
-        this.removePaymentTypeApi = this.removePaymentTypeApi.bind(this);
     }
 
     setChannel(channel: ChannelDetails): void {
@@ -246,7 +245,8 @@ export default class EditChannel extends React.Component<IProps, IState> {
         this.setState({[section]: Object.assign({}, this.state.backup[section])} as any);
     }
 
-    removePaymentTypeApi = (paymentType: string) => {
+    removePaymentType(paymentType: string) {
+        this.setState({paymentTypeList: this.state.paymentTypeList.filter((p) => p !== paymentType)});
         this.context.instance.acquireTokenSilent({
             ...loginRequest,
             account: this.context.accounts[0]
@@ -266,11 +266,6 @@ export default class EditChannel extends React.Component<IProps, IState> {
                         toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
                     });
             });
-    };
-
-    removePaymentType(paymentType: string) {
-        this.setState({paymentTypeList: this.state.paymentTypeList.filter((p) => p !== paymentType)});
-        this.removePaymentTypeApi(paymentType);
     }
 
     setNewPaymentType() {
