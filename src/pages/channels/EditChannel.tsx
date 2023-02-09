@@ -266,7 +266,6 @@ export default class EditChannel extends React.Component<IProps, IState> {
                 }).then((res: any) => {
                         if (res.right.status === 200) {
                             toast.info("Rimozione avvenuta con successo");
-                            this.removePaymentType(this.state.paymentTypeToDelete);
                         } else {
                             this.toastError(res.right.value.detail);
                         }
