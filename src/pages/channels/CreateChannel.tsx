@@ -72,7 +72,6 @@ export default class CreateChannel extends React.Component<IProps, IState> {
             showModal: false
         };
 
-        this.discard = this.discard.bind(this);
         this.save = this.save.bind(this);
         // this.handleChange = this.handleChange.bind(this);
         this.hideModal = this.hideModal.bind(this);
@@ -104,10 +103,6 @@ export default class CreateChannel extends React.Component<IProps, IState> {
             this.setState({ isLoading: false });
             this.setState({isError: false});
         }
-    }
-
-    discard(): void {
-        this.setState({showModal: true});
     }
 
     hideModal(status: string): void {

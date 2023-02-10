@@ -108,10 +108,6 @@ export default class Channel extends React.Component<IProps, IState> {
         this.setState({pspList});
     }
 
-    handleEdit() {
-        this.props.history.push("/channels/" + String(this.props.match.params.code) + "?edit");
-    }
-
     handlePspDetails(code: string) {
         this.props.history.push(this.pspService + "/" + code);
     }

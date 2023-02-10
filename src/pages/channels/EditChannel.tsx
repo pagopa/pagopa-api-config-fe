@@ -96,10 +96,8 @@ export default class EditChannel extends React.Component<IProps, IState> {
             showDeleteModal: false
         };
 
-        this.handleChange = this.handleChange.bind(this);
         this.handlePaymentType = this.handlePaymentType.bind(this);
         this.saveChannel = this.saveChannel.bind(this);
-        this.discard = this.discard.bind(this);
         this.setNewPaymentType = this.setNewPaymentType.bind(this);
         this.setModal = this.setModal.bind(this);
         this.setChannel = this.setChannel.bind(this);
@@ -173,19 +171,6 @@ export default class EditChannel extends React.Component<IProps, IState> {
         this.setState({isLoading: false});
     }
 
-    handleChange(event: any) {
-        // eslint-disable-next-line functional/no-let
-        let channel: ChannelDetails = this.state.channel;
-        const key = event.target.name as string;
-        // eslint-disable-next-line functional/no-let
-        let value = event.target.type === "checkbox" ? event.target.checked : event.target.value;
-        if (value === '-') {
-            value = null;
-        }
-        channel = {...channel, [key]: value};
-        this.setState({channel});
-    }
-
     handlePaymentType(paymentType: string) {
         this.setState({paymentType});
     }
@@ -224,11 +209,6 @@ export default class EditChannel extends React.Component<IProps, IState> {
                     toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
                 });
             });
-    }
-
-    discard(section: string) {
-        // "as any" is necessary because it seems to be a bug: https://github.com/Microsoft/TypeScript/issues/13948
-        this.setState({[section]: Object.assign({}, this.state.backup[section])} as any);
     }
 
     removePaymentType(paymentType: string) {
