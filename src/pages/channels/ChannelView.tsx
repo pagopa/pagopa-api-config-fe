@@ -220,18 +220,7 @@ export default class ChannelView extends React.Component<IProps> {
         this.props.setChannel(channel);
     }
 
-    render(): React.ReactNode {
-        const isError = this.props.isError;
-        const isLoading = this.props.isLoading;
-        const newPaymentType = this.props.newPaymentType;
-
-        const paymentTypeLegend: any = this.props.paymentTypeLegend && Object.keys(this.props.paymentTypeLegend).map((item: any, index: number) => (
-                <span key={index} className="mr-2 badge badge-secondary">
-                    {item}: {this.props.paymentTypeLegend[item]}
-                    {item === "OBEP" && <span className="badge badge-danger ml-2">DEPRECATO</span>}
-                </span>
-        ));
-        const paymentTypeList: any = [];
+    fillPaymentTypeList(paymentTypeList: any = []) {
         if(this.props.showPaymentTypeList){
             this.props.paymentTypeList.forEach((item: any, index: number) => {
                 const row = (
@@ -256,7 +245,9 @@ export default class ChannelView extends React.Component<IProps> {
                 paymentTypeList.push(row);
             });
         }
-        const pspList: any = [];
+    }
+
+    fillPspList(pspList: any = []) {
         if(this.props.readOnly){
             this.props.pspList.map((item: any, index: number) => {
                 const row = (
@@ -281,6 +272,162 @@ export default class ChannelView extends React.Component<IProps> {
                 pspList.push(row);
             });
         }
+    }
+
+    renderPaymentListFooter(newPaymentType?: boolean) {
+        return(
+                <div className="row">
+                <div className="col-md-12">
+                    {
+                        !newPaymentType && <Button className="float-md-right"
+                                                onClick={() => this.props.setNewPaymentType && this.props.setNewPaymentType()}>Nuovo <FaPlus/></Button>
+                    }
+                    {
+                        newPaymentType &&
+                        <Button className="ml-2 float-md-right" variant="secondary"
+                                onClick={() => this.props.discardPaymentType?.()}>Annulla</Button>
+                    }
+                    {
+                        newPaymentType &&
+                        <Button className="float-md-right" onClick={() => this.props.savePaymentType?.()}>Salva</Button>
+                    }
+
+                </div>
+            </div>
+        );
+    }
+
+    renderPaymentTypeList(paymentTypeList: Array<string>, newPaymentType?: boolean) {
+        return(
+            <div className="row mt-3">
+            <div className="col-md-12">
+                <Card>
+                    <Card.Header>
+                        <h5>Tipo Versamento</h5>
+                    </Card.Header>
+                    <Card.Body>
+                        {Object.keys(paymentTypeList).length === 0 && !newPaymentType && (
+                            <Alert className={'col-md-12'} variant={"warning"}><FaInfoCircle
+                                className="mr-1"/>Tipi Versamento non presenti</Alert>
+                        )}
+                        {(Object.keys(paymentTypeList).length > 0 || newPaymentType) &&
+                            <Table hover responsive size="sm">
+                                <thead>
+                                <tr>
+                                    <th className="">Codice</th>
+                                    <th>Descrizione</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {paymentTypeList}
+                                {
+                                    newPaymentType &&
+                                    <tr>
+                                        <td>
+                                            <Form.Control as="select" name="paymentToken"
+                                                        onChange={(e) => this.props.handlePaymentType && this.props.handlePaymentType(e.target.value)}>
+                                                <option></option>
+                                                {
+                                                    Object.keys(this.props.paymentTypeLegend)
+                                                        .filter((p: string) => this.props.paymentTypeList.indexOf(p) === -1)
+                                                        .map((p, index) =>
+                                                            <option key={index} value={p}>
+                                                                {p} - {this.props.paymentTypeLegend[p]}
+                                                                {
+                                                                    p === "OBEP" && " DEPRECATO"
+                                                                }
+                                                            </option>)
+                                                }
+                                            </Form.Control>
+                                        </td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                }
+
+                                </tbody>
+                            </Table>
+                        }
+                    </Card.Body>
+                    {!this.props.readOnly && this.props.showPaymentTypeList &&
+                        <Card.Footer>
+                            {this.renderPaymentListFooter(newPaymentType)}
+                        </Card.Footer>
+                    }
+                </Card>
+            </div>
+        </div>
+        );
+    }
+
+    renderPspList(pspList: [], paymentTypeLegend: any) {
+        return(
+            <div className="row mt-3">
+            <div className="col-md-12">
+                <Card>
+                    <Card.Header>
+                        <div className={"d-flex justify-content-between align-items-center"}>
+                            <h5>PSP</h5>
+                            {Object.keys(pspList).length > 0 &&
+                                <OverlayTrigger placement="top"
+                                                overlay={<Tooltip
+                                                    id="csv-download">Scarica</Tooltip>}>
+                                    <FaCloudDownloadAlt role="button" className="mr-3"
+                                                        onClick={() => this.props.downloadCsv && this.props.downloadCsv()}/>
+                                </OverlayTrigger>
+                            }
+                        </div>
+                    </Card.Header>
+                    <Card.Body>
+                        {Object.keys(pspList).length === 0 && (
+                            <Alert className={'col-md-12'} variant={"warning"}><FaInfoCircle
+                                className="mr-1"/>PSP non presenti</Alert>
+                        )}
+                        {Object.keys(pspList).length > 0 &&
+                            <Table hover responsive size="sm">
+                                <thead>
+                                <tr>
+                                    <th className="">Nome</th>
+                                    <th className="">Codice</th>
+                                    <th className="text-center">Abilitato</th>
+                                    <th className="text-center">Tipo Versamento</th>
+                                    <th className="text-right"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {pspList}
+                                </tbody>
+                            </Table>
+                        }
+                    </Card.Body>
+                    <Card.Footer>
+                        <div className="legend">
+                            <span className="font-weight-bold mr-2">Legenda:</span>
+                            {paymentTypeLegend}
+                        </div>
+                    </Card.Footer>
+                </Card>
+            </div>
+        </div>
+        );
+    }
+
+    render(): React.ReactNode {
+        const isError = this.props.isError;
+        const isLoading = this.props.isLoading;
+        const newPaymentType = this.props.newPaymentType;
+
+        const paymentTypeLegend: any = this.props.paymentTypeLegend && Object.keys(this.props.paymentTypeLegend).map((item: any, index: number) => (
+                <span key={index} className="mr-2 badge badge-secondary">
+                    {item}: {this.props.paymentTypeLegend[item]}
+                    {item === "OBEP" && <span className="badge badge-danger ml-2">DEPRECATO</span>}
+                </span>
+        ));
+        const paymentTypeList: any = [];
+        this.fillPaymentTypeList(paymentTypeList);
+        const pspList: any = [];
+        this.fillPspList(pspList);
         return (
             <div className="container-fluid creditor-institutions">
                 <div className="row">
@@ -718,82 +865,7 @@ export default class ChannelView extends React.Component<IProps> {
                                         }
                                     </Card>
                                 {this.props.showPaymentTypeList &&
-                                    <div className="row mt-3">
-                                        <div className="col-md-12">
-                                            <Card>
-                                                <Card.Header>
-                                                    <h5>Tipo Versamento</h5>
-                                                </Card.Header>
-                                                <Card.Body>
-                                                    {Object.keys(paymentTypeList).length === 0 && !newPaymentType && (
-                                                        <Alert className={'col-md-12'} variant={"warning"}><FaInfoCircle
-                                                            className="mr-1"/>Tipi Versamento non presenti</Alert>
-                                                    )}
-                                                    {(Object.keys(paymentTypeList).length > 0 || newPaymentType) &&
-                                                        <Table hover responsive size="sm">
-                                                            <thead>
-                                                            <tr>
-                                                                <th className="">Codice</th>
-                                                                <th>Descrizione</th>
-                                                                <th></th>
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            {paymentTypeList}
-                                                            {
-                                                                newPaymentType &&
-                                                                <tr>
-                                                                    <td>
-                                                                        <Form.Control as="select" name="paymentToken"
-                                                                                      onChange={(e) => this.props.handlePaymentType && this.props.handlePaymentType(e.target.value)}>
-                                                                            <option></option>
-                                                                            {
-                                                                                Object.keys(this.props.paymentTypeLegend)
-                                                                                    .filter((p: string) => this.props.paymentTypeList.indexOf(p) === -1)
-                                                                                    .map((p, index) =>
-                                                                                        <option key={index} value={p}>
-                                                                                            {p} - {this.props.paymentTypeLegend[p]}
-                                                                                            {
-                                                                                                p === "OBEP" && " DEPRECATO"
-                                                                                            }
-                                                                                        </option>)
-                                                                            }
-                                                                        </Form.Control>
-                                                                    </td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                </tr>
-                                                            }
-
-                                                            </tbody>
-                                                        </Table>
-                                                    }
-                                                </Card.Body>
-                                                {!this.props.readOnly && this.props.showPaymentTypeList &&
-                                                    <Card.Footer>
-                                                        <div className="row">
-                                                            <div className="col-md-12">
-                                                                {
-                                                                    !newPaymentType && <Button className="float-md-right"
-                                                                                            onClick={() => this.props.setNewPaymentType && this.props.setNewPaymentType()}>Nuovo <FaPlus/></Button>
-                                                                }
-                                                                {
-                                                                    newPaymentType &&
-                                                                    <Button className="ml-2 float-md-right" variant="secondary"
-                                                                            onClick={() => this.props.discardPaymentType?.()}>Annulla</Button>
-                                                                }
-                                                                {
-                                                                    newPaymentType &&
-                                                                    <Button className="float-md-right" onClick={() => this.props.savePaymentType?.()}>Salva</Button>
-                                                                }
-
-                                                            </div>
-                                                        </div>
-                                                    </Card.Footer>
-                                                }
-                                            </Card>
-                                        </div>
-                                    </div>
+                                    this.renderPaymentTypeList(paymentTypeList, newPaymentType)
                                 }
                                 </>
                             )
@@ -801,53 +873,7 @@ export default class ChannelView extends React.Component<IProps> {
                     </div>
                 </div>
                 {this.props.readOnly && 
-                    <div className="row mt-3">
-                        <div className="col-md-12">
-                            <Card>
-                                <Card.Header>
-                                    <div className={"d-flex justify-content-between align-items-center"}>
-                                        <h5>PSP</h5>
-                                        {Object.keys(pspList).length > 0 &&
-                                            <OverlayTrigger placement="top"
-                                                            overlay={<Tooltip
-                                                                id="csv-download">Scarica</Tooltip>}>
-                                                <FaCloudDownloadAlt role="button" className="mr-3"
-                                                                    onClick={() => this.props.downloadCsv && this.props.downloadCsv()}/>
-                                            </OverlayTrigger>
-                                        }
-                                    </div>
-                                </Card.Header>
-                                <Card.Body>
-                                    {Object.keys(pspList).length === 0 && (
-                                        <Alert className={'col-md-12'} variant={"warning"}><FaInfoCircle
-                                            className="mr-1"/>PSP non presenti</Alert>
-                                    )}
-                                    {Object.keys(pspList).length > 0 &&
-                                        <Table hover responsive size="sm">
-                                            <thead>
-                                            <tr>
-                                                <th className="">Nome</th>
-                                                <th className="">Codice</th>
-                                                <th className="text-center">Abilitato</th>
-                                                <th className="text-center">Tipo Versamento</th>
-                                                <th className="text-right"></th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            {pspList}
-                                            </tbody>
-                                        </Table>
-                                    }
-                                </Card.Body>
-                                <Card.Footer>
-                                    <div className="legend">
-                                        <span className="font-weight-bold mr-2">Legenda:</span>
-                                        {paymentTypeLegend}
-                                    </div>
-                                </Card.Footer>
-                            </Card>
-                        </div>
-                    </div>
+                    this.renderPspList(pspList, paymentTypeLegend)
                 }
                 <ConfirmationModal show={this.props.showModal} handleClose={this.hideModal}>
                     <p>Sei sicuro di voler annullare le modifiche?</p>

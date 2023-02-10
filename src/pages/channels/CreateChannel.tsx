@@ -136,14 +136,7 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                 }).then((response: any) => {
                     // eslint-disable-next-line no-prototype-builtins
                     if (response.hasOwnProperty("right")) {
-                        if (response.right.status === 201) {
-                            // eslint-disable-next-line no-console
-                            toast.info("Creazione avvenuta con successo.");
-                            setTimeout(this.goBack.bind(this), 2000);
-                        } else {
-                            const message = "detail" in response.right.value ? response.right.value.detail : "Operazione non avvenuta a causa di un errore";
-                            this.toastError(message);
-                        }
+                        this.saveStatusCheck(response);
                     } else {
                         const message = "detail" in response.right.value ? response.right.value.detail : "Operazione non avvenuta a causa di un errore";
                         this.toastError(message);
@@ -152,6 +145,17 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                     this.toastError("Operazione non avvenuta a causa di un errore");
                 });
             });
+    }
+
+    saveStatusCheck(response: any): void {
+        if (response.right.status === 201) {
+            // eslint-disable-next-line no-console
+            toast.info("Creazione avvenuta con successo.");
+            setTimeout(this.goBack.bind(this), 2000);
+        } else {
+            const message = "detail" in response.right.value ? response.right.value.detail : "Operazione non avvenuta a causa di un errore";
+            this.toastError(message);
+        }
     }
 
     render(): React.ReactNode {
