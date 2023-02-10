@@ -1,6 +1,6 @@
 import React from 'react';
 import {Button, OverlayTrigger, Table, Tooltip} from "react-bootstrap";
-import {FaCheck, FaEdit, FaEye, FaFileDownload, FaPlus, FaSpinner, FaTimes, FaTrash} from "react-icons/fa";
+import {FaCheck, FaClone, FaEdit, FaEye, FaFileDownload, FaPlus, FaSpinner, FaTimes, FaTrash} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
 import axios, {AxiosRequestConfig} from "axios";
@@ -39,7 +39,6 @@ interface IState {
 export default class Channels extends React.Component<IProps, IState> {
     static contextType = MsalContext;
     private filter: { [item: string]: any };
-
     service = "/channels";
     constructor(props: IProps) {
         super(props);
@@ -85,7 +84,6 @@ export default class Channels extends React.Component<IProps, IState> {
     toastError(message: string) {
         toast.error(() => <div className={"toast-width"}>{message}</div>, {theme: "colored"});
     }
-
     getPage(page: number) {
         this.setState({isLoading: true});
 
@@ -119,12 +117,10 @@ export default class Channels extends React.Component<IProps, IState> {
     componentDidMount(): void {
         this.getPage(0);
     }
-
     create() {
         this.props.history.push(this.service + "/create");
         return false;
     }
-
     download() {
         const baseUrl = getConfig("APICONFIG_HOST") as string;
         const basePath = getConfig("APICONFIG_BASEPATH") as string;
@@ -184,6 +180,10 @@ export default class Channels extends React.Component<IProps, IState> {
         this.props.history.push(this.service + "/" + code + "?edit");
     }
 
+    handleClone(code: string) {
+        this.props.history.push(this.service + "/create?clone=" + code);
+    }
+
     handleDelete(channel: string, index: number) {
         this.setState({showDeleteModal: true});
         this.setState({channelToDelete: channel});
@@ -238,7 +238,7 @@ export default class Channels extends React.Component<IProps, IState> {
         const pageInfo = this.state.page_info;
         const showDeleteModal = this.state.showDeleteModal;
         const channelList: any = [];
-        const channelToDeleteName = this.state.channelToDelete.description;
+        const channelToDeleteName = this.state.channelToDelete.broker_description;
         const channelToDeleteCode = this.state.channelToDelete.channel_code;
 
         this.state.channels.map((channel: any, index: number) => {
@@ -263,6 +263,13 @@ export default class Channels extends React.Component<IProps, IState> {
                             {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
                             <FaEdit role="button" className="mr-3"
                                     onClick={() => this.handleEdit(channel.channel_code)}/>
+                        </OverlayTrigger>
+                        {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
+                        <OverlayTrigger placement="top"
+                                        overlay={<Tooltip id={`tooltip-clone-${index}`}>Clona</Tooltip>}>
+                            {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
+                            <FaClone role="button" className="mr-3"
+                                    onClick={() => this.handleClone(channel.channel_code)}/>
                         </OverlayTrigger>
                         {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
                         <OverlayTrigger placement="top"
