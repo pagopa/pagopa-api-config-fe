@@ -748,11 +748,11 @@ export default class ChannelView extends React.Component<IProps> {
                                                                                       onChange={(e) => this.props.handlePaymentType && this.props.handlePaymentType(e.target.value)}>
                                                                             <option></option>
                                                                             {
-                                                                                Object.keys(paymentTypeLegend)
+                                                                                Object.keys(this.props.paymentTypeLegend)
                                                                                     .filter((p: string) => this.props.paymentTypeList.indexOf(p) === -1)
                                                                                     .map((p, index) =>
                                                                                         <option key={index} value={p}>
-                                                                                            {p} - {paymentTypeLegend[p]}
+                                                                                            {p} - {this.props.paymentTypeLegend[p]}
                                                                                             {
                                                                                                 p === "OBEP" && " DEPRECATO"
                                                                                             }

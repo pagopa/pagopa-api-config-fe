@@ -161,7 +161,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
             this.setChannel(channel);
             this.setPaymentTypeList(result[2].payment_types);
             const paymentTypeLegend = [] as any;
-            result[2].payment_types.forEach((pt: PaymentType) => {
+            result[1].payment_types.forEach((pt: PaymentType) => {
                 // eslint-disable-next-line functional/immutable-data
                 paymentTypeLegend[pt.payment_type] = pt.description;
             });
