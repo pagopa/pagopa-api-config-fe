@@ -1,22 +1,24 @@
 import React from 'react';
-import {Button} from 'react-bootstrap';
+import {Table, OverlayTrigger, Tooltip} from 'react-bootstrap';
+import {FaExclamationTriangle, FaRedo, FaSpinner} from "react-icons/fa";
 import {MsalContext} from "@azure/msal-react";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import {apiClient} from "../../util/apiClient";
 import {toast} from "react-toastify";
 import {loginRequest} from "../../authConfig";
 
-
 interface IProps {
 }
 
 interface IState {
     isLoading: boolean;
-    showRefreshModal: boolean;
+    configTypes: any;
     configToRefresh: {
-        name: string;
+        domain: string;
+        description: string;
         param: string;
     }
+    refresh: boolean;
 }
 
 export default class RefreshConfigPage extends React.Component<IProps, IState> {
@@ -27,24 +29,37 @@ export default class RefreshConfigPage extends React.Component<IProps, IState> {
 
         this.state = {
             isLoading: false,
-            showRefreshModal: false,
+            configTypes: [],
             configToRefresh: {
-                name: "",
-                param: "",
-            }
+                domain: "",
+                description: "",
+                param: ""
+            },
+            refresh: false
         };
+
+        this.handleRefresh = this.handleRefresh.bind(this);
     }
 
-    handleRefresh(configName: string, configParam: string) {
-        this.setState({showRefreshModal: true});
-        this.setState({configToRefresh: {
-                name: configName,
+    componentDidMount(): void {
+        this.setState({isLoading: true});
+        this.getData();
+        this.setState({isLoading: false});
+    }
+
+    handleRefresh(configDomain: string, configDescription: string, configParam: string) {
+        this.setState({
+            configToRefresh: {
+                domain: configDomain,
+                description: configDescription,
                 param: configParam
-            }
+            },
+            refresh: true
         });
     }
 
     hideRefreshModal = (status: string) => {
+        const param = this.state.configToRefresh.param;
         if (status === "ok") {
             this.context.instance.acquireTokenSilent({
                 ...loginRequest,
@@ -52,9 +67,9 @@ export default class RefreshConfigPage extends React.Component<IProps, IState> {
             })
                 .then((response: any) => {
                     apiClient.getRefreshConfig({
-                        Authorization: `Bearer ${response.idToken}`,
                         ApiKey: "",
-                        configtype: this.state.configToRefresh.param
+                        Authorization: `Bearer ${response.idToken}`,
+                        configtype: param
                     })
                         .then((res: any) => {
                             if (res.right.status === 200) {
@@ -68,9 +83,10 @@ export default class RefreshConfigPage extends React.Component<IProps, IState> {
                         });
                 });
         }
-        this.setState({showRefreshModal: false});
+        this.setState({refresh: false});
         this.setState({configToRefresh: {
-            name: "",
+            domain: "",
+            description: "",
             param: ""
         }});
     };
@@ -79,9 +95,73 @@ export default class RefreshConfigPage extends React.Component<IProps, IState> {
         toast.error(() => <div className={"toast-width"}>{message}</div>, {theme: "colored"});
     }
 
+    getData() {
+        this.setState({
+            configTypes: [{
+                domain: "Globale",
+                description: "configurazione globale del nodo",
+                param: "global"
+            },
+            {
+                domain: "EC",
+                description: "configurazione delle tabelle PA, Stazioni",
+                param: "PA"
+            },
+            {
+                domain: "PSP",
+                description: "configurazione delle tabelle PSP, Canali",
+                param: "PSP" 
+            },
+            {
+                domain: "PDD",
+                description: "configurazione PDD",
+                param: "PDD" 
+            },
+            {
+                domain: "INFORMATIVA PA",
+                description: "configurazione INFORMATIVA PA",
+                param: "INFORMATIVA_PA" 
+            },
+            {
+                domain: "INFORMATIVA CDI",
+                description: "configurazione INFORMATIVA CDI",
+                param: "INFORMATIVA_CDI" 
+            },
+            {
+                domain: "FTP SERVER",
+                description: "configurazione FTP SERVER",
+                param: "FTP_SERVER" 
+            }]
+        });
+    }
+
     render(): React.ReactNode {
-        const showRefreshModal = this.state.showRefreshModal;
+        const isLoading = this.state.isLoading;
+        const showRefreshModal = this.state.refresh;
         const configToRefresh = this.state.configToRefresh;
+        const configTypes: any = [];
+
+        this.state.configTypes.map((configuration: any) => {
+            const index = String(configuration.domain);
+            const code = (
+                <tr key={configuration.domain}>
+                    <td className="key-td-width">{configuration.domain}</td>
+                    <td className="description-td-width text-left">
+                        {configuration.description}
+                    </td>
+                    <td className="text-right">
+                        <>
+                        <OverlayTrigger placement="top" 
+                                        overlay={<Tooltip id={`tooltip-edit-${index}`}>Refresh</Tooltip>}>
+                            <FaRedo role="button" className="mr-1" 
+                                    onClick={() => this.handleRefresh(configuration.domain, configuration.description, configuration.param)}/>
+                        </OverlayTrigger>
+                        </>
+                    </td>
+                </tr>
+            );
+            configTypes.push(code);
+        });
 
         return (
             <div className="container-fluid configuration">
@@ -93,36 +173,33 @@ export default class RefreshConfigPage extends React.Component<IProps, IState> {
 
                 <div className="row">
                     <div className={"col-md-12"}>
-                        <p>In questa sezione è possibile effettuare il refresh delle configurazioni del nodo. Le seguenti azioni innescano l'aggiornamento delle istanze in memoria. </p>
-                        <p>Al fine di non creare incosistenze occorre usare tali azioni solo quando necessario.</p>
+                        <p>In questa sezione è possibile effettuare il refresh delle configurazioni del nodo. Le seguenti azioni innescano il caricamento e l'eventuale aggiornamento delle istanze in memoria. </p>
+                        <p className="alert alert-warning">
+                                <FaExclamationTriangle/> Usare tali azioni solo quando necessario.
+                        </p>
                     </div>
                 </div>
-
-                <div className="row mt-5">
-                    <div className={"col-md-4"}>
-                        <span className="font-weight-bold">Dominio EC: </span>
-                        <span>configurazione delle tabelle PA, Stazioni</span>
-                    </div>
-                    <div className={"col-md-4"}>
-                        <Button onClick={() => this.handleRefresh('PA e Stazioni', 'PA')}>Refresh</Button>
-                        {/* eslint-disable-next-line functional/immutable-data */}
-                    </div>
-                </div>
-
-                <div className="row mt-3">
-                    <div className={"col-md-4"}>
-                        <span className="font-weight-bold">Dominio PSP: </span>
-                        <span>configurazione delle tabelle PSP, Canali</span>
-                    </div>
-                    <div className={"col-md-4"}>
-                        <Button onClick={() => this.handleRefresh('PSP e Canali', 'PSP')}>Refresh</Button>
-                        {/* eslint-disable-next-line functional/immutable-data */}
-                    </div>
-                </div>
+                {isLoading && (<FaSpinner className="spinner"/>)}
+                {!isLoading && (
+                    <>
+                    <Table hover responsive size="sm">
+                        <thead>
+                        <tr>
+                            <th className="key-td-width">Dominio</th>
+                            <th className="description-td-width text-left">Descrizione</th>
+                            <th className="buttons-td-width"/>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            {configTypes}
+                        </tbody>
+                    </Table>
+                    </>
+                )}
                 <ConfirmationModal show={showRefreshModal} handleClose={this.hideRefreshModal}>
                         <p>Sei sicuro di voler avviare il refresh della seguente configurazione?</p>
                         <ul>
-                            <li>{configToRefresh.name}</li>
+                            <li>{configToRefresh.domain}: {configToRefresh.description}</li>
                         </ul>
                 </ConfirmationModal>
             </div>
