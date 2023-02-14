@@ -439,12 +439,12 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
             return;
         }
 
+        this.setActionCurrentlyPerforming(true);
         this.context.instance.acquireTokenSilent({
             ...loginRequest,
             account: this.context.accounts[0]
         })
             .then((response: any) => {
-                this.setActionCurrentlyPerforming(true);
                 apiClient.createCreditorInstitutionStation({
                     Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
@@ -458,12 +458,12 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                     } else {
                         const message = ("detail" in response.right.value) ? response.right.value.detail : "Operazione non avvenuta a causa di un errore";
                         this.toastError(message);
-                    }
+                    }                
                 }).catch(() => {
                     toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
                 });
-            })
-            .finally(this.setActionCurrentlyPerforming(false)); 
+            });
+        this.setActionCurrentlyPerforming(false);        
     }
 
     editStation(): void {
