@@ -2,11 +2,12 @@ import React from 'react';
 import {Table, OverlayTrigger, Tooltip} from 'react-bootstrap';
 import {FaExclamationTriangle, FaRedo, FaSpinner} from "react-icons/fa";
 import {MsalContext} from "@azure/msal-react";
+import {toast} from "react-toastify";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import {apiClient} from "../../util/apiClient";
-import {toast} from "react-toastify";
 import {loginRequest} from "../../authConfig";
 
+/* eslint-disable @typescript-eslint/no-empty-interface */
 interface IProps {
 }
 
@@ -17,7 +18,7 @@ interface IState {
         domain: string;
         description: string;
         param: string;
-    }
+    };
     refresh: boolean;
 }
 
@@ -173,6 +174,7 @@ export default class RefreshConfigPage extends React.Component<IProps, IState> {
 
                 <div className="row">
                     <div className={"col-md-12"}>
+                        {/* eslint-disable-next-line react/no-unescaped-entities */}
                         <p>In questa sezione è possibile effettuare il refresh delle configurazioni del nodo. Le seguenti azioni innescano il caricamento e l'eventuale aggiornamento delle istanze in memoria. </p>
                         <p className="alert alert-warning">
                                 <FaExclamationTriangle/> Usare tali azioni solo quando necessario.
