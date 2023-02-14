@@ -524,14 +524,16 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                     code
                 }).then((resp: any) => {
                     if (resp.right.status === 200) {
+                        const alreadyAssignedStationIds = this.state.stationList.map((station: any) => station.station_code);
                         const items: Array<any> = [];
-                        resp.right.value.stations.map((station: any) => {
-                            // eslint-disable-next-line functional/immutable-data
-                            items.push({
-                                value: {code: station.station_code, version: station.version},
-                                label: station.station_code,
+                        resp.right.value.stations.filter((retrievedStation: any) => alreadyAssignedStationIds.indexOf(retrievedStation.station_code) === -1)
+                            .forEach((retrievedStation: any) => {                            
+                                // eslint-disable-next-line functional/immutable-data
+                                items.push({
+                                    value: {code: retrievedStation.station_code, version: retrievedStation.version},
+                                    label: retrievedStation.station_code,
+                                });    
                             });
-                        });
                         callback(items);
                     }
                     else {
