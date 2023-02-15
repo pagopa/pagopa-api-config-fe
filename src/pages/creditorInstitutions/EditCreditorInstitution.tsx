@@ -32,7 +32,6 @@ interface IState {
     encodingMgmt: any;
     stationMgmt: any;
     confirmationModal: any;
-    isActionPerforming: boolean;
 }
 
 export default class EditCreditorInstitution extends React.Component<IProps, IState> {
@@ -73,8 +72,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                 show: false,
                 description: "",
                 list: ""
-            },
-            isActionPerforming: false
+            }
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -91,7 +89,6 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
         this.debouncedStationOptions = this.debouncedStationOptions.bind(this);
         this.handleStationEdit = this.handleStationEdit.bind(this);
         this.handleStationDelete = this.handleStationDelete.bind(this);
-        this.setActionCurrentlyPerforming = this.setActionCurrentlyPerforming.bind(this);
     }
 
     generateAddress(address: any) {
@@ -439,7 +436,6 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
             return;
         }
 
-        this.setActionCurrentlyPerforming(true);
         this.context.instance.acquireTokenSilent({
             ...loginRequest,
             account: this.context.accounts[0]
@@ -462,8 +458,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                 }).catch(() => {
                     toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
                 });
-            });
-        this.setActionCurrentlyPerforming(false);        
+            });      
     }
 
     editStation(): void {
@@ -574,10 +569,6 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
             list: `${item.station_code}`
         };
         this.setState({stationMgmt, confirmationModal});
-    }
-
-    setActionCurrentlyPerforming(abilitation: boolean): void {
-        this.setState({isActionPerforming: abilitation});
     }
 
     deleteStation() {
@@ -1160,7 +1151,9 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                                             {
                                                                 this.state.stationMgmt.create &&
 																<>
-																	<Button className="float-md-right" disabled={this.state.isActionPerforming} onClick={() => {
+																	<Button className="float-md-right" onClick={(event) => {
+                                                                        // eslint-disable-next-line functional/immutable-data
+                                                                        (event.currentTarget as HTMLButtonElement).disabled = true;
                                                                         this.saveStation();
                                                                     }}>Salva</Button>
 																</>
