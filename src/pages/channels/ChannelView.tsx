@@ -289,7 +289,11 @@ export default class ChannelView extends React.Component<IProps> {
                     }
                     {
                         newPaymentType &&
-                        <Button className="float-md-right" onClick={() => this.props.savePaymentType?.()}>Salva</Button>
+                        <Button className="float-md-right" onClick={(event) => {
+                            // eslint-disable-next-line functional/immutable-data
+                            (event.currentTarget as HTMLButtonElement).disabled = true;
+                            this.props.savePaymentType?.();
+                        }}>Salva</Button>
                     }
 
                 </div>
