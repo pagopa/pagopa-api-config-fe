@@ -485,7 +485,7 @@ export default class ChannelView extends React.Component<IProps> {
                                                 </Form.Group>
                                                 <Form.Group controlId="primitive_version" className="col-md-2">
                                                     <Form.Label>Versione primitive <span className="text-danger">*</span></Form.Label>
-                                                    <Form.Control type={"number"} name="version" min={1} max={2}
+                                                    <Form.Control type={"number"} name="primitive_version" min={1} max={2}
                                                                 value={this.props.channel.primitive_version}
                                                                 onChange={(e) => this.handleChange(e)}
                                                                 readOnly={this.props.readOnly}/>
