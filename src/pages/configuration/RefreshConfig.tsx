@@ -101,7 +101,7 @@ export default class RefreshConfigPage extends React.Component<IProps, IState> {
             configTypes: [{
                 domain: "Globale",
                 description: "configurazione globale del nodo",
-                param: "global"
+                param: "GLOBAL"
             },
             {
                 domain: "EC",
