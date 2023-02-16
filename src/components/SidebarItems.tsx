@@ -68,9 +68,15 @@ const SidebarItems = [
         name: "WFESP Plugins",
         route: "/wfesp-plugins",
         domain: "configuration"
-    }, {
+    },
+    {
         name: "Tipo Versamento",
         route: "/payment-types",
+        domain: "configuration"
+    },
+    {
+        name: "Refresh Configuration",
+        route: "/refresh-config",
         domain: "configuration"
     },
     {
