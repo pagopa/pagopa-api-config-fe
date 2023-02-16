@@ -454,11 +454,11 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                     } else {
                         const message = ("detail" in response.right.value) ? response.right.value.detail : "Operazione non avvenuta a causa di un errore";
                         this.toastError(message);
-                    }
+                    }                
                 }).catch(() => {
                     toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
                 });
-            });
+            });      
     }
 
     editStation(): void {
@@ -519,14 +519,16 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                     code
                 }).then((resp: any) => {
                     if (resp.right.status === 200) {
+                        const alreadyAssignedStationIds = this.state.stationList.map((station: any) => station.station_code);
                         const items: Array<any> = [];
-                        resp.right.value.stations.map((station: any) => {
-                            // eslint-disable-next-line functional/immutable-data
-                            items.push({
-                                value: {code: station.station_code, version: station.version},
-                                label: station.station_code,
+                        resp.right.value.stations.filter((retrievedStation: any) => alreadyAssignedStationIds.indexOf(retrievedStation.station_code) === -1)
+                            .forEach((retrievedStation: any) => {                            
+                                // eslint-disable-next-line functional/immutable-data
+                                items.push({
+                                    value: {code: retrievedStation.station_code, version: retrievedStation.version},
+                                    label: retrievedStation.station_code,
+                                });    
                             });
-                        });
                         callback(items);
                     }
                     else {
@@ -1149,7 +1151,9 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                                             {
                                                                 this.state.stationMgmt.create &&
 																<>
-																	<Button className="float-md-right" onClick={() => {
+																	<Button className="float-md-right" onClick={(event) => {
+                                                                        // eslint-disable-next-line functional/immutable-data
+                                                                        (event.currentTarget as HTMLButtonElement).disabled = true;
                                                                         this.saveStation();
                                                                     }}>Salva</Button>
 																</>
