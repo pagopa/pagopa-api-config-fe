@@ -8,6 +8,7 @@ import {PspChannelPaymentTypes} from "../../../generated/api/PspChannelPaymentTy
 import {PaymentType} from "../../../generated/api/PaymentType";
 import {getChannel, getPaymentTypeList, getPaymentTypeLegend} from "./Services";
 import ChannelView from "./ChannelView";
+
 interface IProps {
     match: {
         params: Record<string, unknown>;
@@ -104,23 +105,23 @@ export default class EditChannel extends React.Component<IProps, IState> {
         this.setPaymentTypeList = this.setPaymentTypeList.bind(this);
         this.setPaymentTypeLegend = this.setPaymentTypeLegend.bind(this);
         this.discardPaymentType = this.discardPaymentType.bind(this);
-        this.savePaymentType = this.savePaymentType.bind(this); 
+        this.savePaymentType = this.savePaymentType.bind(this);
         this.removePaymentType = this.removePaymentType.bind(this);
     }
 
     setChannel(channel: ChannelDetails): void {
-        this.setState({ channel });
+        this.setState({channel});
     }
 
-    setModal(modal: boolean): void{
+    setModal(modal: boolean): void {
         this.setState({showDeleteModal: modal});
     }
 
-    setPaymentTypeList(paymentTypeList: []){
+    setPaymentTypeList(paymentTypeList: []) {
         this.setState({paymentTypeList});
     }
 
-    setPaymentTypeLegend(paymentTypeLegend: any){
+    setPaymentTypeLegend(paymentTypeLegend: any) {
         this.setState({paymentTypeLegend});
     }
 
@@ -152,20 +153,20 @@ export default class EditChannel extends React.Component<IProps, IState> {
     componentDidMount(): void {
         const code: string = this.props.match.params.code as string;
         this.setState({code, isLoading: true});
-        Promise.all([getChannel(this.context, code), getPaymentTypeLegend(this.context), 
+        Promise.all([getChannel(this.context, code), getPaymentTypeLegend(this.context),
             getPaymentTypeList(this.context, code)])
-        .then((result: any) => {
-            const channel = {...this.state.channel, ...result[0]} as ChannelDetails;
-            this.setChannel(channel);
-            this.setPaymentTypeList(result[2].payment_types);
-            const paymentTypeLegend = [] as any;
-            result[1].payment_types.forEach((pt: PaymentType) => {
-                // eslint-disable-next-line functional/immutable-data
-                paymentTypeLegend[pt.payment_type] = pt.description;
-            });
-            this.setPaymentTypeLegend(paymentTypeLegend);
-            this.setState({isError: false});
-        }).catch(() => {
+                .then((result: any) => {
+                    const channel = {...this.state.channel, ...result[0]} as ChannelDetails;
+                    this.setChannel(channel);
+                    this.setPaymentTypeList(result[2].payment_types);
+                    const paymentTypeLegend = [] as any;
+                    result[1].payment_types.forEach((pt: PaymentType) => {
+                        // eslint-disable-next-line functional/immutable-data
+                        paymentTypeLegend[pt.payment_type] = pt.description;
+                    });
+                    this.setPaymentTypeLegend(paymentTypeLegend);
+                    this.setState({isError: false});
+                }).catch(() => {
             this.setState({isError: true});
         });
         this.setState({isLoading: false});
@@ -185,30 +186,30 @@ export default class EditChannel extends React.Component<IProps, IState> {
             ...loginRequest,
             account: this.context.accounts[0]
         })
-            .then((response: any) => {
-                apiClient.updateChannel({
-                    Authorization: `Bearer ${response.idToken}`,
-                    ApiKey: "",
-                    channelcode: this.state.code,
-                    body: channel
-                }).then((response: any) => {
-                    if (response.right.status === 200) {
-                        toast.info("Modifica avvenuta con successo.");
-                        const channel = {...response.right.value};
-                        // eslint-disable-next-line functional/immutable-data
-                        channel.serv_plugin = channel.serv_plugin ? channel.serv_plugin : '-';
-                        this.setState({channel});
-                        this.setState({channelName: channel.description});
-                        this.updateBackup("channel", channel);
-                        setTimeout(this.goBack.bind(this), 2000);
-                    } else {
-                        const message = "detail" in response.right.value ? response.right.value.detail : "Operazione non avvenuta a causa di un errore";
-                        this.toastError(message);
-                    }
-                }).catch(() => {
-                    toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                .then((response: any) => {
+                    apiClient.updateChannel({
+                        Authorization: `Bearer ${response.idToken}`,
+                        ApiKey: "",
+                        channelcode: this.state.code,
+                        body: channel
+                    }).then((response: any) => {
+                        if (response.right.status === 200) {
+                            toast.info("Modifica avvenuta con successo.");
+                            const channel = {...response.right.value};
+                            // eslint-disable-next-line functional/immutable-data
+                            channel.serv_plugin = channel.serv_plugin ? channel.serv_plugin : '-';
+                            this.setState({channel});
+                            this.setState({channelName: channel.description});
+                            this.updateBackup("channel", channel);
+                            setTimeout(this.goBack.bind(this), 2000);
+                        } else {
+                            const message = "detail" in response.right.value ? response.right.value.detail : "Operazione non avvenuta a causa di un errore";
+                            this.toastError(message);
+                        }
+                    }).catch(() => {
+                        toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                    });
                 });
-            });
     }
 
     removePaymentType(paymentType: string) {
@@ -217,21 +218,21 @@ export default class EditChannel extends React.Component<IProps, IState> {
             ...loginRequest,
             account: this.context.accounts[0]
         }).then((response: any) => {
-                apiClient.deleteChannelPaymentType({
-                    Authorization: `Bearer ${response.idToken}`,
-                    ApiKey: "",
-                    channelcode: this.state.code,
-                    paymenttypecode: paymentType
-                }).then((res: any) => {
-                        if (res.right.status === 200) {
-                            toast.info("Rimozione avvenuta con successo");
-                        } else {
-                            this.toastError(res.right.value.detail);
-                        }
-                    }).catch(() => {
-                        toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
-                    });
+            apiClient.deleteChannelPaymentType({
+                Authorization: `Bearer ${response.idToken}`,
+                ApiKey: "",
+                channelcode: this.state.code,
+                paymenttypecode: paymentType
+            }).then((res: any) => {
+                if (res.right.status === 200) {
+                    toast.info("Rimozione avvenuta con successo");
+                } else {
+                    this.toastError(res.right.value.detail);
+                }
+            }).catch(() => {
+                toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
             });
+        });
     }
 
     setNewPaymentType() {
@@ -247,54 +248,54 @@ export default class EditChannel extends React.Component<IProps, IState> {
             ...loginRequest,
             account: this.context.accounts[0]
         })
-            .then((response: any) => {
-                const ptList: Array<string> = [this.state.paymentType];
-                const data = {
-                    "payment_types": ptList
-                } as PspChannelPaymentTypes;
-                apiClient.createChannelPaymentType({
-                    Authorization: `Bearer ${response.idToken}`,
-                    ApiKey: "",
-                    channelcode: this.state.code,
-                    body: data
-                }).then((response: any) => {
-                    if (response.right.status === 201) {
-                        toast.info("Modifica avvenuta con successo.");
-                        this.setState({paymentTypeList: response.right.value.payment_types});
-                    } else {
-                        const message = "detail" in response.right.value ? response.right.value.detail : "Operazione non avvenuta a causa di un errore";
-                        toast.error(message, {theme: "colored"});
-                    }
-                }).catch(() => {
-                    toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
-                }).finally(() => {
-                    this.setState({newPaymentType: false});
+                .then((response: any) => {
+                    const ptList: Array<string> = [this.state.paymentType];
+                    const data = {
+                        "payment_types": ptList
+                    } as PspChannelPaymentTypes;
+                    apiClient.createChannelPaymentType({
+                        Authorization: `Bearer ${response.idToken}`,
+                        ApiKey: "",
+                        channelcode: this.state.code,
+                        body: data
+                    }).then((response: any) => {
+                        if (response.right.status === 201) {
+                            toast.info("Modifica avvenuta con successo.");
+                            this.setState({paymentTypeList: response.right.value.payment_types});
+                        } else {
+                            const message = "detail" in response.right.value ? response.right.value.detail : "Operazione non avvenuta a causa di un errore";
+                            toast.error(message, {theme: "colored"});
+                        }
+                    }).catch(() => {
+                        toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                    }).finally(() => {
+                        this.setState({newPaymentType: false});
+                    });
                 });
-            });
     }
 
     render(): React.ReactNode {
         return (
-            <ChannelView channel={this.state.channel} 
-                setChannel={this.setChannel}
-                saveChannel={this.saveChannel}
-                showModal={this.state.showDeleteModal}
-                setShowModal={this.setModal}
-                paymentTypeList={this.state.paymentTypeList}
-                isLoading={this.state.isLoading}
-                isError={this.state.isError}
-                history={this.props.history}
-                readOnly={false}
-                showPaymentTypeList={true}
-                newPaymentType={this.state.newPaymentType}
-                setNewPaymentType={this.setNewPaymentType}
-                handlePaymentType={this.handlePaymentType}
-                paymentTypeLegend={this.state.paymentTypeLegend}
-                discardPaymentType={this.discardPaymentType}
-                savePaymentType={this.savePaymentType}
-                removePaymentType={this.removePaymentType}
-                pspList={[]}
-            />
+                <ChannelView channel={this.state.channel}
+                             setChannel={this.setChannel}
+                             saveChannel={this.saveChannel}
+                             showModal={this.state.showDeleteModal}
+                             setShowModal={this.setModal}
+                             paymentTypeList={this.state.paymentTypeList}
+                             isLoading={this.state.isLoading}
+                             isError={this.state.isError}
+                             history={this.props.history}
+                             readOnly={false}
+                             showPaymentTypeList={true}
+                             newPaymentType={this.state.newPaymentType}
+                             setNewPaymentType={this.setNewPaymentType}
+                             handlePaymentType={this.handlePaymentType}
+                             paymentTypeLegend={this.state.paymentTypeLegend}
+                             discardPaymentType={this.discardPaymentType}
+                             savePaymentType={this.savePaymentType}
+                             removePaymentType={this.removePaymentType}
+                             pspList={[]}
+                />
         );
-    } 
+    }
 }

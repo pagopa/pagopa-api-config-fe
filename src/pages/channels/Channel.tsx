@@ -6,7 +6,7 @@ import {loginRequest} from "../../authConfig";
 import {ChannelDetails, Payment_modelEnum} from "../../../generated/api/ChannelDetails";
 import {PaymentType} from "../../../generated/api/PaymentType";
 import {getConfig} from "../../util/config";
-import { getChannel, getPaymentTypeLegend, getPaymentTypeList, getPspList } from "./Services";
+import {getChannel, getPaymentTypeLegend, getPaymentTypeList, getPspList} from "./Services";
 import ChannelView from "./ChannelView";
 
 interface IProps {
@@ -25,6 +25,12 @@ interface IState {
     channel: ChannelDetails;
     paymentTypeList: [];
     paymentTypeLegend: any;
+    pageInfo: {
+        page: number;
+        limit: number;
+        items_found: number;
+        total_pages: number;
+    };
     pspList: [];
     edit: boolean;
 }
@@ -79,6 +85,12 @@ export default class Channel extends React.Component<IProps, IState> {
                 description: "",
             } as unknown as ChannelDetails,
             paymentTypeList: [],
+            pageInfo: {
+                page: 0,
+                limit: 10,
+                items_found: 0,
+                total_pages: 1
+            },
             paymentTypeLegend: {},
             pspList: [],
             edit: false
@@ -89,23 +101,24 @@ export default class Channel extends React.Component<IProps, IState> {
         this.setPaymentTypeLegend = this.setPaymentTypeLegend.bind(this);
         this.setPspList = this.setPspList.bind(this);
         this.handlePspDetails = this.handlePspDetails.bind(this);
+        this.handlePageChange = this.handlePageChange.bind(this);
         this.downloadCsv = this.downloadCsv.bind(this);
     }
 
     setChannel(channel: ChannelDetails): void {
-        this.setState({ channel });
+        this.setState({channel});
     }
 
-    setPaymentTypeList(paymentTypeList: []){
+    setPaymentTypeList(paymentTypeList: []) {
         this.setState({paymentTypeList});
     }
 
-    setPaymentTypeLegend(paymentTypeLegend: any){
+    setPaymentTypeLegend(paymentTypeLegend: any) {
         this.setState({paymentTypeLegend});
     }
 
-    setPspList(pspList: []){
-        this.setState({pspList});
+    setPspList(pspList: [], pageInfo: any) {
+        this.setState({pspList, pageInfo});
     }
 
     handlePspDetails(code: string) {
@@ -130,22 +143,22 @@ export default class Channel extends React.Component<IProps, IState> {
             document.body.appendChild(anchor);
             const url = `${String(baseUrl)}${String(basePath)}/channels/${this.state.channel.channel_code}/paymentserviceproviders/csv`;
             axios.get(url, config)
-                .then((res: any) => {
-                    if (res.data.size > 1) {
-                        const objectUrl = window.URL.createObjectURL(res.data);
-                        // eslint-disable-next-line functional/immutable-data
-                        anchor.href = objectUrl;
-                        // eslint-disable-next-line functional/immutable-data
-                        anchor.download = this.state.channel.channel_code + '-psp.csv';
-                        anchor.click();
-                        window.URL.revokeObjectURL(objectUrl);
-                    } else {
-                        toast.warn("Problemi nella generazione del file CSV richiesto.", {theme: "colored"});
-                    }
-                })
-                .catch(() => {
-                    toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
-                });
+                    .then((res: any) => {
+                        if (res.data.size > 1) {
+                            const objectUrl = window.URL.createObjectURL(res.data);
+                            // eslint-disable-next-line functional/immutable-data
+                            anchor.href = objectUrl;
+                            // eslint-disable-next-line functional/immutable-data
+                            anchor.download = this.state.channel.channel_code + '-psp.csv';
+                            anchor.click();
+                            window.URL.revokeObjectURL(objectUrl);
+                        } else {
+                            toast.warn("Problemi nella generazione del file CSV richiesto.", {theme: "colored"});
+                        }
+                    })
+                    .catch(() => {
+                        toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                    });
         });
     }
 
@@ -153,41 +166,53 @@ export default class Channel extends React.Component<IProps, IState> {
         const code: string = this.props.match.params.code as string;
         this.setState({code, isLoading: true});
         Promise.all([getChannel(this.context, code), getPaymentTypeLegend(this.context),
-            getPaymentTypeList(this.context, code), getPspList(this.context, code)])
-        .then((result: any) => {
-            const channel = {...this.state.channel, ...result[0]} as ChannelDetails;
-            this.setChannel(channel);
-            this.setPaymentTypeList(result[2].payment_types);
-            const paymentTypeLegend = {} as any;
-            result[1].payment_types.forEach((pt: PaymentType) => {
-                // eslint-disable-next-line functional/immutable-data
-                paymentTypeLegend[pt.payment_type] = pt.description;
-            });
-            this.setPaymentTypeLegend(paymentTypeLegend);
-            this.setPspList(result[3].payment_service_providers as []);
-            this.setState({isError: false});
-        }).catch(() => {
+            getPaymentTypeList(this.context, code), getPspList(this.context, code, 0)])
+                .then((result: any) => {
+                    const channel = {...this.state.channel, ...result[0]} as ChannelDetails;
+                    this.setChannel(channel);
+                    this.setPaymentTypeList(result[2].payment_types);
+                    const paymentTypeLegend = {} as any;
+                    result[1].payment_types.forEach((pt: PaymentType) => {
+                        // eslint-disable-next-line functional/immutable-data
+                        paymentTypeLegend[pt.payment_type] = pt.description;
+                    });
+                    this.setPaymentTypeLegend(paymentTypeLegend);
+                    this.setPspList(result[3].payment_service_providers as [], result[3].page_info);
+                    this.setState({isError: false});
+                }).catch(() => {
             this.setState({isError: true});
         });
         this.setState({isLoading: false});
     }
 
+    handlePageChange(requestedPage: number) {
+        getPspList(this.context, this.state.channel.channel_code, requestedPage)
+                .then((result: any) => {
+                    this.setState({pspList: result.payment_service_providers, pageInfo: result.page_info});
+                }).catch(() => {
+            this.setState({isError: true});
+        });
+    }
+
+
     render(): React.ReactNode {
         return (
-            <ChannelView channel={this.state.channel} 
-                setChannel={this.setChannel}
-                showModal={false}
-                paymentTypeList={this.state.paymentTypeList}
-                paymentTypeLegend={this.state.paymentTypeLegend}
-                isLoading={this.state.isLoading}
-                isError={this.state.isError}
-                history={this.props.history}
-                readOnly={true}
-                showPaymentTypeList={true}
-                pspList={this.state.pspList}
-                handlePspDetails={this.handlePspDetails}
-                downloadCsv={this.downloadCsv}
-            />
+                <ChannelView channel={this.state.channel}
+                             setChannel={this.setChannel}
+                             showModal={false}
+                             paymentTypeList={this.state.paymentTypeList}
+                             paymentTypeLegend={this.state.paymentTypeLegend}
+                             isLoading={this.state.isLoading}
+                             isError={this.state.isError}
+                             history={this.props.history}
+                             readOnly={true}
+                             showPaymentTypeList={true}
+                             pspList={this.state.pspList}
+                             pageInfo={this.state.pageInfo}
+                             handlePspDetails={this.handlePspDetails}
+                             handlePageChange={this.handlePageChange}
+                             downloadCsv={this.downloadCsv}
+                />
         );
-    } 
+    }
 }

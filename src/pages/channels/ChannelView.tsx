@@ -9,6 +9,7 @@ import {ChannelDetails} from "../../../generated/api/ChannelDetails";
 import {loginRequest} from "../../authConfig";
 import {apiClient} from "../../util/apiClient";
 import ConfirmationModal from "../../components/ConfirmationModal";
+import Paginator from "../../components/Paginator";
 
 interface IProps {
     channel: ChannelDetails;
@@ -31,7 +32,10 @@ interface IProps {
     removePaymentType?: (paymentTypeDelete: string) => void;
     downloadCsv?: () => void;
     pspList: [];
+    pageInfo?: any;
     handlePspDetails?: (code: string) => void;
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    handlePageChange?: Function;
 }
 
 export default class ChannelView extends React.Component<IProps> {
@@ -365,7 +369,7 @@ export default class ChannelView extends React.Component<IProps> {
         );
     }
 
-    renderPspList(pspList: [], paymentTypeLegend: any) {
+    renderPspList(pspList: [], pageInfo: any, paymentTypeLegend: any) {
         return(
             <div className="row mt-3">
             <div className="col-md-12">
@@ -389,6 +393,7 @@ export default class ChannelView extends React.Component<IProps> {
                                 className="mr-1"/>PSP non presenti</Alert>
                         )}
                         {Object.keys(pspList).length > 0 &&
+                            <>
                             <Table hover responsive size="sm">
                                 <thead>
                                 <tr>
@@ -403,6 +408,8 @@ export default class ChannelView extends React.Component<IProps> {
                                 {pspList}
                                 </tbody>
                             </Table>
+                            <Paginator pageInfo={pageInfo} onPageChanged={this.props.handlePageChange!}/>
+                            </>
                         }
                     </Card.Body>
                     <Card.Footer>
@@ -877,7 +884,7 @@ export default class ChannelView extends React.Component<IProps> {
                     </div>
                 </div>
                 {this.props.readOnly && 
-                    this.renderPspList(pspList, paymentTypeLegend)
+                    this.renderPspList(pspList, this.props.pageInfo, paymentTypeLegend)
                 }
                 <ConfirmationModal show={this.props.showModal} handleClose={this.hideModal}>
                     <p>Sei sicuro di voler annullare le modifiche?</p>
