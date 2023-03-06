@@ -57,7 +57,7 @@ export const getPaymentTypeList = (context: any, code: string) => new Promise((r
             });
     });
 
-export const getPspList = (context: any, code: string) => new Promise((resolve, reject) => {
+export const getPspList = (context: any, code: string, page: number) => new Promise((resolve, reject) => {
         context.instance.acquireTokenSilent({
             ...loginRequest,
             account: context.accounts[0]
@@ -66,6 +66,7 @@ export const getPspList = (context: any, code: string) => new Promise((resolve, 
                 apiClient.getChannelPaymentServiceProviders({
                     Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
+                    page,
                     channelcode: code
                 })
                     .then((response: any) => {
