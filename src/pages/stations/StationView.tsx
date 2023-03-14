@@ -294,7 +294,7 @@ export default class StationView extends React.Component<IProps> {
                                                             </Form.Group>
 
                                                             <Form.Group controlId="ip" className="col-md-5">
-                                                                <Form.Label>IP</Form.Label>
+                                                                <Form.Label>Indirizzo</Form.Label>
                                                                 <Form.Control name="ip"
 
                                                                               value={this.props.station.ip}
