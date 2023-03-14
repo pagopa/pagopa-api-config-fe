@@ -544,7 +544,7 @@ export default class ChannelView extends React.Component<IProps> {
                                             </div>
 
                                             <div className={"divider"}></div>
-                                            <h4>Servizio</h4>
+                                            <h4>Endpoint</h4>
                                             <div className="row">
                                                 <Form.Group controlId="protocol" className="col-md-2">
                                                     <Form.Label>Protocollo <span
@@ -597,7 +597,7 @@ export default class ChannelView extends React.Component<IProps> {
                                             <h4>Target</h4>
                                             <p>Configurazione del psp aderente alla nuova connettività.</p>
                                             <p className="alert alert-info">
-                                                <FaInfoCircle /> Impostare la password a <span className="badge badge-light">PLACEHOLDER</span>, disabilitare il proxy se ambiente <span className="font-italic">OnCloud</span> e, viceversa, impostarlo per ambiente <span className="font-italic">OnPrem</span>.
+                                                <FaInfoCircle /> Impostare la password a <span className="badge badge-light">PLACEHOLDER</span> e disabilitare il proxy.
                                             </p>
                                             <div className="card">
                                                 <div className="card-header">Configurazione per endpoint <b>Servizio</b></div>
