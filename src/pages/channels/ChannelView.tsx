@@ -550,7 +550,7 @@ export default class ChannelView extends React.Component<IProps> {
                                                     <Form.Label>Protocollo <span
                                                         className="text-danger">*</span></Form.Label>
                                                     <Form.Control as="select" name="protocol"
-                                                                  defaultValue={String(this.props.channel.protocol)}
+                                                                  value={String(this.props.channel.protocol)}
                                                                   onChange={(e) => this.handleChange(e)}
                                                                   readOnly={this.props.readOnly}>
                                                         <option value="HTTPS">HTTPS</option>
@@ -622,7 +622,7 @@ export default class ChannelView extends React.Component<IProps> {
                                                 <Form.Group controlId="redirect_protocol" className="col-md-2">
                                                     <Form.Label>Protocollo Redirect</Form.Label>
                                                     <Form.Control as="select" name="redirect_protocol"
-                                                                  defaultValue={String(this.props.channel.redirect_protocol)}
+                                                                  value={String(this.props.channel.redirect_protocol)}
                                                                   onChange={(e) => this.handleChange(e)}
                                                                   readOnly={this.props.readOnly}>
                                                         <option value="HTTPS">HTTPS</option>
