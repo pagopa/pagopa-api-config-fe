@@ -544,7 +544,7 @@ export default class ChannelView extends React.Component<IProps> {
                                             </div>
 
                                             <div className={"divider"}></div>
-                                            <h4>Servizio</h4>
+                                            <h4>Endpoint</h4>
                                             <div className="row">
                                                 <Form.Group controlId="protocol" className="col-md-2">
                                                     <Form.Label>Protocollo <span
@@ -558,8 +558,8 @@ export default class ChannelView extends React.Component<IProps> {
                                                     </Form.Control>
                                                 </Form.Group>
 
-                                                <Form.Group controlId="ip" className="col-md-6">
-                                                    <Form.Label>IP</Form.Label>
+                                                <Form.Group controlId="ip" className="col-md-5">
+                                                    <Form.Label>Indirizzo</Form.Label>
                                                     <Form.Control name="ip" placeholder=""
                                                                   value={this.props.channel.ip}
                                                                   onChange={(e) => this.handleChange(e)}
@@ -576,10 +576,18 @@ export default class ChannelView extends React.Component<IProps> {
                                                                   readOnly={this.props.readOnly}/>
                                                 </Form.Group>
 
-                                                <Form.Group controlId="service" className="col-md-6">
+                                                <Form.Group controlId="service" className="col-md-5">
                                                     <Form.Label>Servizio</Form.Label>
                                                     <Form.Control name="service" placeholder=""
                                                                   value={this.props.channel.service}
+                                                                  onChange={(e) => this.handleChange(e)}
+                                                                  readOnly={this.props.readOnly}/>
+                                                </Form.Group>
+
+                                                <Form.Group controlId="nmp_service" className="col-md-5">
+                                                    <Form.Label>Servizio NMP</Form.Label>
+                                                    <Form.Control name="nmp_service" placeholder=""
+                                                                  value={this.props.channel.nmp_service}
                                                                   onChange={(e) => this.handleChange(e)}
                                                                   readOnly={this.props.readOnly}/>
                                                 </Form.Group>
@@ -589,31 +597,66 @@ export default class ChannelView extends React.Component<IProps> {
                                             <h4>Target</h4>
                                             <p>Configurazione del psp aderente alla nuova connettività.</p>
                                             <p className="alert alert-info">
-                                                <FaInfoCircle /> Impostare la password a <span className="badge badge-light">PLACEHOLDER</span>, disabilitare il proxy se ambiente <span className="font-italic">OnCloud</span> e, viceversa, impostarlo per ambiente <span className="font-italic">OnPrem</span>.
+                                                <FaInfoCircle /> Impostare la password a <span className="badge badge-light">PLACEHOLDER</span> e disabilitare il proxy.
                                             </p>
-                                            <div className="row">
-                                                <Form.Group controlId="target_host" className="col-md-5">
-                                                    <Form.Label>Indirizzo</Form.Label>
-                                                    <Form.Control name="target_host"
-                                                                  value={this.props.channel.target_host}
-                                                                  onChange={(e) => this.handleChange(e)}
-                                                                  readOnly={this.props.readOnly}/>
-                                                </Form.Group>
+                                            <div className="card">
+                                                <div className="card-header">Configurazione per endpoint <b>Servizio</b></div>
+                                                <div className="card-body">
+                                                    <div className="row">
+                                                        <Form.Group controlId="target_host" className="col-md-5">
+                                                            <Form.Label>Indirizzo</Form.Label>
+                                                            <Form.Control name="target_host"
+                                                                          value={this.props.channel.target_host}
+                                                                          onChange={(e) => this.handleChange(e)}
+                                                                          readOnly={this.props.readOnly}/>
+                                                        </Form.Group>
 
-                                                <Form.Group controlId="target_port" className="col-md-2">
-                                                    <Form.Label>Porta</Form.Label>
-                                                    <Form.Control name="target_port" type="number" min={1} max={65535}
-                                                                  value={this.props.channel.target_port}
-                                                                  onChange={(e) => this.handleChange(e)}
-                                                                  readOnly={this.props.readOnly}/>
-                                                </Form.Group>
-                                                <Form.Group controlId="target_path" className="col-md-5">
-                                                    <Form.Label>Servizio</Form.Label>
-                                                    <Form.Control name="target_path"
-                                                                  value={this.props.channel.target_path}
-                                                                  onChange={(e) => this.handleChange(e)}
-                                                                  readOnly={this.props.readOnly}/>
-                                                </Form.Group>
+                                                        <Form.Group controlId="target_port" className="col-md-2">
+                                                            <Form.Label>Porta</Form.Label>
+                                                            <Form.Control name="target_port" type="number" min={1} max={65535}
+                                                                          value={this.props.channel.target_port}
+                                                                          onChange={(e) => this.handleChange(e)}
+                                                                          readOnly={this.props.readOnly}/>
+                                                        </Form.Group>
+                                                        <Form.Group controlId="target_path" className="col-md-5">
+                                                            <Form.Label>Path</Form.Label>
+                                                            <Form.Control name="target_path"
+                                                                          value={this.props.channel.target_path}
+                                                                          onChange={(e) => this.handleChange(e)}
+                                                                          readOnly={this.props.readOnly}/>
+                                                        </Form.Group>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="card mt-2">
+                                                <div className="card-header">Configurazione per endpoint <b>Servizio NMP</b></div>
+                                                <div className="card-body">
+                                                    <div className="row">
+                                                        <Form.Group controlId="target_host_nmp" className="col-md-5">
+                                                            <Form.Label>Indirizzo</Form.Label>
+                                                            <Form.Control name="target_host_nmp"
+                                                                          value={this.props.channel.target_host_nmp}
+                                                                          onChange={(e) => this.handleChange(e)}
+                                                                          readOnly={this.props.readOnly}/>
+                                                        </Form.Group>
+
+                                                        <Form.Group controlId="target_port_nmp" className="col-md-2">
+                                                            <Form.Label>Porta</Form.Label>
+                                                            <Form.Control name="target_port_nmp" type="number" min={1} max={65535}
+                                                                          value={this.props.channel.target_port_nmp}
+                                                                          onChange={(e) => this.handleChange(e)}
+                                                                          readOnly={this.props.readOnly}/>
+                                                        </Form.Group>
+                                                        <Form.Group controlId="target_path_nmp" className="col-md-5">
+                                                            <Form.Label>Path</Form.Label>
+                                                            <Form.Control name="target_path_nmp"
+                                                                          value={this.props.channel.target_path_nmp}
+                                                                          onChange={(e) => this.handleChange(e)}
+                                                                          readOnly={this.props.readOnly}/>
+                                                        </Form.Group>
+                                                    </div>
+                                                </div>
                                             </div>
                                                         
                                             <div className={"divider"}></div>

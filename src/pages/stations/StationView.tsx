@@ -279,7 +279,7 @@ export default class StationView extends React.Component<IProps> {
                                                         </div>
 
                                                         <div className={"divider"}></div>
-                                                        <h4>Servizio</h4>
+                                                        <h4>Endpoint</h4>
                                                         <div className="row">
                                                             <Form.Group controlId="protocol" className="col-md-2">
                                                                 <Form.Label>Protocollo <span
@@ -294,7 +294,7 @@ export default class StationView extends React.Component<IProps> {
                                                             </Form.Group>
 
                                                             <Form.Group controlId="ip" className="col-md-5">
-                                                                <Form.Label>IP</Form.Label>
+                                                                <Form.Label>Indirizzo</Form.Label>
                                                                 <Form.Control name="ip"
 
                                                                               value={this.props.station.ip}
@@ -333,32 +333,68 @@ export default class StationView extends React.Component<IProps> {
                                                         <h4>Target</h4>
                                                         <p>Configurazione dell&apos;ente creditore aderente alla nuova connettività.</p>
                                                         <p className="alert alert-info">
-                                                            <FaInfoCircle /> Impostare la password a <span className="badge badge-light">PLACEHOLDER</span>, disabilitare il proxy se ambiente <span className="font-italic">OnCloud</span> e, viceversa, impostarlo per ambiente <span className="font-italic">OnPrem</span>.
+                                                            <FaInfoCircle /> Impostare la password a <span className="badge badge-light">PLACEHOLDER</span> e disabilitare il proxy.
                                                         </p>
-                                                        <div className="row">
-                                                            <Form.Group controlId="target_host" className="col-md-5">
-                                                                <Form.Label>Indirizzo</Form.Label>
-                                                                <Form.Control name="target_host"
-                                                                              value={this.props.station.target_host}
-                                                                              onChange={(e) => this.handleChange(e)}
-                                                                              readOnly={this.props.readOnly}/>
-                                                            </Form.Group>
+                                                        <div className="card">
+                                                            <div className="card-header">Configurazione per endpoint <b>Servizio</b></div>
+                                                            <div className="card-body">
+                                                                <div className="row">
+                                                                    <Form.Group controlId="target_host" className="col-md-5">
+                                                                        <Form.Label>Indirizzo</Form.Label>
+                                                                        <Form.Control name="target_host"
+                                                                                      value={this.props.station.target_host}
+                                                                                      onChange={(e) => this.handleChange(e)}
+                                                                                      readOnly={this.props.readOnly}/>
+                                                                    </Form.Group>
 
-                                                            <Form.Group controlId="target_port" className="col-md-2">
-                                                                <Form.Label>Porta</Form.Label>
-                                                                <Form.Control name="target_port" type="number" min={1} max={65535}
-                                                                              value={this.props.station.target_port}
-                                                                              onChange={(e) => this.handleChange(e)}
-                                                                              readOnly={this.props.readOnly}/>
-                                                            </Form.Group>
-                                                            <Form.Group controlId="target_path" className="col-md-5">
-                                                                <Form.Label>Servizio</Form.Label>
-                                                                <Form.Control name="target_path"
-                                                                              value={this.props.station.target_path}
-                                                                              onChange={(e) => this.handleChange(e)}
-                                                                              readOnly={this.props.readOnly}/>
-                                                            </Form.Group>
+                                                                    <Form.Group controlId="target_port" className="col-md-2">
+                                                                        <Form.Label>Porta</Form.Label>
+                                                                        <Form.Control name="target_port" type="number" min={1} max={65535}
+                                                                                      value={this.props.station.target_port}
+                                                                                      onChange={(e) => this.handleChange(e)}
+                                                                                      readOnly={this.props.readOnly}/>
+                                                                    </Form.Group>
+                                                                    <Form.Group controlId="target_path" className="col-md-5">
+                                                                        <Form.Label>Path</Form.Label>
+                                                                        <Form.Control name="target_path"
+                                                                                      value={this.props.station.target_path}
+                                                                                      onChange={(e) => this.handleChange(e)}
+                                                                                      readOnly={this.props.readOnly}/>
+                                                                    </Form.Group>
+                                                                </div>
+                                                            </div>
                                                         </div>
+
+                                                        <div className="card mt-2">
+                                                            <div className="card-header">Configurazione per endpoint <b>Servizio POF</b></div>
+                                                            <div className="card-body">
+                                                                <div className="row">
+                                                                    <Form.Group controlId="target_host_pof" className="col-md-5">
+                                                                        <Form.Label>Indirizzo</Form.Label>
+                                                                        <Form.Control name="target_host_pof"
+                                                                                      value={this.props.station.target_host_pof}
+                                                                                      onChange={(e) => this.handleChange(e)}
+                                                                                      readOnly={this.props.readOnly}/>
+                                                                    </Form.Group>
+
+                                                                    <Form.Group controlId="target_port_pof" className="col-md-2">
+                                                                        <Form.Label>Porta</Form.Label>
+                                                                        <Form.Control name="target_port_pof" type="number" min={1} max={65535}
+                                                                                      value={this.props.station.target_port_pof}
+                                                                                      onChange={(e) => this.handleChange(e)}
+                                                                                      readOnly={this.props.readOnly}/>
+                                                                    </Form.Group>
+                                                                    <Form.Group controlId="target_path_pof" className="col-md-5">
+                                                                        <Form.Label>Path</Form.Label>
+                                                                        <Form.Control name="target_path_pof"
+                                                                                      value={this.props.station.target_path_pof}
+                                                                                      onChange={(e) => this.handleChange(e)}
+                                                                                      readOnly={this.props.readOnly}/>
+                                                                    </Form.Group>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
 
                                                         <div className={"divider"}></div>
                                                         <h4>Modello 4</h4>
