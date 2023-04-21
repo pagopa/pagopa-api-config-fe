@@ -19,7 +19,7 @@ interface IProps {
 }
 
 interface IState {
-    stations: any;
+    creditor_institution_list: any;
     page_info: {
         page: 0;
         limit: 50;
@@ -27,7 +27,13 @@ interface IState {
         total_pages: 1;
     };
     filters: {
-        code: string;
+        creditor_institution_code?: string;
+        station_code?: string;
+        pa_broker_code?: string;
+        aux_digit?: number;
+        application_code?: number;
+        segregation_code?: number;
+        mod_4?: boolean;
     };
     isLoading: boolean;
     showDeleteModal: boolean;
@@ -46,7 +52,7 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
         super(props);
 
         this.state = {
-            stations: [],
+            creditor_institution_list: [],
             page_info: {
                 page: 0,
                 limit: 50,
@@ -54,7 +60,6 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                 total_pages: 1
             },
             filters: {
-                code: "",
             },
             isLoading: false,
             showDeleteModal: false,
@@ -67,13 +72,17 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
         };
 
         this.filter = {
-            name: {
-                visible: false,
-                placeholder: "Descrizione"
-            },
-            code: {
+            creditor_institution_code: {
                 visible: true,
-                placeholder: "Codice"
+                placeholder: "Pa"
+            },
+            broker_code: {
+                visible: true,
+                placeholder: "Intermediario"
+            },
+            station_code: {
+                visible: true,
+                placeholder: "Stazione"
             }
         };
 
@@ -91,16 +100,21 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
             account: this.context.accounts[0]
         })
             .then((response: any) => {
-                apiClient.getStations({
+                apiClient.getCreditorInstitutionsView({
                     Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                     limit: 10,
                     page,
-                    code: this.state.filters.code,
-                    ordering: this.state.order.ing
+                    creditorInstitutionCode: this.state.filters.creditor_institution_code,
+                    paBrokerCode: this.state.filters.pa_broker_code,
+                    stationCode: this.state.filters.station_code,
+                    auxDigit: this.state.filters.aux_digit,
+                    applicationCode: this.state.filters.application_code,
+                    segregationCode: this.state.filters.segregation_code,
+                    mod4: this.state.filters.mod_4
                 }).then((response: any) => {
                     this.setState({
-                        stations: response.right.value.stations,
+                        creditor_institution_list: response.right.value.creditor_institutions,
                         page_info: response.right.value.page_info
                     });
                 })
@@ -111,7 +125,6 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                         this.setState({isLoading: false});
                     });
             });
-
     }
 
     componentDidMount(): void {
@@ -182,12 +195,12 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
     }
 
     removeStation() {
-        const filteredStations = this.state.stations.filter((item: any) => item.station_code !== this.state.stationToDelete.station_code);
-        this.setState({stations: filteredStations});
+    //     const filteredStations = this.state.stations.filter((item: any) => item.station_code !== this.state.stationToDelete.station_code);
+    //     this.setState({stations: filteredStations});
 
-        if (filteredStations.length === 0 && this.state.page_info.total_pages > 1) {
-            this.getPage(0);
-        }
+    //     if (filteredStations.length === 0 && this.state.page_info.total_pages > 1) {
+    //         this.getPage(0);
+    //     }
     }
 
     hideDeleteModal = (status: string) => {
@@ -241,59 +254,62 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
         const isLoading = this.state.isLoading;
         const pageInfo = this.state.page_info;
         const showDeleteModal = this.state.showDeleteModal;
-        const stationList: any = [];
+        const creditorInstitutionList: any = [];
         const stationToDeleteCode = this.state.stationToDelete.station_code;
 
-        this.state.stations.map((station: any, index: number) => {
+        this.state.creditor_institution_list.map((creditorInstitutionView: any, index: number) => {
             const code = (
                 <tr key={index}>
-                    <td>{station.broker_description}</td>
-                    <td>{station.station_code}</td>
+                    <td>{creditorInstitutionView.creditor_institution_code}</td>
+                    <td>{creditorInstitutionView.broker_code}</td>
+                    <td>{creditorInstitutionView.station_code}</td>
+                    <td>{creditorInstitutionView.auxDigit}</td>
+                    <td>{creditorInstitutionView.application_code}</td>
+                    <td>{creditorInstitutionView.segregation_code}</td>
                     <td className="text-center">
-                        {station.enabled && <FaCheck className="text-success"/>}
-                        {!station.enabled && <FaTimes className="text-danger"/>}
+                        {creditorInstitutionView.mod4 && <FaCheck className="text-success"/>}
+                        {!creditorInstitutionView.mod4 && <FaTimes className="text-danger"/>}
                     </td>
-                    <td className="text-center">{station.version}</td>
                     <td className="text-right">
-                        {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
+                      {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
                         <OverlayTrigger placement="top"
                                         overlay={<Tooltip id={`tooltip-details-${index}`}>Visualizza</Tooltip>}>
                             <FaEye role="button" className="mr-3"
-                                   onClick={() => this.handleDetails(station.station_code)}/>
+                                   onClick={() => this.handleDetails(creditorInstitutionView.station_code)}/>
                         </OverlayTrigger>
                         {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
                         <OverlayTrigger placement="top"
                                         overlay={<Tooltip id={`tooltip-edit-${index}`}>Modifica</Tooltip>}>
                             {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
                             <FaEdit role="button" className="mr-3"
-                                    onClick={() => this.handleEdit(station.station_code)}/>
+                                    onClick={() => this.handleEdit(creditorInstitutionView.station_code)}/>
                         </OverlayTrigger>
                         {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
                         <OverlayTrigger placement="top"
                                         overlay={<Tooltip id={`tooltip-clone-${index}`}>Clona</Tooltip>}>
                             {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
                             <FaClone role="button" className="mr-3"
-                                     onClick={() => this.handleClone(station.station_code)}/>
+                                     onClick={() => this.handleClone(creditorInstitutionView.station_code)}/>
                         </OverlayTrigger>
                         {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
                         <OverlayTrigger placement="top"
                                         overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
                             {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
-                            <FaTrash role="button" className="mr-3" onClick={() => this.handleDelete(station, index)}/>
+                            <FaTrash role="button" className="mr-3" onClick={() => this.handleDelete(creditorInstitutionView, index)}/>
                         </OverlayTrigger>
                     </td>
                 </tr>
             );
-            stationList.push(code);
+            creditorInstitutionList.push(code);
         });
 
         return (
             <div className="container-fluid creditor-institutions">
                 <div className="row">
                     <div className="col-md-9 mb-3">
-                        <h2>Hello There</h2>
+                        <h2>Vista enti creditori</h2>
                     </div>
-                    {/* <div className="col-md-12">
+                    {<div className="col-md-12">
                         <div className="row">
                             <div className="col-md-9">
                                 <Filters configuration={this.filter} onFilter={this.handleFilterCallback}/>
@@ -316,20 +332,18 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                                     <Table hover responsive size="sm">
                                         <thead>
                                         <tr>
-                                            <th className="fixed-td-width">Descrizione Intermediario EC</th>
-                                            <th className="fixed-td-width">
-                                                <Ordering currentOrderBy={this.state.order.by}
-                                                          currentOrdering={this.state.order.ing} orderBy={"CODE"}
-                                                          ordering={"DESC"} handleOrder={this.handleOrder}/>
-                                                Codice
-                                            </th>
-                                            <th className="text-center">Abilitato</th>
-                                            <th className="text-center">Versione</th>
+                                            <th className="fixed-td-width">Pa</th>
+                                            <th className="fixed-td-width">Intermediario</th>
+                                            <th className="fixed-td-width">Stazione</th>
+                                            <th className="text-center">AUX digit</th>
+                                            <th className="text-center">Progressivo</th>
+                                            <th className="text-right">Codice segregazione</th>
+                                            <th className="text-center">Quarto modello</th>
                                             <th/>
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        {stationList}
+                                        {creditorInstitutionList}
                                         </tbody>
                                     </Table>
 
@@ -337,7 +351,7 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                                 </>
                             )
                         }
-                    </div> */}
+                    </div>}
                 </div>
                 <ConfirmationModal show={showDeleteModal} handleClose={this.hideDeleteModal}>
                     <p>Sei sicuro di voler eliminare la seguente stazione?</p>
