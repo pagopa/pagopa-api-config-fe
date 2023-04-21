@@ -94,6 +94,11 @@ const SidebarItems = [
         route: "/massive/icas",
         domain: "batchoperation"
     },
+    {
+        name: "Vista EC",
+        route: "/view/creditor-institution",
+        domain: "views"
+    },
 ];
 
 export default SidebarItems;

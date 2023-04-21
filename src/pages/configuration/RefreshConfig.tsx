@@ -132,6 +132,11 @@ export default class RefreshConfigPage extends React.Component<IProps, IState> {
                 domain: "FTP SERVER",
                 description: "configurazione FTP SERVER",
                 param: "FTP_SERVER" 
+            },
+            {
+                domain: "VISTE",
+                description: "configurazione viste",
+                param: "VISTE" 
             }]
         });
     }
