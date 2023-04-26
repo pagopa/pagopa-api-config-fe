@@ -10,6 +10,8 @@ import ConfirmationModal from "../../components/ConfirmationModal";
 import {loginRequest} from "../../authConfig";
 import Filters from "../../components/Filters";
 import Ordering from "../../components/Ordering";
+import debounce from "lodash.debounce";
+import AsyncSelect from 'react-select/async';
 import {getConfig} from "../../util/config";
 
 interface IProps {
@@ -28,7 +30,7 @@ interface IState {
     };
     filters: {
         creditor_institution_code?: string;
-        station_code?: string;
+        station_code?: any;
         pa_broker_code?: string;
         aux_digit?: number;
         application_code?: number;
@@ -40,13 +42,15 @@ interface IState {
     stationToDelete: any;
     stationIndex: number;
     order: any;
+    stationList: [];
+    creditorInstitutionList: [];
 }
 
 export default class CreditorInstitutionView extends React.Component<IProps, IState> {
     static contextType = MsalContext;
     private filter: { [item: string]: any };
 
-    service = "/stations";
+    service = "/views";
 
     constructor(props: IProps) {
         super(props);
@@ -68,7 +72,9 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
             order: {
                 by: "CODE",
                 ing: "DESC"
-            }
+            },
+            stationList: [],
+            creditorInstitutionList: [],
         };
 
         this.filter = {
@@ -90,6 +96,8 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
         this.handlePageChange = this.handlePageChange.bind(this);
         this.create = this.create.bind(this);
         this.download = this.download.bind(this);
+        this.debouncedStationOptions = this.debouncedStationOptions.bind(this);
+        this.debouncedCreditorInstitutionsOptions = this.debouncedCreditorInstitutionsOptions.bind(this);
     }
 
     getPage(page: number) {
@@ -250,6 +258,100 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
         this.getPage(0);
     }
 
+    handleStationChange(event: any){
+        this.state.filters.station_code = event.value;
+    }
+
+    handleCreditorInstitutionChange(event: any){
+        this.state.filters.station_code = event.value;
+    }
+
+    debouncedStationOptions = debounce((inputValue, callback) => {
+        this.promiseStationOptions(inputValue, callback);
+    }, 500);
+
+    promiseStationOptions(inputValue: string, callback: any) {
+        const limit = inputValue.length === 0 ? 10 : 99999;
+        const code = inputValue.length === 0 ? "" : inputValue;
+
+        this.context.instance.acquireTokenSilent({
+            ...loginRequest,
+            account: this.context.accounts[0]
+        })
+            .then((response: any) => {
+                apiClient.getStations({
+                    Authorization: `Bearer ${response.idToken}`,
+                    ApiKey: "",
+                    page: 0,
+                    limit,
+                    code
+                }).then((resp: any) => {
+                    if (resp.right.status === 200) {
+                        const alreadyAssignedStationIds = this.state.stationList.map((station: any) => station.station_code);
+                        const items: Array<any> = [];
+                        resp.right.value.stations.filter((retrievedStation: any) => alreadyAssignedStationIds.indexOf(retrievedStation.station_code) === -1)
+                            .forEach((retrievedStation: any) => {                            
+                                // eslint-disable-next-line functional/immutable-data
+                                items.push({
+                                    value: {code: retrievedStation.station_code, version: retrievedStation.version},
+                                    label: retrievedStation.station_code,
+                                });    
+                            });
+                        callback(items);
+                    }
+                    else {
+                        callback([]);
+                    }
+                }).catch(() => {
+                    toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                    callback([]);
+                });
+            });
+    }
+
+    debouncedCreditorInstitutionsOptions = debounce((inputValue, callback) => {
+        this.promiseCreditorInstitutionsOptions(inputValue, callback);
+    }, 500);
+
+    promiseCreditorInstitutionsOptions(inputValue: string, callback: any) {
+        const limit = inputValue.length === 0 ? 10 : 99999;
+        const code = inputValue.length === 0 ? "" : inputValue;
+
+        this.context.instance.acquireTokenSilent({
+            ...loginRequest,
+            account: this.context.accounts[0]
+        })
+            .then((response: any) => {
+                apiClient.getCreditorInstitutions({
+                    Authorization: `Bearer ${response.idToken}`,
+                    ApiKey: "",
+                    page: 0,
+                    limit,
+                    code
+                }).then((resp: any) => {
+                    if (resp.right.status === 200) {
+                        const alreadyAssignedECIds = this.state.creditorInstitutionList.map((ec: any) => ec.creditor_institution_code);
+                        const items: Array<any> = [];
+                        resp.right.value.creditor_institutions.filter((retrievedEC: any) => alreadyAssignedECIds.indexOf(retrievedEC.creditor_institution_code) === -1)
+                            .forEach((retrievedEC: any) => {                            
+                                // eslint-disable-next-line functional/immutable-data
+                                items.push({
+                                    value: {code: retrievedEC.creditor_institution_code, version: retrievedEC.version},
+                                    label: retrievedEC.creditor_institution_code,
+                                });    
+                            });
+                        callback(items);
+                    }
+                    else {
+                        callback([]);
+                    }
+                }).catch(() => {
+                    toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                    callback([]);
+                });
+            });
+    }
+
     render(): React.ReactNode {
         const isLoading = this.state.isLoading;
         const pageInfo = this.state.page_info;
@@ -310,20 +412,25 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                         <h2>Vista enti creditori</h2>
                     </div>
                     {<div className="col-md-12">
-                        <div className="row">
-                            <div className="col-md-9">
-                                <Filters configuration={this.filter} onFilter={this.handleFilterCallback}/>
-                            </div>
-                            <div className="col-md-3 text-right">
-                                <OverlayTrigger placement="bottom"
-                                                overlay={<Tooltip id={`tooltip-download`}>Esporta tabella</Tooltip>}>
-                                    <Button className="mr-1" onClick={this.download}>Export <FaFileDownload/></Button>
-                                </OverlayTrigger>
-                                <OverlayTrigger placement="bottom"
-                                                overlay={<Tooltip id={`tooltip-new`}>Crea nuova stazione</Tooltip>}>
-                                    <Button onClick={this.create}>Nuovo <FaPlus/></Button>
-                                </OverlayTrigger>
-                            </div>
+                        <div className="col-md-12">
+                            <AsyncSelect
+                                    cacheOptions defaultOptions
+                                    loadOptions={this.debouncedStationOptions}
+                                    placeholder="Cerca codice stazione"
+									menuPortalTarget={document.body}
+									styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+									name="station_code"
+                                    onChange={(e) => this.handleStationChange(e)}
+                            />
+                            <AsyncSelect
+                                    cacheOptions defaultOptions
+                                    loadOptions={this.debouncedCreditorInstitutionsOptions}
+                                    placeholder="Cerca codice EC"
+									menuPortalTarget={document.body}
+									styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+									name="station_code"
+                                    onChange={(e) => this.handleCreditorInstitutionChange(e)}
+                            />
                         </div>
                         {isLoading && (<FaSpinner className="spinner"/>)}
                         {
