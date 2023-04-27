@@ -104,10 +104,9 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
 
         this.handleOrder = this.handleOrder.bind(this);
         this.handlePageChange = this.handlePageChange.bind(this);
-        this.create = this.create.bind(this);
-        this.download = this.download.bind(this);
         this.debouncedStationOptions = this.debouncedStationOptions.bind(this);
         this.debouncedCreditorInstitutionsOptions = this.debouncedCreditorInstitutionsOptions.bind(this);
+        this.debouncedBrokerOptions = this.debouncedBrokerOptions.bind(this);
     }
 
     getPage(page: number) {
@@ -149,105 +148,10 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
         this.getPage(0);
     }
 
-    create() {
-        this.props.history.push(this.service + "/create");
-    }
-
-    download() {
-        const baseUrl = getConfig("APICONFIG_HOST") as string;
-        const basePath = getConfig("APICONFIG_BASEPATH") as string;
-
-        this.context.instance.acquireTokenSilent({
-            ...loginRequest,
-            account: this.context.accounts[0]
-        }).then((response: any) => {
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${response.idToken}`
-                },
-                responseType: 'blob'
-            } as AxiosRequestConfig;
-            const anchor = document.createElement("a");
-            document.body.appendChild(anchor);
-            const url = `${String(baseUrl)}${String(basePath)}${this.service}/csv`;
-            axios.get(url, config)
-                    .then((res: any) => {
-                        if (res.data.size > 1) {
-                            const objectUrl = window.URL.createObjectURL(res.data);
-                            // eslint-disable-next-line functional/immutable-data
-                            anchor.href = objectUrl;
-                            // eslint-disable-next-line functional/immutable-data
-                            anchor.download = `${this.service.substring(1)}.csv`;
-                            anchor.click();
-                            window.URL.revokeObjectURL(objectUrl);
-                        } else {
-                            toast.warn("Problemi nella generazione del CSV richiesto.", {theme: "colored"});
-                        }
-                    })
-                    .catch(() => {
-                        toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
-                    });
-        });
-    }
 
     handlePageChange(requestedPage: number) {
         this.getPage(requestedPage);
     }
-
-    handleDetails(code: string) {
-        this.props.history.push(this.service + "/" + code);
-    }
-
-    handleClone(code: string) {
-        this.props.history.push(this.service + "/create?clone=" + code);
-    }
-
-    handleEdit(code: string) {
-        this.props.history.push(this.service + "/" + code + "?edit");
-    }
-
-    handleDelete(station: string, index: number) {
-        this.setState({showDeleteModal: true});
-        this.setState({stationToDelete: station});
-        this.setState({stationIndex: index});
-    }
-
-    removeStation() {
-    //     const filteredStations = this.state.stations.filter((item: any) => item.station_code !== this.state.stationToDelete.station_code);
-    //     this.setState({stations: filteredStations});
-
-    //     if (filteredStations.length === 0 && this.state.page_info.total_pages > 1) {
-    //         this.getPage(0);
-    //     }
-    }
-
-    hideDeleteModal = (status: string) => {
-        if (status === "ok") {
-            this.context.instance.acquireTokenSilent({
-                ...loginRequest,
-                account: this.context.accounts[0]
-            })
-                .then((response: any) => {
-                    apiClient.deleteStation({
-                        Authorization: `Bearer ${response.idToken}`,
-                        ApiKey: "",
-                        stationcode: this.state.stationToDelete.station_code
-                    })
-                        .then((res: any) => {
-                            if (res.right.status === 200) {
-                                toast.info("Rimozione avvenuta con successo");
-                                this.removeStation();
-                            } else {
-                                this.toastError(res.right.value.detail);
-                            }
-                        })
-                        .catch(() => {
-                            toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
-                        });
-                });
-        }
-        this.setState({showDeleteModal: false});
-    };
 
     toastError(message: string) {
         toast.error(() => <div className={"toast-width"}>{message}</div>, {theme: "colored"});
@@ -438,9 +342,7 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
     render(): React.ReactNode {
         const isLoading = this.state.isLoading;
         const pageInfo = this.state.page_info;
-        const showDeleteModal = this.state.showDeleteModal;
         const creditorInstitutionList: any = [];
-        const stationToDeleteCode = this.state.stationToDelete.station_code;
 
         this.state.creditor_institution_list.map((creditorInstitutionView: any, index: number) => {
             const code = (
@@ -455,34 +357,6 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                         {creditorInstitutionView.mod4 && <FaCheck className="text-success"/>}
                         {!creditorInstitutionView.mod4 && <FaTimes className="text-danger"/>}
                     </td>
-                    <td className="text-right">
-                      {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
-                        <OverlayTrigger placement="top"
-                                        overlay={<Tooltip id={`tooltip-details-${index}`}>Visualizza</Tooltip>}>
-                            <FaEye role="button" className="mr-3"
-                                   onClick={() => this.handleDetails(creditorInstitutionView.station_code)}/>
-                        </OverlayTrigger>
-                        {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
-                        <OverlayTrigger placement="top"
-                                        overlay={<Tooltip id={`tooltip-edit-${index}`}>Modifica</Tooltip>}>
-                            {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
-                            <FaEdit role="button" className="mr-3"
-                                    onClick={() => this.handleEdit(creditorInstitutionView.station_code)}/>
-                        </OverlayTrigger>
-                        {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
-                        <OverlayTrigger placement="top"
-                                        overlay={<Tooltip id={`tooltip-clone-${index}`}>Clona</Tooltip>}>
-                            {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
-                            <FaClone role="button" className="mr-3"
-                                     onClick={() => this.handleClone(creditorInstitutionView.station_code)}/>
-                        </OverlayTrigger>
-                        {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
-                        <OverlayTrigger placement="top"
-                                        overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
-                            {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
-                            <FaTrash role="button" className="mr-3" onClick={() => this.handleDelete(creditorInstitutionView, index)}/>
-                        </OverlayTrigger>
-                    </td>
                 </tr>
             );
             creditorInstitutionList.push(code);
@@ -496,6 +370,7 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                     </div>
                     {<div className="col-md-12">
                         <div className="col-md-12">
+                            Stazione:
                             <AsyncSelect
                                     cacheOptions defaultOptions
                                     loadOptions={this.debouncedStationOptions}
@@ -505,6 +380,7 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
 									name="station_code"
                                     onChange={(e) => this.handleStationChange(e)}
                             />
+                            EC:
                             <AsyncSelect
                                     cacheOptions defaultOptions
                                     loadOptions={this.debouncedCreditorInstitutionsOptions}
@@ -514,6 +390,7 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
 									name="creditor_institution_code"
                                     onChange={(e) => this.handleCreditorInstitutionChange(e)}
                             />
+                            Intermediario:
                             <AsyncSelect
                                     cacheOptions defaultOptions
                                     loadOptions={this.debouncedBrokerOptions}
@@ -565,13 +442,6 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                         }
                     </div>}
                 </div>
-                <ConfirmationModal show={showDeleteModal} handleClose={this.hideDeleteModal}>
-                    <p>Sei sicuro di voler eliminare la seguente stazione?</p>
-                    <ul>
-                        <li>{stationToDeleteCode}</li>
-                    </ul>
-                </ConfirmationModal>
-
             </div>
         );
     }
