@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, OverlayTrigger, Table, Tooltip} from "react-bootstrap";
+import {Button, Form, OverlayTrigger, Table, Tooltip} from "react-bootstrap";
 import {FaClone, FaCheck, FaEdit, FaEye, FaFileDownload, FaPlus, FaSpinner, FaTimes, FaTrash} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
@@ -13,6 +13,7 @@ import Ordering from "../../components/Ordering";
 import debounce from "lodash.debounce";
 import AsyncSelect from 'react-select/async';
 import {getConfig} from "../../util/config";
+import FiltersView from '../../components/FiltersView';
 
 interface IProps {
     history: {
@@ -29,13 +30,9 @@ interface IState {
         total_pages: 1;
     };
     filters: {
-        creditor_institution_code?: string;
-        station_code?: any;
-        pa_broker_code?: string;
         aux_digit?: number;
         application_code?: number;
         segregation_code?: number;
-        mod_4?: boolean;
     };
     isLoading: boolean;
     showDeleteModal: boolean;
@@ -43,7 +40,12 @@ interface IState {
     stationIndex: number;
     order: any;
     stationList: [];
+    stationFilter: string;
     creditorInstitutionList: [];
+    creditorInstitutionFilter: string;
+    brokerList: [];
+    brokerFilter: string;
+    mod4Filter?: boolean;
 }
 
 export default class CreditorInstitutionView extends React.Component<IProps, IState> {
@@ -63,8 +65,6 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                 items_found: 0,
                 total_pages: 1
             },
-            filters: {
-            },
             isLoading: false,
             showDeleteModal: false,
             stationToDelete: {},
@@ -73,22 +73,32 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                 by: "CODE",
                 ing: "DESC"
             },
+            filters: {
+                aux_digit: undefined,
+                application_code: undefined,
+                segregation_code: undefined,
+            },
             stationList: [],
+            stationFilter: "",
             creditorInstitutionList: [],
+            creditorInstitutionFilter: "",
+            brokerList: [],
+            brokerFilter: "",
+            mod4Filter: undefined,
         };
 
         this.filter = {
-            creditor_institution_code: {
+            aux_digit: {
                 visible: true,
-                placeholder: "Pa"
+                placeholder: "AUX digit"
             },
-            broker_code: {
+            application_code: {
                 visible: true,
-                placeholder: "Intermediario"
+                placeholder: "Progressivo"
             },
-            station_code: {
+            segregation_code: {
                 visible: true,
-                placeholder: "Stazione"
+                placeholder: "Segregazione"
             }
         };
 
@@ -113,13 +123,13 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                     ApiKey: "",
                     limit: 10,
                     page,
-                    creditorInstitutionCode: this.state.filters.creditor_institution_code,
-                    paBrokerCode: this.state.filters.pa_broker_code,
-                    stationCode: this.state.filters.station_code,
+                    creditorInstitutionCode: this.state.creditorInstitutionFilter,
+                    paBrokerCode: this.state.brokerFilter,
+                    stationCode: this.state.stationFilter,
                     auxDigit: this.state.filters.aux_digit,
                     applicationCode: this.state.filters.application_code,
                     segregationCode: this.state.filters.segregation_code,
-                    mod4: this.state.filters.mod_4
+                    mod4: this.state.mod4Filter
                 }).then((response: any) => {
                     this.setState({
                         creditor_institution_list: response.right.value.creditor_institutions,
@@ -259,11 +269,28 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
     }
 
     handleStationChange(event: any){
-        this.state.filters.station_code = event.value;
+        this.setState({stationFilter: event.value.code});
+        this.getPage(0);
     }
 
     handleCreditorInstitutionChange(event: any){
-        this.state.filters.station_code = event.value;
+        this.setState({creditorInstitutionFilter: event.value.code});
+        this.getPage(0);
+    }
+
+    handleBrokerChange(event: any){
+        this.setState({brokerFilter: event.value.code});
+        this.getPage(0);
+    }
+
+    handleMod4Change(event: any){
+        if(event.target.value === ""){
+            this.setState({mod4Filter: undefined});
+        }
+        else{
+            this.setState({mod4Filter: event.target.value === "true"})
+        }
+        this.getPage(0);
     }
 
     debouncedStationOptions = debounce((inputValue, callback) => {
@@ -297,6 +324,10 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                                     label: retrievedStation.station_code,
                                 });    
                             });
+                        items.push({
+                            value: "",
+                            label: "-"
+                        })
                         callback(items);
                     }
                     else {
@@ -340,6 +371,10 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                                     label: retrievedEC.creditor_institution_code,
                                 });    
                             });
+                        items.push({
+                            value: "",
+                            label: "-"
+                        })
                         callback(items);
                     }
                     else {
@@ -351,6 +386,54 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                 });
             });
     }
+
+    debouncedBrokerOptions = debounce((inputValue, callback) => {
+        this.promiseBrokerOptions(inputValue, callback);
+    }, 500);
+
+    promiseBrokerOptions(inputValue: string, callback: any) {
+        const limit = inputValue.length === 0 ? 10 : 99999;
+        const code = inputValue.length === 0 ? "" : inputValue;
+
+        this.context.instance.acquireTokenSilent({
+            ...loginRequest,
+            account: this.context.accounts[0]
+        })
+            .then((response: any) => {
+                apiClient.getBrokers({
+                    Authorization: `Bearer ${response.idToken}`,
+                    ApiKey: "",
+                    page: 0,
+                    limit,
+                    code
+                }).then((resp: any) => {
+                    if (resp.right.status === 200) {
+                        const alreadyAssignedBrokerIds = this.state.brokerList.map((broker: any) => broker.broker_code);
+                        const items: Array<any> = [];
+                        resp.right.value.brokers.filter((retrievedBroker: any) => alreadyAssignedBrokerIds.indexOf(retrievedBroker.broker_code) === -1)
+                            .forEach((retrievedBroker: any) => {                            
+                                // eslint-disable-next-line functional/immutable-data
+                                items.push({
+                                    value: {code: retrievedBroker.broker_code, version: retrievedBroker.version},
+                                    label: retrievedBroker.broker_code,
+                                });    
+                            });
+                        items.push({
+                            value: "",
+                            label: "-"
+                        })
+                        callback(items);
+                    }
+                    else {
+                        callback([]);
+                    }
+                }).catch(() => {
+                    toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                    callback([]);
+                });
+            });
+    }
+
 
     render(): React.ReactNode {
         const isLoading = this.state.isLoading;
@@ -428,10 +511,32 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                                     placeholder="Cerca codice EC"
 									menuPortalTarget={document.body}
 									styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-									name="station_code"
+									name="creditor_institution_code"
                                     onChange={(e) => this.handleCreditorInstitutionChange(e)}
                             />
+                            <AsyncSelect
+                                    cacheOptions defaultOptions
+                                    loadOptions={this.debouncedBrokerOptions}
+                                    placeholder="Cerca codice Intermediario EC"
+									menuPortalTarget={document.body}
+									styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+									name="broker_code"
+                                    onChange={(e) => this.handleBrokerChange(e)}
+                            />
                         </div>
+                        <div className="col-md-12">
+                            <FiltersView configuration={this.filter} onFilter={this.handleFilterCallback} />
+                        </div>
+                        <Form.Group controlId="mod4" className="col-md-2">
+                            <Form.Label>Mod4<span
+                                className="text-danger">*</span></Form.Label>
+                            <Form.Control as="select" name="mod4"
+                                          onChange={(e) => this.handleMod4Change(e)}>
+                                <option value="true">True</option>
+                                <option value="false">False</option>
+                                <option value="">-</option>
+                            </Form.Control>
+                        </Form.Group>
                         {isLoading && (<FaSpinner className="spinner"/>)}
                         {
                             !isLoading && (
