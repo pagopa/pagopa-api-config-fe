@@ -45,6 +45,7 @@ interface IState {
     creditorInstitutionFilter: string;
     brokerList: [];
     brokerFilter: string;
+    auxDigitFilter?: number;
     mod4Filter?: boolean;
 }
 
@@ -84,7 +85,9 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
             creditorInstitutionFilter: "",
             brokerList: [],
             brokerFilter: "",
+            auxDigitFilter: undefined,
             mod4Filter: undefined,
+
         };
 
         this.filter = {
@@ -125,7 +128,7 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                     creditorInstitutionCode: this.state.creditorInstitutionFilter,
                     paBrokerCode: this.state.brokerFilter,
                     stationCode: this.state.stationFilter,
-                    auxDigit: this.state.filters.aux_digit,
+                    auxDigit: this.state.auxDigitFilter,
                     applicationCode: this.state.filters.application_code,
                     segregationCode: this.state.filters.segregation_code,
                     mod4: this.state.mod4Filter
@@ -187,13 +190,18 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
         this.getPage(0);
     }
 
-    handleMod4Change(event: any){
-        if(event.target.value === ""){
-            this.setState({mod4Filter: undefined});
+    handleAuxDigitChange(event: any){
+        if(event.target.value === "1" || event.target.value === "2"){
+            this.setState({auxDigitFilter: event.target.value})
         }
         else{
-            this.setState({mod4Filter: event.target.value === "true"})
+            this.setState({auxDigitFilter: undefined})
         }
+        this.getPage(0);
+    }
+
+    handleMod4Change(event: any){
+        this.setState({mod4Filter: event.target.value === "true"})
         this.getPage(0);
     }
 
@@ -220,6 +228,10 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                     if (resp.right.status === 200) {
                         const alreadyAssignedStationIds = this.state.stationList.map((station: any) => station.station_code);
                         const items: Array<any> = [];
+                        items.push({
+                            value: "",
+                            label: "-"
+                        });
                         resp.right.value.stations.filter((retrievedStation: any) => alreadyAssignedStationIds.indexOf(retrievedStation.station_code) === -1)
                             .forEach((retrievedStation: any) => {                            
                                 // eslint-disable-next-line functional/immutable-data
@@ -228,10 +240,6 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                                     label: retrievedStation.station_code,
                                 });    
                             });
-                        items.push({
-                            value: "",
-                            label: "-"
-                        })
                         callback(items);
                     }
                     else {
@@ -267,6 +275,10 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                     if (resp.right.status === 200) {
                         const alreadyAssignedECIds = this.state.creditorInstitutionList.map((ec: any) => ec.creditor_institution_code);
                         const items: Array<any> = [];
+                        items.push({
+                            value: "",
+                            label: "-"
+                        });
                         resp.right.value.creditor_institutions.filter((retrievedEC: any) => alreadyAssignedECIds.indexOf(retrievedEC.creditor_institution_code) === -1)
                             .forEach((retrievedEC: any) => {                            
                                 // eslint-disable-next-line functional/immutable-data
@@ -275,10 +287,6 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                                     label: retrievedEC.creditor_institution_code,
                                 });    
                             });
-                        items.push({
-                            value: "",
-                            label: "-"
-                        })
                         callback(items);
                     }
                     else {
@@ -314,6 +322,10 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                     if (resp.right.status === 200) {
                         const alreadyAssignedBrokerIds = this.state.brokerList.map((broker: any) => broker.broker_code);
                         const items: Array<any> = [];
+                        items.push({
+                            value: "",
+                            label: "-"
+                        });
                         resp.right.value.brokers.filter((retrievedBroker: any) => alreadyAssignedBrokerIds.indexOf(retrievedBroker.broker_code) === -1)
                             .forEach((retrievedBroker: any) => {                            
                                 // eslint-disable-next-line functional/immutable-data
@@ -322,10 +334,6 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                                     label: retrievedBroker.broker_code,
                                 });    
                             });
-                        items.push({
-                            value: "",
-                            label: "-"
-                        })
                         callback(items);
                     }
                     else {
@@ -350,9 +358,9 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                     <td>{creditorInstitutionView.creditor_institution_code}</td>
                     <td>{creditorInstitutionView.broker_code}</td>
                     <td>{creditorInstitutionView.station_code}</td>
-                    <td>{creditorInstitutionView.auxDigit}</td>
-                    <td>{creditorInstitutionView.application_code}</td>
-                    <td>{creditorInstitutionView.segregation_code}</td>
+                    <td className="text-center">{creditorInstitutionView.auxDigit}</td>
+                    <td className="text-center">{creditorInstitutionView.application_code}</td>
+                    <td className="text-center">{creditorInstitutionView.segregation_code}</td>
                     <td className="text-center">
                         {creditorInstitutionView.mod4 && <FaCheck className="text-success"/>}
                         {!creditorInstitutionView.mod4 && <FaTimes className="text-danger"/>}
@@ -364,56 +372,95 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
 
         return (
             <div className="container-fluid creditor-institutions">
-                <div className="row">
+                <div>
                     <div className="col-md-9 mb-3">
-                        <h2>Vista enti creditori</h2>
+                        <h2>Vista Enti Creditori</h2>
                     </div>
                     {<div className="col-md-12">
-                        <div className="col-md-12">
-                            Stazione:
-                            <AsyncSelect
-                                    cacheOptions defaultOptions
-                                    loadOptions={this.debouncedStationOptions}
-                                    placeholder="Cerca codice stazione"
-									menuPortalTarget={document.body}
-									styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-									name="station_code"
-                                    onChange={(e) => this.handleStationChange(e)}
-                            />
-                            EC:
-                            <AsyncSelect
-                                    cacheOptions defaultOptions
-                                    loadOptions={this.debouncedCreditorInstitutionsOptions}
-                                    placeholder="Cerca codice EC"
-									menuPortalTarget={document.body}
-									styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-									name="creditor_institution_code"
-                                    onChange={(e) => this.handleCreditorInstitutionChange(e)}
-                            />
-                            Intermediario:
-                            <AsyncSelect
-                                    cacheOptions defaultOptions
-                                    loadOptions={this.debouncedBrokerOptions}
-                                    placeholder="Cerca codice Intermediario EC"
-									menuPortalTarget={document.body}
-									styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-									name="broker_code"
-                                    onChange={(e) => this.handleBrokerChange(e)}
-                            />
+                        <div className="row">
+                            <div className="col-md-4">
+                                <AsyncSelect
+                                        cacheOptions defaultOptions
+                                        loadOptions={this.debouncedStationOptions}
+                                        placeholder="Cerca codice stazione"
+                                        menuPortalTarget={document.body}
+                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                        name="station_code"
+                                        onChange={(e) => this.handleStationChange(e)}
+                                />
+                            </div>
+                            <div className="col-md-4">
+                                <AsyncSelect
+                                        cacheOptions defaultOptions
+                                        loadOptions={this.debouncedCreditorInstitutionsOptions}
+                                        placeholder="Cerca codice EC"
+                                        menuPortalTarget={document.body}
+                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                        name="creditor_institution_code"
+                                        onChange={(e) => this.handleCreditorInstitutionChange(e)}
+                                />
+                            </div>
+                            <div className="col-md-4">
+                                <AsyncSelect
+                                        cacheOptions defaultOptions
+                                        loadOptions={this.debouncedBrokerOptions}
+                                        placeholder="Cerca codice Intermediario EC"
+                                        menuPortalTarget={document.body}
+                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                        name="broker_code"
+                                        onChange={(e) => this.handleBrokerChange(e)}
+                                />
+                            </div>
                         </div>
-                        <div className="col-md-12">
-                            <FiltersView configuration={this.filter} onFilter={this.handleFilterCallback} />
+                        {<div className="row">
+                            {(this.filter.aux_digit?.visible &&
+                                <div className="col-md-3">
+                                    <Form.Group controlId="auxDigit">
+                                    <Form.Label>Aux Digit</Form.Label>
+                                        <Form.Control as="select" name="filter_aux_digit" 
+                                                    placeholder="Aux Digit"
+                                                    onChange={(e) => this.handleAuxDigitChange(e)}>
+                                            <option value="0">0</option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                        </Form.Control>
+                                    </Form.Group>
+                                </div>
+                                )}
+                            {(this.filter.segregation_code?.visible &&
+                                <div className="col-md-3">
+                                    <Form.Group controlId="segregationCode">
+                                        <Form.Control name="filter_segregation_code" 
+                                                    placeholder="Segregation Code"
+                                                    onChange={(e) => this.handleAuxDigitChange(e)}>
+                                        </Form.Control>
+                                    </Form.Group>
+                                </div>
+                                )}
+                            {(this.filter.application_code?.visible &&
+                                <div className="col-md-3">
+                                    <Form.Group controlId="applicationCode">
+                                        <Form.Control name="filter_application_code" 
+                                                    placeholder="Application Code"
+                                                    onChange={(e) => this.handleAuxDigitChange(e)}>
+                                        </Form.Control>
+                                    </Form.Group>
+                                </div>
+                                )}
+                            <div className="col-md-3">
+                                <Form.Group controlId="mod4">
+                                    <Form.Label>Mod4</Form.Label>
+                                    <Form.Control as="select" name="mod4"
+                                                onChange={(e) => this.handleMod4Change(e)}
+                                                placeholder="Mod4">
+                                        <option value="true">True</option>
+                                        <option value="false">False</option>
+                                    </Form.Control>
+                                </Form.Group>
+                            </div>
                         </div>
-                        <Form.Group controlId="mod4" className="col-md-2">
-                            <Form.Label>Mod4<span
-                                className="text-danger">*</span></Form.Label>
-                            <Form.Control as="select" name="mod4"
-                                          onChange={(e) => this.handleMod4Change(e)}>
-                                <option value="true">True</option>
-                                <option value="false">False</option>
-                                <option value="">-</option>
-                            </Form.Control>
-                        </Form.Group>
+                        }
                         {isLoading && (<FaSpinner className="spinner"/>)}
                         {
                             !isLoading && (
@@ -421,13 +468,13 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                                     <Table hover responsive size="sm">
                                         <thead>
                                         <tr>
-                                            <th className="fixed-td-width">Pa</th>
+                                            <th className="fixed-td-width">EC</th>
                                             <th className="fixed-td-width">Intermediario</th>
                                             <th className="fixed-td-width">Stazione</th>
-                                            <th className="text-center">AUX digit</th>
-                                            <th className="text-center">Progressivo</th>
-                                            <th className="text-right">Codice segregazione</th>
-                                            <th className="text-center">Quarto modello</th>
+                                            <th className="text-center">Aux digit</th>
+                                            <th className="text-center">Application Code</th>
+                                            <th className="text-center">Codice segregazione</th>
+                                            <th className="text-center">Modello 4</th>
                                             <th/>
                                         </tr>
                                         </thead>

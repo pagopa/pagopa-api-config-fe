@@ -1,7 +1,6 @@
 import React from "react";
 import {Form} from "react-bootstrap";
 import debounce from "lodash.debounce";
-import {FaFilter} from "react-icons/fa";
 
 
 interface IProps {
@@ -24,9 +23,6 @@ export default class FiltersView extends React.Component<IProps, IState> {
     render(): React.ReactNode {
         return (
                 <div className={"row mb-5"}>
-                    <div className="d-flex ml-3 align-items-center">
-                        <FaFilter />
-                    </div>
                     {
                         this.props.configuration.aux_digit?.visible && (
                         <div className="col-md-4 align-items-center">
@@ -54,7 +50,7 @@ export default class FiltersView extends React.Component<IProps, IState> {
                     {
                         this.props.configuration.segregation_code?.visible && (
                             <div className="col-md-4 align-items-center">
-                                <Form.Control name="filter_segregation_code" placeholder={this.props.configuration.segregation_code.placeholder}
+                                <Form.Control name="filter_application_code" placeholder={this.props.configuration.segregation_code.placeholder}
                                               onChange={event => this.onFilter({
                                                   ...this.state,
                                                   segregation_code: event.target.value
