@@ -14,6 +14,7 @@ import debounce from "lodash.debounce";
 import AsyncSelect from 'react-select/async';
 import {getConfig} from "../../util/config";
 import FiltersView from '../../components/FiltersView';
+import { Link, NavLink } from 'react-router-dom';
 
 interface IProps {
     history: {
@@ -206,6 +207,10 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
         window.location.reload();
     }
 
+    handleStationDetails(code: string){
+        this.props.history.push("/creditor-institutions/" + code);
+    }
+
     debouncedStationOptions = debounce((inputValue, callback) => {
         this.promiseStationOptions(inputValue, callback);
     }, 500);
@@ -356,9 +361,24 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
         this.state.creditor_institution_list.map((creditorInstitutionView: any, index: number) => {
             const code = (
                 <tr key={index}>
-                    <td>{creditorInstitutionView.creditor_institution_code}</td>
-                    <td>{creditorInstitutionView.broker_code}</td>
-                    <td>{creditorInstitutionView.station_code}</td>
+                    <td>
+                        <NavLink className="navbar-item"
+                            to = {"/creditor-institutions/" + creditorInstitutionView.creditor_institution_code}>
+                            {creditorInstitutionView.creditor_institution_code}
+                        </NavLink>
+                    </td>
+                    <td>
+                        <NavLink className="navbar-item"
+                            to = {"/brokers/" + creditorInstitutionView.broker_code}>
+                            {creditorInstitutionView.broker_code}
+                        </NavLink>
+                    </td>
+                    <td>
+                        <NavLink className="navbar-item"
+                            to = {"/stations/" + creditorInstitutionView.station_code}>
+                            {creditorInstitutionView.station_code}
+                        </NavLink>
+                    </td>
                     <td className="text-center">{creditorInstitutionView.auxDigit}</td>
                     <td className="text-center">{creditorInstitutionView.application_code}</td>
                     <td className="text-center">{creditorInstitutionView.segregation_code}</td>
