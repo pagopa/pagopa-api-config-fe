@@ -1,5 +1,10 @@
 const SidebarItems = [
     {
+        name: "Vista EC/Intermediario/Stazione",
+        route: "/view/creditor-institution",
+        domain: "ec"
+    },
+    {
         name: "EC",
         route: "/creditor-institutions",
         domain: "ec"
@@ -93,11 +98,6 @@ const SidebarItems = [
         name: "Operazioni Massive ICA",
         route: "/massive/icas",
         domain: "batchoperation"
-    },
-    {
-        name: "Vista EC",
-        route: "/view/creditor-institution",
-        domain: "views"
     },
 ];
 

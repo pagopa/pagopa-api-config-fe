@@ -26,7 +26,6 @@ interface IState {
         psp: boolean;
         configuration: boolean;
         batchoperation: boolean;
-        views: boolean;
     };
     be_version: string;
 }
@@ -43,7 +42,6 @@ export default class Sidebar extends React.Component<IProps, IState> {
                 psp: false,
                 configuration: false,
                 batchoperation: false,
-                views: false,
             },
             be_version: ''
         };
@@ -218,22 +216,6 @@ export default class Sidebar extends React.Component<IProps, IState> {
                         <div className="list-group">
                         {
                             SidebarItems.filter(item => item.domain === "batchoperation").map((item) => getLink(item))
-                        }
-                        </div>
-                    </Accordion.Collapse>
-                </span>
-                    <span>
-                    <Accordion.Toggle as="div" eventKey="4">
-                        <span className="navbar-heading" onClick={() => this.setDomainState("views")}>
-                            <FaExpand className={`ml-2 mr-2 ${getCompressionClass("views", true)}`}/>
-                            <FaCompress className={`ml-2 mr-2 ${getCompressionClass("views", false)}`}/>
-                            Viste
-                        </span>
-                    </Accordion.Toggle>
-                    <Accordion.Collapse eventKey="4">
-                        <div className="list-group">
-                        {
-                            SidebarItems.filter(item => item.domain === "views").map((item) => getLink(item))
                         }
                         </div>
                     </Accordion.Collapse>

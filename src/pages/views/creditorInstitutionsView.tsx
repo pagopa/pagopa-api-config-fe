@@ -13,7 +13,6 @@ import Ordering from "../../components/Ordering";
 import debounce from "lodash.debounce";
 import AsyncSelect from 'react-select/async';
 import {getConfig} from "../../util/config";
-import FiltersView from '../../components/FiltersView';
 import { Link, NavLink } from 'react-router-dom';
 
 interface IProps {
