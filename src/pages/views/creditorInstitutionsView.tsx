@@ -29,11 +29,6 @@ interface IState {
         items_found: 0;
         total_pages: 1;
     };
-    filters: {
-        aux_digit?: number;
-        application_code?: number;
-        segregation_code?: number;
-    };
     isLoading: boolean;
     showDeleteModal: boolean;
     stationToDelete: any;
@@ -75,11 +70,6 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
             order: {
                 by: "CODE",
                 ing: "DESC"
-            },
-            filters: {
-                aux_digit: undefined,
-                application_code: undefined,
-                segregation_code: undefined,
             },
             stationList: [],
             stationFilter: "",
@@ -164,11 +154,6 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
     toastError(message: string) {
         toast.error(() => <div className={"toast-width"}>{message}</div>, {theme: "colored"});
     }
-
-    handleFilterCallback = (filters: any) => {
-        this.setState({filters});
-        this.getPage(0);
-    };
 
     handleOrder(orderBy: string, ordering: string) {
         this.setState({
