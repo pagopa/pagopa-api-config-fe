@@ -233,10 +233,6 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                     if (resp.right.status === 200) {
                         const alreadyAssignedStationIds = this.state.stationList.map((station: any) => station.station_code);
                         const items: Array<any> = [];
-                        items.push({
-                            value: "",
-                            label: "-"
-                        });
                         resp.right.value.stations.filter((retrievedStation: any) => alreadyAssignedStationIds.indexOf(retrievedStation.station_code) === -1)
                             .forEach((retrievedStation: any) => {                            
                                 // eslint-disable-next-line functional/immutable-data
@@ -280,10 +276,6 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                     if (resp.right.status === 200) {
                         const alreadyAssignedECIds = this.state.creditorInstitutionList.map((ec: any) => ec.creditor_institution_code);
                         const items: Array<any> = [];
-                        items.push({
-                            value: "",
-                            label: "-"
-                        });
                         resp.right.value.creditor_institutions.filter((retrievedEC: any) => alreadyAssignedECIds.indexOf(retrievedEC.creditor_institution_code) === -1)
                             .forEach((retrievedEC: any) => {                            
                                 // eslint-disable-next-line functional/immutable-data
@@ -327,10 +319,6 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                     if (resp.right.status === 200) {
                         const alreadyAssignedBrokerIds = this.state.brokerList.map((broker: any) => broker.broker_code);
                         const items: Array<any> = [];
-                        items.push({
-                            value: "",
-                            label: "-"
-                        });
                         resp.right.value.brokers.filter((retrievedBroker: any) => alreadyAssignedBrokerIds.indexOf(retrievedBroker.broker_code) === -1)
                             .forEach((retrievedBroker: any) => {                            
                                 // eslint-disable-next-line functional/immutable-data
@@ -361,19 +349,19 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
             const code = (
                 <tr key={index}>
                     <td>
-                        <NavLink className="navbar-item"
+                        <NavLink className="navlink"
                             to = {"/creditor-institutions/" + creditorInstitutionView.creditor_institution_code}>
                             {creditorInstitutionView.creditor_institution_code}
                         </NavLink>
                     </td>
                     <td>
-                        <NavLink className="navbar-item"
+                        <NavLink className="navlink"
                             to = {"/brokers/" + creditorInstitutionView.broker_code}>
                             {creditorInstitutionView.broker_code}
                         </NavLink>
                     </td>
                     <td>
-                        <NavLink className="navbar-item"
+                        <NavLink className="navlink"
                             to = {"/stations/" + creditorInstitutionView.station_code}>
                             {creditorInstitutionView.station_code}
                         </NavLink>
@@ -392,25 +380,14 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
 
         return (
             <div className="container-fluid creditor-institutions">
-                <div>
+                <div className="row">
                     <div className="col-md-9 mb-3">
-                        <h2>Vista Enti Creditori</h2>
+                        <h2>Vista EC/Intermediario/Stazione</h2>
                     </div>
                     {<div className="col-md-12">
                         <div className="row">
                             <div className="col-md-4">
-                                <AsyncSelect
-                                        cacheOptions defaultOptions
-                                        loadOptions={this.debouncedStationOptions}
-                                        placeholder="Cerca codice stazione"
-                                        menuPortalTarget={document.body}
-                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                                        name="station_code"
-                                        onChange={(e) => this.handleStationChange(e)}
-                                        isClearable={true}
-                                />
-                            </div>
-                            <div className="col-md-4">
+                                <Form.Label>Codice EC</Form.Label>
                                 <AsyncSelect
                                         cacheOptions defaultOptions
                                         loadOptions={this.debouncedCreditorInstitutionsOptions}
@@ -422,6 +399,7 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                                 />
                             </div>
                             <div className="col-md-4">
+                                <Form.Label>Codice intermediario</Form.Label>
                                 <AsyncSelect
                                         cacheOptions defaultOptions
                                         loadOptions={this.debouncedBrokerOptions}
@@ -432,12 +410,25 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                                         onChange={(e) => this.handleBrokerChange(e)}
                                 />
                             </div>
+                            <div className="col-md-4">
+                                <Form.Label>Codice Stazione</Form.Label>
+                                <AsyncSelect
+                                        cacheOptions defaultOptions
+                                        loadOptions={this.debouncedStationOptions}
+                                        placeholder="Cerca codice stazione"
+                                        menuPortalTarget={document.body}
+                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                        name="station_code"
+                                        onChange={(e) => this.handleStationChange(e)}
+                                        isClearable={true}
+                                />
+                            </div>
                         </div>
-                        {<div className="row">
+                        {<div className="row mt-2">
                             {(this.filter.aux_digit?.visible &&
-                                <div className="col-md-3">
+                                <div className="col-md-2">
                                     <Form.Group controlId="auxDigit">
-                                    <Form.Label>Aux Digit:</Form.Label>
+                                    <Form.Label>Aux Digit</Form.Label>
                                         <Form.Control as="select" name="filter_aux_digit" 
                                                     placeholder="Aux Digit"
                                                     onChange={(e) => this.handleAuxDigitChange(e)}>
@@ -450,9 +441,9 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                                 </div>
                                 )}
                             {(this.filter.segregation_code?.visible &&
-                                <div className="col-md-3">
+                                <div className="col-md-2">
                                     <Form.Group controlId="segregationCode">
-                                    <Form.Label>Segregation code:</Form.Label>
+                                    <Form.Label>Segregation code</Form.Label>
                                         <Form.Control name="filter_segregation_code" 
                                                     placeholder="Segregation Code"
                                                     onChange={(e) => this.handleSegregationCodeChange(e)}>
@@ -461,9 +452,9 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                                 </div>
                                 )}
                             {(this.filter.application_code?.visible &&
-                                <div className="col-md-3">
+                                <div className="col-md-2">
                                     <Form.Group controlId="applicationCode">
-                                    <Form.Label>Application code:</Form.Label>
+                                    <Form.Label>Application code</Form.Label>
                                         <Form.Control name="filter_application_code" 
                                                     placeholder="Application Code"
                                                     onChange={(e) => this.handleApplicationCodeChange(e)}>
@@ -471,47 +462,44 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                                     </Form.Group>
                                 </div>
                                 )}
-                            <div className="col-md-3">
+                            <div className="col-md-2">
                                 <Form.Group controlId="mod4">
-                                    <Form.Label>Mod4:</Form.Label>
+                                    <Form.Label>Modello 4</Form.Label>
                                     <Form.Control as="select" name="mod4"
                                                 onChange={(e) => this.handleMod4Change(e)}
-                                                placeholder="Mod4"
+                                                placeholder="Modello 4"
                                                 value={String(this.state.mod4Filter)}>
                                         <option value="true">True</option>
                                         <option value="false">False</option>
                                     </Form.Control>
                                 </Form.Group>
                             </div>
-                        </div>
-                        }
-                        <div className="row">
-                            <div className="col-md-12 text-left">
-                                <Button className="mr-1"
+                            <div className="col-md-4 align-self-md-center text-right">
+                            <Button className="mr-4 mt-3"
                                     onClick={() => {
                                         this.handleSearch();
                                     }}>Cerca</Button>
-                                <Button
+                                <Button className="mt-3"
                                     onClick={() => {
                                         this.handleReset();
                                     }}>Reset</Button>
                             </div>
                         </div>
+                        }
                         {isLoading && (<FaSpinner className="spinner"/>)}
                         {
                             !isLoading && (
                                 <>
-                                    <Table hover responsive size="sm">
+                                    <Table hover responsive size="sm" className="mt-3">
                                         <thead>
                                         <tr>
-                                            <th className="fixed-td-width">EC</th>
-                                            <th className="fixed-td-width">Intermediario</th>
-                                            <th className="fixed-td-width">Stazione</th>
-                                            <th className="text-center">Aux digit</th>
+                                            <th className="text-left">EC</th>
+                                            <th className="text-left">Intermediario</th>
+                                            <th className="text-left">Stazione</th>
+                                            <th className="text-center">Aux Digit</th>
                                             <th className="text-center">Application Code</th>
-                                            <th className="text-center">Codice segregazione</th>
+                                            <th className="text-center">Segregation Code</th>
                                             <th className="text-center">Modello 4</th>
-                                            <th/>
                                         </tr>
                                         </thead>
                                         <tbody>
