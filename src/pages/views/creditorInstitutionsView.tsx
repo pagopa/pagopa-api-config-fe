@@ -46,6 +46,8 @@ interface IState {
     brokerList: [];
     brokerFilter: string;
     auxDigitFilter?: number;
+    segregationCodeFilter?: number;
+    applicationCodeFilter?: number;
     mod4Filter?: boolean;
 }
 
@@ -86,6 +88,8 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
             brokerList: [],
             brokerFilter: "",
             auxDigitFilter: undefined,
+            segregationCodeFilter: undefined,
+            applicationCodeFilter: undefined,
             mod4Filter: undefined,
 
         };
@@ -110,6 +114,7 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
         this.debouncedStationOptions = this.debouncedStationOptions.bind(this);
         this.debouncedCreditorInstitutionsOptions = this.debouncedCreditorInstitutionsOptions.bind(this);
         this.debouncedBrokerOptions = this.debouncedBrokerOptions.bind(this);
+        this.handleStationChange = this.handleStationChange.bind(this);
     }
 
     getPage(page: number) {
@@ -129,8 +134,8 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                     paBrokerCode: this.state.brokerFilter,
                     stationCode: this.state.stationFilter,
                     auxDigit: this.state.auxDigitFilter,
-                    applicationCode: this.state.filters.application_code,
-                    segregationCode: this.state.filters.segregation_code,
+                    applicationCode: this.state.applicationCodeFilter,
+                    segregationCode: this.state.segregationCodeFilter,
                     mod4: this.state.mod4Filter
                 }).then((response: any) => {
                     this.setState({
@@ -177,17 +182,14 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
 
     handleStationChange(event: any){
         this.setState({stationFilter: event.value.code});
-        this.getPage(0);
     }
 
     handleCreditorInstitutionChange(event: any){
         this.setState({creditorInstitutionFilter: event.value.code});
-        this.getPage(0);
     }
 
     handleBrokerChange(event: any){
         this.setState({brokerFilter: event.value.code});
-        this.getPage(0);
     }
 
     handleAuxDigitChange(event: any){
@@ -197,12 +199,26 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
         else{
             this.setState({auxDigitFilter: undefined})
         }
-        this.getPage(0);
+    }
+
+    handleSegregationCodeChange(event: any){
+        this.setState({segregationCodeFilter: event.target.value});
+    }
+
+    handleApplicationCodeChange(event: any){
+        this.setState({applicationCodeFilter: event.target.value});
     }
 
     handleMod4Change(event: any){
         this.setState({mod4Filter: event.target.value === "true"})
+    }
+
+    handleSearch(){
         this.getPage(0);
+    }
+
+    handleReset(){
+        window.location.reload();
     }
 
     debouncedStationOptions = debounce((inputValue, callback) => {
@@ -387,6 +403,7 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                         name="station_code"
                                         onChange={(e) => this.handleStationChange(e)}
+                                        isClearable={true}
                                 />
                             </div>
                             <div className="col-md-4">
@@ -416,7 +433,7 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                             {(this.filter.aux_digit?.visible &&
                                 <div className="col-md-3">
                                     <Form.Group controlId="auxDigit">
-                                    <Form.Label>Aux Digit</Form.Label>
+                                    <Form.Label>Aux Digit:</Form.Label>
                                         <Form.Control as="select" name="filter_aux_digit" 
                                                     placeholder="Aux Digit"
                                                     onChange={(e) => this.handleAuxDigitChange(e)}>
@@ -431,9 +448,10 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                             {(this.filter.segregation_code?.visible &&
                                 <div className="col-md-3">
                                     <Form.Group controlId="segregationCode">
+                                    <Form.Label>Segregation code:</Form.Label>
                                         <Form.Control name="filter_segregation_code" 
                                                     placeholder="Segregation Code"
-                                                    onChange={(e) => this.handleAuxDigitChange(e)}>
+                                                    onChange={(e) => this.handleSegregationCodeChange(e)}>
                                         </Form.Control>
                                     </Form.Group>
                                 </div>
@@ -441,19 +459,21 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                             {(this.filter.application_code?.visible &&
                                 <div className="col-md-3">
                                     <Form.Group controlId="applicationCode">
+                                    <Form.Label>Application code:</Form.Label>
                                         <Form.Control name="filter_application_code" 
                                                     placeholder="Application Code"
-                                                    onChange={(e) => this.handleAuxDigitChange(e)}>
+                                                    onChange={(e) => this.handleApplicationCodeChange(e)}>
                                         </Form.Control>
                                     </Form.Group>
                                 </div>
                                 )}
                             <div className="col-md-3">
                                 <Form.Group controlId="mod4">
-                                    <Form.Label>Mod4</Form.Label>
+                                    <Form.Label>Mod4:</Form.Label>
                                     <Form.Control as="select" name="mod4"
                                                 onChange={(e) => this.handleMod4Change(e)}
-                                                placeholder="Mod4">
+                                                placeholder="Mod4"
+                                                value={String(this.state.mod4Filter)}>
                                         <option value="true">True</option>
                                         <option value="false">False</option>
                                     </Form.Control>
@@ -461,6 +481,18 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                             </div>
                         </div>
                         }
+                        <div className="row">
+                            <div className="col-md-12 text-left">
+                                <Button className="mr-1"
+                                    onClick={() => {
+                                        this.handleSearch();
+                                    }}>Cerca</Button>
+                                <Button
+                                    onClick={() => {
+                                        this.handleReset();
+                                    }}>Reset</Button>
+                            </div>
+                        </div>
                         {isLoading && (<FaSpinner className="spinner"/>)}
                         {
                             !isLoading && (
@@ -482,7 +514,6 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                                         {creditorInstitutionList}
                                         </tbody>
                                     </Table>
-
                                     <Paginator pageInfo={pageInfo} onPageChanged={this.handlePageChange}/>
                                 </>
                             )
