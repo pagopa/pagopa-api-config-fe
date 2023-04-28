@@ -1,19 +1,14 @@
 import React from 'react';
-import {Button, Form, OverlayTrigger, Table, Tooltip} from "react-bootstrap";
-import {FaClone, FaCheck, FaEdit, FaEye, FaFileDownload, FaPlus, FaSpinner, FaTimes, FaTrash} from "react-icons/fa";
+import {Button, Form, Table} from "react-bootstrap";
+import {FaCheck, FaSpinner, FaTimes} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
-import axios, {AxiosRequestConfig} from "axios";
 import {apiClient} from "../../util/apiClient";
 import Paginator from "../../components/Paginator";
-import ConfirmationModal from "../../components/ConfirmationModal";
 import {loginRequest} from "../../authConfig";
-import Filters from "../../components/Filters";
-import Ordering from "../../components/Ordering";
 import debounce from "lodash.debounce";
 import AsyncSelect from 'react-select/async';
-import {getConfig} from "../../util/config";
-import { Link, NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 interface IProps {
     history: {
