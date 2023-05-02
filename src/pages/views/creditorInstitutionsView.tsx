@@ -25,9 +25,6 @@ interface IState {
         total_pages: 1;
     };
     isLoading: boolean;
-    showDeleteModal: boolean;
-    stationToDelete: any;
-    stationIndex: number;
     order: any;
     stationList: [];
     stationFilter: string;
@@ -59,9 +56,6 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                 total_pages: 1
             },
             isLoading: false,
-            showDeleteModal: false,
-            stationToDelete: {},
-            stationIndex: -1,
             order: {
                 by: "CODE",
                 ing: "DESC"
@@ -435,17 +429,6 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                                     </Form.Group>
                                 </div>
                                 )}
-                            {(this.filter.segregation_code?.visible &&
-                                <div className="col-md-2">
-                                    <Form.Group controlId="segregationCode">
-                                    <Form.Label>Segregation code</Form.Label>
-                                        <Form.Control name="filter_segregation_code" 
-                                                    placeholder="Segregation Code"
-                                                    onChange={(e) => this.handleSegregationCodeChange(e)}>
-                                        </Form.Control>
-                                    </Form.Group>
-                                </div>
-                                )}
                             {(this.filter.application_code?.visible &&
                                 <div className="col-md-2">
                                     <Form.Group controlId="applicationCode">
@@ -453,6 +436,17 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                                         <Form.Control name="filter_application_code" 
                                                     placeholder="Application Code"
                                                     onChange={(e) => this.handleApplicationCodeChange(e)}>
+                                        </Form.Control>
+                                    </Form.Group>
+                                </div>
+                                )}
+                            {(this.filter.segregation_code?.visible &&
+                                <div className="col-md-2">
+                                    <Form.Group controlId="segregationCode">
+                                    <Form.Label>Segregation code</Form.Label>
+                                        <Form.Control name="filter_segregation_code" 
+                                                    placeholder="Segregation Code"
+                                                    onChange={(e) => this.handleSegregationCodeChange(e)}>
                                         </Form.Control>
                                     </Form.Group>
                                 </div>
