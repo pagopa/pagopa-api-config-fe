@@ -93,7 +93,6 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
         this.debouncedStationOptions = this.debouncedStationOptions.bind(this);
         this.debouncedCreditorInstitutionsOptions = this.debouncedCreditorInstitutionsOptions.bind(this);
         this.debouncedBrokerOptions = this.debouncedBrokerOptions.bind(this);
-        this.handleStationChange = this.handleStationChange.bind(this);
     }
 
     getPage(page: number) {
@@ -138,10 +137,6 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
 
     handlePageChange(requestedPage: number) {
         this.getPage(requestedPage);
-    }
-
-    toastError(message: string) {
-        toast.error(() => <div className={"toast-width"}>{message}</div>, {theme: "colored"});
     }
 
     handleOrder(orderBy: string, ordering: string) {
@@ -409,7 +404,6 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                         name="station_code"
                                         onChange={(e) => this.handleStationChange(e)}
-                                        isClearable={true}
                                 />
                             </div>
                         </div>
