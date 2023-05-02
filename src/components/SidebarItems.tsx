@@ -30,6 +30,11 @@ const SidebarItems = [
         domain: "ec"
     },
     {
+        name: "Vista PSP/Intermediario/Canale",
+        route: "/view/psp",
+        domain: "psp"
+    },
+    {
         name: "PSP",
         route: "/payment-service-providers",
         domain: "psp"
