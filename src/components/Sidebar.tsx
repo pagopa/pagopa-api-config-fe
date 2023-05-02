@@ -41,7 +41,7 @@ export default class Sidebar extends React.Component<IProps, IState> {
                 ec: true,
                 psp: false,
                 configuration: false,
-                batchoperation: false,
+                batchoperation: false
             },
             be_version: ''
         };
@@ -88,7 +88,6 @@ export default class Sidebar extends React.Component<IProps, IState> {
     }
 
     setDomainState(domain: string) {
-
         Object.keys(this.state.domains).forEach((key: string) => {
             const domains: any = this.state.domains;
             // eslint-disable-next-line functional/immutable-data

@@ -40,7 +40,6 @@ interface IState {
 
 export default class CreditorInstitutionView extends React.Component<IProps, IState> {
     static contextType = MsalContext;
-    private filter: { [item: string]: any };
 
     service = "/views";
 
@@ -71,21 +70,6 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
             applicationCodeFilter: undefined,
             mod4Filter: undefined,
 
-        };
-
-        this.filter = {
-            aux_digit: {
-                visible: true,
-                placeholder: "AUX digit"
-            },
-            application_code: {
-                visible: true,
-                placeholder: "Progressivo"
-            },
-            segregation_code: {
-                visible: true,
-                placeholder: "Segregazione"
-            }
         };
 
         this.handleOrder = this.handleOrder.bind(this);
@@ -122,7 +106,7 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                     });
                 })
                     .catch(() => {
-                        toast.error("Problema nel recuperare le stazioni", {theme: "colored"});
+                        toast.error("Problema nel recuperare la vista", {theme: "colored"});
                     })
                     .finally(() => {
                         this.setState({isLoading: false});
@@ -188,10 +172,6 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
 
     handleReset(){
         window.location.reload();
-    }
-
-    handleStationDetails(code: string){
-        this.props.history.push("/creditor-institutions/" + code);
     }
 
     debouncedStationOptions = debounce((inputValue, callback) => {
@@ -408,43 +388,37 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                             </div>
                         </div>
                         {<div className="row mt-2">
-                            {(this.filter.aux_digit?.visible &&
-                                <div className="col-md-2">
-                                    <Form.Group controlId="auxDigit">
-                                    <Form.Label>Aux Digit</Form.Label>
-                                        <Form.Control as="select" name="filter_aux_digit" 
-                                                    placeholder="Aux Digit"
-                                                    onChange={(e) => this.handleAuxDigitChange(e)}>
-                                            <option value="0">0</option>
-                                            <option value="1">1</option>
-                                            <option value="2">2</option>
-                                            <option value="3">3</option>
-                                        </Form.Control>
+                            <div className="col-md-2">
+                                <Form.Group controlId="auxDigit">
+                                <Form.Label>Aux Digit</Form.Label>
+                                    <Form.Control as="select" name="filter_aux_digit" 
+                                                placeholder="Aux Digit"
+                                                onChange={(e) => this.handleAuxDigitChange(e)}>
+                                        <option value="0">0</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                    </Form.Control>
+                                </Form.Group>
+                            </div>
+                            <div className="col-md-2">
+                                <Form.Group controlId="applicationCode">
+                                <Form.Label>Application code</Form.Label>
+                                    <Form.Control name="filter_application_code" 
+                                                placeholder="Application Code"
+                                                onChange={(e) => this.handleApplicationCodeChange(e)}>                                        
+                                    </Form.Control>
+                                </Form.Group>
+                            </div>
+                            <div className="col-md-2">
+                                <Form.Group controlId="segregationCode">
+                                <Form.Label>Segregation code</Form.Label>
+                                    <Form.Control name="filter_segregation_code" 
+                                                placeholder="Segregation Code"
+                                                onChange={(e) => this.handleSegregationCodeChange(e)}>
+                                    </Form.Control>
                                     </Form.Group>
-                                </div>
-                                )}
-                            {(this.filter.application_code?.visible &&
-                                <div className="col-md-2">
-                                    <Form.Group controlId="applicationCode">
-                                    <Form.Label>Application code</Form.Label>
-                                        <Form.Control name="filter_application_code" 
-                                                    placeholder="Application Code"
-                                                    onChange={(e) => this.handleApplicationCodeChange(e)}>
-                                        </Form.Control>
-                                    </Form.Group>
-                                </div>
-                                )}
-                            {(this.filter.segregation_code?.visible &&
-                                <div className="col-md-2">
-                                    <Form.Group controlId="segregationCode">
-                                    <Form.Label>Segregation code</Form.Label>
-                                        <Form.Control name="filter_segregation_code" 
-                                                    placeholder="Segregation Code"
-                                                    onChange={(e) => this.handleSegregationCodeChange(e)}>
-                                        </Form.Control>
-                                    </Form.Group>
-                                </div>
-                                )}
+                            </div>
                             <div className="col-md-2">
                                 <Form.Group controlId="mod4">
                                     <Form.Label>Modello 4</Form.Label>
