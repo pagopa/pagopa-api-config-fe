@@ -1,5 +1,10 @@
 const SidebarItems = [
     {
+        name: "Vista EC/Intermediario/Stazione",
+        route: "/view/creditor-institution",
+        domain: "ec"
+    },
+    {
         name: "EC",
         route: "/creditor-institutions",
         domain: "ec"
