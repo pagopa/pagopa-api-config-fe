@@ -3,12 +3,12 @@ import {Button, Form, Table} from "react-bootstrap";
 import {FaSpinner} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
-import {apiClient} from "../../util/apiClient";
-import Paginator from "../../components/Paginator";
-import {loginRequest} from "../../authConfig";
 import debounce from "lodash.debounce";
 import AsyncSelect from 'react-select/async';
 import { NavLink } from 'react-router-dom';
+import {apiClient} from "../../util/apiClient";
+import Paginator from "../../components/Paginator";
+import {loginRequest} from "../../authConfig";
 
 interface IProps {
     history: {
@@ -144,7 +144,6 @@ export default class PspView extends React.Component<IProps, IState> {
     }
 
     handlePaymentModelChange(event: any){
-        console.warn(event.target.value);
         this.setState({paymentModelFilter: event.target.value});
     }
 
@@ -296,19 +295,19 @@ export default class PspView extends React.Component<IProps, IState> {
                 <tr key={index}>
                     <td>
                         <NavLink className="navlink"
-                            to = {"/payment-service-providers/" + pspView.psp_code}>
+                            to = {`/payment-service-providers/${pspView.psp_code}`}>
                             {pspView.psp_code}
                         </NavLink>
                     </td>
                     <td>
                         <NavLink className="navlink"
-                            to = {"/brokers-psp/" + pspView.broker_psp_code}>
+                            to = {`/brokers-psp/${pspView.broker_psp_code}`}>
                             {pspView.broker_psp_code}
                         </NavLink>
                     </td>
                     <td>
                         <NavLink className="navlink"
-                            to = {"/channels/" + pspView.channel_code}>
+                            to = {`/channels/${pspView.channel_code}`}>
                             {pspView.channel_code}
                         </NavLink>
                     </td>
