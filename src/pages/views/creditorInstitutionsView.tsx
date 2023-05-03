@@ -3,12 +3,12 @@ import {Button, Form, Table} from "react-bootstrap";
 import {FaCheck, FaSpinner, FaTimes} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
-import {apiClient} from "../../util/apiClient";
-import Paginator from "../../components/Paginator";
-import {loginRequest} from "../../authConfig";
 import debounce from "lodash.debounce";
 import AsyncSelect from 'react-select/async';
 import { NavLink } from 'react-router-dom';
+import {apiClient} from "../../util/apiClient";
+import Paginator from "../../components/Paginator";
+import {loginRequest} from "../../authConfig";
 
 interface IProps {
     history: {
@@ -147,10 +147,10 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
 
     handleAuxDigitChange(event: any){
         if(event.target.value === "1" || event.target.value === "2"){
-            this.setState({auxDigitFilter: event.target.value})
+            this.setState({auxDigitFilter: event.target.value});
         }
         else{
-            this.setState({auxDigitFilter: undefined})
+            this.setState({auxDigitFilter: undefined});
         }
     }
 
@@ -163,7 +163,7 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
     }
 
     handleMod4Change(event: any){
-        this.setState({mod4Filter: event.target.value === "true"})
+        this.setState({mod4Filter: event.target.value === "true"});
     }
 
     handleSearch(){
@@ -314,19 +314,19 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                 <tr key={index}>
                     <td>
                         <NavLink className="navlink"
-                            to = {"/creditor-institutions/" + creditorInstitutionView.creditor_institution_code}>
+                            to = {`/creditor-institutions/${creditorInstitutionView.creditor_institution_code}`}>
                             {creditorInstitutionView.creditor_institution_code}
                         </NavLink>
                     </td>
                     <td>
                         <NavLink className="navlink"
-                            to = {"/brokers/" + creditorInstitutionView.broker_code}>
+                            to = {`/brokers/${creditorInstitutionView.broker_code}`}>
                             {creditorInstitutionView.broker_code}
                         </NavLink>
                     </td>
                     <td>
                         <NavLink className="navlink"
-                            to = {"/stations/" + creditorInstitutionView.station_code}>
+                            to = {`/stations/${creditorInstitutionView.station_code}`}>
                             {creditorInstitutionView.station_code}
                         </NavLink>
                     </td>
