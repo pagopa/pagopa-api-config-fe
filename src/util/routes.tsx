@@ -40,7 +40,7 @@ import MassiveMigration from "../pages/batchoperations/MassiveMigration";
 import PaymentTypePage from "../pages/configuration/PaymentType";
 import MassiveIcas from "../pages/batchoperations/MassiveIcas";
 import RefreshConfigPage from "../pages/configuration/RefreshConfig";
-import CreditorInstitutionView from "../pages/views/creditorInstitutionsView";
+import CreditorInstitutionView from "../pages/views/CreditorInstitutionsView";
 
 
 export default class Routes extends React.Component {
