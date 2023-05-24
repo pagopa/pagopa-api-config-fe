@@ -834,6 +834,18 @@ export default class ChannelView extends React.Component<IProps> {
                                                         readOnly={this.props.readOnly}
                                                     />
                                                 </Form.Group>
+                                                <Form.Group controlId="flag_psp_cp" className="col-md-2 custom-control-box">
+                                                    <Form.Check
+                                                        custom
+                                                        name="flag_psp_cp"
+                                                        checked={this.props.channel.flag_psp_cp === true}
+                                                        type={'checkbox'}
+                                                        id={'flag_psp_cp'}
+                                                        label={'PSP CP'}
+                                                        onChange={(e) => this.handleChange(e)}
+                                                        readOnly={this.props.readOnly}
+                                                    />
+                                                </Form.Group>
 
                                                 <Form.Group controlId="rt_push" className="col-md-2 custom-control-box">
                                                     <Form.Check
