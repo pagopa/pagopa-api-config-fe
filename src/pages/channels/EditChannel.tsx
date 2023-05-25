@@ -86,6 +86,7 @@ export default class EditChannel extends React.Component<IProps, IState> {
                 digital_stamp_brand: false,
                 serv_plugin: '-',
                 flag_io: false,
+                flag_psp_cp: false,
                 agid: false,
                 description: "",
             } as unknown as ChannelDetails,
