@@ -163,7 +163,12 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
     }
 
     handleMod4Change(event: any){
-        this.setState({mod4Filter: event.target.value === "true"});
+        if(event.target.value === ''){
+            this.setState({mod4Filter: undefined});
+        }
+        else{
+            this.setState({mod4Filter: event.target.value});
+        }
     }
 
     handleSearch(){
@@ -426,6 +431,7 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                                                 onChange={(e) => this.handleMod4Change(e)}
                                                 placeholder="Modello 4"
                                                 value={String(this.state.mod4Filter)}>
+                                        <option value="">-</option>
                                         <option value="true">True</option>
                                         <option value="false">False</option>
                                     </Form.Control>
