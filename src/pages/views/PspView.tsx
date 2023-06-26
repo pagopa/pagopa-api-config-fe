@@ -145,7 +145,7 @@ export default class PspView extends React.Component<IProps, IState> {
 
     handlePaymentModelChange(event: any){
         if (event.target.value === '') {
-            this.setState({paymentModelFilter: undefined})
+            this.setState({paymentModelFilter: undefined});
         }
         else{
             this.setState({paymentModelFilter: event.target.value});
