@@ -144,7 +144,12 @@ export default class PspView extends React.Component<IProps, IState> {
     }
 
     handlePaymentModelChange(event: any){
-        this.setState({paymentModelFilter: event.target.value});
+        if (event.target.value === '') {
+            this.setState({paymentModelFilter: undefined})
+        }
+        else{
+            this.setState({paymentModelFilter: event.target.value});
+        }
     }
 
     handleSearch(){
@@ -379,6 +384,7 @@ export default class PspView extends React.Component<IProps, IState> {
                                     <Form.Control as="select" name="filter_payment_model" 
                                                 placeholder="Payment model"
                                                 onChange={(e) => this.handlePaymentModelChange(e)}>
+                                            <option value="">-</option>
                                             <option value="IMMEDIATO">IMMEDIATO</option>
                                             <option value="IMMEDIATO_MULTIBENEFICIARIO">IMMEDIATO_MULTIBENEFICIARIO</option>
                                             <option value="DIFFERITO">DIFFERITO</option>
