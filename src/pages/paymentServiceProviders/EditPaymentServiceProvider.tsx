@@ -608,16 +608,6 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                                                         label={'Marca bollo digitale'}
                                                         onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
-                                                <Form.Group controlId="transfer" className="col-md-2 custom-control-box">
-                                                    <Form.Check
-                                                        custom
-                                                        checked={this.state.paymentServiceProvider.transfer === true}
-                                                        name="transfer"
-                                                        type={'checkbox'}
-                                                        id={'transfer'}
-                                                        label={'Storno pagamento'}
-                                                        onChange={(e) => this.handleChange(e)}/>
-                                                </Form.Group>
                                             </div>
                                         </Card.Body>
                                         <Card.Footer>
