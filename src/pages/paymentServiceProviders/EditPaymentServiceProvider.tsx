@@ -608,6 +608,7 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                                                         label={'Marca bollo digitale'}
                                                         onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
+                                                
                                             </div>
                                         </Card.Body>
                                         <Card.Footer>
