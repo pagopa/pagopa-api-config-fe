@@ -254,16 +254,6 @@ export default class PaymentServiceProvider extends React.Component<IProps, ISta
                                                 label={'Marca bollo digitale'}
                                             />
                                         </Form.Group>
-                                        <Form.Group controlId="transfer" className="col-md-2 custom-control-box">
-                                            <Form.Check
-                                                custom
-                                                disabled
-                                                checked={this.state.paymentServiceProvider.transfer === true}
-                                                type={'checkbox'}
-                                                id={'transfer'}
-                                                label={'Storno pagamento'}
-                                            />
-                                        </Form.Group>
                                     </div>
                                 </>
                             )
