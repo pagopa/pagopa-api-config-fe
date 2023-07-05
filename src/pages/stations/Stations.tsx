@@ -28,6 +28,7 @@ interface IState {
     };
     filters: {
         code: string;
+        name: string;
     };
     isLoading: boolean;
     showDeleteModal: boolean;
@@ -55,6 +56,7 @@ export default class Stations extends React.Component<IProps, IState> {
             },
             filters: {
                 code: "",
+                name: "",
             },
             isLoading: false,
             showDeleteModal: false,
@@ -68,8 +70,8 @@ export default class Stations extends React.Component<IProps, IState> {
 
         this.filter = {
             name: {
-                visible: false,
-                placeholder: "Descrizione"
+                visible: true,
+                placeholder: "Descrizione Intermediario EC"
             },
             code: {
                 visible: true,
@@ -97,6 +99,7 @@ export default class Stations extends React.Component<IProps, IState> {
                     limit: 10,
                     page,
                     code: this.state.filters.code,
+                    brokerdescription: this.state.filters.name,
                     ordering: this.state.order.ing
                 }).then((response: any) => {
                     this.setState({
