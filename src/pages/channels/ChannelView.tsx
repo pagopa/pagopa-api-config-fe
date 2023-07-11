@@ -866,6 +866,7 @@ export default class ChannelView extends React.Component<IProps> {
                                                                         label={'PSP Notify Payment'}
                                                                         onChange={(e) => this.handleChange(e)}
                                                                         readOnly={this.props.readOnly}
+                                                                        disabled={this.props.readOnly}
                                                                 />
                                                             </Form.Group>
                                                             <Form.Group controlId="flag_psp_cp"
@@ -879,6 +880,7 @@ export default class ChannelView extends React.Component<IProps> {
                                                                         label={'Travaso Additional Payment'}
                                                                         onChange={(e) => this.handleChange(e)}
                                                                         readOnly={this.props.readOnly}
+                                                                        disabled={this.props.readOnly}
                                                                 />
 
                                                                 <OverlayTrigger placement="top"
@@ -899,6 +901,7 @@ export default class ChannelView extends React.Component<IProps> {
                                                                         name="rt_push"
                                                                         onChange={(e) => this.handleChange(e)}
                                                                         readOnly={this.props.readOnly}
+                                                                        disabled={this.props.readOnly}
                                                                 />
                                                             </Form.Group>
 
@@ -913,6 +916,7 @@ export default class ChannelView extends React.Component<IProps> {
                                                                         name="on_us"
                                                                         onChange={(e) => this.handleChange(e)}
                                                                         readOnly={this.props.readOnly}
+                                                                        disabled={this.props.readOnly}
                                                                 />
                                                             </Form.Group>
 
@@ -927,6 +931,7 @@ export default class ChannelView extends React.Component<IProps> {
                                                                         name="card_chart"
                                                                         onChange={(e) => this.handleChange(e)}
                                                                         readOnly={this.props.readOnly}
+                                                                        disabled={this.props.readOnly}
                                                                 />
                                                             </Form.Group>
 
@@ -941,6 +946,7 @@ export default class ChannelView extends React.Component<IProps> {
                                                                         name="recovery"
                                                                         onChange={(e) => this.handleChange(e)}
                                                                         readOnly={this.props.readOnly}
+                                                                        disabled={this.props.readOnly}
                                                                 />
                                                             </Form.Group>
 
@@ -955,6 +961,7 @@ export default class ChannelView extends React.Component<IProps> {
                                                                         name="digital_stamp_brand"
                                                                         onChange={(e) => this.handleChange(e)}
                                                                         readOnly={this.props.readOnly}
+                                                                        disabled={this.props.readOnly}
                                                                 />
                                                             </Form.Group>
                                                         </div>
