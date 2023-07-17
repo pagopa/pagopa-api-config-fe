@@ -261,18 +261,10 @@ export default class StationView extends React.Component<IProps> {
                                                                 )}
                                                             </Form.Group>
 
-                                                            <Form.Group controlId="password" className="col-md-4">
+                                                            <Form.Group controlId="password" className="col-md-6">
                                                                 <Form.Label>Password</Form.Label>
                                                                 <Form.Control name="password"
                                                                               value={this.props.station.password}
-                                                                              onChange={(e) => this.handleChange(e)}
-                                                                              readOnly={this.props.readOnly}/>
-                                                            </Form.Group>
-
-                                                            <Form.Group controlId="new_password" className="col-md-4">
-                                                                <Form.Label>Nuova Password</Form.Label>
-                                                                <Form.Control name="new_password"
-                                                                              value={this.props.station.new_password}
                                                                               onChange={(e) => this.handleChange(e)}
                                                                               readOnly={this.props.readOnly}/>
                                                             </Form.Group>
