@@ -547,13 +547,6 @@ export default class ChannelView extends React.Component<IProps> {
                                                                               onChange={(e) => this.handleChange(e)}
                                                                               readOnly={this.props.readOnly}/>
                                                             </Form.Group>
-                                                            <Form.Group controlId="new_password" className="col-md-4">
-                                                                <Form.Label>Nuova Password</Form.Label>
-                                                                <Form.Control name="new_password" placeholder=""
-                                                                              value={this.props.channel.new_password}
-                                                                              onChange={(e) => this.handleChange(e)}
-                                                                              readOnly={this.props.readOnly}/>
-                                                            </Form.Group>
                                                         </div>
 
                                                         <div className={"divider"}></div>
