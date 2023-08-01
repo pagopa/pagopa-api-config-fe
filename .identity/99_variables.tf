@@ -54,3 +54,7 @@ variable "github_repository_environment" {
     reviewers_teams        = ["pagopa-team-backoffice"]
   }
 }
+
+variable "client_id" {
+  type = string
+}

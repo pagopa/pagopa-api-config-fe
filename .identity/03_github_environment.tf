@@ -33,9 +33,10 @@ locals {
     "CDN_ENDPOINT" : "pagopa-${var.env_short}-selfcare-cdn-endpoint",
     "CDN_PROFILE" : "pagopa-${var.env_short}-selfcare-cdn-profile",
 
-    "SELFCARE_HOST_FE" : var.env == "prod" ? "https://selfcare.pagopa.it" : "https://${var.env}.selfcare.pagopa.it",
-    "SELFCARE_API_BE" : var.env == "prod" ? "https://api.platform.pagopa.it" : "https://api.${var.env}.platform.pagopa.it" ,
-    "REACT_APP_URL_STORAGE" : "https://pagopa${var.env_short}selfcaresa.z6.web.core.windows.net/",
+    "APICONFIG_BASEPATH" : "/apiconfig/api/v1",
+    "APICONFIG_CLIENT_ID" : var.client_id,
+    "APICONFIG_REDIRECT_URI" :  var.env == "prod" ?  "https://config.platform.pagopa.it/" : "https://config.${var.env}.platform.pagopa.it/",
+    "APICONFIG_SCOPES": "api://${var.prefix}-${var.env_short}-apiconfig-be/access-apiconfig-be"
   }
 }
 

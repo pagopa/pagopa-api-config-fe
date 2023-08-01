@@ -115,48 +115,18 @@ jobs:
 
       - name: Build
         run: |
-          export REACT_APP_ENV='${{ inputs.environment }}'
-          export INLINE_RUNTIME_CHUNK='false'
-          
-          export REACT_APP_URL_FE_LOGIN='${{ vars.SELFCARE_HOST_FE }}/auth/login'
-          export REACT_APP_URL_FE_LOGOUT='${{ vars.SELFCARE_HOST_FE }}/auth/logout'
-          export REACT_APP_URL_FE_LANDING='${{ vars.SELFCARE_HOST_FE }}/auth/logout'
-          export REACT_APP_URL_FE_ASSISTANCE='${{ vars.SELFCARE_HOST_FE }}/assistenza'
-          export REACT_APP_URL_FE_SELFCARE='${{ vars.SELFCARE_HOST_FE }}/dashboard/'
-          export REACT_APP_URL_FE_TOKEN_EXCHANGE='${{ vars.SELFCARE_HOST_FE }}/token-exchange'
-          
-          export REACT_APP_URL_API_PORTAL='${{ vars.SELFCARE_API_BE }}/selfcare/pagopa/v1/'
-          export REACT_APP_URL_API_TOKEN='${{ vars.SELFCARE_API_BE }}/api/token/token'
-          export REACT_APP_URL_API_APICONFIG='${{ vars.SELFCARE_API_BE }}/backoffice/apiconfig/auth/v1'
-          
-          export REACT_APP_URL_INSTITUTION_LOGO_PREFIX='${{ vars.REACT_APP_URL_STORAGE }}/institutions/'
-          
-          export REACT_APP_PAGOPA_HELP_EMAIL='assistenza@selfcare.it'
-          export REACT_APP_OPERATOR_EMAIL_ADDRESSES='stefano.bafaro@pagopa.it;lombardigiancarlo@fiore-ruggiero.com;iferrari@barone.eu;'
-          export REACT_APP_MIXPANEL_TOKEN='${{ secrets.REACT_APP_MIXPANEL_TOKEN }}'
-          export REACT_APP_ONE_TRUST_BASE_URL='${{ vars.SELFCARE_HOST_FE }}/ot/test'
-          export REACT_APP_ONETRUST_DOMAIN_ID='${{ secrets.REACT_APP_ONETRUST_DOMAIN_ID }}'
-          
-          export REACT_APP_FEATURES_DASHBOARD_ENABLED='true'
-          export REACT_APP_FEATURES_CHANNELS_ENABLED='true'
-          export REACT_APP_FEATURES_STATIONS_ENABLED='true'
-          export REACT_APP_ANALYTICS_ENABLE='false'
-          export REACT_APP_ANALYTICS_MOCKED='false'
-          
-          if [ "${{ inputs.environment }}" = "dev" ]; then
-            export REACT_APP_FEATURES_IBAN_ENABLED='true'
-          fi
-          
-          if [ "${{ inputs.environment }}" = "uat" ]; then
-            export REACT_APP_FEATURES_IBAN_ENABLED='false'
-          fi
-          
-          if [ "${{ inputs.environment }}" = "prod" ]; then
-            export REACT_APP_FEATURES_IBAN_ENABLED='false'
-          fi
-          
           yarn install
           yarn generate
+          
+          export APICONFIG_HOST='${{ vars.APICONFIG_HOST }}'
+          export APICONFIG_BASEPATH='${{ vars.APICONFIG_BASEPATH }}'
+          export APICONFIG_BASEPATH_ALT='${{ vars.APICONFIG_BASEPATH_ALT }}'
+          export APICONFIG_CLIENT_ID='${{ vars.APICONFIG_CLIENT_ID }}'
+          export APICONFIG_REDIRECT_URI='${{ vars.APICONFIG_REDIRECT_URI }}'
+          export APICONFIG_SCOPES='${{ vars.APICONFIG_SCOPES }}'
+        
+          chmod +x env.sh && . ./env.sh
+
           yarn build
 
       - name: Login
