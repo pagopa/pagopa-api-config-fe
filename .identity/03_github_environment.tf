@@ -28,10 +28,10 @@ locals {
   env_variables = {
     "CONTAINER_APP_ENVIRONMENT_NAME" : local.container_app_environment.name,
     "CONTAINER_APP_ENVIRONMENT_RESOURCE_GROUP_NAME" : local.container_app_environment.resource_group,
-    "STORAGE_ACCOUNT" : "pagopa${var.env_short}selfcaresa",
-    "CDN_RESOURCE_GROUP" : "pagopa-${var.env_short}-fe-rg",
-    "CDN_ENDPOINT" : "pagopa-${var.env_short}-selfcare-cdn-endpoint",
-    "CDN_PROFILE" : "pagopa-${var.env_short}-selfcare-cdn-profile",
+    "STORAGE_ACCOUNT" : "pagopa${var.env_short}apiconfigfesa",
+    "CDN_RESOURCE_GROUP" : "pagopa-${var.env_short}-api-config-fe-rg",
+    "CDN_ENDPOINT" : "pagopa-${var.env_short}-api-config-fe-cdn-endpoint",
+    "CDN_PROFILE" : "pagopa-${var.env_short}-api-config-fe-cdn-profile",
 
     "APICONFIG_BASEPATH" : "/apiconfig/api/v1",
     "APICONFIG_CLIENT_ID" : var.client_id,
