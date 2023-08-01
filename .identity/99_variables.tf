@@ -5,15 +5,15 @@ locals {
   }
 
   prefix         = "pagopa"
-  domain         = "api-config-fe"
+  domain         = "apiconfig"
   location_short = "weu"
   product        = "${var.prefix}-${var.env_short}"
 
   app_name = "github-${local.github.org}-${local.github.repository}-${var.prefix}-${local.domain}-${var.env}-aks"
 
   cdn = {
-    name                = "${local.prefix}-${var.env_short}-${local.domain}-cdn-profile"
-    resource_group_name = "${local.prefix}-${var.env_short}-fe-rg"
+    name                = "${local.prefix}-${var.env_short}-api-config-fe-cdn-profile"
+    resource_group_name = "${local.prefix}-${var.env_short}-api-config-fe-rg"
   }
 
   container_app_environment = {

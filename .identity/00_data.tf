@@ -33,21 +33,6 @@ data "azurerm_key_vault_secret" "key_vault_cucumber_token" {
   key_vault_id = data.azurerm_key_vault.key_vault.id
 }
 
-data "azurerm_key_vault_secret" "key_vault_mixpanel_token" {
-  name = "react-app-mixpanel-token"
-  key_vault_id = data.azurerm_key_vault.domain_key_vault.id
-}
-
-data "azurerm_key_vault_secret" "key_vault_onetrust_domain" {
-  name = "react-app-onetrust-domain-id"
-  key_vault_id = data.azurerm_key_vault.domain_key_vault.id
-}
-
-data "azurerm_key_vault_secret" "key_vault_blob_connection_string" {
-  name = "web-storage-blob-connection-string"
-  key_vault_id = data.azurerm_key_vault.domain_key_vault.id
-}
-
 data "azurerm_cdn_profile" "cdn_profile" {
   name                = local.cdn.name
   resource_group_name = local.cdn.resource_group_name
