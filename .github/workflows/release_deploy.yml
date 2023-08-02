@@ -145,6 +145,7 @@ jobs:
           inlineScript: |
             ls
             ls ./build
+            ls ./build/release
             az storage blob sync --container '$web' --account-name ${{ vars.STORAGE_ACCOUNT }} -s "./build/release" --destination 'azureBlob' --connection-string '${{ secrets.BLOB_CONNECTION_STRING }}'
 
       - name: Remove Old Files
@@ -153,7 +154,7 @@ jobs:
           azcliversion: latest
           inlineScript: |
             ls
-            date=`date -d "15 minutes ago" '+%Y-%m-%dT%H:%MZ'`
+            date=`date -d "-15 minutes" '+%Y-%m-%dT%H:%MZ'`
             echo $date
             az storage blob delete-batch -s '$web' --account-name ${{ vars.STORAGE_ACCOUNT }} --connection-string '${{ secrets.BLOB_CONNECTION_STRING }}' --if-unmodified-since $date
 
