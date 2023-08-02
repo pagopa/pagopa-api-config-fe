@@ -7,7 +7,7 @@
     "prebuild": "npm-run-all prebuild:*",
     "prebuild:clean": "shx rm -rf build",
     "prebuild:tsc": "tsc --noEmit",
-    "build": "parcel build src/*.html --dist-dir build/release --public-url ./ --no-optimize",
+    "build": "parcel build src/*.html -d build/release --public-url ./ --no-optimize",
     "lint": "eslint -f json -o eslint-report.json . -c .eslintrc.js --ext .ts,.tsx --cache",
     "lint:local": "eslint . -c .eslintrc.js --ext .ts,.tsx --cache",
     "lint-autofix": "eslint . -c .eslintrc.js --ext .ts,.tsx --fix",
