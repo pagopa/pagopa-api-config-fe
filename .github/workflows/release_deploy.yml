@@ -128,7 +128,6 @@ jobs:
           chmod +x env.sh && . ./env.sh
 
           yarn build
-          ls
 
       - name: Login
         id: login
@@ -144,16 +143,11 @@ jobs:
         with:
           azcliversion: latest
           inlineScript: |
-            ls
-            ls ./build
-            ls ./build/release
             az storage blob sync --container '$web' --account-name ${{ vars.STORAGE_ACCOUNT }} -s "./build/release" --destination 'azureBlob' --connection-string '${{ secrets.BLOB_CONNECTION_STRING }}'
 
       - name: date
         run: |
           date=$(date --date="15 min ago" '+%Y-%m-%dT%H:%MZ')
-          echo $date
-          echo "DATE=$date" 
           echo "DATE=$date" >> $GITHUB_ENV
 
       - name: Remove Old Files
