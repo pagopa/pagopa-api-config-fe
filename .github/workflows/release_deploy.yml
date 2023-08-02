@@ -154,7 +154,7 @@ jobs:
           date=$(date --date="15 min ago" '+%Y-%m-%dT%H:%MZ')
           echo $date
           echo "DATE=$date" 
-          echo "DATE=$date" >> GITHUB_ENV
+          echo "DATE=$date" >> $GITHUB_ENV
 
       - name: Remove Old Files
         uses: azure/CLI@v1
