@@ -1,6 +1,6 @@
 {
   "name": "pagopa-api-config-fe",
-  "version": "1.32.4-7-PAGOPA-1134-sviluppo-migrazione-api-config-fe",
+  "version": "1.32.4-8-PAGOPA-1134-sviluppo-migrazione-api-config-fe",
   "license": "MIT",
   "scripts": {
     "envconfig": "chmod +x envconfig.sh && . ./envconfig.sh",
