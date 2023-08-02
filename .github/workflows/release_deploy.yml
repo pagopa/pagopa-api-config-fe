@@ -149,15 +149,19 @@ jobs:
             ls ./build/release
             az storage blob sync --container '$web' --account-name ${{ vars.STORAGE_ACCOUNT }} -s "./build/release" --destination 'azureBlob' --connection-string '${{ secrets.BLOB_CONNECTION_STRING }}'
 
-      - run: |
-          echo "date=$(date --date="15 min ago" '+%Y-%m-%dT%H:%MZ')" >> GITHUB_ENV
+      - name: date
+        run: |
+          date=$(date --date="15 min ago" '+%Y-%m-%dT%H:%MZ')
+          echo $date
+          echo "DATE=$date" 
+          echo "DATE=$date" >> GITHUB_ENV
 
       - name: Remove Old Files
         uses: azure/CLI@v1
         with:
           azcliversion: latest
           inlineScript: |
-            az storage blob delete-batch -s '$web' --account-name ${{ vars.STORAGE_ACCOUNT }} --connection-string '${{ secrets.BLOB_CONNECTION_STRING }}' --if-unmodified-since ${{env.date}}
+            az storage blob delete-batch -s '$web' --account-name ${{ vars.STORAGE_ACCOUNT }} --connection-string '${{ secrets.BLOB_CONNECTION_STRING }}' --if-unmodified-since ${{env.DATE}}
 
       - name: Purge
         uses: azure/CLI@v1
