@@ -150,7 +150,8 @@ jobs:
         with:
           azcliversion: latest
           inlineScript: |
-            date=`date -d "15 min ago" '+%Y-%m-%dT%H:%MZ'`
+            date=`date -d "15 minutes ago" '+%Y-%m-%dT%H:%MZ'`
+            echo $date
             az storage blob delete-batch -s '$web' --account-name ${{ vars.STORAGE_ACCOUNT }} --connection-string '${{ secrets.BLOB_CONNECTION_STRING }}' --if-unmodified-since $date
 
       - name: Purge
