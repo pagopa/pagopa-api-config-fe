@@ -36,6 +36,7 @@ locals {
     "CDN_PROFILE" : "pagopa-${var.env_short}-api-config-fe-cdn-profile",
 
     "APICONFIG_BASEPATH" : "/apiconfig/api/v1",
+    "APICONFIG_HOST" :  var.env == "prod" ?  "https://api.platform.pagopa.it" : "https://api.${var.env}.platform.pagopa.it",
     "APICONFIG_CLIENT_ID" : var.client_id,
     "APICONFIG_REDIRECT_URI" :  var.env == "prod" ?  "https://config.platform.pagopa.it/" : "https://config.${var.env}.platform.pagopa.it/",
     "APICONFIG_SCOPES": "api://${var.prefix}-${var.env_short}-apiconfig-be/access-apiconfig-be"
