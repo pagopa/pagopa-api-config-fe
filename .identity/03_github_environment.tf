@@ -39,6 +39,7 @@ locals {
     "APICONFIG_CLIENT_ID" : var.client_id,
     "APICONFIG_REDIRECT_URI" :  var.env == "prod" ?  "https://config.platform.pagopa.it/" : "https://config.${var.env}.platform.pagopa.it/",
     "APICONFIG_SCOPES": "api://${var.prefix}-${var.env_short}-apiconfig-be/access-apiconfig-be"
+    "APICONFIG_TENANT": "https://login.microsoftonline.com/7788edaf-0346-4068-9d79-c868aed15b3d"
   }
 }
 

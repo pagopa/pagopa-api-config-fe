@@ -124,7 +124,8 @@ jobs:
           export APICONFIG_CLIENT_ID='${{ vars.APICONFIG_CLIENT_ID }}'
           export APICONFIG_REDIRECT_URI='${{ vars.APICONFIG_REDIRECT_URI }}'
           export APICONFIG_SCOPES='${{ vars.APICONFIG_SCOPES }}'
-        
+          export APICONFIG_TENANT='${{ vars.APICONFIG_TENANT }}'
+          
           chmod +x env.sh && . ./env.sh
 
           yarn build
