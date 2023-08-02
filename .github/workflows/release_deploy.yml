@@ -150,7 +150,7 @@ jobs:
         with:
           azcliversion: latest
           inlineScript: |
-            az storage blob delete-batch -s '$web' --account-name ${{ vars.STORAGE_ACCOUNT }} --account-name ${{ vars.STORAGE_ACCOUNT }} --connection-string '${{ secrets.BLOB_CONNECTION_STRING }}' --if-unmodified-since `date -d "15 min ago" ''+%Y-%m-%dT%H:%MZ''
+            az storage blob delete-batch -s '$web' --account-name ${{ vars.STORAGE_ACCOUNT }} --account-name ${{ vars.STORAGE_ACCOUNT }} --connection-string '${{ secrets.BLOB_CONNECTION_STRING }}' --if-unmodified-since `date -d "15 min ago" ''+%Y-%m-%dT%H:%MZ''`'
 
       - name: Purge
         uses: azure/CLI@v1
