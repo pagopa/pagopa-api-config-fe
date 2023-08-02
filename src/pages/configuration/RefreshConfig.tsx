@@ -102,36 +102,6 @@ export default class RefreshConfigPage extends React.Component<IProps, IState> {
                 domain: "Globale",
                 description: "configurazione globale del nodo",
                 param: "GLOBAL"
-            },
-            {
-                domain: "EC",
-                description: "configurazione delle tabelle PA, Stazioni",
-                param: "PA"
-            },
-            {
-                domain: "PSP",
-                description: "configurazione delle tabelle PSP, Canali",
-                param: "PSP" 
-            },
-            {
-                domain: "PDD",
-                description: "configurazione PDD",
-                param: "PDD" 
-            },
-            {
-                domain: "INFORMATIVA PA",
-                description: "configurazione INFORMATIVA PA",
-                param: "INFORMATIVA_PA" 
-            },
-            {
-                domain: "INFORMATIVA CDI",
-                description: "configurazione INFORMATIVA CDI",
-                param: "INFORMATIVA_CDI" 
-            },
-            {
-                domain: "FTP SERVER",
-                description: "configurazione FTP SERVER",
-                param: "FTP_SERVER" 
             }]
         });
     }
