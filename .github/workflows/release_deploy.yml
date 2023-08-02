@@ -143,7 +143,7 @@ jobs:
         with:
           azcliversion: latest
           inlineScript: |
-            az storage blob sync --container '$web' --account-name ${{ vars.STORAGE_ACCOUNT }} -s "./build/release" --destination 'azureBlob' --connection-string '${{ secrets.BLOB_CONNECTION_STRING }}'
+            az storage blob sync --container '$web' --account-name ${{ vars.STORAGE_ACCOUNT }} -s "./build/release" --connection-string '${{ secrets.BLOB_CONNECTION_STRING }}'
 
       - name: date
         run: |
