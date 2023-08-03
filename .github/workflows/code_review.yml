@@ -44,6 +44,17 @@ jobs:
         run: |
           yarn install
           yarn generate
+          
+          export APICONFIG_HOST='http://localhost:8080'
+          export APICONFIG_BASEPATH='/apiconfig/api/v1'
+          export APICONFIG_BASEPATH_ALT='/apiconfig/api/v1'
+          export APICONFIG_CLIENT_ID='aaaa-bbbb-cccc-dddd'
+          export APICONFIG_REDIRECT_URI='http://localhost:3000'
+          export APICONFIG_SCOPES='api://pagopa-t-apiconfig-be/access-apiconfig-be'
+          export APICONFIG_TENANT='abcd12345'
+  
+          chmod +x env.sh && . ./env.sh
+          
           yarn build
 
   static_analysis:
@@ -62,6 +73,7 @@ jobs:
       - name: Lint
         run: |
           yarn install
+          yarn generate
           yarn lint
 
   test:
@@ -75,13 +87,24 @@ jobs:
       - name: Set Node.js 16
         uses: actions/setup-node@v3
         with:
-          node-version: 16.10.0
+          node-version: 14.19.0
 
       - name: Unit Tests
         run: |
           yarn install
           yarn generate
-          yarn test --watchAll=false
+          
+          export APICONFIG_HOST='http://localhost:8080'
+          export APICONFIG_BASEPATH='/apiconfig/api/v1'
+          export APICONFIG_BASEPATH_ALT='/apiconfig/api/v1'
+          export APICONFIG_CLIENT_ID='aaaa-bbbb-cccc-dddd'
+          export APICONFIG_REDIRECT_URI='http://localhost:3000'
+          export APICONFIG_SCOPES='api://pagopa-t-apiconfig-be/access-apiconfig-be'
+          export APICONFIG_TENANT='abcd12345'
+          
+          chmod +x env.sh && . ./env.sh
+          
+          yarn test
 
   sonar:
     name: Sonar
@@ -90,6 +113,29 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+
+      - name: Set Node.js 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: 14.19.0
+
+      - name: generate
+        run: |
+          yarn install
+          yarn generate
+
+          export APICONFIG_HOST='http://localhost:8080'
+          export APICONFIG_BASEPATH='/apiconfig/api/v1'
+          export APICONFIG_BASEPATH_ALT='/apiconfig/api/v1'
+          export APICONFIG_CLIENT_ID='aaaa-bbbb-cccc-dddd'
+          export APICONFIG_REDIRECT_URI='http://localhost:3000'
+          export APICONFIG_SCOPES='api://pagopa-t-apiconfig-be/access-apiconfig-be'
+          export APICONFIG_TENANT='abcd12345'
+
+          chmod +x env.sh && . ./env.sh
+          
+          yarn test
+          yarn lint
 
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@master
