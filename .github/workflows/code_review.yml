@@ -44,6 +44,17 @@ jobs:
         run: |
           yarn install
           yarn generate
+          
+          export APICONFIG_HOST='${{ vars.APICONFIG_HOST }}'
+          export APICONFIG_BASEPATH='${{ vars.APICONFIG_BASEPATH }}'
+          export APICONFIG_BASEPATH_ALT='${{ vars.APICONFIG_BASEPATH_ALT }}'
+          export APICONFIG_CLIENT_ID='${{ vars.APICONFIG_CLIENT_ID }}'
+          export APICONFIG_REDIRECT_URI='${{ vars.APICONFIG_REDIRECT_URI }}'
+          export APICONFIG_SCOPES='${{ vars.APICONFIG_SCOPES }}'
+          export APICONFIG_TENANT='${{ vars.APICONFIG_TENANT }}'
+          
+          chmod +x env.sh && . ./env.sh
+          
           yarn build
 
   static_analysis:
