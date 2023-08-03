@@ -103,6 +103,7 @@ jobs:
           export APICONFIG_TENANT='abcd12345'
           
           chmod +x env.sh && . ./env.sh
+          cat ./src/env-config.js
           
           yarn test
 
@@ -128,6 +129,9 @@ jobs:
           export APICONFIG_TENANT='abcd12345'
 
           chmod +x env.sh && . ./env.sh
+          
+          yarn test
+          yarn lint
 
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@master
