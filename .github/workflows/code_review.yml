@@ -84,11 +84,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set Node.js 16
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16.10.0
-
       - name: Unit Tests
         run: |
           yarn install
@@ -103,7 +98,6 @@ jobs:
           export APICONFIG_TENANT='abcd12345'
           
           chmod +x env.sh && . ./env.sh
-          cat ./src/env-config.js
           
           yarn test
 
