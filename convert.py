@@ -6,7 +6,6 @@ with open('swagger.json', 'r') as file:
     warning_response = """"X-Warning": {                "description": "This header identifies response validation error",                "type": "string"              }"""
     psp_pattern_response = """"pattern": "[A-Z0-9_]{6,14}","""
     payment_type_pattern_response = """"pattern": "[A-Z]*","""
-
     data = file.read().replace("\n", "").replace(" ", "")
     data = data.replace(param.replace(" ", ""), "")
     data = data.replace(request_id_response.replace(" ", ""), "")
