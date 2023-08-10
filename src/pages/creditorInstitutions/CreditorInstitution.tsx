@@ -183,7 +183,7 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
                 <tr key={index}>
                     <td>{item.iban}</td>
                     <td>{item.validity_date.toLocaleDateString()}</td>
-                    <td>{item.publication_date.toLocaleDateString()}</td>
+                    <td>{(item.publication_date == null) ? "" : item.publication_date.toLocaleDateString()}</td>
                 </tr>
             );
             ibanList.push(row);
