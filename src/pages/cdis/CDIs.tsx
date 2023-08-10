@@ -37,7 +37,7 @@ interface IState {
 
 export default class Cdis extends React.Component<IProps, IState> {
     static contextType = MsalContext;
-    private filter: {[item: string]: any};
+    private filter: { [item: string]: any };
 
     constructor(props: IProps) {
         super(props);
@@ -87,27 +87,27 @@ export default class Cdis extends React.Component<IProps, IState> {
             ...loginRequest,
             account: this.context.accounts[0]
         })
-            .then((response: any) => {
-                apiClient.getCdis({
-                    Authorization: `Bearer ${response.idToken}`,
-                    ApiKey: "",
-                    limit: 10,
-                    page,
-                    idcdi: this.state.filters.name,
-                    pspcode: this.state.filters.code
-                }).then((response: any) => {
-                    this.setState({
-                        cdis: response.right.value.cdis,
-                        page_info: response.right.value.page_info
-                    });
-                })
-                    .catch(() => {
-                        toast.error("Problema nel recuperare i cdi", {theme: "colored"});
+                .then((response: any) => {
+                    apiClient.getCdis({
+                        Authorization: `Bearer ${response.idToken}`,
+                        ApiKey: "",
+                        limit: 10,
+                        page,
+                        idcdi: this.state.filters.name,
+                        pspcode: this.state.filters.code
+                    }).then((response: any) => {
+                        this.setState({
+                            cdis: response.right.value.cdis,
+                            page_info: response.right.value.page_info
+                        });
                     })
-                    .finally(() => {
-                        this.setState({isLoading: false});
-                    });
-            });
+                            .catch(() => {
+                                toast.error("Problema nel recuperare i cdi", {theme: "colored"});
+                            })
+                            .finally(() => {
+                                this.setState({isLoading: false});
+                            });
+                });
     }
 
     componentDidMount(): void {
@@ -141,18 +141,22 @@ export default class Cdis extends React.Component<IProps, IState> {
                     Authorization: `Bearer ${response.idToken}`
                 }
             };
+            if (localStorage.getItem("beta") === "true") {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                // eslint-disable-next-line functional/immutable-data
+                config.headers['X-Canary'] = 'canary';
+            }
             axios.post(baseUrl + basePath + "/cdis", data, config).then(() => {
                 toast.info("File CDI caricato con successo");
                 this.getPage(0);
             }).catch((err) => {
                 if (err.response.status === 409) {
                     toast.error("Problema di conflitto nell'upload del file", {theme: "colored"});
-                }
-                else {
+                } else {
                     if (err.response.data.detail) {
                         toast.error(`Problema nell'upload del file. ${String(err.response.data.detail)}`, {theme: "colored"});
-                    }
-                    else {
+                    } else {
                         toast.error("Problema nell'upload del file.", {theme: "colored"});
                     }
                 }
@@ -182,23 +186,22 @@ export default class Cdis extends React.Component<IProps, IState> {
             document.body.appendChild(anchor);
             const url = `${String(baseUrl)}${String(basePath)}/cdis/${cdi.id_cdi}?pspcode=${cdi.psp_code}`;
             axios.get(url, config)
-            .then((res: any) => {
-                if (res.data.size > 1) {
-                    const objectUrl = window.URL.createObjectURL(res.data);
-                    // eslint-disable-next-line functional/immutable-data
-                    anchor.href = objectUrl;
-                    // eslint-disable-next-line functional/immutable-data
-                    anchor.download = "cdi_" + String(cdi.id_cdi).replace(" ", "_") + "_" + String(cdi.psp_code).replace(" ", "_") + '.xml';
-                    anchor.click();
-                    window.URL.revokeObjectURL(objectUrl);
-                }
-                else {
-                    toast.warn("Problemi nella generazione del CDI richiesto.", {theme: "colored"});
-                }
-            })
-            .catch(() => {
-                toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
-            });
+                    .then((res: any) => {
+                        if (res.data.size > 1) {
+                            const objectUrl = window.URL.createObjectURL(res.data);
+                            // eslint-disable-next-line functional/immutable-data
+                            anchor.href = objectUrl;
+                            // eslint-disable-next-line functional/immutable-data
+                            anchor.download = "cdi_" + String(cdi.id_cdi).replace(" ", "_") + "_" + String(cdi.psp_code).replace(" ", "_") + '.xml';
+                            anchor.click();
+                            window.URL.revokeObjectURL(objectUrl);
+                        } else {
+                            toast.warn("Problemi nella generazione del CDI richiesto.", {theme: "colored"});
+                        }
+                    })
+                    .catch(() => {
+                        toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                    });
         });
     }
 
@@ -223,25 +226,25 @@ export default class Cdis extends React.Component<IProps, IState> {
                 ...loginRequest,
                 account: this.context.accounts[0]
             })
-                .then((response: any) => {
-                    apiClient.deleteCdi({
-                        Authorization: `Bearer ${response.idToken}`,
-                        ApiKey: "",
-                        idcdi: this.state.cdiToDelete.id_cdi,
-                        pspcode: this.state.cdiToDelete.psp_code
-                    })
-                        .then((res: any) => {
-                            if (res.right.status === 200) {
-                                toast.info("Rimozione avvenuta con successo");
-                                this.removeCdi();
-                            } else {
-                                this.toastError(res.right.value.detail);
-                            }
+                    .then((response: any) => {
+                        apiClient.deleteCdi({
+                            Authorization: `Bearer ${response.idToken}`,
+                            ApiKey: "",
+                            idcdi: this.state.cdiToDelete.id_cdi,
+                            pspcode: this.state.cdiToDelete.psp_code
                         })
-                        .catch(() => {
-                            toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
-                        });
-                });
+                                .then((res: any) => {
+                                    if (res.right.status === 200) {
+                                        toast.info("Rimozione avvenuta con successo");
+                                        this.removeCdi();
+                                    } else {
+                                        this.toastError(res.right.value.detail);
+                                    }
+                                })
+                                .catch(() => {
+                                    toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                                });
+                    });
         }
         this.setState({showDeleteModal: false});
     };
@@ -259,30 +262,31 @@ export default class Cdis extends React.Component<IProps, IState> {
                 String(this.state.cdiToDelete.psp_code) + ")";
 
         const cdiList = this.state.cdis.map((cdi: any, index: number) =>
-            (
-                    <tr key={index}>
-                        <td>{cdi.id_cdi}</td>
-                        <td>{cdi.business_name}</td>
-                        <td>{cdi.psp_code}</td>
-                        <td>{cdi.publication_date.toLocaleString()}</td>
-                        <td>{cdi.validity_date.toLocaleString()}</td>
+                (
+                        <tr key={index}>
+                            <td>{cdi.id_cdi}</td>
+                            <td>{cdi.business_name}</td>
+                            <td>{cdi.psp_code}</td>
+                            <td>{cdi.publication_date.toLocaleString()}</td>
+                            <td>{cdi.validity_date.toLocaleString()}</td>
 
-                        <td className="text-right">
-                            {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
-                            <OverlayTrigger placement="top"
-                                            overlay={<Tooltip id={`tooltip-details-${index}`}>Scarica</Tooltip>}>
-                                <FaCloudDownloadAlt role="button" className="mr-3"
-                                       onClick={() => this.handleDetails(cdi)}/>
-                            </OverlayTrigger>
-                            {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
-                            <OverlayTrigger placement="top"
-                                            overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
-                                {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
-                                <FaTrash role="button" className="mr-3" onClick={() => this.handleDelete(cdi, index)}/>
-                            </OverlayTrigger>
-                        </td>
-                    </tr>
-            )
+                            <td className="text-right">
+                                {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
+                                <OverlayTrigger placement="top"
+                                                overlay={<Tooltip id={`tooltip-details-${index}`}>Scarica</Tooltip>}>
+                                    <FaCloudDownloadAlt role="button" className="mr-3"
+                                                        onClick={() => this.handleDetails(cdi)}/>
+                                </OverlayTrigger>
+                                {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
+                                <OverlayTrigger placement="top"
+                                                overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
+                                    {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
+                                    <FaTrash role="button" className="mr-3"
+                                             onClick={() => this.handleDelete(cdi, index)}/>
+                                </OverlayTrigger>
+                            </td>
+                        </tr>
+                )
         );
 
         return (
@@ -294,47 +298,48 @@ export default class Cdis extends React.Component<IProps, IState> {
                         <div className="col-md-2 text-right">
                             <Button onClick={this.create}>Nuovo <FaPlus/></Button>
                             {/* eslint-disable-next-line functional/immutable-data */}
-                            <Form.Control id="fileUploader" className="hidden" type="file" accept=".xml" onChange={this.upload} onClick={(e: any) => (e.target.value = null)} />
+                            <Form.Control id="fileUploader" className="hidden" type="file" accept=".xml"
+                                          onChange={this.upload} onClick={(e: any) => (e.target.value = null)}/>
                         </div>
                         <div className="col-md-12">
                             <div className="row">
                                 <div className="col-md-8">
-                                    <Filters configuration={this.filter} onFilter={this.handleFilterCallback} />
+                                    <Filters configuration={this.filter} onFilter={this.handleFilterCallback}/>
                                 </div>
                             </div>
                             {isLoading && (<FaSpinner className="spinner"/>)}
                             {
-                                !isLoading && (
-                                        <>
-                                            <Table hover responsive size="sm">
-                                                <thead>
-                                                <tr>
-                                                    <th className="fixed-td-width">
-                                                        Codice CDI
-                                                    </th>
-                                                    <th className="">
-                                                        PSP
-                                                    </th>
-                                                    <th className="fixed-td-width">
-                                                        Codice PSP
-                                                    </th>
-                                                    <th className="fixed-td-width">
-                                                        Data pubblicazione
-                                                    </th>
-                                                    <th className="fixed-td-width">
-                                                        Data validità
-                                                    </th>
-                                                    <th className="fixed-td-width-sm text-center" />
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                {cdiList}
-                                                </tbody>
-                                            </Table>
+                                    !isLoading && (
+                                            <>
+                                                <Table hover responsive size="sm">
+                                                    <thead>
+                                                    <tr>
+                                                        <th className="fixed-td-width">
+                                                            Codice CDI
+                                                        </th>
+                                                        <th className="">
+                                                            PSP
+                                                        </th>
+                                                        <th className="fixed-td-width">
+                                                            Codice PSP
+                                                        </th>
+                                                        <th className="fixed-td-width">
+                                                            Data pubblicazione
+                                                        </th>
+                                                        <th className="fixed-td-width">
+                                                            Data validità
+                                                        </th>
+                                                        <th className="fixed-td-width-sm text-center"/>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {cdiList}
+                                                    </tbody>
+                                                </Table>
 
-                                            <Paginator pageInfo={pageInfo} onPageChanged={this.handlePageChange}/>
-                                        </>
-                                )
+                                                <Paginator pageInfo={pageInfo} onPageChanged={this.handlePageChange}/>
+                                            </>
+                                    )
                             }
                         </div>
                     </div>

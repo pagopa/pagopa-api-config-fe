@@ -63,3 +63,5 @@ yarn-error.log
 */env-config.js
 /swagger.json
 /test-report.xml
+.identity/.terraform
+.identity/.terraform.lock.hcl
