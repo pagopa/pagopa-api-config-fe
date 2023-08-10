@@ -1,6 +1,6 @@
 {
   "name": "pagopa-api-config-fe",
-  "version": "1.32.6-1-PAGOPA-1160-cdi-codici-convezioni-non-salvati-a-db",
+  "version": "1.32.6-2-PAGOPA-1160-cdi-codici-convezioni-non-salvati-a-db",
   "license": "MIT",
   "scripts": {
     "envconfig": "chmod +x envconfig.sh && . ./envconfig.sh",
