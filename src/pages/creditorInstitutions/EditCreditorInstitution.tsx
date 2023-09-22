@@ -140,7 +140,13 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                         this.setState({isError: true});
                     })
                     .finally(() => this.setState({isLoading: false}));
-            });
+            })// eslint-disable-next-line sonarjs/no-identical-functions
+                .catch(() => {
+                    this.context.instance.logoutPopup({
+                        postLogoutRedirectUri: "/",
+                        mainWindowRedirectUri: "/"
+                    }).then(() => window.sessionStorage.removeItem("secret"));
+                });
     }
 
     getIbans(code: string): void {
@@ -164,7 +170,13 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                     .catch(() => {
                         this.setState({isError: true});
                     });
-            });
+            })// eslint-disable-next-line sonarjs/no-identical-functions
+                .catch(() => {
+                    this.context.instance.logoutPopup({
+                        postLogoutRedirectUri: "/",
+                        mainWindowRedirectUri: "/"
+                    }).then(() => window.sessionStorage.removeItem("secret"));
+                });
     }
 
     getStations(code: string): void {
@@ -188,7 +200,13 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                     .catch(() => {
                         this.setState({isError: true});
                     });
-            });
+            })// eslint-disable-next-line sonarjs/no-identical-functions
+                .catch(() => {
+                    this.context.instance.logoutPopup({
+                        postLogoutRedirectUri: "/",
+                        mainWindowRedirectUri: "/"
+                    }).then(() => window.sessionStorage.removeItem("secret"));
+                });
     }
 
     getEncodings(code: string): void {
@@ -212,7 +230,13 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                     .catch(() => {
                         this.setState({isError: true});
                     });
-            });
+            })// eslint-disable-next-line sonarjs/no-identical-functions
+                .catch(() => {
+                    this.context.instance.logoutPopup({
+                        postLogoutRedirectUri: "/",
+                        mainWindowRedirectUri: "/"
+                    }).then(() => window.sessionStorage.removeItem("secret"));
+                });
     }
 
     componentDidMount(): void {
@@ -266,7 +290,13 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                 }).catch(() => {
                     toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
                 });
-            });
+            })// eslint-disable-next-line sonarjs/no-identical-functions
+                .catch(() => {
+                    this.context.instance.logoutPopup({
+                        postLogoutRedirectUri: "/",
+                        mainWindowRedirectUri: "/"
+                    }).then(() => window.sessionStorage.removeItem("secret"));
+                });
     }
 
     discard(section: string) {
@@ -310,7 +340,13 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                 }).catch(() => {
                     toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
                 });
-            });
+            })// eslint-disable-next-line sonarjs/no-identical-functions
+                .catch(() => {
+                    this.context.instance.logoutPopup({
+                        postLogoutRedirectUri: "/",
+                        mainWindowRedirectUri: "/"
+                    }).then(() => window.sessionStorage.removeItem("secret"));
+                });
     }
 
     discardEncoding(): void {
@@ -385,7 +421,13 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                         };
                         this.setState({confirmationModal, encodingMgmt});
                     });
-            });
+            })// eslint-disable-next-line sonarjs/no-identical-functions
+                .catch(() => {
+                    this.context.instance.logoutPopup({
+                        postLogoutRedirectUri: "/",
+                        mainWindowRedirectUri: "/"
+                    }).then(() => window.sessionStorage.removeItem("secret"));
+                });
     }
 
     hideDeleteModal(status: string) {
@@ -458,7 +500,13 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                 }).catch(() => {
                     toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
                 });
-            });      
+            })// eslint-disable-next-line sonarjs/no-identical-functions
+                .catch(() => {
+                    this.context.instance.logoutPopup({
+                        postLogoutRedirectUri: "/",
+                        mainWindowRedirectUri: "/"
+                    }).then(() => window.sessionStorage.removeItem("secret"));
+                });
     }
 
     editStation(): void {
@@ -485,7 +533,13 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                 }).catch(() => {
                     toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
                 });
-            });
+            })// eslint-disable-next-line sonarjs/no-identical-functions
+                .catch(() => {
+                    this.context.instance.logoutPopup({
+                        postLogoutRedirectUri: "/",
+                        mainWindowRedirectUri: "/"
+                    }).then(() => window.sessionStorage.removeItem("secret"));
+                });
     }
 
     discardStation(): void {
@@ -538,7 +592,13 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                     toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
                     callback([]);
                 });
-            });
+            })// eslint-disable-next-line sonarjs/no-identical-functions
+                .catch(() => {
+                    this.context.instance.logoutPopup({
+                        postLogoutRedirectUri: "/",
+                        mainWindowRedirectUri: "/"
+                    }).then(() => window.sessionStorage.removeItem("secret"));
+                });
     }
 
     handleStationChange(event: any) {
@@ -620,7 +680,13 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                         };
                         this.setState({confirmationModal, stationMgmt});
                     });
-            });
+            })// eslint-disable-next-line sonarjs/no-identical-functions
+                .catch(() => {
+                    this.context.instance.logoutPopup({
+                        postLogoutRedirectUri: "/",
+                        mainWindowRedirectUri: "/"
+                    }).then(() => window.sessionStorage.removeItem("secret"));
+                });
     }
 
     getIbanListRender() {

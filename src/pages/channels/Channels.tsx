@@ -114,7 +114,12 @@ export default class Channels extends React.Component<IProps, IState> {
                     .finally(() => {
                         this.setState({isLoading: false});
                     });
-            });
+            }).catch(() => {
+            this.context.instance.logoutPopup({
+                postLogoutRedirectUri: "/",
+                mainWindowRedirectUri: "/"
+            }).then(() => window.sessionStorage.removeItem("secret"));
+        });
     }
 
     componentDidMount(): void {
@@ -131,7 +136,8 @@ export default class Channels extends React.Component<IProps, IState> {
         this.context.instance.acquireTokenSilent({
             ...loginRequest,
             account: this.context.accounts[0]
-        }).then((response: any) => {
+        })
+                .then((response: any) => {
             const config = {
                 headers: {
                     Authorization: `Bearer ${response.idToken}`
@@ -158,6 +164,12 @@ export default class Channels extends React.Component<IProps, IState> {
                     .catch(() => {
                         toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
                     });
+                    // eslint-disable-next-line sonarjs/no-identical-functions
+        }).catch(() => {
+            this.context.instance.logoutPopup({
+                postLogoutRedirectUri: "/",
+                mainWindowRedirectUri: "/"
+            }).then(() => window.sessionStorage.removeItem("secret"));
         });
     }
 
@@ -226,7 +238,13 @@ export default class Channels extends React.Component<IProps, IState> {
                         .catch(() => {
                             toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
                         });
-                });
+                    // eslint-disable-next-line sonarjs/no-identical-functions
+                }).catch(() => {
+                this.context.instance.logoutPopup({
+                    postLogoutRedirectUri: "/",
+                    mainWindowRedirectUri: "/"
+                }).then(() => window.sessionStorage.removeItem("secret"));
+            });
         }
         this.setState({showDeleteModal: false});
     };

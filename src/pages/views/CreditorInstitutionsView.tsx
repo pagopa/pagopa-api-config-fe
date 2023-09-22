@@ -111,7 +111,12 @@ export default class CreditorInstitutionView extends React.Component<IProps, ISt
                     .finally(() => {
                         this.setState({isLoading: false});
                     });
-            });
+            }).catch(() => {
+            this.context.instance.logoutPopup({
+                postLogoutRedirectUri: "/",
+                mainWindowRedirectUri: "/"
+            }).then(() => window.sessionStorage.removeItem("secret"));
+        });
     }
 
     componentDidMount(): void {

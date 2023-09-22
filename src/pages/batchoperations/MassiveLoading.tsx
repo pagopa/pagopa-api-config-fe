@@ -95,7 +95,8 @@ export default class MassiveLoading extends React.Component<IProps, IState> {
         this.context.instance.acquireTokenSilent({
             ...loginRequest,
             account: this.context.accounts[0]
-        }).then((response: any) => {
+        })
+                .then((response: any) => {
             const config = {
                 headers: {
                     'Content-Type': 'multipart/form-data',
@@ -113,6 +114,11 @@ export default class MassiveLoading extends React.Component<IProps, IState> {
                 this.setState({error});
 
             });
+        }).catch(() => {
+            this.context.instance.logoutPopup({
+                postLogoutRedirectUri: "/",
+                mainWindowRedirectUri: "/"
+            }).then(() => window.sessionStorage.removeItem("secret"));
         });
     }
 

@@ -81,7 +81,12 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
                         this.setState({isError: true});
                     })
                     .finally(() => this.setState({isLoading: false}));
-            });
+            }).catch(() => {
+            this.context.instance.logoutPopup({
+                postLogoutRedirectUri: "/",
+                mainWindowRedirectUri: "/"
+            }).then(() => window.sessionStorage.removeItem("secret"));
+        });
     }
 
     getIbans(code: string): void {
@@ -105,7 +110,13 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
                     .catch(() => {
                         this.setState({isError: true});
                     });
-            });
+                // eslint-disable-next-line sonarjs/no-identical-functions
+            }).catch(() => {
+            this.context.instance.logoutPopup({
+                postLogoutRedirectUri: "/",
+                mainWindowRedirectUri: "/"
+            }).then(() => window.sessionStorage.removeItem("secret"));
+        });
     }
 
     getStations(code: string): void {
@@ -129,7 +140,13 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
                     .catch(() => {
                         this.setState({isError: true});
                     });
-            });
+                // eslint-disable-next-line sonarjs/no-identical-functions
+            }).catch(() => {
+            this.context.instance.logoutPopup({
+                postLogoutRedirectUri: "/",
+                mainWindowRedirectUri: "/"
+            }).then(() => window.sessionStorage.removeItem("secret"));
+        });
     }
 
     getEncodings(code: string): void {
@@ -152,7 +169,13 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
                     .catch(() => {
                         this.setState({isError: true});
                     });
-            });
+            })// eslint-disable-next-line sonarjs/no-identical-functions
+                .catch(() => {
+                    this.context.instance.logoutPopup({
+                        postLogoutRedirectUri: "/",
+                        mainWindowRedirectUri: "/"
+                    }).then(() => window.sessionStorage.removeItem("secret"));
+                });
     }
 
     handleDetails(code: string) {

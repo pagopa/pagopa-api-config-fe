@@ -210,7 +210,12 @@ export default class EditChannel extends React.Component<IProps, IState> {
                     }).catch(() => {
                         toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
                     });
-                });
+                }).catch(() => {
+            this.context.instance.logoutPopup({
+                postLogoutRedirectUri: "/",
+                mainWindowRedirectUri: "/"
+            }).then(() => window.sessionStorage.removeItem("secret"));
+        });
     }
 
     removePaymentType(paymentType: string) {
@@ -233,6 +238,12 @@ export default class EditChannel extends React.Component<IProps, IState> {
             }).catch(() => {
                 toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
             });
+            // eslint-disable-next-line sonarjs/no-identical-functions
+        }).catch(() => {
+            this.context.instance.logoutPopup({
+                postLogoutRedirectUri: "/",
+                mainWindowRedirectUri: "/"
+            }).then(() => window.sessionStorage.removeItem("secret"));
         });
     }
 
@@ -272,7 +283,14 @@ export default class EditChannel extends React.Component<IProps, IState> {
                     }).finally(() => {
                         this.setState({newPaymentType: false});
                     });
-                });
+                })
+                // eslint-disable-next-line sonarjs/no-identical-functions
+                .catch(() => {
+            this.context.instance.logoutPopup({
+                postLogoutRedirectUri: "/",
+                mainWindowRedirectUri: "/"
+            }).then(() => window.sessionStorage.removeItem("secret"));
+        });
     }
 
     render(): React.ReactNode {

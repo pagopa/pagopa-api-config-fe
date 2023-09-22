@@ -108,7 +108,13 @@ export default class Pdds extends React.Component<IProps, IState> {
                     .finally(() => {
                         this.setState({isLoading: false});
                     });
-            });
+            })// eslint-disable-next-line sonarjs/no-identical-functions
+                .catch(() => {
+                    this.context.instance.logoutPopup({
+                        postLogoutRedirectUri: "/",
+                        mainWindowRedirectUri: "/"
+                    }).then(() => window.sessionStorage.removeItem("secret"));
+                });
     }
 
     componentDidMount(): void {
@@ -215,7 +221,13 @@ export default class Pdds extends React.Component<IProps, IState> {
                             }
                         });
                     });
-            });
+            })// eslint-disable-next-line sonarjs/no-identical-functions
+                .catch(() => {
+                    this.context.instance.logoutPopup({
+                        postLogoutRedirectUri: "/",
+                        mainWindowRedirectUri: "/"
+                    }).then(() => window.sessionStorage.removeItem("secret"));
+                });
     }
 
     save() {
@@ -258,7 +270,13 @@ export default class Pdds extends React.Component<IProps, IState> {
                             }
                         });
                     });
-            });
+            })// eslint-disable-next-line sonarjs/no-identical-functions
+                .catch(() => {
+                    this.context.instance.logoutPopup({
+                        postLogoutRedirectUri: "/",
+                        mainWindowRedirectUri: "/"
+                    }).then(() => window.sessionStorage.removeItem("secret"));
+                });
     }
 
     handleEdit(configuration: Pdd) {
@@ -311,7 +329,13 @@ export default class Pdds extends React.Component<IProps, IState> {
                         .catch(() => {
                             toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
                         });
-                });
+                })// eslint-disable-next-line sonarjs/no-identical-functions
+                    .catch(() => {
+                        this.context.instance.logoutPopup({
+                            postLogoutRedirectUri: "/",
+                            mainWindowRedirectUri: "/"
+                        }).then(() => window.sessionStorage.removeItem("secret"));
+                    });
         }
         this.setState({
             delete: {

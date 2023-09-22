@@ -23,7 +23,13 @@ export const getChannel = (context: any, code: string) => new Promise((resolve, 
             })
             .then(r => thenResolve(r, resolve, reject))
             .catch(reject);
-        });
+        })// eslint-disable-next-line sonarjs/no-identical-functions
+                .catch(() => {
+                    context.instance.logoutPopup({
+                        postLogoutRedirectUri: "/",
+                        mainWindowRedirectUri: "/"
+                    }).then(() => window.sessionStorage.removeItem("secret"));
+                });
     });
 
 export const getPaymentTypeLegend = (context: any) => new Promise((resolve, reject) => {

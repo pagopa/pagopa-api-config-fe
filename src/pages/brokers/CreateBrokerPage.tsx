@@ -98,7 +98,12 @@ export default class CreateBrokerPage extends React.Component<IProps, IState> {
                 }).catch(() => {
                     toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
                 });
-            });
+            }).catch(() => {
+            this.context.instance.logoutPopup({
+                postLogoutRedirectUri: "/",
+                mainWindowRedirectUri: "/"
+            }).then(() => window.sessionStorage.removeItem("secret"));
+        });
     }
 
     render(): React.ReactNode {

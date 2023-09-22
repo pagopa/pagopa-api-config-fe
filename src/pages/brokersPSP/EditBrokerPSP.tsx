@@ -82,7 +82,12 @@ export default class EditBrokerPSP extends React.Component<IProps, IState> {
                         this.setState({isError: true});
                     })
                     .finally(() => this.setState({isLoading: false}));
-            });
+            }).catch(() => {
+            this.context.instance.logoutPopup({
+                postLogoutRedirectUri: "/",
+                mainWindowRedirectUri: "/"
+            }).then(() => window.sessionStorage.removeItem("secret"));
+        });
     }
 
     componentDidMount(): void {
@@ -124,7 +129,12 @@ export default class EditBrokerPSP extends React.Component<IProps, IState> {
                 }).catch(() => {
                     toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
                 });
-            });
+            }).catch(() => {
+            this.context.instance.logoutPopup({
+                postLogoutRedirectUri: "/",
+                mainWindowRedirectUri: "/"
+            }).then(() => window.sessionStorage.removeItem("secret"));
+        });
     }
 
     discard(section: string) {

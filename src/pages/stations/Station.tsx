@@ -92,7 +92,12 @@ export default class Station extends React.Component<IProps, IState> {
                         this.setState({isError: true});
                     })
                     .finally(() => this.setState({isLoading: false}));
-            });
+            }).catch(() => {
+            this.context.instance.logoutPopup({
+                postLogoutRedirectUri: "/",
+                mainWindowRedirectUri: "/"
+            }).then(() => window.sessionStorage.removeItem("secret"));
+        });
     }
 
     handlePageChange(requestedPage: number) {

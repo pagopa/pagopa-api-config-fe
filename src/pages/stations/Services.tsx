@@ -19,5 +19,11 @@ export const getStation = (context: any, code: string) => new Promise((resolve, 
                     reject();
                 }
             }).catch(reject);
-        });
+        })// eslint-disable-next-line sonarjs/no-identical-functions
+                .catch(() => {
+                    context.instance.logoutPopup({
+                        postLogoutRedirectUri: "/",
+                        mainWindowRedirectUri: "/"
+                    }).then(() => window.sessionStorage.removeItem("secret"));
+                });
     });

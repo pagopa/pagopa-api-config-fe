@@ -109,6 +109,13 @@ export default class CheckIca extends React.Component<IProps, IState> {
                         toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
                     });
                 })
+                // eslint-disable-next-line sonarjs/no-identical-functions
+                .catch(() => {
+                    this.context.instance.logoutPopup({
+                        postLogoutRedirectUri: "/",
+                        mainWindowRedirectUri: "/"
+                    }).then(() => window.sessionStorage.removeItem("secret"));
+                })
                 .finally(() => {
                             toast.dismiss(creating);
                         }
@@ -211,7 +218,13 @@ export default class CheckIca extends React.Component<IProps, IState> {
                 } as XMLData;
                 this.setState({xsd});
             });
-        });
+        })// eslint-disable-next-line sonarjs/no-identical-functions
+                .catch(() => {
+                    this.context.instance.logoutPopup({
+                        postLogoutRedirectUri: "/",
+                        mainWindowRedirectUri: "/"
+                    }).then(() => window.sessionStorage.removeItem("secret"));
+                });
     }
 
     render(): React.ReactNode {

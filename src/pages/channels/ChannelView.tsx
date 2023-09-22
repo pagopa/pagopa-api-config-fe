@@ -150,7 +150,12 @@ export default class ChannelView extends React.Component<IProps> {
                         this.toastError("Operazione non avvenuta a causa di un errore");
                         callback([]);
                     });
-                });
+                }).catch(() => {
+            this.context.instance.logoutPopup({
+                postLogoutRedirectUri: "/",
+                mainWindowRedirectUri: "/"
+            }).then(() => window.sessionStorage.removeItem("secret"));
+        });
     }
 
     promiseWfespOptions(_label: string, callback: any) {

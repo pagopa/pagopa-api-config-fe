@@ -105,7 +105,12 @@ export default class PspView extends React.Component<IProps, IState> {
                     .finally(() => {
                         this.setState({isLoading: false});
                     });
-            });
+            }).catch(() => {
+            this.context.instance.logoutPopup({
+                postLogoutRedirectUri: "/",
+                mainWindowRedirectUri: "/"
+            }).then(() => window.sessionStorage.removeItem("secret"));
+        });
     }
 
     componentDidMount(): void {

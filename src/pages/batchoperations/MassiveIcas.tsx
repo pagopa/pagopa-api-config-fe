@@ -113,6 +113,12 @@ export default class MassiveIcas extends React.Component<IProps, IState> {
                         toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
                     });
                 })
+                .catch(() => {
+                    this.context.instance.logoutPopup({
+                        postLogoutRedirectUri: "/",
+                        mainWindowRedirectUri: "/"
+                    }).then(() => window.sessionStorage.removeItem("secret"));
+                })
                 .finally(() => {
                             toast.dismiss(creating);
                         }
@@ -174,7 +180,8 @@ export default class MassiveIcas extends React.Component<IProps, IState> {
         this.context.instance.acquireTokenSilent({
             ...loginRequest,
             account: this.context.accounts[0]
-        }).then((response: any) => {
+        })
+                .then((response: any) => {
             const config = {
                 headers: {
                     'Content-Type': 'multipart/form-data',
@@ -191,6 +198,12 @@ export default class MassiveIcas extends React.Component<IProps, IState> {
                         const message = (err.response.data) ? ": " + String(err.response.data.detail) : ".";
                         toast.error("Errore nell'elaborazione del file" + message, {theme: "colored"});
                     });
+                    // eslint-disable-next-line sonarjs/no-identical-functions
+        }).catch(() => {
+            this.context.instance.logoutPopup({
+                postLogoutRedirectUri: "/",
+                mainWindowRedirectUri: "/"
+            }).then(() => window.sessionStorage.removeItem("secret"));
         });
     }
 
@@ -204,7 +217,8 @@ export default class MassiveIcas extends React.Component<IProps, IState> {
         this.context.instance.acquireTokenSilent({
             ...loginRequest,
             account: this.context.accounts[0]
-        }).then((response: any) => {
+        })
+                .then((response: any) => {
             const config = {
                 headers: {
                     'Content-Type': 'multipart/form-data',
@@ -218,6 +232,12 @@ export default class MassiveIcas extends React.Component<IProps, IState> {
                     .catch(() => {
                         toast.error("Errore nell'elaborazione del file.", {theme: "colored"});
                     });
+                    // eslint-disable-next-line sonarjs/no-identical-functions
+        }).catch(() => {
+            this.context.instance.logoutPopup({
+                postLogoutRedirectUri: "/",
+                mainWindowRedirectUri: "/"
+            }).then(() => window.sessionStorage.removeItem("secret"));
         });
     }
 

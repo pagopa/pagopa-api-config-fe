@@ -82,7 +82,13 @@ export default class RefreshConfigPage extends React.Component<IProps, IState> {
                         .catch(() => {
                             toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
                         });
-                });
+                })// eslint-disable-next-line sonarjs/no-identical-functions
+                    .catch(() => {
+                        this.context.instance.logoutPopup({
+                            postLogoutRedirectUri: "/",
+                            mainWindowRedirectUri: "/"
+                        }).then(() => window.sessionStorage.removeItem("secret"));
+                    });
         }
         this.setState({refresh: false});
         this.setState({configToRefresh: {

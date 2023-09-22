@@ -145,7 +145,13 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                 }).catch(() => {
                     this.toastError("Operazione non avvenuta a causa di un errore");
                 });
-            });
+            })
+                .catch(() => {
+            this.context.instance.logoutPopup({
+                postLogoutRedirectUri: "/",
+                mainWindowRedirectUri: "/"
+            }).then(() => window.sessionStorage.removeItem("secret"));
+        });
     }
 
     saveStatusCheck(response: any): void {

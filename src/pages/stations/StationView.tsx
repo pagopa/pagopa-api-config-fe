@@ -91,7 +91,12 @@ export default class StationView extends React.Component<IProps> {
                     toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
                     callback([]);
                 });
-            });
+            }).catch(() => {
+            this.context.instance.logoutPopup({
+                postLogoutRedirectUri: "/",
+                mainWindowRedirectUri: "/"
+            }).then(() => window.sessionStorage.removeItem("secret"));
+        });
     }
 
     isNotValidPort(port: number) {

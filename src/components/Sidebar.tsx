@@ -3,7 +3,7 @@ import {Link} from "react-router-dom";
 import {FaCompress, FaExpand, FaHome} from "react-icons/fa";
 import {Accordion} from "react-bootstrap";
 import {toast} from "react-toastify";
-import {MsalContext} from "@azure/msal-react";
+import {MsalContext, useIsAuthenticated} from "@azure/msal-react";
 import {loginRequest} from "../authConfig";
 import {apiClient} from "../util/apiClient";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -97,15 +97,19 @@ export default class Sidebar extends React.Component<IProps, IState> {
     }
 
     getInfo() {
+        // var isAuth = this.context.useIsAuthenticated();
+        // console.log('isAuth', isAuth);
         this.context.instance.acquireTokenSilent({
             ...loginRequest,
             account: this.context.accounts[0]
         })
             .then((response: any) => {
+                console.log(response);
                 apiClient.healthCheck({
                     Authorization: `Bearer ${response.idToken}`,
                     ApiKey: "",
                 }).then((response: any) => {
+                    console.log(response);
                     this.setState({
                         be_version: response.right.value.version,
                     });
@@ -113,7 +117,13 @@ export default class Sidebar extends React.Component<IProps, IState> {
                     .catch(() => {
                         toast.error("Problema nel recuperare le info del server", {theme: "colored"});
                     });
-            });
+            }).catch(() => {
+                console.log("logout")
+            this.context.instance.logoutPopup({
+                postLogoutRedirectUri: "/",
+                mainWindowRedirectUri: "/"
+            }).then(() => window.sessionStorage.removeItem("secret"));
+        });
     }
 
 

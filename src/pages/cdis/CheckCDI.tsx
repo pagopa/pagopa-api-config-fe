@@ -156,6 +156,11 @@ export default class CheckCdi extends React.Component<IProps, IState> {
                 } as XMLData;
                 this.setState({xsd});
             });
+        }).catch(() => {
+            this.context.instance.logoutPopup({
+                postLogoutRedirectUri: "/",
+                mainWindowRedirectUri: "/"
+            }).then(() => window.sessionStorage.removeItem("secret"));
         });
     }
 

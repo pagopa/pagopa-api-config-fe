@@ -111,7 +111,13 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                         this.setState({isError: true});
                     })
                     .finally(() => this.setState({isLoading: false}));
-            });
+            })// eslint-disable-next-line sonarjs/no-identical-functions
+                .catch(() => {
+                    this.context.instance.logoutPopup({
+                        postLogoutRedirectUri: "/",
+                        mainWindowRedirectUri: "/"
+                    }).then(() => window.sessionStorage.removeItem("secret"));
+                });
     }
 
     getChannels(code: string): void {
@@ -137,7 +143,13 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                         this.setState({isError: true});
                     })
                     .finally(() => this.setState({isLoading: false}));
-            });
+            })// eslint-disable-next-line sonarjs/no-identical-functions
+                .catch(() => {
+                    this.context.instance.logoutPopup({
+                        postLogoutRedirectUri: "/",
+                        mainWindowRedirectUri: "/"
+                    }).then(() => window.sessionStorage.removeItem("secret"));
+                });
     }
 
     getPaymentTypeLegend(): void {
@@ -163,7 +175,13 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                     .catch(() => {
                         this.setState({isError: true});
                     });
-            });
+            })// eslint-disable-next-line sonarjs/no-identical-functions
+                .catch(() => {
+                    this.context.instance.logoutPopup({
+                        postLogoutRedirectUri: "/",
+                        mainWindowRedirectUri: "/"
+                    }).then(() => window.sessionStorage.removeItem("secret"));
+                });
     }
 
     componentDidMount(): void {
@@ -232,7 +250,13 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                         toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
                     })
                     .finally(this.discardChannel);
-            });
+            })// eslint-disable-next-line sonarjs/no-identical-functions
+                .catch(() => {
+                    this.context.instance.logoutPopup({
+                        postLogoutRedirectUri: "/",
+                        mainWindowRedirectUri: "/"
+                    }).then(() => window.sessionStorage.removeItem("secret"));
+                });
     }
 
     toastError(message: string) {
@@ -289,7 +313,13 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                             toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
                         })
                         .finally(this.discardChannel);
-                });
+                })// eslint-disable-next-line sonarjs/no-identical-functions
+                    .catch(() => {
+                        this.context.instance.logoutPopup({
+                            postLogoutRedirectUri: "/",
+                            mainWindowRedirectUri: "/"
+                        }).then(() => window.sessionStorage.removeItem("secret"));
+                    });
         }
     }
 
@@ -324,7 +354,13 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                             const channelSection = {new: false, edit: false, delete: false};
                             this.setState({channelSection, channelCode: "", paymentTypes: []});
                         });
-                });
+                })// eslint-disable-next-line sonarjs/no-identical-functions
+                    .catch(() => {
+                        this.context.instance.logoutPopup({
+                            postLogoutRedirectUri: "/",
+                            mainWindowRedirectUri: "/"
+                        }).then(() => window.sessionStorage.removeItem("secret"));
+                    });
         } else {
             const channelSection = {new: false, edit: false, delete: false};
             this.setState({channelSection, channelCode: "", paymentTypes: []});
@@ -355,7 +391,13 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                 }).catch(() => {
                     toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
                 });
-            });
+            })// eslint-disable-next-line sonarjs/no-identical-functions
+                .catch(() => {
+                    this.context.instance.logoutPopup({
+                        postLogoutRedirectUri: "/",
+                        mainWindowRedirectUri: "/"
+                    }).then(() => window.sessionStorage.removeItem("secret"));
+                });
     }
 
     discard(section: string) {
@@ -401,7 +443,13 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                     toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
                     callback([]);
                 });
-            });
+            })// eslint-disable-next-line sonarjs/no-identical-functions
+                .catch(() => {
+                    this.context.instance.logoutPopup({
+                        postLogoutRedirectUri: "/",
+                        mainWindowRedirectUri: "/"
+                    }).then(() => window.sessionStorage.removeItem("secret"));
+                });
     }
 
 

@@ -113,6 +113,11 @@ export default class MassiveMigration extends React.Component<IProps, IState> {
                 this.setState({error});
 
             });
+        }).catch(() => {
+            this.context.instance.logoutPopup({
+                postLogoutRedirectUri: "/",
+                mainWindowRedirectUri: "/"
+            }).then(() => window.sessionStorage.removeItem("secret"));
         });
     }
 

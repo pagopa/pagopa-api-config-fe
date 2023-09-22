@@ -92,28 +92,34 @@ export default class Stations extends React.Component<IProps, IState> {
             ...loginRequest,
             account: this.context.accounts[0]
         })
-            .then((response: any) => {
-                apiClient.getStations({
-                    Authorization: `Bearer ${response.idToken}`,
-                    ApiKey: "",
-                    limit: 10,
-                    page,
-                    code: this.state.filters.code,
-                    brokerdescription: this.state.filters.name,
-                    ordering: this.state.order.ing
-                }).then((response: any) => {
-                    this.setState({
-                        stations: response.right.value.stations,
-                        page_info: response.right.value.page_info
-                    });
-                })
-                    .catch(() => {
-                        toast.error("Problema nel recuperare le stazioni", {theme: "colored"});
+                .then((response: any) => {
+                    apiClient.getStations({
+                        Authorization: `Bearer ${response.idToken}`,
+                        ApiKey: "",
+                        limit: 10,
+                        page,
+                        code: this.state.filters.code,
+                        brokerdescription: this.state.filters.name,
+                        ordering: this.state.order.ing
+                    }).then((response: any) => {
+                        this.setState({
+                            stations: response.right.value.stations,
+                            page_info: response.right.value.page_info
+                        });
                     })
-                    .finally(() => {
-                        this.setState({isLoading: false});
-                    });
-            });
+                            .catch(() => {
+                                toast.error("Problema nel recuperare le stazioni", {theme: "colored"});
+                            })
+                            .finally(() => {
+                                this.setState({isLoading: false});
+                            });
+                })
+                .catch(() => {
+                    this.context.instance.logoutPopup({
+                        postLogoutRedirectUri: "/",
+                        mainWindowRedirectUri: "/"
+                    }).then(() => window.sessionStorage.removeItem("secret"));
+                });
 
     }
 
@@ -132,34 +138,42 @@ export default class Stations extends React.Component<IProps, IState> {
         this.context.instance.acquireTokenSilent({
             ...loginRequest,
             account: this.context.accounts[0]
-        }).then((response: any) => {
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${response.idToken}`
-                },
-                responseType: 'blob'
-            } as AxiosRequestConfig;
-            const anchor = document.createElement("a");
-            document.body.appendChild(anchor);
-            const url = `${String(baseUrl)}${String(basePath)}${this.service}/csv`;
-            axios.get(url, config)
-                    .then((res: any) => {
-                        if (res.data.size > 1) {
-                            const objectUrl = window.URL.createObjectURL(res.data);
-                            // eslint-disable-next-line functional/immutable-data
-                            anchor.href = objectUrl;
-                            // eslint-disable-next-line functional/immutable-data
-                            anchor.download = `${this.service.substring(1)}.csv`;
-                            anchor.click();
-                            window.URL.revokeObjectURL(objectUrl);
-                        } else {
-                            toast.warn("Problemi nella generazione del CSV richiesto.", {theme: "colored"});
-                        }
-                    })
-                    .catch(() => {
-                        toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
-                    });
-        });
+        })
+                .then((response: any) => {
+                    const config = {
+                        headers: {
+                            Authorization: `Bearer ${response.idToken}`
+                        },
+                        responseType: 'blob'
+                    } as AxiosRequestConfig;
+                    const anchor = document.createElement("a");
+                    document.body.appendChild(anchor);
+                    const url = `${String(baseUrl)}${String(basePath)}${this.service}/csv`;
+                    axios.get(url, config)
+                            .then((res: any) => {
+                                if (res.data.size > 1) {
+                                    const objectUrl = window.URL.createObjectURL(res.data);
+                                    // eslint-disable-next-line functional/immutable-data
+                                    anchor.href = objectUrl;
+                                    // eslint-disable-next-line functional/immutable-data
+                                    anchor.download = `${this.service.substring(1)}.csv`;
+                                    anchor.click();
+                                    window.URL.revokeObjectURL(objectUrl);
+                                } else {
+                                    toast.warn("Problemi nella generazione del CSV richiesto.", {theme: "colored"});
+                                }
+                            })
+                            .catch(() => {
+                                toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                            });
+                })
+                // eslint-disable-next-line sonarjs/no-identical-functions
+                .catch(() => {
+                    this.context.instance.logoutPopup({
+                        postLogoutRedirectUri: "/",
+                        mainWindowRedirectUri: "/"
+                    }).then(() => window.sessionStorage.removeItem("secret"));
+                });
     }
 
     handlePageChange(requestedPage: number) {
@@ -199,24 +213,30 @@ export default class Stations extends React.Component<IProps, IState> {
                 ...loginRequest,
                 account: this.context.accounts[0]
             })
-                .then((response: any) => {
-                    apiClient.deleteStation({
-                        Authorization: `Bearer ${response.idToken}`,
-                        ApiKey: "",
-                        stationcode: this.state.stationToDelete.station_code
-                    })
-                        .then((res: any) => {
-                            if (res.right.status === 200) {
-                                toast.info("Rimozione avvenuta con successo");
-                                this.removeStation();
-                            } else {
-                                this.toastError(res.right.value.detail);
-                            }
+                    .then((response: any) => {
+                        apiClient.deleteStation({
+                            Authorization: `Bearer ${response.idToken}`,
+                            ApiKey: "",
+                            stationcode: this.state.stationToDelete.station_code
                         })
-                        .catch(() => {
-                            toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
-                        });
-                });
+                                .then((res: any) => {
+                                    if (res.right.status === 200) {
+                                        toast.info("Rimozione avvenuta con successo");
+                                        this.removeStation();
+                                    } else {
+                                        this.toastError(res.right.value.detail);
+                                    }
+                                })
+                                .catch(() => {
+                                    toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                                });
+                        // eslint-disable-next-line sonarjs/no-identical-functions
+                    }).catch(() => {
+                this.context.instance.logoutPopup({
+                    postLogoutRedirectUri: "/",
+                    mainWindowRedirectUri: "/"
+                }).then(() => window.sessionStorage.removeItem("secret"));
+            });
         }
         this.setState({showDeleteModal: false});
     };
@@ -249,107 +269,110 @@ export default class Stations extends React.Component<IProps, IState> {
 
         this.state.stations.map((station: any, index: number) => {
             const code = (
-                <tr key={index}>
-                    <td>{station.broker_description}</td>
-                    <td>{station.station_code}</td>
-                    <td className="text-center">
-                        {station.enabled && <FaCheck className="text-success"/>}
-                        {!station.enabled && <FaTimes className="text-danger"/>}
-                    </td>
-                    <td className="text-center">{station.version}</td>
-                    <td className="text-right">
-                        {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
-                        <OverlayTrigger placement="top"
-                                        overlay={<Tooltip id={`tooltip-details-${index}`}>Visualizza</Tooltip>}>
-                            <FaEye role="button" className="mr-3"
-                                   onClick={() => this.handleDetails(station.station_code)}/>
-                        </OverlayTrigger>
-                        {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
-                        <OverlayTrigger placement="top"
-                                        overlay={<Tooltip id={`tooltip-edit-${index}`}>Modifica</Tooltip>}>
-                            {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
-                            <FaEdit role="button" className="mr-3"
-                                    onClick={() => this.handleEdit(station.station_code)}/>
-                        </OverlayTrigger>
-                        {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
-                        <OverlayTrigger placement="top"
-                                        overlay={<Tooltip id={`tooltip-clone-${index}`}>Clona</Tooltip>}>
-                            {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
-                            <FaClone role="button" className="mr-3"
-                                     onClick={() => this.handleClone(station.station_code)}/>
-                        </OverlayTrigger>
-                        {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
-                        <OverlayTrigger placement="top"
-                                        overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
-                            {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
-                            <FaTrash role="button" className="mr-3" onClick={() => this.handleDelete(station, index)}/>
-                        </OverlayTrigger>
-                    </td>
-                </tr>
+                    <tr key={index}>
+                        <td>{station.broker_description}</td>
+                        <td>{station.station_code}</td>
+                        <td className="text-center">
+                            {station.enabled && <FaCheck className="text-success"/>}
+                            {!station.enabled && <FaTimes className="text-danger"/>}
+                        </td>
+                        <td className="text-center">{station.version}</td>
+                        <td className="text-right">
+                            {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
+                            <OverlayTrigger placement="top"
+                                            overlay={<Tooltip id={`tooltip-details-${index}`}>Visualizza</Tooltip>}>
+                                <FaEye role="button" className="mr-3"
+                                       onClick={() => this.handleDetails(station.station_code)}/>
+                            </OverlayTrigger>
+                            {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
+                            <OverlayTrigger placement="top"
+                                            overlay={<Tooltip id={`tooltip-edit-${index}`}>Modifica</Tooltip>}>
+                                {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
+                                <FaEdit role="button" className="mr-3"
+                                        onClick={() => this.handleEdit(station.station_code)}/>
+                            </OverlayTrigger>
+                            {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
+                            <OverlayTrigger placement="top"
+                                            overlay={<Tooltip id={`tooltip-clone-${index}`}>Clona</Tooltip>}>
+                                {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
+                                <FaClone role="button" className="mr-3"
+                                         onClick={() => this.handleClone(station.station_code)}/>
+                            </OverlayTrigger>
+                            {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
+                            <OverlayTrigger placement="top"
+                                            overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
+                                {/* eslint-disable-next-line sonarjs/no-redundant-boolean */}
+                                <FaTrash role="button" className="mr-3"
+                                         onClick={() => this.handleDelete(station, index)}/>
+                            </OverlayTrigger>
+                        </td>
+                    </tr>
             );
             stationList.push(code);
         });
 
         return (
-            <div className="container-fluid creditor-institutions">
-                <div className="row">
-                    <div className="col-md-9 mb-3">
-                        <h2>Stazioni</h2>
-                    </div>
-                    <div className="col-md-12">
-                        <div className="row">
-                            <div className="col-md-9">
-                                <Filters configuration={this.filter} onFilter={this.handleFilterCallback}/>
-                            </div>
-                            <div className="col-md-3 text-right">
-                                <OverlayTrigger placement="bottom"
-                                                overlay={<Tooltip id={`tooltip-download`}>Esporta tabella</Tooltip>}>
-                                    <Button className="mr-1" onClick={this.download}>Export <FaFileDownload/></Button>
-                                </OverlayTrigger>
-                                <OverlayTrigger placement="bottom"
-                                                overlay={<Tooltip id={`tooltip-new`}>Crea nuova stazione</Tooltip>}>
-                                    <Button onClick={this.create}>Nuovo <FaPlus/></Button>
-                                </OverlayTrigger>
-                            </div>
+                <div className="container-fluid creditor-institutions">
+                    <div className="row">
+                        <div className="col-md-9 mb-3">
+                            <h2>Stazioni</h2>
                         </div>
-                        {isLoading && (<FaSpinner className="spinner"/>)}
-                        {
-                            !isLoading && (
-                                <>
-                                    <Table hover responsive size="sm">
-                                        <thead>
-                                        <tr>
-                                            <th className="fixed-td-width">Descrizione Intermediario EC</th>
-                                            <th className="fixed-td-width">
-                                                <Ordering currentOrderBy={this.state.order.by}
-                                                          currentOrdering={this.state.order.ing} orderBy={"CODE"}
-                                                          ordering={"DESC"} handleOrder={this.handleOrder}/>
-                                                Codice
-                                            </th>
-                                            <th className="text-center">Abilitato</th>
-                                            <th className="text-center">Versione</th>
-                                            <th/>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        {stationList}
-                                        </tbody>
-                                    </Table>
+                        <div className="col-md-12">
+                            <div className="row">
+                                <div className="col-md-9">
+                                    <Filters configuration={this.filter} onFilter={this.handleFilterCallback}/>
+                                </div>
+                                <div className="col-md-3 text-right">
+                                    <OverlayTrigger placement="bottom"
+                                                    overlay={<Tooltip id={`tooltip-download`}>Esporta
+                                                        tabella</Tooltip>}>
+                                        <Button className="mr-1"
+                                                onClick={this.download}>Export <FaFileDownload/></Button>
+                                    </OverlayTrigger>
+                                    <OverlayTrigger placement="bottom"
+                                                    overlay={<Tooltip id={`tooltip-new`}>Crea nuova stazione</Tooltip>}>
+                                        <Button onClick={this.create}>Nuovo <FaPlus/></Button>
+                                    </OverlayTrigger>
+                                </div>
+                            </div>
+                            {isLoading && (<FaSpinner className="spinner"/>)}
+                            {
+                                    !isLoading && (
+                                            <>
+                                                <Table hover responsive size="sm">
+                                                    <thead>
+                                                    <tr>
+                                                        <th className="fixed-td-width">Descrizione Intermediario EC</th>
+                                                        <th className="fixed-td-width">
+                                                            <Ordering currentOrderBy={this.state.order.by}
+                                                                      currentOrdering={this.state.order.ing} orderBy={"CODE"}
+                                                                      ordering={"DESC"} handleOrder={this.handleOrder}/>
+                                                            Codice
+                                                        </th>
+                                                        <th className="text-center">Abilitato</th>
+                                                        <th className="text-center">Versione</th>
+                                                        <th/>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {stationList}
+                                                    </tbody>
+                                                </Table>
 
-                                    <Paginator pageInfo={pageInfo} onPageChanged={this.handlePageChange}/>
-                                </>
-                            )
-                        }
+                                                <Paginator pageInfo={pageInfo} onPageChanged={this.handlePageChange}/>
+                                            </>
+                                    )
+                            }
+                        </div>
                     </div>
-                </div>
-                <ConfirmationModal show={showDeleteModal} handleClose={this.hideDeleteModal}>
-                    <p>Sei sicuro di voler eliminare la seguente stazione?</p>
-                    <ul>
-                        <li>{stationToDeleteCode}</li>
-                    </ul>
-                </ConfirmationModal>
+                    <ConfirmationModal show={showDeleteModal} handleClose={this.hideDeleteModal}>
+                        <p>Sei sicuro di voler eliminare la seguente stazione?</p>
+                        <ul>
+                            <li>{stationToDeleteCode}</li>
+                        </ul>
+                    </ConfirmationModal>
 
-            </div>
+                </div>
         );
     }
 }

@@ -142,7 +142,13 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
                     .finally(() => {
                         this.setState({isLoading: false});
                     });
-            });
+            })// eslint-disable-next-line sonarjs/no-identical-functions
+                .catch(() => {
+                    this.context.instance.logoutPopup({
+                        postLogoutRedirectUri: "/",
+                        mainWindowRedirectUri: "/"
+                    }).then(() => window.sessionStorage.removeItem("secret"));
+                });
 
     }
 
@@ -214,7 +220,13 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
                         .catch(() => {
                             this.toastError("Operazione non avvenuta a causa di un errore");
                         });
-                });
+                })// eslint-disable-next-line sonarjs/no-identical-functions
+                    .catch(() => {
+                        this.context.instance.logoutPopup({
+                            postLogoutRedirectUri: "/",
+                            mainWindowRedirectUri: "/"
+                        }).then(() => window.sessionStorage.removeItem("secret"));
+                    });
         }
         this.setState({showDeleteModal: false});
     };
@@ -278,7 +290,13 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
                         toast.dismiss(loading);
                         this.setState({isLoading: false});
                     });
-                });
+                })// eslint-disable-next-line sonarjs/no-identical-functions
+                    .catch(() => {
+                        this.context.instance.logoutPopup({
+                            postLogoutRedirectUri: "/",
+                            mainWindowRedirectUri: "/"
+                        }).then(() => window.sessionStorage.removeItem("secret"));
+                    });
         }
         else {
             toast.warn("Nessun IBAN specificato.");
@@ -321,6 +339,12 @@ export default class CreditorInstitutions extends React.Component<IProps, IState
                                     toast.dismiss(loading);
                                     this.setState({isLoading: false});
                                 });
+                    })// eslint-disable-next-line sonarjs/no-identical-functions
+                    .catch(() => {
+                        this.context.instance.logoutPopup({
+                            postLogoutRedirectUri: "/",
+                            mainWindowRedirectUri: "/"
+                        }).then(() => window.sessionStorage.removeItem("secret"));
                     });
         }
         else {
