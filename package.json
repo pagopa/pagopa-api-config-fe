@@ -1,6 +1,6 @@
 {
   "name": "pagopa-api-config-fe",
-  "version": "1.33.0-5-login-logout",
+  "version": "1.33.1",
   "license": "MIT",
   "scripts": {
     "envconfig": "chmod +x envconfig.sh && . ./envconfig.sh",
