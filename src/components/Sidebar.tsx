@@ -97,8 +97,6 @@ export default class Sidebar extends React.Component<IProps, IState> {
     }
 
     getInfo() {
-        // var isAuth = this.context.useIsAuthenticated();
-        // console.log('isAuth', isAuth);
         this.context.instance.acquireTokenSilent({
             ...loginRequest,
             account: this.context.accounts[0]
