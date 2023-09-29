@@ -1,6 +1,6 @@
 {
   "name": "pagopa-api-config-fe",
-  "version": "1.33.1",
+  "version": "1.33.1-3-PAGOPA-1053-sviluppo-feedback-su-refresh-della-configurazione",
   "license": "MIT",
   "scripts": {
     "envconfig": "chmod +x envconfig.sh && . ./envconfig.sh",
