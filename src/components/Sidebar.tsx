@@ -178,7 +178,6 @@ export default class Sidebar extends React.Component<IProps, IState> {
             );
         }
 
-        // @ts-ignore
         return (
             <>
                 <Link to={"/"} key={"home"} className={`list-group-item-action `}>

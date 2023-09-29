@@ -150,7 +150,7 @@ export default class RefreshConfigPage extends React.Component<IProps, IState> {
                     <div className={"col-md-12"}>
                         {/* eslint-disable-next-line react/no-unescaped-entities */}
                         <p>In questa sezione è possibile effettuare il refresh delle configurazioni del nodo. Le
-                            seguenti azioni innescano il caricamento e l'eventuale aggiornamento delle istanze in
+                            seguenti azioni innescano il caricamento e l&apos;eventuale aggiornamento delle istanze in
                             memoria. </p>
                         <p className="alert alert-warning">
                             <FaExclamationTriangle/> Usare tali azioni solo quando necessario.
