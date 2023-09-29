@@ -1,5 +1,5 @@
 import React from 'react';
-import {Table, OverlayTrigger, Tooltip} from 'react-bootstrap';
+import {OverlayTrigger, Table, Tooltip} from 'react-bootstrap';
 import {FaExclamationTriangle, FaRedo, FaSpinner} from "react-icons/fa";
 import {MsalContext} from "@azure/msal-react";
 import {toast} from "react-toastify";
@@ -73,8 +73,10 @@ export default class RefreshConfigPage extends React.Component<IProps, IState> {
                         configtype: param
                     })
                         .then((res: any) => {
-                            if (res.right.status === 200) {
+                            if (res.right !== undefined && res.right.status === 200) {
                                 toast.info("Refresh avvenuto con successo");
+                            } else if (res.left !== undefined && res.left[0].value.status === 504) {
+                                toast.info("Azione presa in carico dal NODO. Attendere che venga appllicata (circa 5 min).");
                             } else {
                                 this.toastError(res.right.value.detail);
                             }
@@ -85,11 +87,13 @@ export default class RefreshConfigPage extends React.Component<IProps, IState> {
                 });
         }
         this.setState({refresh: false});
-        this.setState({configToRefresh: {
-            domain: "",
-            description: "",
-            param: ""
-        }});
+        this.setState({
+            configToRefresh: {
+                domain: "",
+                description: "",
+                param: ""
+            }
+        });
     };
 
     toastError(message: string) {
@@ -122,11 +126,11 @@ export default class RefreshConfigPage extends React.Component<IProps, IState> {
                     </td>
                     <td className="text-right">
                         <>
-                        <OverlayTrigger placement="top" 
-                                        overlay={<Tooltip id={`tooltip-edit-${index}`}>Refresh</Tooltip>}>
-                            <FaRedo role="button" className="mr-1" 
-                                    onClick={() => this.handleRefresh(configuration.domain, configuration.description, configuration.param)}/>
-                        </OverlayTrigger>
+                            <OverlayTrigger placement="top"
+                                            overlay={<Tooltip id={`tooltip-edit-${index}`}>Refresh</Tooltip>}>
+                                <FaRedo role="button" className="mr-1"
+                                        onClick={() => this.handleRefresh(configuration.domain, configuration.description, configuration.param)}/>
+                            </OverlayTrigger>
                         </>
                     </td>
                 </tr>
@@ -145,34 +149,36 @@ export default class RefreshConfigPage extends React.Component<IProps, IState> {
                 <div className="row">
                     <div className={"col-md-12"}>
                         {/* eslint-disable-next-line react/no-unescaped-entities */}
-                        <p>In questa sezione è possibile effettuare il refresh delle configurazioni del nodo. Le seguenti azioni innescano il caricamento e l'eventuale aggiornamento delle istanze in memoria. </p>
+                        <p>In questa sezione è possibile effettuare il refresh delle configurazioni del nodo. Le
+                            seguenti azioni innescano il caricamento e l'eventuale aggiornamento delle istanze in
+                            memoria. </p>
                         <p className="alert alert-warning">
-                                <FaExclamationTriangle/> Usare tali azioni solo quando necessario.
+                            <FaExclamationTriangle/> Usare tali azioni solo quando necessario.
                         </p>
                     </div>
                 </div>
                 {isLoading && (<FaSpinner className="spinner"/>)}
                 {!isLoading && (
                     <>
-                    <Table hover responsive size="sm">
-                        <thead>
-                        <tr>
-                            <th className="key-td-width">Dominio</th>
-                            <th className="description-td-width text-left">Descrizione</th>
-                            <th className="buttons-td-width"/>
-                        </tr>
-                        </thead>
-                        <tbody>
+                        <Table hover responsive size="sm">
+                            <thead>
+                            <tr>
+                                <th className="key-td-width">Dominio</th>
+                                <th className="description-td-width text-left">Descrizione</th>
+                                <th className="buttons-td-width"/>
+                            </tr>
+                            </thead>
+                            <tbody>
                             {configTypes}
-                        </tbody>
-                    </Table>
+                            </tbody>
+                        </Table>
                     </>
                 )}
                 <ConfirmationModal show={showRefreshModal} handleClose={this.hideRefreshModal}>
-                        <p>Sei sicuro di voler avviare il refresh della seguente configurazione?</p>
-                        <ul>
-                            <li>{configToRefresh.domain}: {configToRefresh.description}</li>
-                        </ul>
+                    <p>Sei sicuro di voler avviare il refresh della seguente configurazione?</p>
+                    <ul>
+                        <li>{configToRefresh.domain}: {configToRefresh.description}</li>
+                    </ul>
                 </ConfirmationModal>
             </div>
         );

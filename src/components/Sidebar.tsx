@@ -28,6 +28,7 @@ interface IState {
         batchoperation: boolean;
     };
     be_version: string;
+    cache_version: string;
 }
 
 export default class Sidebar extends React.Component<IProps, IState> {
@@ -43,15 +44,18 @@ export default class Sidebar extends React.Component<IProps, IState> {
                 configuration: false,
                 batchoperation: false
             },
-            be_version: ''
+            be_version: '',
+            cache_version: ''
         };
 
         this.getInfo = this.getInfo.bind(this);
+        this.getCacheVersion = this.getCacheVersion.bind(this);
 
     }
 
     componentDidMount(): void {
         this.getInfo();
+        this.getCacheVersion();
 
         // workaround for react according gap
         SidebarItems.forEach(item => {
@@ -101,24 +105,46 @@ export default class Sidebar extends React.Component<IProps, IState> {
             ...loginRequest,
             account: this.context.accounts[0]
         })
-                .then((response: any) => {
-                    apiClient.healthCheck({
-                        Authorization: `Bearer ${response.idToken}`,
-                        ApiKey: "",
-                    }).then((response: any) => {
-                        this.setState({
-                            be_version: response.right.value.version,
-                        });
-                    })
-                            .catch(() => {
-                                toast.error("Problema nel recuperare le info del server", {theme: "colored"});
-                            });
-                }).catch(() => {
+            .then((response: any) => {
+                apiClient.healthCheck({
+                    Authorization: `Bearer ${response.idToken}`,
+                    ApiKey: "",
+                }).then((response: any) => {
+                    this.setState({
+                        be_version: response.right.value.version,
+                    });
+                })
+                    .catch(() => {
+                        toast.error("Problema nel recuperare le info del server", {theme: "colored"});
+                    });
+            }).catch(() => {
             this.context.instance.logoutPopup({
                 postLogoutRedirectUri: "/",
                 mainWindowRedirectUri: "/"
             }).then(() => window.sessionStorage.removeItem("secret"));
         });
+    }
+
+    getCacheVersion() {
+        this.context.instance.acquireTokenSilent({
+            ...loginRequest,
+            account: this.context.accounts[0]
+        })
+            .then((response: any) => {
+                apiClient.getCacheVersions({
+                    Authorization: `Bearer ${response.idToken}`,
+                    ApiKey: "",
+                    limit: 1,
+                    page: 0
+                }).then((response: any) => {
+                    this.setState({
+                        cache_version:  response.right.value.version_list[0].id
+                    });
+                })
+                    .catch(() => {
+                        toast.error("Problema nel recuperare le info della configurazione", {theme: "colored"});
+                    });
+            });
     }
 
 
@@ -146,20 +172,20 @@ export default class Sidebar extends React.Component<IProps, IState> {
 
         function getLink(item: any) {
             return (
-                    <Link to={item.route} key={item.name} className={`list-group-item-action ${getClass(item)}`}>
-                        <span>{item.name}</span>
-                    </Link>
+                <Link to={item.route} key={item.name} className={`list-group-item-action ${getClass(item)}`}>
+                    <span>{item.name}</span>
+                </Link>
             );
         }
 
         return (
-                <>
-                    <Link to={"/"} key={"home"} className={`list-group-item-action `}>
-                        <div className="ml-1">
-                            <FaHome></FaHome> <span className="ml-1">Home</span>
-                        </div>
-                    </Link>
-                    <Accordion onSelect={(activeIndex) => this.handleAccordion(activeIndex)}>
+            <>
+                <Link to={"/"} key={"home"} className={`list-group-item-action `}>
+                    <div className="ml-1">
+                        <FaHome></FaHome> <span className="ml-1">Home</span>
+                    </div>
+                </Link>
+                <Accordion onSelect={(activeIndex) => this.handleAccordion(activeIndex)}>
                 <span>
                     <Accordion.Toggle as="div" eventKey="0">
                         <span className="navbar-heading" onClick={() => this.setDomainState("ec")}>
@@ -176,7 +202,7 @@ export default class Sidebar extends React.Component<IProps, IState> {
                         </div>
                     </Accordion.Collapse>
                 </span>
-                        <span>
+                    <span>
                     <Accordion.Toggle as="div" eventKey="1">
                         <span className="navbar-heading" onClick={() => this.setDomainState("psp")}>
                             <FaExpand className={`ml-2 mr-2 ${getCompressionClass("psp", true)}`}/>
@@ -192,7 +218,7 @@ export default class Sidebar extends React.Component<IProps, IState> {
                         </div>
                     </Accordion.Collapse>
                 </span>
-                        <span>
+                    <span>
                     <Accordion.Toggle as="div" eventKey="2">
                         <span className="navbar-heading" onClick={() => this.setDomainState("configuration")}>
                             <FaExpand className={`ml-2 mr-2 ${getCompressionClass("configuration", true)}`}/>
@@ -208,7 +234,7 @@ export default class Sidebar extends React.Component<IProps, IState> {
                         </div>
                     </Accordion.Collapse>
                 </span>
-                        <span>
+                    <span>
                     <Accordion.Toggle as="div" eventKey="3">
                         <span className="navbar-heading" onClick={() => this.setDomainState("batchoperation")}>
                             <FaExpand className={`ml-2 mr-2 ${getCompressionClass("batchoperation", true)}`}/>
@@ -224,13 +250,14 @@ export default class Sidebar extends React.Component<IProps, IState> {
                         </div>
                     </Accordion.Collapse>
                 </span>
-                    </Accordion>
-                    <div className={"info-box"}>
-                        <div>versione FE {packageJson.version} </div>
-                        <div>versione BE {this.state.be_version}</div>
-                        Made with ❤️ by PagoPA S.p.A.
-                    </div>
-                </>
+                </Accordion>
+                <div className={"info-box"}>
+                    <div>versione FE {packageJson.version} </div>
+                    <div>versione BE {this.state.be_version}</div>
+                    <div>versione configurazione {this.state.cache_version}</div>
+                    Made with ❤️ by PagoPA S.p.A.
+                </div>
+            </>
         );
     }
 }
