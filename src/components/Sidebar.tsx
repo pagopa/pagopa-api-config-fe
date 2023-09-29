@@ -1,7 +1,7 @@
 import React from "react";
 import {Link} from "react-router-dom";
 import {FaCompress, FaExpand, FaHome} from "react-icons/fa";
-import {Accordion} from "react-bootstrap";
+import {Accordion, Dropdown, OverlayTrigger, Tooltip} from "react-bootstrap";
 import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
 import {loginRequest} from "../authConfig";
@@ -138,7 +138,7 @@ export default class Sidebar extends React.Component<IProps, IState> {
                     page: 0
                 }).then((response: any) => {
                     this.setState({
-                        cache_version:  response.right.value.version_list[0].id
+                        cache_version: response.right.value.version_list[0].id
                     });
                 })
                     .catch(() => {
@@ -178,6 +178,7 @@ export default class Sidebar extends React.Component<IProps, IState> {
             );
         }
 
+        // @ts-ignore
         return (
             <>
                 <Link to={"/"} key={"home"} className={`list-group-item-action `}>
@@ -252,10 +253,27 @@ export default class Sidebar extends React.Component<IProps, IState> {
                 </span>
                 </Accordion>
                 <div className={"info-box"}>
-                    <div>versione FE {packageJson.version} </div>
-                    <div>versione BE {this.state.be_version}</div>
-                    <div>versione configurazione {this.state.cache_version}</div>
-                    Made with ❤️ by PagoPA S.p.A.
+                    <div className={"row text-truncate d-flex flex-nowrap"}><strong>versione FE</strong>
+                        <OverlayTrigger placement="top"
+                                        overlay={<Tooltip id={`version-fe`}>{packageJson.version}</Tooltip>}>
+                            <div className={"ml-1"}>{packageJson.version}</div>
+                        </OverlayTrigger>
+                    </div>
+                    <div className={"row text-truncate d-flex flex-nowrap"}><strong>versione BE</strong>
+                        <OverlayTrigger placement="top"
+                                        overlay={<Tooltip id={`version-be`}>{this.state.be_version}</Tooltip>}>
+                            <div className={"ml-1"}>{this.state.be_version}</div>
+                        </OverlayTrigger>
+                    </div>
+                    <div className={"row text-truncate d-flex flex-nowrap"}><strong>versione configurazione</strong>
+                        <OverlayTrigger placement="top"
+                                        overlay={<Tooltip id={`version-cache`}>{this.state.cache_version}</Tooltip>}>
+                            <div className={"ml-1"}>{this.state.cache_version}</div>
+                        </OverlayTrigger>
+                    </div>
+                    <Dropdown.Divider/>
+
+                    <div className={"row text-truncate"}>Made with ❤️ by PagoPA S.p.A.</div>
                 </div>
             </>
         );
