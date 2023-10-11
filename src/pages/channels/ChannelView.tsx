@@ -446,6 +446,18 @@ export default class ChannelView extends React.Component<IProps, IState> {
         );
     }
 
+    renderLockIcon() {
+        if (this.state.lock){
+            return ( <FaLock role="button" className="mr-3"
+                             onClick={() => this.setState({lock: false})}/>);
+        }
+        else {
+            return (<FaUnlock role="button" className="mr-3"
+                              onClick={() => this.setState({lock: true})}/>);
+        }
+    }
+
+
     render(): React.ReactNode {
         const isError = this.props.isError;
         const isLoading = this.props.isLoading;
@@ -499,15 +511,7 @@ export default class ChannelView extends React.Component<IProps, IState> {
                                         <Card.Body>
                                             <div className="row">
                                                 <Form.Group controlId="channel_code" className="col-md-4">
-                                                    {this.state.lock ? (
-                                                            <FaLock role="button" className="mr-3"
-                                                                    onClick={() => this.setState({lock: false})}/>
-                                                        )
-                                                        :
-                                                        (<FaUnlock role="button" className="mr-3"
-                                                                   onClick={() => this.setState({lock: true})}/>
-                                                        )
-                                                    }
+                                                    {this.renderLockIcon()}
                                                     <Form.Label>Codice <span
                                                         className="text-danger">*</span></Form.Label>
 
@@ -908,10 +912,13 @@ export default class ChannelView extends React.Component<IProps, IState> {
                                                     />
 
                                                     <OverlayTrigger placement="top"
-                                                                    overlay={<Tooltip id={`tooltip-details-flag_psp_cp`}>Il
+                                                                    overlay={<Tooltip
+                                                                        id={`tooltip-details-flag_psp_cp`}>Il
                                                                         FLAG_PSP_CP rappresenta l&apos;abilitazione ad
-                                                                        effettuare il travaso delle informazioni presenti in
-                                                                        additional payment information nei tag relativi al
+                                                                        effettuare il travaso delle informazioni
+                                                                        presenti in
+                                                                        additional payment information nei tag relativi
+                                                                        al
                                                                         pagamento con carte per le Pa in V1</Tooltip>}>
                                                         <FaInfoCircle></FaInfoCircle>
                                                     </OverlayTrigger>
@@ -1011,9 +1018,9 @@ export default class ChannelView extends React.Component<IProps, IState> {
                                             </Card.Footer>
                                         }
                                     </Card>
-                                        {this.props.showPaymentTypeList &&
-                                            this.renderPaymentTypeList(paymentTypeList, newPaymentType)
-                                        }
+                                    {this.props.showPaymentTypeList &&
+                                        this.renderPaymentTypeList(paymentTypeList, newPaymentType)
+                                    }
                                 </>
                             )
                         }
