@@ -1,7 +1,7 @@
 import React, {ReactNode} from "react";
 import {Alert, Breadcrumb, Button, Card, Form} from "react-bootstrap";
 import {MsalContext} from "@azure/msal-react";
-import {FaInfoCircle, FaSpinner} from "react-icons/fa";
+import {FaInfoCircle, FaLock, FaSpinner, FaUnlock} from "react-icons/fa";
 import AsyncSelect from "react-select/async";
 import debounce from "lodash.debounce";
 import {toast} from "react-toastify";
@@ -23,14 +23,20 @@ interface IProps {
     readOnly: boolean;
     getCiList?: () => ReactNode;
 }
-
-export default class StationView extends React.Component<IProps> {
+interface IState {
+    lock: boolean;
+}
+export default class StationView extends React.Component<IProps, IState> {
     static contextType = MsalContext;
 
     service = "/stations";
 
     constructor(props: IProps) {
         super(props);
+
+        this.state = {
+            lock: true
+        };
 
         this.handleChange = this.handleChange.bind(this);
         this.debouncedBrokerOptions = this.debouncedBrokerOptions.bind(this);
@@ -203,11 +209,20 @@ export default class StationView extends React.Component<IProps> {
                                                     <Card.Body>
                                                         <div className="row">
                                                             <Form.Group controlId="station_code" className="col-md-3">
+                                                                {this.state.lock ? (
+                                                                        <FaLock role="button" className="mr-3"
+                                                                                onClick={() => this.setState({lock: false})}/>
+                                                                    )
+                                                                    :
+                                                                    (<FaUnlock role="button" className="mr-3"
+                                                                               onClick={() => this.setState({lock: true})}/>
+                                                                    )
+                                                                }
                                                                 <Form.Label>Codice <span className="text-danger">*</span></Form.Label>
                                                                 <Form.Control name="station_code" placeholder=""
                                                                             value={this.props.station.station_code}
                                                                             onChange={(e) => this.handleChange(e)}
-                                                                            readOnly={this.props.readOnly}/>
+                                                                            readOnly={this.state.lock || this.props.readOnly}/>
                                                             </Form.Group>
                                                            <Form.Group controlId="enabled" className="col-md-2">
                                                                <Form.Label>Stato <span className="text-danger">*</span></Form.Label>
