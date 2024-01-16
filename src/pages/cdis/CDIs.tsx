@@ -265,8 +265,8 @@ export default class Cdis extends React.Component<IProps, IState> {
                         <td>{cdi.id_cdi}</td>
                         <td>{cdi.business_name}</td>
                         <td>{cdi.psp_code}</td>
-                        <td>{format(addMinutes(cdi.publication_date, cdi.publication_date.getTimezoneOffset()), 'yyyy-MM-dd HH:mm:ss')}</td>
-                        <td>{format(addMinutes(cdi.validity_date, cdi.validity_date.getTimezoneOffset()), 'yyyy-MM-dd HH:mm:ss')}</td>
+                        <td>{format(addMinutes(cdi.publication_date, cdi.publication_date.getTimezoneOffset()), 'dd/MM/yyyy HH:mm:ss')}</td>
+                        <td>{format(addMinutes(cdi.validity_date, cdi.validity_date.getTimezoneOffset()), 'dd/MM/yyyy HH:mm:ss')}</td>
 
                         <td className="text-right">
                             {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
