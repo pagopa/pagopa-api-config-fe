@@ -4,7 +4,7 @@ import {FaPlus, FaSpinner, FaTrash, FaCloudDownloadAlt} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
 import axios, {AxiosRequestConfig} from "axios";
-import {format, addMinutes} from 'date-fns'
+import {format, addMinutes} from 'date-fns';
 import {apiClient} from "../../util/apiClient";
 import Paginator from "../../components/Paginator";
 import ConfirmationModal from "../../components/ConfirmationModal";
