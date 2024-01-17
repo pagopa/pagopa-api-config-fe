@@ -31,6 +31,7 @@ interface IState {
         limit: 50;
         items_found: 0;
         total_pages: 1;
+        total_items: 0;
     };
     filters: {
         code: string;
@@ -58,7 +59,8 @@ export default class BrokersPSP extends React.Component<IProps, IState> {
                 page: 0,
                 limit: 50,
                 items_found: 0,
-                total_pages: 1
+                total_pages: 1,
+                total_items: 0
             },
             filters: {
                 code: "",
