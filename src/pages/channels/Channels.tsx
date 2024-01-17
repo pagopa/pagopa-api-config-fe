@@ -25,7 +25,7 @@ interface IState {
         limit: 50;
         items_found: 0;
         total_pages: 1;
-        total_items: 0
+        total_items: 0;
     };
     filters: {
         code: string;
