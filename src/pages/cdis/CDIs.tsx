@@ -4,6 +4,7 @@ import {FaPlus, FaSpinner, FaTrash, FaCloudDownloadAlt} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {MsalContext} from "@azure/msal-react";
 import axios, {AxiosRequestConfig} from "axios";
+import {format, addMinutes} from 'date-fns';
 import {apiClient} from "../../util/apiClient";
 import Paginator from "../../components/Paginator";
 import ConfirmationModal from "../../components/ConfirmationModal";
@@ -266,8 +267,8 @@ export default class Cdis extends React.Component<IProps, IState> {
                         <td>{cdi.id_cdi}</td>
                         <td>{cdi.business_name}</td>
                         <td>{cdi.psp_code}</td>
-                        <td>{cdi.publication_date.toLocaleString()}</td>
-                        <td>{cdi.validity_date.toLocaleString()}</td>
+                        <td>{format(addMinutes(cdi.publication_date, cdi.publication_date.getTimezoneOffset()), 'dd/MM/yyyy HH:mm:ss')}</td>
+                        <td>{format(addMinutes(cdi.validity_date, cdi.validity_date.getTimezoneOffset()), 'dd/MM/yyyy HH:mm:ss')}</td>
 
                         <td className="text-right">
                             {/* eslint-disable-next-line @typescript-eslint/restrict-plus-operands */}
