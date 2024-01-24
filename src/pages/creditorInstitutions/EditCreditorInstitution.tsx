@@ -922,6 +922,12 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                                                   value={this.state.address?.tax_domicile}
                                                                   onChange={(e) => this.handleChange(e, "address")}/>
                                                 </Form.Group>
+                                                <Form.Group controlId="cbill" className="col-md-2">
+                                                    <Form.Label>CBill</Form.Label>
+                                                    <Form.Control name="cbill_code" placeholder=""
+                                                                  value={this.state.creditorInstitution.cbill_code}
+                                                                  onChange={(e) => this.handleChange(e, "creditorInstitution")}/>
+                                                </Form.Group>
                                                 <Form.Group controlId="psp_payment"
                                                             className="col-md-2 custom-control-box">
                                                     <Form.Check

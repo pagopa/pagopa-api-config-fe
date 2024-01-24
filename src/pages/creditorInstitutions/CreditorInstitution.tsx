@@ -313,6 +313,12 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
                                                           value={this.state.creditorInstitution.address?.tax_domicile}
                                                           readOnly/>
                                         </Form.Group>
+                                        <Form.Group controlId="cbill" className="col-md-2">
+                                            <Form.Label>CBill</Form.Label>
+                                            <Form.Control type="cbill" placeholder="-"
+                                                          value={this.state.creditorInstitution.cbill_code}
+                                                          readOnly/>
+                                        </Form.Group>
                                         <Form.Group controlId="tax" className="col-md-2 custom-control-box">
                                             <Form.Check
                                                 custom
