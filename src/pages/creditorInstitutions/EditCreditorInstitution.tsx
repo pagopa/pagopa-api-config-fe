@@ -923,7 +923,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                                                   onChange={(e) => this.handleChange(e, "address")}/>
                                                 </Form.Group>
                                                 <Form.Group controlId="cbill" className="col-md-2">
-                                                    <Form.Label>CBill</Form.Label>
+                                                    <Form.Label>CBILL</Form.Label>
                                                     <Form.Control name="cbill_code" placeholder=""
                                                                   value={this.state.creditorInstitution.cbill_code}
                                                                   onChange={(e) => this.handleChange(e, "creditorInstitution")}/>

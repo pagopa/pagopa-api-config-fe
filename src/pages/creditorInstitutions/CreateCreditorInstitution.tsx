@@ -181,7 +181,7 @@ export default class CreateCreditorInstitution extends React.Component<IProps, I
                                               onChange={(e) => this.handleChange(e, "address")}/>
                             </Form.Group>
                             <Form.Group controlId="cbill" className="col-md-2">
-                                <Form.Label>CBill</Form.Label>
+                                <Form.Label>CBILL</Form.Label>
                                 <Form.Control placeholder="" name="cbill_code"
                                               value={this.state.creditorInstitution.cbill_code}
                                               onChange={(e) => this.handleChange(e, "creditorInstitution")}/>

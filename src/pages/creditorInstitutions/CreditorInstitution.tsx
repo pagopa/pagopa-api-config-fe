@@ -314,7 +314,7 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
                                                           readOnly/>
                                         </Form.Group>
                                         <Form.Group controlId="cbill" className="col-md-2">
-                                            <Form.Label>CBill</Form.Label>
+                                            <Form.Label>CBILL</Form.Label>
                                             <Form.Control type="cbill" placeholder="-"
                                                           value={this.state.creditorInstitution.cbill_code}
                                                           readOnly/>
