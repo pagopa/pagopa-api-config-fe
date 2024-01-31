@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "envconfig": "chmod +x envconfig.sh && . ./envconfig.sh && chmod +x version.sh && ./version.sh",
-    "prebuild": "npm-run-all prebuild:*",
+    "prebuild": "npm-run-all prebuild:* && chmod +x version.sh && ./version.sh",
     "prebuild:clean": "shx rm -rf build",
     "prebuild:tsc": "tsc --noEmit",
     "build": "parcel build src/*.html --dist-dir build/release --public-url ./ --no-optimize",

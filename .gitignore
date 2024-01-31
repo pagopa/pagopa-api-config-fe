@@ -63,3 +63,4 @@ yarn-error.log
 */env-config.js
 /swagger.json
 /test-report.xml
+/public/version.json

@@ -128,7 +128,6 @@ jobs:
           export APICONFIG_TENANT='${{ vars.APICONFIG_TENANT }}'
           
           chmod +x env.sh && . ./env.sh
-          chmod +x version.sh && . ./version.sh
 
           yarn build
 
