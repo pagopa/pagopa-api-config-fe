@@ -118,6 +118,7 @@ jobs:
           yarn install
           yarn generate
           
+          export REACT_APP_ENV='${{ inputs.environment }}'
           export APICONFIG_HOST='${{ vars.APICONFIG_HOST }}'
           export APICONFIG_BASEPATH='${{ vars.APICONFIG_BASEPATH }}'
           export APICONFIG_BASEPATH_ALT='${{ vars.APICONFIG_BASEPATH_ALT }}'
@@ -127,6 +128,7 @@ jobs:
           export APICONFIG_TENANT='${{ vars.APICONFIG_TENANT }}'
           
           chmod +x env.sh && . ./env.sh
+          chmod +x version.sh && . ./version.sh
 
           yarn build
 
