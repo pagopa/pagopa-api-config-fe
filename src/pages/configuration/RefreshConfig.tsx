@@ -60,17 +60,15 @@ export default class RefreshConfigPage extends React.Component<IProps, IState> {
     }
 
     hideRefreshModal = (status: string) => {
-        const param = this.state.configToRefresh.param;
         if (status === "ok") {
             this.context.instance.acquireTokenSilent({
                 ...loginRequest,
                 account: this.context.accounts[0]
             })
                 .then((response: any) => {
-                    apiClient.getRefreshConfig({
+                    apiClient.getRefreshGlobalConfig({
                         ApiKey: "",
-                        Authorization: `Bearer ${response.idToken}`,
-                        configtype: param
+                        Authorization: `Bearer ${response.idToken}`
                     })
                         .then((res: any) => {
                             if (res.right !== undefined && res.right.status === 200) {
