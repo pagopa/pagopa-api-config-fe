@@ -138,7 +138,7 @@ export default class Sidebar extends React.Component<IProps, IState> {
                     page: 0
                 }).then((response: any) => {
                     this.setState({
-                        cache_version: response.right.value.version_list[0].id
+                        cache_version: response.right.value.version_list[0].time
                     });
                 })
                     .catch(() => {
