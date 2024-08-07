@@ -715,7 +715,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                             </Form.Control>
                         </td>     
                          <td className="text-center">
-                            <Form.Control as="select" placeholder="Stato" name="aca"
+                            <Form.Control as="select" placeholder="aca" name="aca"
                                 value={this.state.stationMgmt.station?.aca}
                                 onChange={(e) => this.handleStationChange(e)}>
                                 <option value="true">Abilitato</option>
@@ -723,7 +723,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                             </Form.Control>
                         </td>    
                          <td className="text-center">
-                            <Form.Control as="select" placeholder="Stato" name="stand_in"
+                            <Form.Control as="select" placeholder="stand in" name="stand_in"
                                 value={this.state.stationMgmt.station?.stand_in}
                                 onChange={(e) => this.handleStationChange(e)}>
                                 <option value="true">Abilitato</option>
@@ -753,6 +753,14 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                         <td className="text-center">
                             {item.broadcast && <FaCheck className="text-success" />}
                             {!item.broadcast && <FaTimes className="text-danger" />}
+                        </td> 
+                        <td className="text-center">
+                            {item.aca && <FaCheck className="text-success" />}
+                            {!item.aca && <FaTimes className="text-danger" />}
+                        </td>
+                        <td className="text-center">
+                            {item.stand_in && <FaCheck className="text-success" />}
+                            {!item.stand_in && <FaTimes className="text-danger" />}
                         </td>
                         <td className="text-right">
                             <OverlayTrigger placement="top"
