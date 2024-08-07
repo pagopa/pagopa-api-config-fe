@@ -146,8 +146,8 @@ export default class MassiveLoading extends React.Component<IProps, IState> {
                                             <p>Attraverso la seguente azione è possibile caricare un CSV contenente le relazioni tra EC e stazioni da creare o cancellare.</p>
                                             <p>Il CSV deve avere la seguente struttura:</p>
                                             <code>
-                                                cf,idstazione,ambiente,broadcast,auxdigit,codicesegregazione,applicationcode,datavalidita,operazione<br/>
-                                                ecCode,stationCode,COLL|ESER,S|N,0|1|2|3,2cipher|blank,2cipher|blank,2022-03-21,A|C
+                                                cf,idstazione,ambiente,broadcast,auxdigit,codicesegregazione,applicationcode,datavalidita,operazione,aca,standIn<br/>
+                                                ecCode,stationCode,COLL|ESER,S|N,0|1|2|3,2cipher|blank,2cipher|blank,2022-03-21,A|C,1,1
                                             </code>
                                             <p className="mt-2">e deve rispettare le seguenti regole:</p>
                                             <ul className="mt-0">
@@ -178,6 +178,8 @@ export default class MassiveLoading extends React.Component<IProps, IState> {
                                                 </li>
                                                 <li><span className="font-weight-bold">Data validità</span>: opzionale, nessun controllo.</li>
                                                 <li><span className="font-weight-bold">Operazione</span>: può assumere valore <span className="badge badge-info">A</span> (aggiunta) o <span className="badge badge-info">C</span> (cancellazione).</li>
+                                                <li><span className="font-weight-bold">ACA</span>: può assumere valore <span className="badge badge-info">1</span> (true) o <span className="badge badge-info">0</span> (false).</li>
+                                                <li><span className="font-weight-bold">STAND IN</span>: può assumere valore <span className="badge badge-info">1</span> (true) o <span className="badge badge-info">0</span> (false).</li>
                                             </ul>
                                             <p>Per ulteriori approfondimenti in merito si rimanda al seguente <a href="https://pagopa.atlassian.net/wiki/spaces/PAG/pages/497124463/Creazione+e+cancellazione+di+associazioni+Enti-Stazioni">link</a>.</p>
                                         </div>
