@@ -92,7 +92,7 @@ jobs:
     steps:
       - name: Make Release
         id: release
-        uses: pagopa/github-actions-template/node-release@v1.6.6
+        uses: pagopa/github-actions-template/node-release@241d9bfcaa2a623cb78a2d993716d761af158c0c # v1.6.6
         with:
           semver: ${{ needs.setup.outputs.semver }}
           github_token: ${{ secrets.BOT_TOKEN_GITHUB }}
@@ -112,7 +112,7 @@ jobs:
           persist-credentials: false
 
       - name: Set Node.js 16
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@1a4442cacd436585916779262731d5b162bc6ec7 # v3
         with:
           node-version: 16.10.0
 
@@ -144,7 +144,7 @@ jobs:
           subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
 
       - name: Deploy
-        uses: azure/CLI@v1
+        uses: azure/CLI@4db43908b9df2e7ac93c8275a8f9a448c59338dd # v1
         with:
           azcliversion: latest
           inlineScript: |
@@ -156,14 +156,14 @@ jobs:
           echo "DATE=$date" >> $GITHUB_ENV
 
       - name: Remove Old Files
-        uses: azure/CLI@v1
+        uses: azure/CLI@4db43908b9df2e7ac93c8275a8f9a448c59338dd # v1
         with:
           azcliversion: latest
           inlineScript: |
             az storage blob delete-batch -s '$web' --account-name ${{ vars.STORAGE_ACCOUNT }} --connection-string '${{ secrets.BLOB_CONNECTION_STRING }}' --if-unmodified-since ${{env.DATE}}
 
       - name: Purge
-        uses: azure/CLI@v1
+        uses: azure/CLI@4db43908b9df2e7ac93c8275a8f9a448c59338dd # v1
         with:
           azcliversion: latest
           inlineScript: |
@@ -177,7 +177,7 @@ jobs:
     steps:
       - name: Report Status
         if: ${{ needs.setup.outputs.environment == 'prod' }}
-        uses: ravsamhq/notify-slack-action@v2
+        uses: ravsamhq/notify-slack-action@be814b201e233b2dc673608aa46e5447c8ab13f2 # v2
         with:
           status: ${{ needs.deploy.result }}
           token: ${{ secrets.GITHUB_TOKEN }}
