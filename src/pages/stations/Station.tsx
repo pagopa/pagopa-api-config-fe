@@ -127,6 +127,14 @@ export default class Station extends React.Component<IProps, IState> {
                         {item.broadcast && <FaCheck className="text-success"/>}
                         {!item.broadcast && <FaTimes className="text-danger"/>}
                     </td>
+                    <td className="text-center">
+                        {item.aca && <FaCheck className="text-success"/>}
+                        {!item.aca && <FaTimes className="text-danger"/>}
+                    </td>
+                    <td className="text-center">
+                        {item.stand_in && <FaCheck className="text-success"/>}
+                        {!item.stand_in && <FaTimes className="text-danger"/>}
+                    </td>
                     <td className="text-right">
                         <OverlayTrigger placement="top"
                                         overlay={<Tooltip id={`tooltip-details-${index}`}>Visualizza</Tooltip>}>
@@ -211,6 +219,8 @@ export default class Station extends React.Component<IProps, IState> {
                                 <th className="text-center">Segregation Code</th>
                                 <th className="text-center">Modello 4</th>
                                 <th className="text-center">Broadcast</th>
+                                <th className="text-center">ACA</th>
+                                <th className="text-center">Stand In</th>
                                 <th className="text-center"></th>
                             </tr>
                             </thead>

@@ -1,12 +1,12 @@
 import React from "react";
-import {Breadcrumb, Button, Form} from "react-bootstrap";
-import {toast} from "react-toastify";
-import {MsalContext} from "@azure/msal-react";
-import {apiClient} from "../../util/apiClient";
+import { Breadcrumb, Button, Form } from "react-bootstrap";
+import { toast } from "react-toastify";
+import { MsalContext } from "@azure/msal-react";
+import { apiClient } from "../../util/apiClient";
 import ConfirmationModal from "../../components/ConfirmationModal";
-import {CreditorInstitutionDetails} from "../../../generated/api/CreditorInstitutionDetails";
+import { CreditorInstitutionDetails } from "../../../generated/api/CreditorInstitutionDetails";
 import CountryCode from "../../components/CountryCode";
-import {loginRequest} from "../../authConfig";
+import { loginRequest } from "../../authConfig";
 
 interface IProps {
     match: {
@@ -43,7 +43,7 @@ export default class CreateCreditorInstitution extends React.Component<IProps, I
                 "fk_int_quadrature": undefined,
                 "psp_payment": false,
                 "reporting_ftp": false,
-                "reporting_zip": false
+                "reporting_zip": false,
             } as unknown as CreditorInstitutionDetails,
             showModal: false
         };
@@ -60,24 +60,24 @@ export default class CreateCreditorInstitution extends React.Component<IProps, I
         const key = event.target.name as string;
         if (obj === "creditorInstitution") {
             const value = event.target.type === "checkbox" ? event.target.checked : event.target.value;
-            creditorInstitution = {...creditorInstitution, [key]: value};
+            creditorInstitution = { ...creditorInstitution, [key]: value };
         } else if (obj === "address") {
             const value = event.target.value;
-            const address = {...creditorInstitution.address, [key]: value};
-            creditorInstitution = {...creditorInstitution, address};
+            const address = { ...creditorInstitution.address, [key]: value };
+            creditorInstitution = { ...creditorInstitution, address };
         }
-        this.setState({creditorInstitution});
+        this.setState({ creditorInstitution });
     }
 
     discard(): void {
-        this.setState({showModal: true});
+        this.setState({ showModal: true });
     }
 
     hideModal(status: string): void {
         if (status === "ok") {
             this.props.history.push("/creditor-institutions");
         }
-        this.setState({showModal: false});
+        this.setState({ showModal: false });
     }
 
     goBack(): void {
@@ -106,16 +106,16 @@ export default class CreateCreditorInstitution extends React.Component<IProps, I
                             this.toastError(message);
                         }
                     } else {
-                        toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                        toast.error("Operazione non avvenuta a causa di un errore", { theme: "colored" });
                     }
                 }).catch(() => {
-                    toast.error("Operazione non avvenuta a causa di un errore", {theme: "colored"});
+                    toast.error("Operazione non avvenuta a causa di un errore", { theme: "colored" });
                 });
             });
     }
 
     toastError(message: string) {
-        toast.error(() => <div className={"toast-width"}>{message}</div>, {theme: "colored"});
+        toast.error(() => <div className={"toast-width"}>{message}</div>, { theme: "colored" });
     }
 
     render(): React.ReactNode {
@@ -138,18 +138,18 @@ export default class CreateCreditorInstitution extends React.Component<IProps, I
                             <Form.Group controlId="code" className="col-md-3">
                                 <Form.Label>Nome<span className="text-danger">*</span></Form.Label>
                                 <Form.Control name="business_name" placeholder=""
-                                              onChange={(e) => this.handleChange(e, "creditorInstitution")}/>
+                                    onChange={(e) => this.handleChange(e, "creditorInstitution")} />
                             </Form.Group>
                             <Form.Group controlId="code" className="col-md-3">
                                 <Form.Label>Codice<span className="text-danger">*</span></Form.Label>
                                 <Form.Control name="creditor_institution_code" placeholder=""
-                                              onChange={(e) => this.handleChange(e, "creditorInstitution")}/>
+                                    onChange={(e) => this.handleChange(e, "creditorInstitution")} />
                             </Form.Group>
                             <Form.Group controlId="enabled" className="col-md-3">
                                 <Form.Label>Stato<span className="text-danger">*</span></Form.Label>
                                 <Form.Control as="select" name="enabled" placeholder="stato"
-                                              onChange={(e) => this.handleChange(e, "creditorInstitution")}
-                                              defaultValue={this.state.creditorInstitution.enabled.toString()}>
+                                    onChange={(e) => this.handleChange(e, "creditorInstitution")}
+                                    defaultValue={this.state.creditorInstitution.enabled.toString()}>
                                     <option value="true">Abilitato</option>
                                     <option value="false">Non Abilitato</option>
                                 </Form.Control>
@@ -159,32 +159,32 @@ export default class CreateCreditorInstitution extends React.Component<IProps, I
                             <Form.Group controlId="location" className="col-md-4">
                                 <Form.Label>Indirizzo</Form.Label>
                                 <Form.Control placeholder="" name="location"
-                                              onChange={(e) => this.handleChange(e, "address")}/>
+                                    onChange={(e) => this.handleChange(e, "address")} />
                             </Form.Group>
                             <Form.Group controlId="city" className="col-md-3">
                                 <Form.Label>Città</Form.Label>
                                 <Form.Control placeholder="" name="city"
-                                              onChange={(e) => this.handleChange(e, "address")}/>
+                                    onChange={(e) => this.handleChange(e, "address")} />
                             </Form.Group>
                             <Form.Group controlId="country_code" className="col-md-2">
                                 <Form.Label>Provincia</Form.Label>
-                                <CountryCode name="country_code" obj="address" value={this.state.creditorInstitution.address?.country_code} handleChange={this.handleChange}/>
+                                <CountryCode name="country_code" obj="address" value={this.state.creditorInstitution.address?.country_code} handleChange={this.handleChange} />
                             </Form.Group>
                             <Form.Group controlId="cap" className="col-md-2">
                                 <Form.Label>CAP</Form.Label>
                                 <Form.Control type="number" placeholder="" name="zip_code"
-                                              onChange={(e) => this.handleChange(e, "address")}/>
+                                    onChange={(e) => this.handleChange(e, "address")} />
                             </Form.Group>
                             <Form.Group controlId="tax" className="col-md-4">
                                 <Form.Label>Domicilio fiscale</Form.Label>
                                 <Form.Control placeholder="" name="tax_domicile"
-                                              onChange={(e) => this.handleChange(e, "address")}/>
+                                    onChange={(e) => this.handleChange(e, "address")} />
                             </Form.Group>
                             <Form.Group controlId="cbill" className="col-md-2">
                                 <Form.Label>CBILL</Form.Label>
                                 <Form.Control placeholder="" name="cbill_code"
-                                              value={this.state.creditorInstitution.cbill_code}
-                                              onChange={(e) => this.handleChange(e, "creditorInstitution")}/>
+                                    value={this.state.creditorInstitution.cbill_code}
+                                    onChange={(e) => this.handleChange(e, "creditorInstitution")} />
                             </Form.Group>
                             <Form.Group controlId="tax" className="col-md-2 custom-control-box">
                                 <Form.Check
@@ -194,7 +194,7 @@ export default class CreateCreditorInstitution extends React.Component<IProps, I
                                     id={'psp-payment'}
                                     label={'Pagamento PSP'}
                                     value={'true'}
-                                    onChange={(e) => this.handleChange(e, "creditorInstitution")}/>
+                                    onChange={(e) => this.handleChange(e, "creditorInstitution")} />
                             </Form.Group>
                             <Form.Group controlId="tax" className="col-md-2 custom-control-box">
                                 <Form.Check
@@ -204,7 +204,7 @@ export default class CreateCreditorInstitution extends React.Component<IProps, I
                                     id={'reporting-ftp'}
                                     label={'Rendicontazione FTP'}
                                     value={'true'}
-                                    onChange={(e) => this.handleChange(e, "creditorInstitution")}/>
+                                    onChange={(e) => this.handleChange(e, "creditorInstitution")} />
                             </Form.Group>
                             <Form.Group controlId="tax" className="col-md-2 custom-control-box">
                                 <Form.Check
@@ -214,7 +214,7 @@ export default class CreateCreditorInstitution extends React.Component<IProps, I
                                     id={'reporting-zip'}
                                     label={'Rendicontazione ZIP'}
                                     value={'true'}
-                                    onChange={(e) => this.handleChange(e, "creditorInstitution")}/>
+                                    onChange={(e) => this.handleChange(e, "creditorInstitution")} />
                             </Form.Group>
                         </div>
 
