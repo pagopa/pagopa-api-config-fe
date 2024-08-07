@@ -1,6 +1,6 @@
 {
   "name": "pagopa-api-config-fe",
-  "version": "1.36.5-1-PAGOPA-2033-aggiornare-api-config-con-i-flag-aca-standin",
+  "version": "1.36.5-2-PAGOPA-2033-aggiornare-api-config-con-i-flag-aca-standin",
   "license": "MIT",
   "scripts": {
     "envconfig": "chmod +x envconfig.sh && . ./envconfig.sh && chmod +x version.sh && ./version.sh",
