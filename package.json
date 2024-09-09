@@ -26,7 +26,7 @@
     "@azure/msal-react": "^1.1.1",
     "@pagopa/ts-commons": "^10.2.1",
     "axios": "^0.24.0",
-    "bootstrap": "^4.5.3",
+    "bootstrap": "^5.0.0",
     "classnames": "^2.2.6",
     "date-fns": "^2.16.1",
     "enzyme": "^3.11.0",
