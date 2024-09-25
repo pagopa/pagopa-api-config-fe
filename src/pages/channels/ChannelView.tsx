@@ -999,6 +999,20 @@ export default class ChannelView extends React.Component<IProps, IState> {
                                                         disabled={this.props.readOnly}
                                                     />
                                                 </Form.Group>
+                                                <Form.Group controlId="flag_standin"
+                                                            className="col-md-2 custom-control-box">
+                                                    <Form.Check
+                                                        custom
+                                                        checked={this.props.channel.flag_standin === true}
+                                                        type={'checkbox'}
+                                                        id={'flag_standin'}
+                                                        label={'Flag standin'}
+                                                        name="flag_standin"
+                                                        onChange={(e) => this.handleChange(e)}
+                                                        readOnly={this.props.readOnly}
+                                                        disabled={this.props.readOnly}
+                                                    />
+                                                </Form.Group>
                                             </div>
                                         </Card.Body>
                                         {!this.props.readOnly &&

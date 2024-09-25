@@ -598,6 +598,18 @@ export default class StationView extends React.Component<IProps, IState> {
                                                             </Form.Group>
 
                                                         </div>
+                                                        <div className="row">
+                                                            <Form.Group controlId="flag_standin" className="col-md-2">
+                                                                <Form.Label>Flag standin</Form.Label>
+                                                                <Form.Control as="select" name="flag_standin" placeholder="stato"
+                                                                              onChange={(e) => this.handleChange(e)}
+                                                                              value={String(this.props.station.flag_standin)}
+                                                                              readOnly={this.props.readOnly}>
+                                                                    <option value="true">Abilitato</option>
+                                                                    <option value="false">Non Abilitato</option>
+                                                                </Form.Control>
+                                                            </Form.Group>
+                                                        </div>
 
                                                     </Card.Body>
                                                     {
