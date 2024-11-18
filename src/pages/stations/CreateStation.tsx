@@ -58,6 +58,7 @@ export default class CreateStation extends React.Component<IProps, IState> {
                 timeout_c: 120,
                 version: 1,
                 flag_online: false,
+                flag_standin: false,
                 invio_rt_istantaneo: false,
                 ip_4mod: false,
                 new_password: "",
