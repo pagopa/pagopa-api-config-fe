@@ -67,6 +67,7 @@ export default class CreateChannel extends React.Component<IProps, IState> {
                 digital_stamp_brand: false,
                 flag_io: false,
                 flag_psp_cp: false,
+                flag_standin: false,
                 serv_plugin: '-',
                 agid: false
             } as unknown as ChannelDetails,

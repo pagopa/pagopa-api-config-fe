@@ -1,6 +1,6 @@
 {
   "name": "pagopa-api-config-fe",
-  "version": "1.36.9",
+  "version": "1.36.9-1-PAGOPA-1622-sviluppo-api-config-gestione-flag-stand-in-per-wsdl",
   "license": "MIT",
   "scripts": {
     "envconfig": "chmod +x envconfig.sh && . ./envconfig.sh && chmod +x version.sh && ./version.sh",
