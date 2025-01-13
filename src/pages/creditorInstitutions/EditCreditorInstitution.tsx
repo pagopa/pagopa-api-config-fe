@@ -545,7 +545,6 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
     }
 
     handleStationChange(event: any) {
-        console.warn("HELLO")
         const key = "value" in event ? "station_code" : event.target.name as string;
         const value = "value" in event ? event.value : event.target.value;
         // eslint-disable-next-line functional/no-let
