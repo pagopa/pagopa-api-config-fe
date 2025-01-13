@@ -661,6 +661,8 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
             </Table>;
     }
 
+    /* eslint-disable */
+    // TODO refactor function to reduce complexity
     getStationListRender() {
         return this.state.stationList.map((item: any, index: number) => {
             if (this.state.stationMgmt.edit && this.state.stationMgmt.station.station_code === item.station_code) {
@@ -793,6 +795,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
             }
         });
     }
+    /* eslint-enable */
 
     getEncodingListRender() {
         return this.state.encodings.map((item: any, index: number) => (
