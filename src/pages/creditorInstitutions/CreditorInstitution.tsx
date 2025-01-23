@@ -219,6 +219,10 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
                         {item.stand_in && <FaCheck className="text-success" />}
                         {!item.stand_in && <FaTimes className="text-danger" />}
                     </td>
+                    <td className="text-center">
+                        {item.spontaneous_payment && <FaCheck className="text-success" />}
+                        {!item.spontaneous_payment && <FaTimes className="text-danger" />}
+                    </td>
                     <td className="text-right">
                         <OverlayTrigger placement="top"
                             overlay={<Tooltip id={`tooltip-details-${index}`}>Visualizza</Tooltip>}>
@@ -440,6 +444,7 @@ export default class CreditorInstitution extends React.Component<IProps, IState>
                                                                     <th className="text-center">Broadcast</th>
                                                                     <th className="text-center">ACA</th>
                                                                     <th className="text-center">Stand In</th>
+                                                                    <th className="text-center">Pagamento spontaneo</th>
                                                                     <th className="text-right"></th>
                                                                 </tr>
                                                             </thead>

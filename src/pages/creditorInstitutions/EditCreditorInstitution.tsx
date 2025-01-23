@@ -423,6 +423,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                 broadcast: false,
                 aca: true,
                 stand_in: true,
+                spontaneous_payment: false
             }
         };
         this.setState({ stationMgmt });
@@ -619,7 +620,8 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                 mod4: false,
                                 broadcast: false,
                                 aca: true,
-                                stand_in: true
+                                stand_in: true,
+                                spontaneous_payment: false
                             }
                         };
                         this.setState({ confirmationModal, stationMgmt });
@@ -659,6 +661,8 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
             </Table>;
     }
 
+    /* eslint-disable */
+    // TODO refactor function to reduce complexity
     getStationListRender() {
         return this.state.stationList.map((item: any, index: number) => {
             if (this.state.stationMgmt.edit && this.state.stationMgmt.station.station_code === item.station_code) {
@@ -730,6 +734,14 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                 <option value="false">Disabilitato</option>
                             </Form.Control>
                         </td>
+                        <td className="text-center">
+                            <Form.Control as="select" placeholder="spontaneous payment" name="spontaneous_payment"
+                                value={this.state.stationMgmt.station?.spontaneous_payment}
+                                onChange={(e) => this.handleStationChange(e)}>
+                                <option value="true">Abilitato</option>
+                                <option value="false">Disabilitato</option>
+                            </Form.Control>
+                        </td>
                         <td></td>
                     </tr>
                 );
@@ -762,6 +774,10 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                             {item.stand_in && <FaCheck className="text-success" />}
                             {!item.stand_in && <FaTimes className="text-danger" />}
                         </td>
+                        <td className="text-center">
+                            {item.spontaneous_payment && <FaCheck className="text-success" />}
+                            {!item.spontaneous_payment && <FaTimes className="text-danger" />}
+                        </td>
                         <td className="text-right">
                             <OverlayTrigger placement="top"
                                 overlay={<Tooltip id={`tooltip-edit-${index}`}>Modifica</Tooltip>}>
@@ -779,6 +795,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
             }
         });
     }
+    /* eslint-enable */
 
     getEncodingListRender() {
         return this.state.encodings.map((item: any, index: number) => (
@@ -1091,6 +1108,7 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                                                     <th className="text-center">Broadcast</th>
                                                                     <th className="text-center">ACA</th>
                                                                     <th className="text-center">Stand In</th>
+                                                                    <th className="text-center">Pagamento spontaneo</th>
                                                                     <th></th>
                                                                 </tr>
                                                             </thead>
@@ -1166,6 +1184,14 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                                                         <td className="text-center">
                                                                             <Form.Control as="select" placeholder="Stand In" name="stand_in"
                                                                                 value={this.state.stationMgmt.station?.stand_in}
+                                                                                onChange={(e) => this.handleStationChange(e)}>
+                                                                                <option value="true">Abilitato</option>
+                                                                                <option value="false">Disabilitato</option>
+                                                                            </Form.Control>
+                                                                        </td>
+                                                                        <td className="text-center">
+                                                                            <Form.Control as="select" placeholder="Spontaneous payment" name="spontaneous_payment"
+                                                                                value={this.state.stationMgmt.station?.spontaneous_payment}
                                                                                 onChange={(e) => this.handleStationChange(e)}>
                                                                                 <option value="true">Abilitato</option>
                                                                                 <option value="false">Disabilitato</option>
