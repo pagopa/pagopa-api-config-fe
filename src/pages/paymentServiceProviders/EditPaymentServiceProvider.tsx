@@ -586,6 +586,12 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
                                                                   value={this.state.paymentServiceProvider.bic}
                                                                   onChange={(e) => this.handleChange(e)}/>
                                                 </Form.Group>
+                                                <Form.Group controlId="vat_number" className="col-md-2">
+                                                    <Form.Label>Partita IVA</Form.Label>
+                                                    <Form.Control placeholder="" name="vat_number"
+                                                                  value={this.state.paymentServiceProvider.vat_number}
+                                                                  onChange={(e) => this.handleChange(e)}/>
+                                                </Form.Group>
                                             </div>
                                             <div className="row">
                                                 <Form.Group controlId="agid_psp" className="col-md-2 custom-control-box">

@@ -232,6 +232,12 @@ export default class PaymentServiceProvider extends React.Component<IProps, ISta
                                                           value={this.state.paymentServiceProvider.bic}
                                                           readOnly/>
                                         </Form.Group>
+                                        <Form.Group controlId="vat_number" className="col-md-2">
+                                            <Form.Label>Partita IVA</Form.Label>
+                                            <Form.Control type="vat_number" placeholder="-"
+                                                          value={this.state.paymentServiceProvider.vat_number}
+                                                          readOnly/>
+                                        </Form.Group>
                                     </div>
                                     <div className="row">
                                         <Form.Group controlId="agid_psp" className="col-md-2 custom-control-box">
