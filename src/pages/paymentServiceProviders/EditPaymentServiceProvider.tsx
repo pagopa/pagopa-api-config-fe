@@ -178,8 +178,14 @@ export default class EditPaymentServiceProvider extends React.Component<IProps, 
         // eslint-disable-next-line functional/no-let
         let paymentServiceProvider: PaymentServiceProviderDetails = this.state.paymentServiceProvider;
         const key = event.target.name as string;
-        const value = event.target.type === "checkbox" ? event.target.checked : event.target.value;
-        paymentServiceProvider = {...paymentServiceProvider, [key]: value};
+
+        if (key === "vat_number" && event.target.value === "") {
+            paymentServiceProvider = {...paymentServiceProvider, [key]: null};
+        } else {
+            const value = event.target.type === "checkbox" ? event.target.checked : event.target.value;
+            paymentServiceProvider = {...paymentServiceProvider, [key]: value};
+        }
+
         this.setState({paymentServiceProvider});
     }
 
