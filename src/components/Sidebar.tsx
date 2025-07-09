@@ -26,6 +26,7 @@ interface IState {
         psp: boolean;
         configuration: boolean;
         batchoperation: boolean;
+        gec: boolean;
     };
     be_version: string;
     cache_version: string;
@@ -42,7 +43,8 @@ export default class Sidebar extends React.Component<IProps, IState> {
                 ec: true,
                 psp: false,
                 configuration: false,
-                batchoperation: false
+                batchoperation: false,
+                gec: false
             },
             be_version: '',
             cache_version: ''
@@ -246,6 +248,22 @@ export default class Sidebar extends React.Component<IProps, IState> {
                         <div className="list-group">
                         {
                             SidebarItems.filter(item => item.domain === "batchoperation").map((item) => getLink(item))
+                        }
+                        </div>
+                    </Accordion.Collapse>
+                </span>
+                <span>
+                    <Accordion.Toggle as="div" eventKey="4">
+                        <span className="navbar-heading" onClick={() => this.setDomainState("gec")}>
+                            <FaExpand className={`ml-2 mr-2 ${getCompressionClass("gec", true)}`}/>
+                            <FaCompress className={`ml-2 mr-2 ${getCompressionClass("gec", false)}`}/>
+                            GEC
+                        </span>
+                    </Accordion.Toggle>
+                    <Accordion.Collapse eventKey="4">
+                        <div className="list-group">
+                        {
+                            SidebarItems.filter(item => item.domain === "gec").map((item) => getLink(item))
                         }
                         </div>
                     </Accordion.Collapse>
