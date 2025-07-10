@@ -393,3 +393,17 @@ pre {
   color: black;
   text-decoration: underline;
 }
+
+.flutter-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+}
+
+payment-methods-manager {
+  display: block; 
+  flex-grow: 1;
+  width: 100%;
+  border: none;
+}

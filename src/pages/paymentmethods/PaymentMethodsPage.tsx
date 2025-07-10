@@ -1,7 +1,7 @@
 import React from 'react';
 import { MsalContext } from "@azure/msal-react";
 import { loginRequest } from "../../authConfig";
-
+import { getConfig } from '../../util/config';
 
 
 interface IProps {
@@ -76,11 +76,13 @@ export default class PaymentMedothodsPage extends React.Component<IProps, IState
 
     render(): React.ReactNode {
         const jwt = this.state.jwt;
+        const host = getConfig("APICONFIG_HOST") as string;
 
         return (
-            <div style={{ width: '1500px', height: '800px' }}>
-                {jwt && (
+            <div className="flutter-container">
+                    {jwt && (
                     <payment-methods-manager
+                        host={host}
                         jwt={jwt} >
                     </payment-methods-manager>
                 )}
