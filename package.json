@@ -1,6 +1,6 @@
 {
   "name": "pagopa-api-config-fe",
-  "version": "1.36.12-2-gec",
+  "version": "1.36.12-3-gec",
   "license": "MIT",
   "scripts": {
     "envconfig": "chmod +x envconfig.sh && . ./envconfig.sh && chmod +x version.sh && ./version.sh",
