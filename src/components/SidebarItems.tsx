@@ -105,7 +105,7 @@ const SidebarItems = [
         domain: "batchoperation"
     },
     {
-        name: "Metodi di Pagamento",
+        name: "Bundles e Metodi di Pagamento",
         route: "/payment-methods",
         domain: "gec"
     },
