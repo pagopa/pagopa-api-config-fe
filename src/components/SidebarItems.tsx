@@ -104,6 +104,11 @@ const SidebarItems = [
         route: "/massive/icas",
         domain: "batchoperation"
     },
+    {
+        name: "Bundles e Metodi di Pagamento",
+        route: "/payment-methods",
+        domain: "gec"
+    },
 ];
 
 export default SidebarItems;

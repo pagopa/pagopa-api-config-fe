@@ -90,6 +90,7 @@
     "isolatedModules": true
   },
   "include": [
+    "src",
     "src/**/*",
     // this is the eslint-only inclusion
     ".eslintrc.js",

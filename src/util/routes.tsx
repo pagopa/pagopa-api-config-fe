@@ -42,6 +42,7 @@ import MassiveIcas from "../pages/batchoperations/MassiveIcas";
 import RefreshConfigPage from "../pages/configuration/RefreshConfig";
 import PspView from "../pages/views/PspView";
 import CreditorInstitutionView from "../pages/views/CreditorInstitutionsView";
+import PaymentMedothodsPage from "../pages/paymentmethods/PaymentMethodsPage";
 
 
 export default class Routes extends React.Component {
@@ -119,6 +120,8 @@ export default class Routes extends React.Component {
                                     <Route path="/view/psp" exact component={PspView} />
 
                                     <Route path="/view/creditor-institution" exact component={CreditorInstitutionView} />
+
+                                    <Route path="/payment-methods" exact component={PaymentMedothodsPage} />
 
 
                                     <Route component={NotFound}/>
