@@ -40,6 +40,7 @@ import MassiveMigration from "../pages/batchoperations/MassiveMigration";
 import PaymentTypePage from "../pages/configuration/PaymentType";
 import MassiveIcas from "../pages/batchoperations/MassiveIcas";
 import RefreshConfigPage from "../pages/configuration/RefreshConfig";
+import CDS from "../pages/cds/CDS";
 import PspView from "../pages/views/PspView";
 import CreditorInstitutionView from "../pages/views/CreditorInstitutionsView";
 import PaymentMedothodsPage from "../pages/paymentmethods/PaymentMethodsPage";
@@ -111,6 +112,7 @@ export default class Routes extends React.Component {
                                     <Route path="/wfesp-plugins" exact component={WFESPPlugins}/>
                                     <Route path="/payment-types" exact component={PaymentTypePage}/>
                                     <Route path="/refresh-config" exact component={RefreshConfigPage}/>
+                                    <Route path="/cds" exact component={CDS}/>
 
                                     <Route path="/massive/loading" exact component={MassiveLoading} />
                                     <Route path="/massive/migration" exact component={MassiveMigration} />
