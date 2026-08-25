@@ -8,7 +8,7 @@ import ConfirmationModal from "../../components/ConfirmationModal";
 import Paginator from "../../components/Paginator";
 import {loginRequest} from "../../authConfig";
 import {extractErrorMessage} from "../../util/apiErrors";
-import {CdsServizio} from '../../../generated/api/CdsServizio';
+import {CdsSoggetto} from '../../../generated/api/CdsSoggetto';
 
 
 /* eslint-disable @typescript-eslint/no-empty-interface */
@@ -16,40 +16,37 @@ interface IProps {
 }
 
 interface IState {
-    services: Array<CdsServizio>;
+    subjects: Array<CdsSoggetto>;
     isLoading: boolean;
     showFormModal: boolean;
     isEditing: boolean;
-    formData: CdsServizio;
+    formData: CdsSoggetto;
     showDeleteModal: boolean;
-    serviceToDelete: CdsServizio;
+    subjectToDelete: CdsSoggetto;
     currentPage: number;
 }
 
 const PAGE_SIZE = 10;
 
-const emptyService: CdsServizio = {
-    idServizio: "",
-    descrizioneServizio: "",
-    xsdRiferimento: "",
-    categoriaId: undefined,
-    version: 0
+const emptySubject: CdsSoggetto = {
+    creditorInstitutionCode: "",
+    creditorInstitutionDescription: ""
 };
 
-export default class CdsServices extends React.Component<IProps, IState> {
+export default class CdsSubjects extends React.Component<IProps, IState> {
     static contextType = MsalContext;
 
     constructor(props: IProps) {
         super(props);
 
         this.state = {
-            services: [],
+            subjects: [],
             isLoading: false,
             showFormModal: false,
             isEditing: false,
-            formData: {...emptyService},
+            formData: {...emptySubject},
             showDeleteModal: false,
-            serviceToDelete: {},
+            subjectToDelete: {},
             currentPage: 0
         };
 
@@ -73,22 +70,22 @@ export default class CdsServices extends React.Component<IProps, IState> {
             account: this.context.accounts[0]
         })
             .then((response: any) => {
-                apiClient.getCdsServices({
+                apiClient.getCdsSubjects({
                     Authorization: `Bearer ${response.idToken}`,
                     ApiKey: ""
                 })
                     .then((res: any) => {
                         if (res.right.status === 200) {
-                            const services = res.right.value;
-                            const totalPages = Math.max(Math.ceil(services.length / PAGE_SIZE), 1);
+                            const subjects = res.right.value;
+                            const totalPages = Math.max(Math.ceil(subjects.length / PAGE_SIZE), 1);
                             const currentPage = Math.min(this.state.currentPage, totalPages - 1);
-                            this.setState({services, currentPage});
+                            this.setState({subjects, currentPage});
                         } else {
                             this.toastError(res.right.value.detail);
                         }
                     })
                     .catch(() => {
-                        toast.error("Problema nel recuperare i servizi", {theme: "colored"});
+                        toast.error("Problema nel recuperare i soggetti", {theme: "colored"});
                     })
                     .finally(() => {
                         this.setState({isLoading: false});
@@ -108,31 +105,30 @@ export default class CdsServices extends React.Component<IProps, IState> {
         this.setState({
             showFormModal: true,
             isEditing: false,
-            formData: {...emptyService}
+            formData: {...emptySubject}
         });
     }
 
-    handleEdit(service: CdsServizio) {
+    handleEdit(subject: CdsSoggetto) {
         this.setState({
             showFormModal: true,
             isEditing: true,
-            formData: {...service}
+            formData: {...subject}
         });
     }
 
     handleChange(event: any) {
         const {name, value} = event.target;
         const formData = {...this.state.formData};
-        const numericFields = ["categoriaId", "version"];
         // eslint-disable-next-line functional/immutable-data
-        (formData as any)[name] = numericFields.includes(name) ? (value === "" ? undefined : Number(value)) : value;
+        (formData as any)[name] = value;
         this.setState({formData});
     }
 
     hideFormModal() {
         this.setState({
             showFormModal: false,
-            formData: {...emptyService}
+            formData: {...emptySubject}
         });
     }
 
@@ -145,13 +141,13 @@ export default class CdsServices extends React.Component<IProps, IState> {
         })
             .then((response: any) => {
                 const request = isEditing
-                    ? apiClient.updateCdsService({
+                    ? apiClient.updateCdsSubject({
                         Authorization: `Bearer ${response.idToken}`,
                         ApiKey: "",
-                        idservizio: formData.idServizio as string,
+                        subjectid: formData.id as number,
                         body: formData
                     })
-                    : apiClient.createCdsService({
+                    : apiClient.createCdsSubject({
                         Authorization: `Bearer ${response.idToken}`,
                         ApiKey: "",
                         body: formData
@@ -174,26 +170,26 @@ export default class CdsServices extends React.Component<IProps, IState> {
             });
     }
 
-    handleDelete(service: CdsServizio) {
+    handleDelete(subject: CdsSoggetto) {
         this.setState({
             showDeleteModal: true,
-            serviceToDelete: service
+            subjectToDelete: subject
         });
     }
 
     hideDeleteModal(status: string) {
         if (status === "ok") {
-            const service = this.state.serviceToDelete;
+            const subject = this.state.subjectToDelete;
 
             this.context.instance.acquireTokenSilent({
                 ...loginRequest,
                 account: this.context.accounts[0]
             })
                 .then((response: any) => {
-                    apiClient.deleteCdsService({
+                    apiClient.deleteCdsSubject({
                         Authorization: `Bearer ${response.idToken}`,
                         ApiKey: "",
-                        idservizio: service.idServizio as string
+                        subjectid: subject.id as number
                     })
                         .then(async (res: any) => {
                             if (res.right && res.right.status === 200) {
@@ -209,27 +205,27 @@ export default class CdsServices extends React.Component<IProps, IState> {
                         });
                 });
         }
-        this.setState({showDeleteModal: false, serviceToDelete: {}});
+        this.setState({showDeleteModal: false, subjectToDelete: {}});
     }
 
     render(): React.ReactNode {
-        const {services, isLoading, showFormModal, isEditing, formData, showDeleteModal, serviceToDelete, currentPage} = this.state;
+        const {subjects, isLoading, showFormModal, isEditing, formData, showDeleteModal, subjectToDelete, currentPage} = this.state;
 
-        const totalPages = Math.max(Math.ceil(services.length / PAGE_SIZE), 1);
-        const pagedServices = services.slice(currentPage * PAGE_SIZE, currentPage * PAGE_SIZE + PAGE_SIZE);
+        const totalPages = Math.max(Math.ceil(subjects.length / PAGE_SIZE), 1);
+        const pagedSubjects = subjects.slice(currentPage * PAGE_SIZE, currentPage * PAGE_SIZE + PAGE_SIZE);
         const pageInfo = {
             page: currentPage,
             limit: PAGE_SIZE,
-            items_found: pagedServices.length,
+            items_found: pagedSubjects.length,
             total_pages: totalPages,
-            total_items: services.length
+            total_items: subjects.length
         };
 
         return (
-            <div className="cds-services">
+            <div className="cds-subjects">
                 <div className="row">
                     <div className="col-md-10">
-                        <p>Elenco dei servizi censiti nel Catalogo Dati Servizi.</p>
+                        <p>Elenco dei soggetti censiti nel Catalogo Dati Servizi.</p>
                     </div>
                     <div className="col-md-2 text-right">
                         <Button onClick={this.handleCreate}>Nuovo <FaPlus/></Button>
@@ -243,33 +239,27 @@ export default class CdsServices extends React.Component<IProps, IState> {
                             <Table hover responsive size="sm">
                                 <thead>
                                 <tr>
-                                    <th>ID Servizio</th>
-                                    <th className="text-left">Descrizione</th>
-                                    <th>XSD Riferimento</th>
-                                    <th>Categoria</th>
-                                    <th>Versione</th>
+                                    <th>Codice Ente Creditore</th>
+                                    <th className="text-left">Descrizione Ente Creditore</th>
                                     <th className="buttons-td-width"/>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 {
-                                    pagedServices.map((service: CdsServizio, index: number) => (
-                                        <tr key={service.id ?? index}>
-                                            <td>{service.idServizio}</td>
-                                            <td className="text-left">{service.descrizioneServizio}</td>
-                                            <td>{service.xsdRiferimento}</td>
-                                            <td>{service.categoria?.description ?? service.categoriaId}</td>
-                                            <td>{service.version}</td>
+                                    pagedSubjects.map((subject: CdsSoggetto, index: number) => (
+                                        <tr key={subject.id ?? index}>
+                                            <td>{subject.creditorInstitutionCode}</td>
+                                            <td className="text-left">{subject.creditorInstitutionDescription}</td>
                                             <td className="text-right">
                                                 <OverlayTrigger placement="top"
                                                                 overlay={<Tooltip id={`tooltip-edit-${index}`}>Modifica</Tooltip>}>
                                                     <FaEdit role="button" className="mr-3"
-                                                            onClick={() => this.handleEdit(service)}/>
+                                                            onClick={() => this.handleEdit(subject)}/>
                                                 </OverlayTrigger>
                                                 <OverlayTrigger placement="top"
                                                                 overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
                                                     <FaTrash role="button" className="mr-0"
-                                                             onClick={() => this.handleDelete(service)}/>
+                                                             onClick={() => this.handleDelete(subject)}/>
                                                 </OverlayTrigger>
                                             </td>
                                         </tr>
@@ -284,35 +274,18 @@ export default class CdsServices extends React.Component<IProps, IState> {
 
                 <Modal show={showFormModal} onHide={this.hideFormModal}>
                     <Modal.Header closeButton>
-                        <Modal.Title>{isEditing ? "Modifica Servizio" : "Nuovo Servizio"}</Modal.Title>
+                        <Modal.Title>{isEditing ? "Modifica Soggetto" : "Nuovo Soggetto"}</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <Form>
                             <Form.Group>
-                                <Form.Label>ID Servizio</Form.Label>
-                                <Form.Control name="idServizio" value={formData.idServizio ?? ""}
-                                              disabled={isEditing}
+                                <Form.Label>Codice Ente Creditore</Form.Label>
+                                <Form.Control name="creditorInstitutionCode" value={formData.creditorInstitutionCode ?? ""}
                                               onChange={this.handleChange}/>
                             </Form.Group>
                             <Form.Group>
-                                <Form.Label>Descrizione</Form.Label>
-                                <Form.Control name="descrizioneServizio" value={formData.descrizioneServizio ?? ""}
-                                              onChange={this.handleChange}/>
-                            </Form.Group>
-                            <Form.Group>
-                                <Form.Label>XSD Riferimento</Form.Label>
-                                <Form.Control name="xsdRiferimento" value={formData.xsdRiferimento ?? ""}
-                                              onChange={this.handleChange}/>
-                            </Form.Group>
-                            <Form.Group>
-                                <Form.Label>Categoria (ID)</Form.Label>
-                                <Form.Control name="categoriaId" type="number"
-                                              value={formData.categoriaId ?? ""}
-                                              onChange={this.handleChange}/>
-                            </Form.Group>
-                            <Form.Group>
-                                <Form.Label>Versione</Form.Label>
-                                <Form.Control name="version" type="number" value={formData.version ?? ""}
+                                <Form.Label>Descrizione Ente Creditore</Form.Label>
+                                <Form.Control name="creditorInstitutionDescription" value={formData.creditorInstitutionDescription ?? ""}
                                               onChange={this.handleChange}/>
                             </Form.Group>
                         </Form>
@@ -324,9 +297,9 @@ export default class CdsServices extends React.Component<IProps, IState> {
                 </Modal>
 
                 <ConfirmationModal show={showDeleteModal} handleClose={this.hideDeleteModal}>
-                    <p>Sei sicuro di voler eliminare il seguente servizio?</p>
+                    <p>Sei sicuro di voler eliminare il seguente soggetto?</p>
                     <ul>
-                        <li>{serviceToDelete.idServizio} - {serviceToDelete.descrizioneServizio}</li>
+                        <li>{subjectToDelete.creditorInstitutionCode} - {subjectToDelete.creditorInstitutionDescription}</li>
                     </ul>
                 </ConfirmationModal>
             </div>

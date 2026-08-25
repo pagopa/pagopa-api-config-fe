@@ -1,5 +1,6 @@
 import React from 'react';
 import CdsServices from './CdsServices';
+import CdsSubjects from './CdsSubjects';
 
 /* eslint-disable @typescript-eslint/no-empty-interface */
 interface IProps {
@@ -28,7 +29,7 @@ export default class CDS extends React.Component<IProps> {
                 <div className="row">
                     <div className="col-md-12 mb-4">
                         <h4>Soggetto</h4>
-                        <p>{LOREM_IPSUM}</p>
+                        <CdsSubjects/>
                     </div>
                 </div>
 
