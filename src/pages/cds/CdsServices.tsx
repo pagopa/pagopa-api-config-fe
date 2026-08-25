@@ -79,7 +79,8 @@ export default class CdsServices extends React.Component<IProps, IState> {
                 })
                     .then((res: any) => {
                         if (res.right.status === 200) {
-                            const services = res.right.value;
+                            const services = [...res.right.value].sort((a: CdsServizio, b: CdsServizio) =>
+                                (a.idServizio ?? "").localeCompare(b.idServizio ?? ""));
                             const totalPages = Math.max(Math.ceil(services.length / PAGE_SIZE), 1);
                             const currentPage = Math.min(this.state.currentPage, totalPages - 1);
                             this.setState({services, currentPage});

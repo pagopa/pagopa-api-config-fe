@@ -76,7 +76,8 @@ export default class CdsSubjects extends React.Component<IProps, IState> {
                 })
                     .then((res: any) => {
                         if (res.right.status === 200) {
-                            const subjects = res.right.value;
+                            const subjects = [...res.right.value].sort((a: CdsSoggetto, b: CdsSoggetto) =>
+                                (a.creditorInstitutionCode ?? "").localeCompare(b.creditorInstitutionCode ?? ""));
                             const totalPages = Math.max(Math.ceil(subjects.length / PAGE_SIZE), 1);
                             const currentPage = Math.min(this.state.currentPage, totalPages - 1);
                             this.setState({subjects, currentPage});
