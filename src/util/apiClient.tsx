@@ -28,5 +28,7 @@ export const apiClient = createClient({
     fetchApi
 });
 
+export const apiBaseUrl = `${apiConfigHost}${apiConfigBasePath}`;
+
 
 export type APIClient = typeof apiClient;

@@ -1,6 +1,6 @@
 import React from 'react';
 import {Button, Form, Modal, OverlayTrigger, Table, Tooltip} from "react-bootstrap";
-import {FaEdit, FaPlus, FaSpinner, FaTrash} from "react-icons/fa";
+import {FaEdit, FaLink, FaPlus, FaSpinner, FaTrash} from "react-icons/fa";
 import {MsalContext} from "@azure/msal-react";
 import {toast} from "react-toastify";
 import {apiClient} from "../../util/apiClient";
@@ -11,8 +11,9 @@ import {extractErrorMessage} from "../../util/apiErrors";
 import {CdsSoggetto} from '../../../generated/api/CdsSoggetto';
 
 
-/* eslint-disable @typescript-eslint/no-empty-interface */
 interface IProps {
+    selectedSubjectId?: number;
+    onSelectSubject: (subject: CdsSoggetto) => void;
 }
 
 interface IState {
@@ -76,7 +77,7 @@ export default class CdsSubjects extends React.Component<IProps, IState> {
                 })
                     .then((res: any) => {
                         if (res.right.status === 200) {
-                            const subjects = [...res.right.value].sort((a: CdsSoggetto, b: CdsSoggetto) =>
+                            const subjects = [...res.right.value.subjects].sort((a: CdsSoggetto, b: CdsSoggetto) =>
                                 (a.creditorInstitutionCode ?? "").localeCompare(b.creditorInstitutionCode ?? ""));
                             const totalPages = Math.max(Math.ceil(subjects.length / PAGE_SIZE), 1);
                             const currentPage = Math.min(this.state.currentPage, totalPages - 1);
@@ -211,6 +212,7 @@ export default class CdsSubjects extends React.Component<IProps, IState> {
 
     render(): React.ReactNode {
         const {subjects, isLoading, showFormModal, isEditing, formData, showDeleteModal, subjectToDelete, currentPage} = this.state;
+        const {selectedSubjectId} = this.props;
 
         const totalPages = Math.max(Math.ceil(subjects.length / PAGE_SIZE), 1);
         const pagedSubjects = subjects.slice(currentPage * PAGE_SIZE, currentPage * PAGE_SIZE + PAGE_SIZE);
@@ -248,10 +250,16 @@ export default class CdsSubjects extends React.Component<IProps, IState> {
                                 <tbody>
                                 {
                                     pagedSubjects.map((subject: CdsSoggetto, index: number) => (
-                                        <tr key={subject.id ?? index}>
+                                        <tr key={subject.id ?? index}
+                                            className={subject.id !== undefined && subject.id === selectedSubjectId ? "table-active" : ""}>
                                             <td>{subject.creditorInstitutionCode}</td>
                                             <td className="text-left">{subject.creditorInstitutionDescription}</td>
                                             <td className="text-right">
+                                                <OverlayTrigger placement="top"
+                                                                overlay={<Tooltip id={`tooltip-select-${index}`}>Vedi servizi associati</Tooltip>}>
+                                                    <FaLink role="button" className="mr-3"
+                                                            onClick={() => this.props.onSelectSubject(subject)}/>
+                                                </OverlayTrigger>
                                                 <OverlayTrigger placement="top"
                                                                 overlay={<Tooltip id={`tooltip-edit-${index}`}>Modifica</Tooltip>}>
                                                     <FaEdit role="button" className="mr-3"

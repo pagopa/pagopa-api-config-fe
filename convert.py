@@ -16,5 +16,19 @@ with open('swagger.json', 'r') as file:
 
 f = open("swagger.json", "w")
 mydata = json.loads(data)
+
+# Frontend-only patch: lo schema `Iban` usato da GET
+# /creditorinstitutions/{code}/ibans non espone i campi data che la UI
+# renderizza come oggetti Date (esistono solo su IbanEnhanced). Senza di essi il
+# client io-ts lascia i valori come stringhe grezze e
+# `validity_date.toLocaleDateString()` va in errore. Li iniettiamo qui come
+# date-time cosi' il codec generato li decodifica via UTCISODateFromString.
+# Rimuovere quando il contratto backend esporra' questi campi su Iban.
+iban_schema = mydata.get("definitions", {}).get("Iban")
+if iban_schema is not None:
+    iban_props = iban_schema.setdefault("properties", {})
+    for date_field in ("validity_date", "publication_date"):
+        iban_props.setdefault(date_field, {"type": "string", "format": "date-time"})
+
 f.write(json.dumps(mydata, indent=4))
 f.close()

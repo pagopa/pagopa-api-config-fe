@@ -2,6 +2,9 @@
   "name": "pagopa-api-config-fe",
   "version": "1.36.13",
   "license": "MIT",
+  "engines": {
+    "node": "16.16.0"
+  },
   "scripts": {
     "envconfig": "chmod +x envconfig.sh && . ./envconfig.sh && chmod +x version.sh && ./version.sh",
     "prebuild": "npm-run-all prebuild:* && chmod +x version.sh && ./version.sh",
@@ -13,11 +16,13 @@
     "lint-autofix": "eslint . -c .eslintrc.js --ext .ts,.tsx --fix",
     "prestart": "npm-run-all envconfig",
     "start": "parcel --port 3000 src/index.html --dist-dir build/debug",
+    "start:nvm": "bash -c 'unset npm_config_prefix && source $HOME/.nvm/nvm.sh && nvm use 16.16.0 && npm-run-all envconfig && parcel --port 3000 src/index.html --dist-dir build/debug'",
     "pretest": "npm-run-all envconfig",
     "test": "jest --coverage --ci --testResultsProcessor jest-sonar-reporter",
     "test:local": "jest --coverage --ci",
-    "generate:api": "rm -f swagger.json && wget https://raw.githubusercontent.com/pagopa/pagopa-api-config/main/openapi/swagger.json && sed -i 's/\\\\/\\\\\\\\/g' swagger.json && python3 ./convert.py && gen-api-models --api-spec swagger.json --no-strict --out-dir generated/api --request-types --response-decoders --client",
-    "macosx:generate:api": "rm -f swagger.json && wget https://raw.githubusercontent.com/pagopa/pagopa-api-config/main/openapi/swagger.json && sed -i '' 's/\\\\/\\\\\\\\/g' swagger.json && python3 ./convert.py && gen-api-models --api-spec swagger.json --no-strict --out-dir generated/api --request-types --response-decoders --client",
+    "generate:api": "rm -f swagger.json && shx rm -rf generated/api && wget https://raw.githubusercontent.com/pagopa/pagopa-api-config/main/openapi/swagger.json && sed -i 's/\\\\/\\\\\\\\/g' swagger.json && python3 ./convert.py && gen-api-models --api-spec swagger.json --no-strict --out-dir generated/api --request-types --response-decoders --client && node scripts/fix-circular-generated-models.js",
+    "macosx:generate:api": "rm -f swagger.json && shx rm -rf generated/api && wget https://raw.githubusercontent.com/pagopa/pagopa-api-config/main/openapi/swagger.json && sed -i '' 's/\\\\/\\\\\\\\/g' swagger.json && python3 ./convert.py && gen-api-models --api-spec swagger.json --no-strict --out-dir generated/api --request-types --response-decoders --client && node scripts/fix-circular-generated-models.js",
+    "local:generate:api": "rm -f openapi.json swagger.json && shx rm -rf generated/api && cp ../pagopa-api-config/openapi/openapi.json ./openapi.json && api-spec-converter --from=openapi_3 --to=swagger_2 ./openapi.json > ./swagger.json && sed -i '' 's/\"type\": \"http\"/\"type\": \"apiKey\",\\n      \"in\": \"header\",\\n      \"name\": \"Authorization\" /g' ./swagger.json && sed -i '' 's/\\\\/\\\\\\\\/g' swagger.json && python3 ./convert.py && gen-api-models --api-spec swagger.json --no-strict --out-dir generated/api --request-types --response-decoders --client && node scripts/fix-circular-generated-models.js",
     "generate": "npm-run-all generate:*",
     "prettify": "prettier --write \"./**/*.{ts,tsx}\""
   },
@@ -105,6 +110,7 @@
     "sass": "^1.42.1",
     "shx": "^0.3.3",
     "ts-jest": "^27.0.6",
+    "ts-morph": "18.0.0",
     "typescript": "^4.1.2",
     "url": "^0.11.0",
     "util": "^0.12.4",
