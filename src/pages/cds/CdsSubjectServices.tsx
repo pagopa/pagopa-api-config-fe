@@ -442,21 +442,21 @@ export default class CdsSubjectServices extends React.Component<IProps, IState> 
                 />
 
                 <p className="text-muted">
-                  Il campo <b>idServizio</b> rappresenta l'identificativo di un
-                  servizio generico registrato all'interno del sistema pagoPA. È
+                  Il campo <b>idServizio</b> rappresenta l&apos;identificativo di un
+                  servizio generico registrato all&apos;interno del sistema pagoPA. È
                   espresso come un codice numerico di 5 cifre.
                 </p>
                 <p className="text-muted">
                   Il campo <b>idSoggettoServizio</b> rappresenta
-                  l'identificativo univoco dell'associazione tra un determinato
+                  l&apos;identificativo univoco dell&apos;associazione tra un determinato
                   servizio generico e uno specifico Ente Creditore.
                 </p>
                 <p className="text-muted">
-                  Mentre l'idServizio identifica il servizio generico (la
-                  categoria astratta), l'idSoggettoServizio identifica la
+                  Mentre l&apos;idServizio identifica il servizio generico (la
+                  categoria astratta), l&apos;idSoggettoServizio identifica la
                   specifica implementazione o istanza di quel servizio offerta
-                  da un determinato EC (ad esempio, l'associazione
-                  specifica "Mensa Scolastica" erogata dal "Comune di Roma")
+                  da un determinato EC (ad esempio, l&apos;associazione
+                  specifica &quot;Mensa Scolastica&quot; erogata dal &quot;Comune di Roma&quot;)
                 </p>
               </>
             )}
