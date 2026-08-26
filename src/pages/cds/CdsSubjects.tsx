@@ -2,6 +2,7 @@ import React from 'react';
 import {Button, Form, Modal, OverlayTrigger, Table, Tooltip} from "react-bootstrap";
 import {FaEdit, FaLink, FaPlus, FaSpinner, FaTrash} from "react-icons/fa";
 import {MsalContext} from "@azure/msal-react";
+import {NavLink} from "react-router-dom";
 import {toast} from "react-toastify";
 import {apiClient} from "../../util/apiClient";
 import ConfirmationModal from "../../components/ConfirmationModal";
@@ -252,7 +253,18 @@ export default class CdsSubjects extends React.Component<IProps, IState> {
                                     pagedSubjects.map((subject: CdsSoggetto, index: number) => (
                                         <tr key={subject.id ?? index}
                                             className={subject.id !== undefined && subject.id === selectedSubjectId ? "table-active" : ""}>
-                                            <td>{subject.creditorInstitutionCode}</td>
+                                            <td>
+                                                {subject.creditorInstitutionCode ? (
+                                                    <NavLink
+                                                        className="navlink"
+                                                        to={`/creditor-institutions/${subject.creditorInstitutionCode}`}
+                                                    >
+                                                        {subject.creditorInstitutionCode}
+                                                    </NavLink>
+                                                ) : (
+                                                    ""
+                                                )}
+                                            </td>
                                             <td className="text-left">{subject.creditorInstitutionDescription}</td>
                                             <td className="text-right">
                                                 <OverlayTrigger placement="top"

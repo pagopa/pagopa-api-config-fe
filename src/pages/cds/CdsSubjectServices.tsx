@@ -2,6 +2,7 @@ import React from 'react';
 import {Button, Form, Modal, OverlayTrigger, Table, Tooltip} from "react-bootstrap";
 import {FaEdit, FaPlus, FaSpinner, FaTrash} from "react-icons/fa";
 import {MsalContext} from "@azure/msal-react";
+import {NavLink} from "react-router-dom";
 import {toast} from "react-toastify";
 import {apiClient, apiBaseUrl} from "../../util/apiClient";
 import ConfirmationModal from "../../components/ConfirmationModal";
@@ -386,7 +387,18 @@ export default class CdsSubjectServices extends React.Component<IProps, IState> 
                             {subjectService.dataFineValidita?.toLocaleDateString()}
                           </td>
                           <td>{subjectService.commissione ? "Sì" : "No"}</td>
-                          <td>{formatStazione(subjectService.stazionePa)}</td>
+                          <td>
+                            {formatStazione(subjectService.stazionePa) ? (
+                              <NavLink
+                                className="navlink"
+                                to={`/stations/${formatStazione(subjectService.stazionePa)}`}
+                              >
+                                {formatStazione(subjectService.stazionePa)}
+                              </NavLink>
+                            ) : (
+                              ""
+                            )}
+                          </td>
                           <td className="text-right">
                             <OverlayTrigger
                               placement="top"
