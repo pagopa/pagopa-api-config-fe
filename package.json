@@ -5,6 +5,12 @@
   "engines": {
     "node": "16.16.0"
   },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
   "scripts": {
     "envconfig": "chmod +x envconfig.sh && . ./envconfig.sh && chmod +x version.sh && ./version.sh",
     "prebuild": "npm-run-all prebuild:* && chmod +x version.sh && ./version.sh",
