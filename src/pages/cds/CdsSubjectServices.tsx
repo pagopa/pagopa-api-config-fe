@@ -242,30 +242,30 @@ export default class CdsSubjectServices extends React.Component<IProps, IState> 
         })
             .then((response: any) => {
                 const body = toRequestDto(formData, subjectCode, isEditing);
-                const request = isEditing
-                    ? apiClient.updateCdsSubjectService({
-                        Authorization: `Bearer ${response.idToken}`,
-                        ApiKey: "",
-                        subjectid: subjectCode,
-                        idsoggettoservizio: formData.idSoggettoServizio as string,
-                        body
-                    })
-                    : apiClient.createCdsSubjectService({
-                        Authorization: `Bearer ${response.idToken}`,
-                        ApiKey: "",
-                        subjectid: subjectCode,
-                        body
-                    });
+                // the backend echoes the saved record with offset dates (e.g. "+02:00"),
+                // which the generated io-ts decoder rejects; use a raw fetch (like getData)
+                // so a successful save is not reported as an error
+                const url = isEditing
+                    ? `${apiBaseUrl}/cds/subjects/${subjectCode}/services/${formData.idSoggettoServizio}`
+                    : `${apiBaseUrl}/cds/subjects/${subjectCode}/services`;
 
-                request
-                    .then(async (res: any) => {
-                        if (res.right && (res.right.status === 200 || res.right.status === 201)) {
+                fetch(url, {
+                    method: isEditing ? "PUT" : "POST",
+                    headers: {
+                        Authorization: `Bearer ${response.idToken}`,
+                        "Ocp-Apim-Subscription-Key": "",
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(body)
+                })
+                    .then(async (res: Response) => {
+                        if (res.status === 200 || res.status === 201) {
                             toast.info("Salvataggio avvenuto con successo");
                             this.getData();
                             this.hideFormModal();
                         } else {
-                            const message = await extractErrorMessage(res, "Operazione non avvenuta a causa di un errore");
-                            this.toastError(message);
+                            const errorBody = await res.json().catch(() => ({}));
+                            this.toastError(errorBody?.detail ?? "Operazione non avvenuta a causa di un errore");
                         }
                     })
                     .catch(() => {
@@ -338,126 +338,225 @@ export default class CdsSubjectServices extends React.Component<IProps, IState> 
         };
 
         return (
-            <div className="cds-subject-services">
-                <div className="row">
-                    <div className="col-md-10">
-                        <p>Elenco dei servizi associati al soggetto <strong>{subject.creditorInstitutionCode}</strong> - {subject.creditorInstitutionDescription}.</p>
-                    </div>
-                    <div className="col-md-2 text-right">
-                        <Button onClick={this.handleCreate}>Nuovo <FaPlus/></Button>
-                    </div>
-                </div>
-
-                {isLoading && (<FaSpinner className="spinner"/>)}
-                {
-                    !isLoading && (
-                        <>
-                            <Table hover responsive size="sm">
-                                <thead>
-                                <tr>
-                                    <th>ID Soggetto Servizio</th>
-                                    <th>ID Servizio</th>
-                                    <th className="text-left">Descrizione</th>
-                                    <th>Inizio Validità</th>
-                                    <th>Fine Validità</th>
-                                    <th>Commissione</th>
-                                    <th>Stazione</th>
-                                    <th className="buttons-td-width"/>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {
-                                    pagedSubjectServices.map((subjectService: CdsSoggettoServizio, index: number) => (
-                                        <tr key={subjectService.id ?? index}>
-                                            <td>{subjectService.idSoggettoServizio}</td>
-                                            <td>{subjectService.servizio?.idServizio}</td>
-                                            <td className="text-left">{subjectService.descrizioneServizio}</td>
-                                            <td>{subjectService.dataInizioValidita?.toLocaleDateString()}</td>
-                                            <td>{subjectService.dataFineValidita?.toLocaleDateString()}</td>
-                                            <td>{subjectService.commissione ? "Sì" : "No"}</td>
-                                            <td>{formatStazione(subjectService.stazionePa)}</td>
-                                            <td className="text-right">
-                                                <OverlayTrigger placement="top"
-                                                                overlay={<Tooltip id={`tooltip-edit-${index}`}>Modifica</Tooltip>}>
-                                                    <FaEdit role="button" className="mr-3"
-                                                            onClick={() => this.handleEdit(subjectService)}/>
-                                                </OverlayTrigger>
-                                                <OverlayTrigger placement="top"
-                                                                overlay={<Tooltip id={`tooltip-delete-${index}`}>Elimina</Tooltip>}>
-                                                    <FaTrash role="button" className="mr-0"
-                                                             onClick={() => this.handleDelete(subjectService)}/>
-                                                </OverlayTrigger>
-                                            </td>
-                                        </tr>
-                                    ))
-                                }
-                                </tbody>
-                            </Table>
-                            <Paginator pageInfo={pageInfo} onPageChanged={this.handlePageChange}/>
-                        </>
-                    )
-                }
-
-                <Modal show={showFormModal} onHide={isSaving ? undefined : this.hideFormModal}>
-                    <Modal.Header closeButton={!isSaving}>
-                        <Modal.Title>{isEditing ? "Modifica Associazione Soggetto - Servizio" : "Nuova Associazione Soggetto - Servizio"}</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        {isSaving && (<FaSpinner className="spinner"/>)}
-                        <Form>
-                            <Form.Group>
-                                <Form.Label>ID Soggetto Servizio</Form.Label>
-                                <Form.Control name="idSoggettoServizio" value={formData.idSoggettoServizio ?? ""}
-                                              disabled={isEditing}
-                                              onChange={this.handleChange}/>
-                            </Form.Group>
-                            <Form.Group>
-                                <Form.Label>ID Servizio</Form.Label>
-                                <Form.Control name="idServizio" value={formData.servizio?.idServizio ?? ""}
-                                              onChange={this.handleServizioChange}/>
-                            </Form.Group>
-                            <Form.Group>
-                                <Form.Label>Descrizione</Form.Label>
-                                <Form.Control name="descrizioneServizio" value={formData.descrizioneServizio ?? ""}
-                                              onChange={this.handleChange}/>
-                            </Form.Group>
-                            <Form.Group>
-                                <Form.Label>Stazione</Form.Label>
-                                <Form.Control name="idStazione" value={formData?.stazionePa?.fkStazione?.idStazione ?? ""}
-                                              onChange={this.handleStazioneChange}/>
-                            </Form.Group>
-                            <Form.Group>
-                                <Form.Label>Data Inizio Validità</Form.Label>
-                                <Form.Control name="dataInizioValidita" type="date"
-                                              value={dateToInputValue(formData.dataInizioValidita)}
-                                              onChange={this.handleDateChange}/>
-                            </Form.Group>
-                            <Form.Group>
-                                <Form.Label>Data Fine Validità</Form.Label>
-                                <Form.Control name="dataFineValidita" type="date"
-                                              value={dateToInputValue(formData.dataFineValidita)}
-                                              onChange={this.handleDateChange}/>
-                            </Form.Group>
-                            <Form.Group>
-                                <Form.Check type="checkbox" name="commissione" label="Commissione"
-                                            checked={formData.commissione ?? false}
-                                            onChange={this.handleChange}/>
-                            </Form.Group>
-                        </Form>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={this.hideFormModal} disabled={isSaving}>Annulla</Button>
-                        <Button variant="primary" onClick={this.handleSave} disabled={isSaving}>Salva</Button>
-                    </Modal.Footer>
-                </Modal>
-
-                <ConfirmationModal show={showDeleteModal} handleClose={this.hideDeleteModal}>
-                    <p>Sei sicuro di voler eliminare la seguente associazione?</p>
-                    <ul>
-                        <li>{subjectServiceToDelete.idSoggettoServizio} - {subjectServiceToDelete.descrizioneServizio}</li>
-                    </ul>
-                </ConfirmationModal>
+          <div className="cds-subject-services">
+            <div className="row">
+              <div className="col-md-10">
+                <p>
+                  Elenco dei servizi associati al soggetto{" "}
+                  <strong>{subject.creditorInstitutionCode}</strong> -{" "}
+                  {subject.creditorInstitutionDescription}.
+                </p>
+              </div>
+              <div className="col-md-2 text-right">
+                <Button onClick={this.handleCreate}>
+                  Nuovo <FaPlus />
+                </Button>
+              </div>
             </div>
+
+            {isLoading && <FaSpinner className="spinner" />}
+            {!isLoading && (
+              <>
+                <Table hover responsive size="sm">
+                  <thead>
+                    <tr>
+                      <th>ID Soggetto Servizio</th>
+                      <th>ID Servizio</th>
+                      <th className="text-left">Descrizione</th>
+                      <th>Inizio Validità</th>
+                      <th>Fine Validità</th>
+                      <th>Commissione</th>
+                      <th>Stazione</th>
+                      <th className="buttons-td-width" />
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {pagedSubjectServices.map(
+                      (subjectService: CdsSoggettoServizio, index: number) => (
+                        <tr key={subjectService.id ?? index}>
+                          <td>{subjectService.idSoggettoServizio}</td>
+                          <td>{subjectService.servizio?.idServizio}</td>
+                          <td className="text-left">
+                            {subjectService.descrizioneServizio}
+                          </td>
+                          <td>
+                            {subjectService.dataInizioValidita?.toLocaleDateString()}
+                          </td>
+                          <td>
+                            {subjectService.dataFineValidita?.toLocaleDateString()}
+                          </td>
+                          <td>{subjectService.commissione ? "Sì" : "No"}</td>
+                          <td>{formatStazione(subjectService.stazionePa)}</td>
+                          <td className="text-right">
+                            <OverlayTrigger
+                              placement="top"
+                              overlay={
+                                <Tooltip id={`tooltip-edit-${index}`}>
+                                  Modifica
+                                </Tooltip>
+                              }
+                            >
+                              <FaEdit
+                                role="button"
+                                className="mr-3"
+                                onClick={() => this.handleEdit(subjectService)}
+                              />
+                            </OverlayTrigger>
+                            <OverlayTrigger
+                              placement="top"
+                              overlay={
+                                <Tooltip id={`tooltip-delete-${index}`}>
+                                  Elimina
+                                </Tooltip>
+                              }
+                            >
+                              <FaTrash
+                                role="button"
+                                className="mr-0"
+                                onClick={() =>
+                                  this.handleDelete(subjectService)
+                                }
+                              />
+                            </OverlayTrigger>
+                          </td>
+                        </tr>
+                      )
+                    )}
+                  </tbody>
+                </Table>
+                <Paginator
+                  pageInfo={pageInfo}
+                  onPageChanged={this.handlePageChange}
+                />
+
+                <p className="text-muted">
+                  Il campo <b>idServizio</b> rappresenta l'identificativo di un
+                  servizio generico registrato all'interno del sistema pagoPA. È
+                  espresso come un codice numerico di 5 cifre.
+                </p>
+                <p className="text-muted">
+                  Il campo <b>idSoggettoServizio</b> rappresenta
+                  l'identificativo univoco dell'associazione tra un determinato
+                  servizio generico e uno specifico Ente Creditore.
+                </p>
+                <p className="text-muted">
+                  Mentre l'idServizio identifica il servizio generico (la
+                  categoria astratta), l'idSoggettoServizio identifica la
+                  specifica implementazione o istanza di quel servizio offerta
+                  da un determinato EC (ad esempio, l'associazione
+                  specifica "Mensa Scolastica" erogata dal "Comune di Roma")
+                </p>
+              </>
+            )}
+
+            <Modal
+              show={showFormModal}
+              onHide={isSaving ? undefined : this.hideFormModal}
+            >
+              <Modal.Header closeButton={!isSaving}>
+                <Modal.Title>
+                  {isEditing
+                    ? "Modifica Associazione Soggetto - Servizio"
+                    : "Nuova Associazione Soggetto - Servizio"}
+                </Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                {isSaving && <FaSpinner className="spinner" />}
+                <Form>
+                  <Form.Group>
+                    <Form.Label>ID Soggetto Servizio</Form.Label>
+                    <Form.Control
+                      name="idSoggettoServizio"
+                      value={formData.idSoggettoServizio ?? ""}
+                      disabled={isEditing}
+                      maxLength={5}
+                      onChange={this.handleChange}
+                    />
+                  </Form.Group>
+                  <Form.Group>
+                    <Form.Label>ID Servizio</Form.Label>
+                    <Form.Control
+                      name="idServizio"
+                      value={formData.servizio?.idServizio ?? ""}
+                      onChange={this.handleServizioChange}
+                    />
+                  </Form.Group>
+                  <Form.Group>
+                    <Form.Label>Descrizione</Form.Label>
+                    <Form.Control
+                      name="descrizioneServizio"
+                      value={formData.descrizioneServizio ?? ""}
+                      onChange={this.handleChange}
+                    />
+                  </Form.Group>
+                  <Form.Group>
+                    <Form.Label>Stazione</Form.Label>
+                    <Form.Control
+                      name="idStazione"
+                      value={formData?.stazionePa?.fkStazione?.idStazione ?? ""}
+                      onChange={this.handleStazioneChange}
+                    />
+                  </Form.Group>
+                  <Form.Group>
+                    <Form.Label>Data Inizio Validità</Form.Label>
+                    <Form.Control
+                      name="dataInizioValidita"
+                      type="date"
+                      value={dateToInputValue(formData.dataInizioValidita)}
+                      onChange={this.handleDateChange}
+                    />
+                  </Form.Group>
+                  <Form.Group>
+                    <Form.Label>Data Fine Validità</Form.Label>
+                    <Form.Control
+                      name="dataFineValidita"
+                      type="date"
+                      value={dateToInputValue(formData.dataFineValidita)}
+                      onChange={this.handleDateChange}
+                    />
+                  </Form.Group>
+                  <Form.Group>
+                    <Form.Check
+                      type="checkbox"
+                      name="commissione"
+                      label="Commissione"
+                      checked={formData.commissione ?? false}
+                      onChange={this.handleChange}
+                    />
+                  </Form.Group>
+                </Form>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button
+                  variant="secondary"
+                  onClick={this.hideFormModal}
+                  disabled={isSaving}
+                >
+                  Annulla
+                </Button>
+                <Button
+                  variant="primary"
+                  onClick={this.handleSave}
+                  disabled={isSaving}
+                >
+                  Salva
+                </Button>
+              </Modal.Footer>
+            </Modal>
+
+            <ConfirmationModal
+              show={showDeleteModal}
+              handleClose={this.hideDeleteModal}
+            >
+              <p>Sei sicuro di voler eliminare la seguente associazione?</p>
+              <ul>
+                <li>
+                  {subjectServiceToDelete.idSoggettoServizio} -{" "}
+                  {subjectServiceToDelete.descrizioneServizio}
+                </li>
+              </ul>
+            </ConfirmationModal>
+          </div>
         );
     }
 }

@@ -290,6 +290,7 @@ export default class CdsSubjects extends React.Component<IProps, IState> {
                             <Form.Group>
                                 <Form.Label>Codice Ente Creditore</Form.Label>
                                 <Form.Control name="creditorInstitutionCode" value={formData.creditorInstitutionCode ?? ""}
+                                              maxLength={5}
                                               onChange={this.handleChange}/>
                             </Form.Group>
                             <Form.Group>
