@@ -5,56 +5,56 @@ $text-color: #17324d;
 // we catch only the necessary to our aim
 // --------------------------------------------------------------------
 // funzioni e variabili colore
-@import "~bootstrap-italia/src/scss/functions";
-@import "~bootstrap-italia/src/scss/utilities/colors_vars";
+@import "~bootstrap-italia/src/scss/functions.scss";
+@import "~bootstrap-italia/src/scss/utilities/colors_vars.scss";
 
 //variables
-@import "~bootstrap-italia/src/scss/variables";
+@import "~bootstrap-italia/src/scss/variables.scss";
 
 //classi colore
-@import "~bootstrap-italia/src/scss/utilities/colors";
+@import "~bootstrap-italia/src/scss/utilities/colors.scss";
 
-@import "~bootstrap/scss/functions";
-@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/functions.scss";
+@import "~bootstrap/scss/variables.scss";
 
 // mixins
-@import "~bootstrap/scss/mixins";
-@import "~bootstrap-italia/src/scss/custom/mixins/buttons";
-@import "~bootstrap-italia/src/scss/custom/mixins/text-emphasis";
+@import "~bootstrap/scss/mixins.scss";
+@import "~bootstrap-italia/src/scss/custom/mixins/buttons.scss";
+@import "~bootstrap-italia/src/scss/custom/mixins/text-emphasis.scss";
 
-@import "~bootstrap/scss/root";
-@import "~bootstrap/scss/print";
-@import "~bootstrap/scss/reboot";
-@import "~bootstrap/scss/type";
-@import "~bootstrap/scss/alert";
-//@import '~bootstrap/scss/images';
-//@import '~bootstrap/scss/code';
-@import "~bootstrap/scss/grid";
-@import '~bootstrap/scss/tables';
-@import "~bootstrap/scss/forms";
-@import "~bootstrap/scss/buttons";
-@import "~bootstrap/scss/transitions";
-@import "~bootstrap/scss/dropdown";
-@import "~bootstrap/scss/button-group";
-@import "~bootstrap/scss/input-group";
-@import '~bootstrap/scss/nav';
-@import '~bootstrap/scss/navbar';
-@import '~bootstrap/scss/card';
-@import '~bootstrap/scss/breadcrumb';
-@import '~bootstrap/scss/pagination';
-@import '~bootstrap/scss/badge';
-//@import '~bootstrap/scss/progress';
-//@import '~bootstrap/scss/media';
-@import "~bootstrap/scss/list-group";
-@import '~bootstrap/scss/close';
-@import '~bootstrap/scss/modal';
-@import '~bootstrap/scss/tooltip';
-//@import '~bootstrap/scss/popover';
-//@import '~bootstrap/scss/carousel';
-@import "~bootstrap/scss/utilities";
-@import "~bootstrap/scss/spinners";
-@import "~bootstrap/scss/toasts";
-//@import "~bootstrap-icons/font/bootstrap-icons";
+@import "~bootstrap/scss/root.scss";
+@import "~bootstrap/scss/print.scss";
+@import "~bootstrap/scss/reboot.scss";
+@import "~bootstrap/scss/type.scss";
+@import "~bootstrap/scss/alert.scss";
+//@import '~bootstrap/scss/images.scss';
+//@import '~bootstrap/scss/code.scss';
+@import "~bootstrap/scss/grid.scss";
+@import '~bootstrap/scss/tables.scss';
+@import "~bootstrap/scss/forms.scss";
+@import "~bootstrap/scss/buttons.scss";
+@import "~bootstrap/scss/transitions.scss";
+@import "~bootstrap/scss/dropdown.scss";
+@import "~bootstrap/scss/button-group.scss";
+@import "~bootstrap/scss/input-group.scss";
+@import '~bootstrap/scss/nav.scss';
+@import '~bootstrap/scss/navbar.scss';
+@import '~bootstrap/scss/card.scss';
+@import '~bootstrap/scss/breadcrumb.scss';
+@import '~bootstrap/scss/pagination.scss';
+@import '~bootstrap/scss/badge.scss';
+//@import '~bootstrap/scss/progress.scss';
+//@import '~bootstrap/scss/media.scss';
+@import "~bootstrap/scss/list-group.scss";
+@import '~bootstrap/scss/close.scss';
+@import '~bootstrap/scss/modal.scss';
+@import '~bootstrap/scss/tooltip.scss';
+//@import '~bootstrap/scss/popover.scss';
+//@import '~bootstrap/scss/carousel.scss';
+@import "~bootstrap/scss/utilities.scss";
+@import "~bootstrap/scss/spinners.scss";
+@import "~bootstrap/scss/toasts.scss";
+//@import "~bootstrap-icons/font/bootstrap-icons.scss";
 
 @import "fonts";
 
