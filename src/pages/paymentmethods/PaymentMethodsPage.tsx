@@ -14,6 +14,7 @@ interface IState {
     jwt: string | null;
 }
 
+// eslint-disable-next-line functional/immutable-data
 (window as any).isFlutterInitialized = (window as any).isFlutterInitialized || false;
 
 export default class PaymentMedothodsPage extends React.Component<IProps, IState> {
@@ -34,12 +35,14 @@ export default class PaymentMedothodsPage extends React.Component<IProps, IState
 
     componentDidMount(): void {
         if ((window as any).isFlutterInitialized === true) {
+            // eslint-disable-next-line no-console
             console.warn("Rilevata istanza Flutter precedente. Ricarico la pagina per un avvio pulito.");
             window.location.reload();
             return; 
         }
 
         
+        // eslint-disable-next-line functional/immutable-data
         (window as any).isFlutterInitialized = true;
         
         this.context.instance.acquireTokenSilent({
@@ -50,6 +53,7 @@ export default class PaymentMedothodsPage extends React.Component<IProps, IState
                 this.setState({ jwt: response.idToken });
             })
             .catch((error: any) => {
+                // eslint-disable-next-line no-console
                 console.error("Failed to acquire token silently", error);
             });    }
 

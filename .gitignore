@@ -62,5 +62,6 @@ yarn-error.log
 .env.local
 */env-config.js
 /swagger.json
+/openapi.json
 /test-report.xml
 /public/version.json
