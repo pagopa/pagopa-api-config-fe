@@ -1,6 +1,6 @@
 {
   "name": "pagopa-api-config-fe",
-  "version": "1.37.0",
+  "version": "1.37.0-1-fix-slack",
   "license": "MIT",
   "engines": {
     "node": "16.16.0"
