@@ -24,7 +24,7 @@ locals {
     "CLIENT_ID" : module.github_runner_app.application_id,
     "TENANT_ID" : data.azurerm_client_config.current.tenant_id,
     "SUBSCRIPTION_ID" : data.azurerm_subscription.current.subscription_id,
-
+    "SLACK_WEBHOOK_URL_DEPLOY": data.azurerm_key_vault_secret.key_vault_deploy_webhook_slack.value,
     "BLOB_CONNECTION_STRING" : data.azurerm_key_vault_secret.key_vault_blob_connection_string.value
   }
   env_variables = {
@@ -96,8 +96,8 @@ resource "github_actions_secret" "secret_cucumber_token" {
   plaintext_value = data.azurerm_key_vault_secret.key_vault_cucumber_token.value
 }
 
-resource "github_actions_secret" "slack_webhook_deploy" {
-  repository       = "pagopa-api-config"
-  secret_name      = "SLACK_WEBHOOK_URL_DEPLOY"
-  plaintext_value  = data.azurerm_key_vault_secret.key_vault_deploy_webhook_slack.value
-}
+# resource "github_actions_secret" "slack_webhook_deploy" {
+#   repository       = local.github.repository
+#   secret_name      = "SLACK_WEBHOOK_URL_DEPLOY"
+#   plaintext_value  = data.azurerm_key_vault_secret.key_vault_deploy_webhook_slack.value
+# }
