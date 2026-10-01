@@ -1,6 +1,6 @@
 {
   "name": "pagopa-api-config-fe",
-  "version": "1.37.0-2-fix-cds",
+  "version": "1.38.0",
   "license": "MIT",
   "engines": {
     "node": "16.16.0"
