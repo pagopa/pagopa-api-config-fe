@@ -1,3 +1,4 @@
+import {readableReport} from "@pagopa/ts-commons/lib/reporters";
 import {loginRequest} from "../../authConfig";
 import {apiClient} from "../../util/apiClient";
 
@@ -12,11 +13,16 @@ export const getStation = (context: any, code: string) => new Promise((resolve, 
                 ApiKey: "",
                 stationcode: code
             }).then((response: any) => {
-                if (response.right.status === 200) {
+                if (response.right === undefined) {
+                    // io-ts decoding failure: the response does not match the generated codec
+                    console.error("Invalid API response:\n" + readableReport(response.left));
+                    reject(response.left);
+                } else if (response.right.status === 200) {
                     resolve(response.right.value);
                 }
                 else {
-                    reject();
+                    console.error("Unexpected API status", response.right.status, response.right.value);
+                    reject(response.right);
                 }
             }).catch(reject);
         });

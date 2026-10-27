@@ -1,4 +1,5 @@
 import React from "react";
+import {readableReport} from "@pagopa/ts-commons/lib/reporters";
 import {Link} from "react-router-dom";
 import {FaCompress, FaExpand, FaHome} from "react-icons/fa";
 import {Accordion, Dropdown, OverlayTrigger, Tooltip} from "react-bootstrap";
@@ -116,7 +117,8 @@ export default class Sidebar extends React.Component<IProps, IState> {
                         be_version: response.right.value.version,
                     });
                 })
-                    .catch(() => {
+                    .catch((err: unknown) => {
+                        console.error("Error loading server info", err);
                         toast.error("Problema nel recuperare le info del server", {theme: "colored"});
                     });
             }).catch(() => {
@@ -139,11 +141,15 @@ export default class Sidebar extends React.Component<IProps, IState> {
                     limit: 1,
                     page: 0
                 }).then((response: any) => {
+                    if (response.right === undefined) {
+                        console.error("Invalid getCacheVersions response:\n" + readableReport(response.left));
+                    }
                     this.setState({
                         cache_version: response.right.value.version_list[0].time
                     });
                 })
-                    .catch(() => {
+                    .catch((err: unknown) => {
+                        console.error("Error loading cache version", err);
                         toast.error("Problema nel recuperare le info della configurazione", {theme: "colored"});
                     });
             });
