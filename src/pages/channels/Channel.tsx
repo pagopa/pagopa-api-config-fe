@@ -179,7 +179,8 @@ export default class Channel extends React.Component<IProps, IState> {
                     this.setPaymentTypeLegend(paymentTypeLegend);
                     this.setPspList(result[3].payment_service_providers as [], result[3].page_info);
                     this.setState({isError: false});
-                }).catch(() => {
+                }).catch((err: unknown) => {
+            console.error("Error loading channel", err);
             this.setState({isError: true});
         });
         this.setState({isLoading: false});

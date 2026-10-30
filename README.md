@@ -2,6 +2,15 @@
 
 The project is useful to create and verify some configuration for the pagoPA platform.
 
+## Creditor institution IBANs
+
+The creditor institution edit page (`/creditor-institutions/{code}?edit`)
+supports adding and deleting IBANs directly from the IBAN section.
+Insertion requires a valid IBAN, active status, validity and expiry dates;
+the description is optional. Dates are entered in local time and sent as UTC.
+Deletion requires confirmation. Both operations are saved immediately,
+independently of changes to the institution details, and refresh the IBAN list.
+
 ## Prerequisites
 
 - Install [yarn](https://classic.yarnpkg.com/en/docs/getting-started)
@@ -38,4 +47,3 @@ The page will reload if you make edits and you will also see any lint errors in 
 ### `yarn test`
 
 Launches the test created using [Jest](https://jestjs.io/).
-

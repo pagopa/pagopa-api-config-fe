@@ -67,7 +67,8 @@ export default class EditStation extends React.Component<IProps, IState> {
             const station = {...data, station_code: code} as StationDetails;
             this.setStation(station);
             this.setState({isError: false});      
-        }).catch(() => {
+        }).catch((err: unknown) => {
+            console.error("Error loading station", err);
             this.setState({isError: true});
         }).finally(() => this.setState({ isLoading: false }));
     }
