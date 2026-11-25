@@ -1,6 +1,6 @@
 {
   "name": "pagopa-api-config-fe",
-  "version": "1.39.0-1-channels-stations",
+  "version": "1.40.0",
   "license": "MIT",
   "engines": {
     "node": "16.16.0"
