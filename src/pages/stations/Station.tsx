@@ -63,7 +63,8 @@ export default class Station extends React.Component<IProps, IState> {
             this.setStation(station);
             this.getStationCI(code, 0);
             this.setState({isError: false});      
-        }).catch(() => {
+        }).catch((err: unknown) => {
+            console.error("Error loading station", err);
             this.setState({isError: true});
         }).finally(() => this.setState({ isLoading: false }));
     }

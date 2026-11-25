@@ -1,12 +1,18 @@
+import {readableReport} from "@pagopa/ts-commons/lib/reporters";
 import {loginRequest} from "../../authConfig";
 import {apiClient} from "../../util/apiClient";
 
 const thenResolve = (response: any, resolve: any, reject: any): void => {
-    if (response.right.status === 200) {
+    if (response.right === undefined) {
+        // io-ts decoding failure: the response does not match the generated codec
+        console.error("Invalid API response:\n" + readableReport(response.left));
+        reject(response.left);
+    } else if (response.right.status === 200) {
         resolve(response.right.value);
     }
     else {
-        reject();
+        console.error("Unexpected API status", response.right.status, response.right.value);
+        reject(response.right);
     }
 };
 
@@ -75,7 +81,8 @@ export const getPspList = (context: any, code: string, page: number) => new Prom
                         } else if (response.right.status === 404) {
                             resolve([]);
                         } else {
-                            reject();
+                            console.error("Unexpected API status", response.right.status, response.right.value);
+                            reject(response.right);
                         }
                     }).catch(reject);
             });

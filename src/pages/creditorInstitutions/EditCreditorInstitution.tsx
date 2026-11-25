@@ -7,9 +7,11 @@ import AsyncSelect from 'react-select/async';
 import debounce from "lodash.debounce";
 import { apiClient } from "../../util/apiClient";
 import { CreditorInstitutionDetails } from "../../../generated/api/CreditorInstitutionDetails";
+import { Iban } from "../../../generated/api/Iban";
 import { loginRequest } from "../../authConfig";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import CountryCode from "../../components/CountryCode";
+import CreditorInstitutionIbans from "./CreditorInstitutionIbans";
 
 interface IProps {
     match: {
@@ -26,7 +28,7 @@ interface IState {
     creditorInstitution: CreditorInstitutionDetails;
     address: any;
     edit: boolean;
-    ibanList: [];
+    ibanList: ReadonlyArray<Iban>;
     stationList: [];
     encodings: [];
     encodingMgmt: any;
@@ -629,38 +631,6 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
             });
     }
 
-    getIbanListRender() {
-        return this.state.ibanList.map((item: any, index: number) => (
-            <tr key={index}>
-                <td>{item.iban}</td>
-                <td>{item.validity_date.toLocaleDateString()}</td>
-                <td>{item.publication_date.toLocaleDateString()}</td>
-            </tr>
-        ));
-    }
-
-    hasIbanWarning(ibanList: any) {
-        return Object.keys(ibanList).length === 0 &&
-            <Alert className={'col-md-12'} variant={"warning"}><FaInfoCircle
-                className="mr-1" />Iban non presenti</Alert>;
-    }
-
-    hasIbanContent(ibanList: any) {
-        return Object.keys(ibanList).length > 0 &&
-            <Table hover responsive size="sm">
-                <thead>
-                    <tr>
-                        <th className="">Iban</th>
-                        <th className="">Validità</th>
-                        <th className="">Pubblicazione</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {ibanList}
-                </tbody>
-            </Table>;
-    }
-
     /* eslint-disable */
     // TODO refactor function to reduce complexity
     getStationListRender() {
@@ -869,11 +839,6 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
         const isError = this.state.isError;
         const isLoading = this.state.isLoading;
 
-        // create rows for ibans table
-        const ibanList = this.getIbanListRender();
-        const warningIbanContent = this.hasIbanWarning(ibanList);
-        const showIbanContent = this.hasIbanContent(ibanList);
-
         // create rows for stations table
         const stationList = this.getStationListRender();
         const warningStationContent = this.hasStationWarning(stationList);
@@ -1068,22 +1033,11 @@ export default class EditCreditorInstitution extends React.Component<IProps, ISt
                                     </div>
                                     <div className="row mt-3">
                                         <div className="col-md-12">
-                                            <Card>
-                                                <Card.Header>
-                                                    <h5>Iban</h5>
-                                                </Card.Header>
-                                                <Card.Body>
-                                                    {warningIbanContent}
-
-                                                    {showIbanContent}
-                                                </Card.Body>
-                                                <Card.Footer>
-                                                    <div className="legend">
-                                                        <span className="badge badge-info mr-1">Nota:</span>
-                                                        Gli Iban si aggiungono tramite l&apos;ICA
-                                                    </div>
-                                                </Card.Footer>
-                                            </Card>
+                                            <CreditorInstitutionIbans
+                                                code={this.state.code}
+                                                ibans={this.state.ibanList}
+                                                onChanged={() => this.getIbans(this.state.code)}
+                                            />
                                         </div>
                                     </div>
                                     <div className="row mt-3">

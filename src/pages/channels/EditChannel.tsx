@@ -167,7 +167,8 @@ export default class EditChannel extends React.Component<IProps, IState> {
                     });
                     this.setPaymentTypeLegend(paymentTypeLegend);
                     this.setState({isError: false});
-                }).catch(() => {
+                }).catch((err: unknown) => {
+            console.error("Error loading channel", err);
             this.setState({isError: true});
         });
         this.setState({isLoading: false});
